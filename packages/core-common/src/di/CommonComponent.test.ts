@@ -17,7 +17,7 @@ describe('CommonComponent', () => {
     })
   }
 
-  it('assembles all modules and exposes dependencies', () => {
+  it('assembles and exposes core dependencies', () => {
     const component = createTestComponent()
 
     expect(component.commonStorage).toBeDefined()

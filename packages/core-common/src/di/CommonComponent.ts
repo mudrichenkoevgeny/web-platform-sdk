@@ -1,22 +1,19 @@
 import { EncryptedSettings } from '../storage/EncryptedSettings'
 import { CommonStorage } from '../storage/common/CommonStorage'
-import { ExternalLauncher } from '../platform/externallauncher/ExternalLauncher'
+import { EncryptedCommonStorage } from '../storage/common/EncryptedCommonStorage'
+import { ExternalLauncher, getExternalLauncher } from '../platform/externallauncher/ExternalLauncher'
 import { DeviceInfoProvider, WebDeviceInfoProvider } from '../platform/deviceinfo/DeviceInfoProvider'
-import { PlatformRepository } from '../platform/PlatformRepository'
+import { PlatformRepository, PlatformRepositoryImpl } from '../platform/PlatformRepository'
 import { HttpClient } from '../network/httpclient/HttpClient'
 import { HttpClientConfigPlugin } from '../network/httpclient/HttpClientConfigPlugin'
 import { AccessTokenProvider } from '../network/provider/AccessTokenProvider'
 import { WebSocketService } from '../network/websocket/service/WebSocketService'
+import { WebWebSocketService } from '../network/websocket/service/WebWebSocketService'
 import { WebSocketMessageHandler } from '../network/websocket/messagehandler/WebSocketMessageHandler'
+import { CommonWebSocketMessageHandler } from '../network/websocket/messagehandler/CommonWebSocketMessageHandler'
 import { AppErrorParser } from '../error/parser/AppErrorParser'
 import { AppErrorParserBuilder } from '../error/parser/AppErrorParserBuilder'
 import { CommonErrorParser } from '../error/parser/CommonErrorParser'
-import {
-  CommonStorageModule,
-  CommonPlatformModule,
-  CommonRepositoryModule,
-  CommonNetworkModule
-} from './CommonModules'
 
 /**
  * Configuration options required to instantiate {@link CommonComponent}.
@@ -75,36 +72,36 @@ export class CommonComponent {
   public constructor(config: CommonComponentConfig) {
     this.encryptedSettings = config.encryptedSettings
 
-    const storageModule = new CommonStorageModule(this.encryptedSettings)
-    this.commonStorage = storageModule.commonStorage
-
-    const platformModule = new CommonPlatformModule()
-    this.externalLauncher = platformModule.externalLauncher
+    this.commonStorage = new EncryptedCommonStorage(this.encryptedSettings)
+    this.externalLauncher = getExternalLauncher()
 
     this.deviceInfoProvider =
       config.deviceInfoProvider ??
       new WebDeviceInfoProvider(this.commonStorage, config.appVersion)
 
-    const repositoryModule = new CommonRepositoryModule(
+    this.platformRepository = new PlatformRepositoryImpl(
       this.deviceInfoProvider,
       this.externalLauncher
     )
-    this.platformRepository = repositoryModule.platformRepository
 
-    const networkModule = new CommonNetworkModule({
+    this.httpClient = new HttpClient({
       baseUrl: config.baseUrl,
-      webSocketPath: config.webSocketPath,
-      httpClientConfigPlugins: config.httpClientConfigPlugins,
-      accessTokenProvider: config.accessTokenProvider,
       deviceInfoProvider: this.deviceInfoProvider,
+      plugins: config.httpClientConfigPlugins,
       customFetch: config.customFetch,
-      webSocketFactory: config.webSocketFactory,
       logger: config.logger
     })
 
-    this.httpClient = networkModule.httpClient
-    this.webSocketService = networkModule.webSocketService
-    this.commonWebSocketMessageHandler = networkModule.commonWebSocketMessageHandler
+    this.commonWebSocketMessageHandler = new CommonWebSocketMessageHandler()
+
+    this.webSocketService = new WebWebSocketService({
+      baseUrl: config.baseUrl,
+      webSocketPath: config.webSocketPath,
+      accessTokenProvider: config.accessTokenProvider,
+      deviceInfoProvider: this.deviceInfoProvider,
+      webSocketFactory: config.webSocketFactory,
+      logger: config.logger
+    })
   }
 
   /**

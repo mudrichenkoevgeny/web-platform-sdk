@@ -122,12 +122,8 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
 
             {filter.isMultiple && filter.options.length > 3 && (
               <div className="flex items-center justify-between px-2">
-                <CoreTextButton onClick={handleSelectAll} className="h-6 text-xs w-auto px-2">
-                  {enStrings.ui_common_select_all}
-                </CoreTextButton>
-                <CoreTextButton onClick={handleClearAll} className="h-6 text-xs w-auto px-2">
-                  {enStrings.ui_common_clear_all}
-                </CoreTextButton>
+                <CoreTextButton label={enStrings.ui_common_select_all} onClick={handleSelectAll} className="h-6 text-xs w-auto px-2" />
+                <CoreTextButton label={enStrings.ui_common_clear_all} onClick={handleClearAll} className="h-6 text-xs w-auto px-2" />
               </div>
             )}
 

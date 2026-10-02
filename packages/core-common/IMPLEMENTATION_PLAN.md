@@ -1,4 +1,4 @@
-# todo delete later
+# todo delete later and fix readme if need
 # Core Common — Implementation Plan
 
 This document outlines the step-by-step implementation plan for the `core-common` module in the Web Platform SDK. It maps the architectural concepts from the Kotlin Multiplatform (KMP) project to the modern Web ecosystem (TypeScript, React, WebCrypto, native Fetch).

@@ -1,3 +1,4 @@
+# todo delete later and add readme
 # Core Security — Implementation Plan
 
 This document outlines the step-by-step implementation plan for the `core-security` module in the Web Platform SDK. It maps the security settings, password policy validation, encrypted persistence, and real-time WebSocket infrastructure from the Kotlin Multiplatform (KMP) project to the modern Web ecosystem (TypeScript, WebCrypto, native Fetch).
@@ -25,38 +26,38 @@ This document outlines the step-by-step implementation plan for the `core-securi
 
 ### Phase 1: Localizations & Error Modeling (CoR)
 - [x] Create localized string dictionaries (`CoreSecurityStrings`, `enSecurityStrings`, `ruSecurityStrings`).
-- [ ] Implement `ClientSecurityErrorCodes` constants.
-- [ ] Implement `SecurityError` hierarchy (extending `AppError`, handling MFA, TOTP, OTP rate-limiting, Password Policy violations, IP restrictions).
-- [ ] Implement `SecurityErrorParser` (extending `AppErrorParser` for security-specific error code parsing).
-- [ ] Write unit tests for `SecurityErrorParser`.
+- [x] Implement `ClientSecurityErrorCodes` constants.
+- [x] Implement `SecurityError` hierarchy (extending `AppError`, handling MFA, TOTP, OTP rate-limiting, Password Policy violations, IP restrictions).
+- [x] Implement `SecurityErrorParser` (extending `AppErrorParser` for security-specific error code parsing).
+- [x] Write unit tests for `SecurityErrorParser`.
 
 ### Phase 2: Storage Layer
-- [ ] Implement `OpenSecuritySettingsStorage` interface.
-- [ ] Implement `EncryptedOpenSecuritySettingsStorage` (backed by `EncryptedSettings`).
-- [ ] Write unit tests for `EncryptedOpenSecuritySettingsStorage`.
+- [x] Implement `OpenSecuritySettingsStorage` interface.
+- [x] Implement `EncryptedOpenSecuritySettingsStorage` (backed by `EncryptedSettings`).
+- [x] Write unit tests for `EncryptedOpenSecuritySettingsStorage`.
 
 ### Phase 3: Network Layer (REST & WebSockets)
-- [ ] Implement `OpenSecuritySettingsApi` interface.
-- [ ] Implement `FetchOpenSecuritySettingsApi` (HTTP REST client using `HttpClient`).
-- [ ] Implement `SecurityWebSocketMessageHandler` (handling `SECURITY_SETTINGS_UPDATED` WebSocket frames).
-- [ ] Write unit tests for API client and WebSocket message handler.
+- [x] Implement `OpenSecuritySettingsApi` interface.
+- [x] Implement `FetchOpenSecuritySettingsApi` (HTTP REST client using `HttpClient`).
+- [x] Implement `SecurityWebSocketMessageHandler` (handling `SECURITY_SETTINGS_UPDATED` WebSocket frames).
+- [x] Write unit tests for API client and WebSocket message handler.
 
 ### Phase 4: Repository Layer
-- [ ] Implement `OpenSecuritySettingsRepository` interface.
-- [ ] Implement `OpenSecuritySettingsRepositoryImpl` (coordinating API, Encrypted Storage, and reactive WebSocket updates).
-- [ ] Write unit tests for `OpenSecuritySettingsRepositoryImpl`.
+- [x] Implement `OpenSecuritySettingsRepository` interface.
+- [x] Implement `OpenSecuritySettingsRepositoryImpl` (coordinating API, Encrypted Storage, and reactive WebSocket updates).
+- [x] Write unit tests for `OpenSecuritySettingsRepositoryImpl`.
 
 ### Phase 5: Domain Use Cases & Password Validation
-- [ ] Implement `ValidatePasswordUseCase` (validating candidate passwords against active `PasswordPolicy` from `@mudrichenkoevgeny/shared-foundation` and returning `AppResult<void, SecurityError>`).
-- [ ] Implement `RefreshOpenSecuritySettingsUseCase` (fetching and caching latest security settings).
-- [ ] Write unit tests for Use Cases.
+- [x] Implement `ValidatePasswordUseCase` (validating candidate passwords against active `PasswordPolicy` from `@mudrichenkoevgeny/shared-foundation` and returning `AppResult<void, SecurityError>`).
+- [x] Implement `RefreshOpenSecuritySettingsUseCase` (fetching and caching latest security settings).
+- [x] Write unit tests for Use Cases.
 
 ### Phase 6: Dependency Injection & Mocks
-- [ ] Implement DI modules (`SecurityStorageModule`, `SecurityRepositoryModule`, `SecurityUseCaseModule`, `SecurityNetworkModule`, `SecurityWebSocketModule`).
-- [ ] Implement `SecurityComponent` container.
-- [ ] Create mock implementations (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsStorageMock`, `OpenSecuritySettingsApiMock`, `ValidatePasswordUseCaseMock`, and domain/network payload mocks).
-- [ ] Write unit tests for `SecurityComponent`.
+- [x] Implement DI modules (`SecurityStorageModule`, `SecurityRepositoryModule`, `SecurityUseCaseModule`, `SecurityNetworkModule`, `SecurityWebSocketModule`).
+- [x] Implement `SecurityComponent` container.
+- [x] Create mock implementations (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsStorageMock`, `OpenSecuritySettingsApiMock`, `ValidatePasswordUseCaseMock`, and domain/network payload mocks).
+- [x] Write unit tests for `SecurityComponent`.
 
 ### Phase 7: Final Review & Export
-- [ ] Export all public interfaces, classes, use cases, and mocks in `src/index.ts`.
-- [ ] Validate `tsc --noEmit` and `vite build` complete successfully.
+- [x] Export all public interfaces, classes, use cases, and mocks in `src/index.ts`.
+- [x] Validate `tsc --noEmit` and `vite build` complete successfully.

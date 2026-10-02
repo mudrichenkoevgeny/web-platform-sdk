@@ -103,11 +103,10 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
                       {textVal && (
                         <div className="ml-auto mb-1">
                           <CoreTextButton
+                            label={enStrings.ui_common_clear_all}
                             onClick={() => onFilterChanged(filter.id, null)}
                             className="h-6 text-xs w-auto px-1"
-                          >
-                            {enStrings.ui_common_clear_all}
-                          </CoreTextButton>
+                          />
                         </div>
                       )}
                     </div>

@@ -23,32 +23,32 @@ This document outlines the step-by-step implementation plan for the `core-settin
 ## 🏗️ Implementation Phases
 
 ### Phase 1: Encrypted Storage Layer
-- [ ] Implement `OpenGlobalSettingsStorage` interface.
-- [ ] Implement `EncryptedOpenGlobalSettingsStorage` (persisting global configuration encrypted via `EncryptedSettings` from `core-common`).
-- [ ] Write unit tests for `EncryptedOpenGlobalSettingsStorage`.
+- [x] Implement `OpenGlobalSettingsStorage` interface.
+- [x] Implement `EncryptedOpenGlobalSettingsStorage` (persisting global configuration encrypted via `EncryptedSettings` from `core-common`).
+- [x] Write unit tests for `EncryptedOpenGlobalSettingsStorage`.
 
 ### Phase 2: Network Layer (REST & WebSockets)
-- [ ] Implement `OpenGlobalSettingsApi` interface.
-- [ ] Implement `FetchOpenGlobalSettingsApi` (HTTP REST client using `HttpClient`).
-- [ ] Implement `SettingsWebSocketMessageHandler` (handling `GLOBAL_SETTINGS_UPDATED` WebSocket frames).
-- [ ] Write unit tests for API client and WebSocket message handler.
+- [x] Implement `OpenGlobalSettingsApi` interface.
+- [x] Implement `FetchOpenGlobalSettingsApi` (HTTP REST client using `HttpClient`).
+- [x] Implement `SettingsWebSocketMessageHandler` (handling `GLOBAL_SETTINGS_UPDATED` WebSocket frames).
+- [x] Write unit tests for API client and WebSocket message handler.
 
 ### Phase 3: Repository Layer
-- [ ] Implement `OpenGlobalSettingsRepository` interface.
-- [ ] Implement `OpenGlobalSettingsRepositoryImpl` (coordinating REST API, Encrypted Storage, and reactive WebSocket updates).
-- [ ] Write unit tests for `OpenGlobalSettingsRepositoryImpl`.
+- [x] Implement `OpenGlobalSettingsRepository` interface.
+- [x] Implement `OpenGlobalSettingsRepositoryImpl` (coordinating REST API, Encrypted Storage, and reactive WebSocket updates).
+- [x] Write unit tests for `OpenGlobalSettingsRepositoryImpl`.
 
 ### Phase 4: Domain Use Cases
-- [ ] Implement `GetOpenGlobalSettingsUseCase` (retrieving global settings from repository).
-- [ ] Implement `RefreshOpenGlobalSettingsUseCase` (forcing network REST refresh and updating persistence).
-- [ ] Write unit tests for Use Cases.
+- [x] Implement `GetOpenGlobalSettingsUseCase` (retrieving global settings from repository).
+- [x] Implement `RefreshOpenGlobalSettingsUseCase` (forcing network REST refresh and updating persistence).
+- [x] Write unit tests for Use Cases.
 
 ### Phase 5: Dependency Injection & Mocks
-- [ ] Implement DI modules (`SettingsStorageModule`, `SettingsRepositoryModule`, `SettingsUseCaseModule`, `SettingsNetworkModule`, `SettingsWebSocketsModule`).
-- [ ] Implement `SettingsComponent` container.
-- [ ] Create mock implementations (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsStorageMock`, `OpenGlobalSettingsApiMock`, `GlobalSettingsMock`, `GlobalSettingsPayloadMock`).
-- [ ] Write unit tests for `SettingsComponent`.
+- [x] Implement DI modules (`SettingsStorageModule`, `SettingsRepositoryModule`, `SettingsUseCaseModule`, `SettingsNetworkModule`, `SettingsWebSocketsModule`).
+- [x] Implement `SettingsComponent` container.
+- [x] Create mock implementations (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsStorageMock`, `OpenGlobalSettingsApiMock`, `GlobalSettingsMock`, `GlobalSettingsPayloadMock`).
+- [x] Write unit tests for `SettingsComponent`.
 
 ### Phase 6: Final Review & Export
-- [ ] Export all public interfaces, classes, use cases, and mocks in `src/index.ts`.
-- [ ] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/core-settings`.
+- [x] Export all public interfaces, classes, use cases, and mocks in `src/index.ts`.
+- [x] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/core-settings`.
