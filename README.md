@@ -2,11 +2,9 @@
 
 A modular **TypeScript / React** client SDK for Web applications. It provides a unified foundation for building modern web frontends with shared logic for networking, WebCrypto-encrypted storage, security policies, and identity management. By pairing **React** UI components (Tailwind CSS + shadcn/ui) with **Zustand** state machines, it allows host applications to integrate complex authentication flows, settings, and administration tools with minimal boilerplate.
 
-[![npm version](https://img.shields.io/npm/v/@mudrichenkoevgeny/web-platform-sdk-core-common)](https://www.npmjs.com/package/@mudrichenkoevgeny/web-platform-sdk-core-common)
+## Workspace Installation & Usage
 
-## Installation
-
-Install the required workspace packages via `pnpm` (or your preferred package manager):
+Packages in this repository are managed via `pnpm` workspaces.
 
 **For Client Applications:**
 ```bash
@@ -36,31 +34,30 @@ import '@mudrichenkoevgeny/web-platform-sdk-core-common/tokens.css'
 
 Managed as a monorepo via `pnpm` workspaces:
 
-- **`core-common`** — Foundation for all packages: native Fetch HTTP client bootstrap, WebSocket lifecycle management, `EncryptedSettings` WebCrypto storage abstraction, Chain of Responsibility error parser, and shared design tokens (`tokens.css` / `tokens.ts`).
+- **`core-common`** — Foundation for all packages: native Fetch HTTP client bootstrap, WebSocket lifecycle management, `EncryptedSettings` WebCrypto storage abstraction, Chain of Responsibility error parser, and shared design tokens ([module README](packages/core-common/README.md)).
 - **`core-settings`** — Global application configuration management, Fetch API client, encrypted storage caching, and reactive Zustand settings store.
 - **`core-security`** — Password policy validation, MFA state management, Fetch API client, encrypted storage, and localized security error parsing.
 - **`feature-user`** — Headless identity and auth domain logic: Zod schema models, use cases, auth token storage (`AuthStorage`), session auto-refresh, TOTP 2FA, session management, and identifier linking.
 - **`feature-clientuser`** — Identity solution for consumer web applications: multi-method auth (Email, Phone OTP, Google Sign-In), shadcn/ui and Tailwind CSS components, Framer Motion transitions, and Zustand state machine navigation flows.
 - **`feature-managementuser`** — Administrative identity solution for internal staff, resource oversight, administrative user management, session control, and audit inspection UI.
 
-## Documentation & Architecture
+## Project Documentation
 
-- **`ARCHITECTURE.md`** — High-level architecture, module dependency graph, domain models (`AppType`, `UserRole`, `UserAccountStatus` state machine, `UserSession`), and sequence diagrams for runtime flows (SDK bootstrap, token refresh, error parsing, WebSockets, TOTP/security, account management).
-- **`CONTRIBUTING.md`** — Workspace configuration, package build pipelines, Vitest unit and UI testing, Storybook conventions, and npm publishing guidelines.
-- **`AGENTS.md`** — Project standards, module boundaries, TypeScript coding style, and architectural constraints for contributors and AI coding assistants.
+- **[AGENTS.md](AGENTS.md)** — Entry point for project standards, module boundaries, TypeScript coding style, and architectural rules.
 
-## Design Tokens Integration
+## Design Tokens & Theme Integration
 
-Visual design decisions across the SDK are managed via a platform-independent token system:
+Visual design decisions across the SDK are driven by design tokens and font assets:
 
-1. **Single Source of Truth:** All design tokens originate from the [platform-design-system](https://github.com/mudrichenkoevgeny/platform-design-system) repository.
-2. **Target Paths for Generated Tokens:**
-  - **CSS Variables:** `packages/core-common/src/theme/tokens/tokens.css`
-  - **TypeScript Tokens:** `packages/core-common/src/theme/tokens/tokens.ts`
-3. **Synchronization Rule:** Token files are compiled automatically in the `platform-design-system` repository (`generated/web/`) and manually copied to the target paths above. Direct manual edits to these generated files are strictly prohibited.
-4. **Project Usage:**
-  - `tokens.css` is imported in application root stylesheets to supply CSS custom properties (`--color-primary`, `--spacing-md`, etc.) for Tailwind CSS and component styling.
-  - `tokens.ts` exports the typed `GeneratedDesignTokens` object for runtime TypeScript logic, inline styles, or dynamic theme adapters.
+1. **Source of Truth**: The single source of truth (SSOT) for all design tokens and font assets is the [platform-design-system](https://github.com/mudrichenkoevgeny/platform-design-system) repository.
+2. **Target Paths for Generated Tokens**:
+   - `packages/core-common/src/theme/tokens/tokens.css`
+   - `packages/core-common/src/theme/tokens/tokens.ts`
+3. **Target Path for Font Assets**:
+   - `packages/core-common/src/assets/fonts/` (copied from `assets/fonts/woff2/*.woff2` in `platform-design-system`).
+4. **Update Rule**: Token files are generated automatically in the design system platform (`generated/web/tokens.css` and `tokens.ts`) and manually copied alongside font files to the SDK target paths above. Direct manual edits to `tokens.css` and `tokens.ts` are strictly forbidden.
+5. **Theme Integration**: `ThemeProvider` and `useTheme()` manage theme modes (`light`, `dark`, `system`), controlling the `.dark` DOM class, CSS variables (`var(--color-primary)`, `--spacing-md`, `--radius-sm`), and Tailwind CSS utility presets (`sdkTailwindPreset`).
+6. **Font Resources**: `@font-face` declarations in `tokens.css` automatically load custom WOFF2 fonts (`PT Sans`) from `packages/core-common/src/assets/fonts/`.
 
 ## Integration Steps
 
@@ -167,8 +164,6 @@ export function App({ clientAppComponent }: { clientAppComponent: ClientAppCompo
   )
 }
 ```
-
-For full wiring examples, refer to the `sampleclient` and `samplemanagement` reference applications.
 
 ## License
 

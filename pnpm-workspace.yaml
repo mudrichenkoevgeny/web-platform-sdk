@@ -1,0 +1,19 @@
+packages:
+  - 'packages/*'
+  - 'samples/*'
+
+catalog:
+  '@testing-library/react': '^16.0.0'
+  '@testing-library/user-event': '^14.5.0'
+  '@types/node': '^26.6.3'
+  '@types/react': '^19.0.0'
+  '@types/react-dom': '^19.0.0'
+  'eslint': '^10.11.0'
+  'jsdom': '^26.0.0'
+  'react': '^19.0.0'
+  'react-dom': '^19.0.0'
+  'typescript': '^7.0.2'
+  'typescript-eslint': '^8.71.0'
+  'vite': '^8.3.2'
+  'vite-plugin-dts': '^5.1.1'
+  'vitest': '^5.0.3'
