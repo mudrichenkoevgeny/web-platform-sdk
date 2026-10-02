@@ -2,16 +2,38 @@ import { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shar
 import { CommonStorage } from '../../storage/common/CommonStorage'
 import { UserAgentParser } from '../parser/UserAgentParser'
 
+/**
+ * Interface providing platform device metadata.
+ */
 export interface DeviceInfoProvider {
+  /**
+   * Resolves client device information payload.
+   *
+   * @returns Device info payload promise
+   */
   getDeviceInfo(): Promise<ClientDeviceInfoPayload>
 }
 
+/**
+ * Web browser implementation of {@link DeviceInfoProvider}.
+ */
 export class WebDeviceInfoProvider implements DeviceInfoProvider {
+  /**
+   * Constructs a new {@link WebDeviceInfoProvider}.
+   *
+   * @param commonStorage - Storage instance containing persistent device credentials
+   * @param appVersion - Version string of the current application
+   */
   public constructor(
     private readonly commonStorage: CommonStorage,
     private readonly appVersion: string = '1.0.0'
   ) {}
 
+  /**
+   * Resolves browser and device metadata from navigator userAgent and storage.
+   *
+   * @returns Device info payload
+   */
   public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
     const rawDeviceId = await this.commonStorage.getDeviceId()
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : ''

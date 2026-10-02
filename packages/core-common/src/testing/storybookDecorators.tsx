@@ -4,10 +4,18 @@ import {
   DialogSizePreviewSpecs
 } from './previewSpecs'
 
+/** Props for Storybook preview container components. */
 export interface ContainerProps {
+  /** React node children to render inside fixed-size container. */
   children: React.ReactNode
 }
 
+/**
+ * Storybook decorator container applying narrow component dimensions.
+ *
+ * @param props - Container properties
+ * @returns JSX wrapper div
+ */
 export const NarrowContainer: React.FC<ContainerProps> = ({ children }) => {
   return (
     <div style={{ width: `${ComponentSizePreviewSpecs.WIDTH_NARROW}px` }}>
@@ -16,6 +24,12 @@ export const NarrowContainer: React.FC<ContainerProps> = ({ children }) => {
   )
 }
 
+/**
+ * Storybook decorator container applying standard component dimensions.
+ *
+ * @param props - Container properties
+ * @returns JSX wrapper div
+ */
 export const StandardComponentContainer: React.FC<ContainerProps> = ({ children }) => {
   return (
     <div style={{ width: `${ComponentSizePreviewSpecs.WIDTH_STANDARD}px` }}>
@@ -24,6 +38,12 @@ export const StandardComponentContainer: React.FC<ContainerProps> = ({ children 
   )
 }
 
+/**
+ * Storybook decorator container applying standard dialog dimensions.
+ *
+ * @param props - Container properties
+ * @returns JSX wrapper div
+ */
 export const DialogContainer: React.FC<ContainerProps> = ({ children }) => {
   return (
     <div
@@ -37,6 +57,12 @@ export const DialogContainer: React.FC<ContainerProps> = ({ children }) => {
   )
 }
 
+/**
+ * Storybook decorator container applying mobile sheet dialog dimensions.
+ *
+ * @param props - Container properties
+ * @returns JSX wrapper div
+ */
 export const MobileSheetContainer: React.FC<ContainerProps> = ({ children }) => {
   return (
     <div

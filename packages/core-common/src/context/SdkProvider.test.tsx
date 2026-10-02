@@ -3,8 +3,8 @@ import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { SdkProvider, useCommonComponent, useAppErrorParser } from './SdkProvider'
 import { CommonComponent } from '../di/CommonComponent'
-import { createInMemoryEncryptedSettings } from '../mock/EncryptedSettingsMock'
-import { AccessTokenProviderMock } from '../mock/AccessTokenProviderMock'
+import { createInMemoryEncryptedSettings } from '../mock/storage/EncryptedSettingsMock'
+import { AccessTokenProviderMock } from '../mock/network/AccessTokenProviderMock'
 import { CommonError } from '../error/model/CommonError'
 
 describe('SdkProvider', () => {

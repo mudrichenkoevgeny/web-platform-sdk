@@ -4,9 +4,23 @@ import { AppErrorParser } from './AppErrorParser'
 import { ClientCommonErrorCodes } from '../naming/ClientCommonErrorCodes'
 import { enStrings, CoreCommonStrings } from '../../locales/index'
 
+/**
+ * Default error parser resolving common SDK and server error codes to localized strings.
+ */
 export class CommonErrorParser implements AppErrorParser {
+  /**
+   * Constructs a new {@link CommonErrorParser}.
+   *
+   * @param strings - Core common string dictionary instance (defaults to English)
+   */
   public constructor(private readonly strings: CoreCommonStrings = enStrings) {}
 
+  /**
+   * Translates an {@link AppError} code and parameters into a localized user-facing message.
+   *
+   * @param appError - Application error instance to format
+   * @returns Localized error message string
+   */
   public parse(appError: AppError): string {
     const args = appError.args ?? {}
 

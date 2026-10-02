@@ -1,3 +1,6 @@
+/**
+ * Viewport size specifications for component preview stories.
+ */
 export const ComponentSizePreviewSpecs = {
   NAME_STANDARD: '1. Standard Component',
   NAME_NARROW: '2. Narrow Component',
@@ -5,6 +8,9 @@ export const ComponentSizePreviewSpecs = {
   WIDTH_NARROW: 280
 } as const
 
+/**
+ * Viewport size specifications for dialog preview stories.
+ */
 export const DialogSizePreviewSpecs = {
   NAME_COMPACT: '1. Compact Dialog',
   NAME_MOBILE_SHEET: '2. Mobile Dialog / Sheet',
@@ -17,6 +23,9 @@ export const DialogSizePreviewSpecs = {
   HEIGHT_STANDARD: 520
 } as const
 
+/**
+ * Viewport size specifications for screen layout preview stories.
+ */
 export const ScreenSizePreviewSpecs = {
   NAME_MOBILE: '1. Mobile Phone',
   NAME_TABLET: '2. Tablet',
@@ -29,6 +38,9 @@ export const ScreenSizePreviewSpecs = {
   HEIGHT_DESKTOP: 800
 } as const
 
+/**
+ * Theme specifications for storybook preview.
+ */
 export const ThemePreviewSpecs = {
   NAME_LIGHT: '1. Light Theme',
   NAME_DARK: '2. Dark Theme'

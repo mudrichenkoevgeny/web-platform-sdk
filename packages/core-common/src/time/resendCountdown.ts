@@ -19,6 +19,14 @@ const delay = (ms: number, signal?: AbortSignal): Promise<void> => {
   })
 }
 
+/**
+ * Asynchronous countdown loop emitting tick events until total seconds elapse or signal aborts.
+ *
+ * @param totalSeconds - Total countdown duration in seconds
+ * @param onTick - Callback function receiving remaining seconds on each tick
+ * @param intervalMs - Tick interval duration in milliseconds (defaults to 1000)
+ * @param abortSignal - Optional AbortSignal to cancel countdown early
+ */
 export const resendCountdown = async (
   totalSeconds: number,
   onTick: (remainingSeconds: number) => void,

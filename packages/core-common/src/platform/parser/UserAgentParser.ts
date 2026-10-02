@@ -1,3 +1,6 @@
+/**
+ * Utility parser for extracting browser and operating system names from User-Agent strings.
+ */
 export class UserAgentParser {
   private static readonly BROWSER_TOKEN_EDGE = 'Edg/'
   private static readonly BROWSER_TOKEN_OPERA_OPR = 'OPR/'
@@ -37,12 +40,24 @@ export class UserAgentParser {
   private static readonly OS_NAME_CHROME_OS = 'ChromeOS'
   private static readonly OS_NAME_UNKNOWN = 'Web'
 
+  /**
+   * Combines browser name and operating system name into a human-readable device name string.
+   *
+   * @param userAgent - User-Agent header string
+   * @returns Formatted device name string
+   */
   public static getDeviceName(userAgent: string): string {
     const browser = UserAgentParser.getBrowser(userAgent)
     const os = UserAgentParser.getOs(userAgent)
     return `${browser} on ${os}`
   }
 
+  /**
+   * Identifies the web browser name from a User-Agent string.
+   *
+   * @param userAgent - User-Agent header string
+   * @returns Detected browser name
+   */
   public static getBrowser(userAgent: string): string {
     if (userAgent.includes(UserAgentParser.BROWSER_TOKEN_EDGE)) {
       return UserAgentParser.BROWSER_NAME_EDGE
@@ -74,6 +89,12 @@ export class UserAgentParser {
     return UserAgentParser.BROWSER_NAME_UNKNOWN
   }
 
+  /**
+   * Identifies the operating system name from a User-Agent string.
+   *
+   * @param userAgent - User-Agent header string
+   * @returns Detected OS name
+   */
   public static getOs(userAgent: string): string {
     if (userAgent.includes(UserAgentParser.OS_TOKEN_WINDOWS_10_OR_11)) {
       return UserAgentParser.OS_NAME_WINDOWS_10_OR_11

@@ -20,6 +20,8 @@ alwaysApply: true
 - **No FQN:** Use workspace aliases.
 - **No Comments / Trailing Commas.**
 - **No Inline Dummies:** Use test factory functions (e.g., `mockUserDto()`) from dedicated `mock` directories. Do not hardcode massive objects inside the test block.
+- **Domain Mock Subfolders:** Mocks inside `src/mock/` must be organized strictly into domain subfolders matching contract areas (`di/`, `error/`, `network/`, `platform/`, `storage/`). Flat file lists in the root of `src/mock/` are forbidden.
+- **Mock Naming & Re-exports:** Mock classes and functions must use explicit `Mock` naming (e.g., `EncryptedSettingsMock.ts`, `AccessTokenProviderMock.ts`) and be re-exported via package entry points (`src/index.ts`) to enable reuse in tests, Storybook previews, and dependent modules.
 
 ## 4. UI Testing Mandate
 - Every React component must have a `*.test.tsx` file verifying rendering, user events, and error states.

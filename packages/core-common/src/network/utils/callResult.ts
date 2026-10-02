@@ -5,6 +5,13 @@ import { toServerError } from '../../error/mapper/toServerError'
 import { CommonError } from '../../error/model/CommonError'
 import { isNoInternetException } from './isNoInternetException'
 
+/**
+ * Safely executes an async function and wraps the returned result or caught exception into an {@link AppResult}.
+ *
+ * @param call - Async function producing the data payload
+ * @param isRetryable - Whether the operation can be retried on failure
+ * @returns {@link AppResult} containing data on success or mapped {@link AppError} on failure
+ */
 export const callResult = async <T>(
   call: () => Promise<T>,
   isRetryable: boolean = false

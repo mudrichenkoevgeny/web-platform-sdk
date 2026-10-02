@@ -11,15 +11,25 @@ const MAX_RECONNECT_DELAY_MS = 60000
 const MIN_SESSION_DURATION_MS = 5000
 const LOGGER_SOCKET_PREFIX = 'Socket'
 
+/** Configuration options for {@link WebWebSocketService}. */
 export interface WebWebSocketServiceConfig {
+  /** Base URL for WebSocket connection. */
   baseUrl: string
+  /** Target WebSocket path endpoint. */
   webSocketPath: string
+  /** Provider for user access token. */
   accessTokenProvider: AccessTokenProvider
+  /** Provider for device info payload. */
   deviceInfoProvider: DeviceInfoProvider
+  /** Optional diagnostic logging function. */
   logger?: (msg: string) => void
+  /** Optional custom WebSocket factory for unit testing. */
   webSocketFactory?: (url: string) => WebSocket
 }
 
+/**
+ * Browser WebSocket client service managing automatic connection retries, handler routing, and auth updates.
+ */
 export class WebWebSocketService implements WebSocketService {
   private readonly baseUrl: string
   private readonly webSocketPath: string
@@ -41,6 +51,11 @@ export class WebWebSocketService implements WebSocketService {
   private previousToken: string | null = null
   private tokenUnsubscribe: (() => void) | null = null
 
+  /**
+   * Constructs a new {@link WebWebSocketService}.
+   *
+   * @param config - Service configuration parameters
+   */
   public constructor(config: WebWebSocketServiceConfig) {
     this.baseUrl = config.baseUrl
     this.webSocketPath = config.webSocketPath
@@ -54,6 +69,7 @@ export class WebWebSocketService implements WebSocketService {
     this.observeTokenChanges()
   }
 
+  /** Starts the WebSocket connection lifecycle. */
   public connect(): void {
     if (this.isConnectionStarted) {
       this.logger?.(`${LOGGER_SOCKET_PREFIX}: Already started`)
@@ -65,6 +81,7 @@ export class WebWebSocketService implements WebSocketService {
     this.startConnection()
   }
 
+  /** Disconnects and closes active WebSocket sockets and timers. */
   public disconnect(): void {
     this.logger?.(`${LOGGER_SOCKET_PREFIX}: Disconnecting...`)
     this.isConnectionStarted = false
@@ -81,6 +98,7 @@ export class WebWebSocketService implements WebSocketService {
     }
   }
 
+  /** Restarts the connection socket if active. */
   public restart(): void {
     if (!this.isConnectionStarted) {
       this.logger?.(`${LOGGER_SOCKET_PREFIX}: Cannot restart, service not started`)
@@ -98,6 +116,12 @@ export class WebWebSocketService implements WebSocketService {
     this.startConnection()
   }
 
+  /**
+   * Subscribes a listener function to unhandled incoming frames.
+   *
+   * @param listener - Callback triggered on frame
+   * @returns Unsubscribe function
+   */
   public observeEvents(listener: SocketEventListener): () => void {
     this.eventListeners.add(listener)
     return () => {
@@ -105,10 +129,22 @@ export class WebWebSocketService implements WebSocketService {
     }
   }
 
+  /**
+   * Updates the list of registered frame handlers.
+   *
+   * @param handlers - Handler list
+   */
   public updateWebSocketMessageHandlers(handlers: WebSocketMessageHandler[]): void {
     this.webSocketMessageHandlers = handlers
   }
 
+  /**
+   * Dispatches a WebSocket frame.
+   *
+   * @param type - Event type string
+   * @param payload - Event body payload
+   * @param metadata - Metadata key-value dictionary
+   */
   public async sendEvent(
     type: string,
     payload?: unknown,
@@ -129,6 +165,11 @@ export class WebWebSocketService implements WebSocketService {
     }
   }
 
+  /**
+   * Sends a PING event frame.
+   *
+   * @param metadata - Optional metadata
+   */
   public async sendPing(metadata?: Record<string, string>): Promise<void> {
     await this.sendEvent(CommonWebSocketEventTypes.PING, null, metadata)
   }

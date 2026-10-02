@@ -1,3 +1,4 @@
+/** Localized string dictionary contract for core-common. */
 export interface CoreCommonStrings {
   error_common_not_found: string
   error_common_not_found_args: (resource: string) => string

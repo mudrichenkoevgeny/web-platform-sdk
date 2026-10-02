@@ -5,14 +5,23 @@ import { HttpClientConfigPlugin } from './HttpClientConfigPlugin'
 import { ApiException } from '../../error/model/ApiException'
 import { generateErrorId } from '../../error/model/ErrorId'
 
+/** Configuration options for {@link HttpClient}. */
 export interface HttpClientConfig {
+  /** Target API base URL. */
   baseUrl: string
+  /** Provider for device headers metadata. */
   deviceInfoProvider: DeviceInfoProvider
+  /** Optional HTTP plugins. */
   plugins?: HttpClientConfigPlugin[]
+  /** Optional custom fetch function implementation. */
   customFetch?: typeof fetch
+  /** Optional diagnostic log callback. */
   logger?: (msg: string) => void
 }
 
+/**
+ * Fetch network client executing REST requests with automatic headers, plugins, and error schema validation.
+ */
 export class HttpClient {
   private readonly baseUrl: string
   private readonly deviceInfoProvider: DeviceInfoProvider
@@ -20,6 +29,11 @@ export class HttpClient {
   private readonly fetchImpl: typeof fetch
   private readonly logger?: (msg: string) => void
 
+  /**
+   * Constructs a new {@link HttpClient}.
+   *
+   * @param config - Configuration options for the client
+   */
   public constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl.endsWith('/') ? config.baseUrl.slice(0, -1) : config.baseUrl
     this.deviceInfoProvider = config.deviceInfoProvider
@@ -28,6 +42,15 @@ export class HttpClient {
     this.logger = config.logger
   }
 
+  /**
+   * Dispatches an HTTP request to the specified endpoint path.
+   *
+   * @param path - Relative endpoint path or absolute URL
+   * @param init - Request options
+   * @returns Deserialized response payload
+   * @throws {@link ApiException} if the server returns a structured error payload
+   * @throws Error on non-2xx HTTP responses or fetch network failures
+   */
   public async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const fullUrl = path.startsWith('http://') || path.startsWith('https://')
       ? path

@@ -3,16 +3,30 @@ import { SettingsFactory } from './SettingsFactory'
 
 const MASTER_KEY_STORAGE_KEY = '__sdk_master_key__'
 
+/**
+ * EncryptedSettings implementation utilizing WebCrypto AES-GCM encryption with LocalStorage persistence.
+ */
 export class WebCryptoSettings implements EncryptedSettings {
   private readonly storage: Storage
   private readonly listeners = new Map<string, Set<StorageChangeListener>>()
   private cryptoKeyPromise: Promise<CryptoKey> | null = null
 
+  /**
+   * Constructs a new {@link WebCryptoSettings}.
+   *
+   * @param storage - Browser Storage implementation (defaults to window.localStorage)
+   */
   public constructor(storage: Storage = window.localStorage) {
     this.storage = storage
     this.initStorageEventListener()
   }
 
+  /**
+   * Encrypts and persists a string value into storage.
+   *
+   * @param key - Target storage key
+   * @param value - String value to encrypt and store
+   */
   public async put(key: string, value: string): Promise<void> {
     const cryptoKey = await this.getOrCreateCryptoKey()
     const encoder = new TextEncoder()
@@ -33,6 +47,12 @@ export class WebCryptoSettings implements EncryptedSettings {
     this.notifyListeners(key, value)
   }
 
+  /**
+   * Retrieves and decrypts a stored string value by key.
+   *
+   * @param key - Target storage key
+   * @returns Decrypted string or null if key absent or decryption fails
+   */
   public async get(key: string): Promise<string | null> {
     const payload = this.storage.getItem(key)
     if (!payload) {
@@ -67,11 +87,23 @@ export class WebCryptoSettings implements EncryptedSettings {
     }
   }
 
+  /**
+   * Removes entry from storage and notifies observers.
+   *
+   * @param key - Storage key to remove
+   */
   public async remove(key: string): Promise<void> {
     this.storage.removeItem(key)
     this.notifyListeners(key, null)
   }
 
+  /**
+   * Subscribes observer to storage key updates.
+   *
+   * @param key - Storage key to observe
+   * @param listener - Callback function
+   * @returns Unsubscribe function
+   */
   public observe(key: string, listener: StorageChangeListener): () => void {
     let keyListeners = this.listeners.get(key)
     if (!keyListeners) {
@@ -175,14 +207,33 @@ export class WebCryptoSettings implements EncryptedSettings {
   }
 }
 
+/**
+ * Factory creating {@link WebCryptoSettings} instances.
+ */
 export class WebCryptoSettingsFactory implements SettingsFactory {
+  /**
+   * Constructs a new {@link WebCryptoSettingsFactory}.
+   *
+   * @param storage - Custom Storage instance
+   */
   public constructor(private readonly storage?: Storage) {}
 
+  /**
+   * Creates a new {@link EncryptedSettings} instance.
+   *
+   * @returns WebCryptoSettings instance
+   */
   public create(): EncryptedSettings {
     return new WebCryptoSettings(this.storage)
   }
 }
 
+/**
+ * Helper function creating a {@link SettingsFactory}.
+ *
+ * @param storage - Custom storage implementation
+ * @returns SettingsFactory instance
+ */
 export const getSettingsFactory = (storage?: Storage): SettingsFactory => {
   return new WebCryptoSettingsFactory(storage)
 }

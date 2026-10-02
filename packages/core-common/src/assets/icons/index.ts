@@ -12,6 +12,7 @@ import icSettings from './ic_settings.svg?react'
 import icShow from './ic_show.svg?react'
 import icWarning from './ic_warning.svg?react'
 
+/** SVG icon components record for core-common. */
 export const icons = {
   add: icAdd,
   back: icBack,

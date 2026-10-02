@@ -1,3 +1,9 @@
+/**
+ * Formats epoch milliseconds into a human-readable localized date-time string.
+ *
+ * @param epochMillis - Epoch timestamp in milliseconds or string equivalent
+ * @returns Formatted date-time string (e.g., '01.01.2026 12:00 (UTC+3)') or null if invalid
+ */
 export const formatEpochMillisToDateTime = (
   epochMillis?: number | string | null
 ): string | null => {
@@ -40,6 +46,12 @@ export const formatEpochMillisToDateTime = (
   }
 }
 
+/**
+ * Formats a JavaScript Date instance into a human-readable date-time string.
+ *
+ * @param date - Date object to format
+ * @returns Formatted date-time string or null
+ */
 export const formatInstantToDateTime = (date?: Date | null): string | null => {
   if (!date || isNaN(date.getTime())) {
     return null

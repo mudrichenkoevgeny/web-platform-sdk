@@ -1,5 +1,6 @@
 import { CoreCommonStrings } from '../en/strings'
 
+/** Russian localized string dictionary for core-common. */
 export const ruStrings: CoreCommonStrings = {
   error_common_not_found: 'Ресурс не найден.',
   error_common_not_found_args: (resource: string) => `Ресурс «${resource}» не найден.`,
