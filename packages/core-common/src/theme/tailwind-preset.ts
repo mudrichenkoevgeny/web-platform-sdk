@@ -56,7 +56,13 @@ export const sdkTailwindPreset = {
         regular: 'var(--font-weight-regular)',
         bold: 'var(--font-weight-bold)'
       },
+      maxWidth: {
+        'core-content': '800px',
+        'core-button': '400px',
+        'core-form': '480px'
+      },
       height: {
+        'core-button': '52px',
         header: 'var(--dimen-header-height)',
         'action-button': 'var(--dimen-action-button-height)',
         row: 'var(--dimen-row-height)',

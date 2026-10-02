@@ -76,6 +76,7 @@ export function ThemeProvider({
         mediaQuery.removeEventListener('change', handleChange)
       }
     }
+    return undefined
   }, [mode])
 
   const setMode = (newMode: ThemeMode) => {
