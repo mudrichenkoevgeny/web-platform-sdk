@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { toUserIdentifierIdOrThrow, toUserSessionIdOrThrow, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { RefreshTokenUseCase } from './RefreshTokenUseCase'
-import { RefreshTokenRepository } from '@/repository/auth/refreshtoken/RefreshTokenRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
+import type { RefreshTokenRepository } from '@/repository/auth/refreshtoken/RefreshTokenRepository'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('RefreshTokenUseCase', () => {
   let mockRepository: RefreshTokenRepository

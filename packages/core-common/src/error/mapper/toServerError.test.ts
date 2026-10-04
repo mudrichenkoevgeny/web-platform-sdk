@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { ApiErrorResponse, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import { toServerError } from './toServerError'
+import type { ApiErrorResponse, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { toServerError } from '@/error/mapper/toServerError'
 import { generateErrorId } from '@/model/ErrorId'
 
 describe('toServerError', () => {

@@ -12,12 +12,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   LoginByEmailProvider,
-  LoginByEmailStoreDependencies,
   useLoginByEmailStore
-} from './LoginByEmailStore'
+} from '@/ui/screens/auth/login/email/LoginByEmailStore'
+import type { LoginByEmailStoreDependencies } from "@/ui/screens/auth/login/email/LoginByEmailStore";
 
 const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

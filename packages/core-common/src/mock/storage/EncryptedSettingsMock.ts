@@ -1,4 +1,5 @@
-import { EncryptedSettings, StorageChangeListener } from '@/storage/EncryptedSettings'
+import { EncryptedSettings } from '@/storage/EncryptedSettings'
+import type { StorageChangeListener } from "@/storage/EncryptedSettings";
 
 /**
  * Mock in-memory implementation of {@link EncryptedSettings} for testing key-value persistence without WebCrypto or LocalStorage.

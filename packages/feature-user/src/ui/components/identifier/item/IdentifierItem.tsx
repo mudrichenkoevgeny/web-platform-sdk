@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Props for the {@link IdentifierItem} component.

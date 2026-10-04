@@ -1,8 +1,8 @@
-import React from 'react'
+import type React from 'react'
 import {
   ComponentSizePreviewSpecs,
   DialogSizePreviewSpecs
-} from './previewSpecs'
+} from '@/testing/previewSpecs'
 
 /** Props for Storybook preview container components. */
 export interface ContainerProps {

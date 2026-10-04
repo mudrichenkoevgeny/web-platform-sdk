@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ListingEmptyState } from './ListingEmptyState'
+import { ListingEmptyState } from '@/ui/components/listing/empty-state/ListingEmptyState'
 
 const meta: Meta<typeof ListingEmptyState> = {
   title: 'Core/Listing/ListingEmptyState',

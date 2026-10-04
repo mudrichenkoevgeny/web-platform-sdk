@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { PasswordPolicyValidator } from './PasswordPolicyValidator'
-import { OpenPasswordPolicy } from './OpenSecuritySettings'
+import { PasswordPolicyValidator } from '@/domain/model/PasswordPolicyValidator'
+import type { OpenPasswordPolicy } from '@/domain/model/OpenSecuritySettings'
 
 describe('PasswordPolicyValidator', () => {
   const validator = new PasswordPolicyValidator()

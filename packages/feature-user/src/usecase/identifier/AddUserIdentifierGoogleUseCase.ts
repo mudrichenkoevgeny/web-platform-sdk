@@ -1,9 +1,9 @@
-import { AppError, AppResult, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 /** Google Sign-In flow for associating a Google identity record with current account. */
 export class AddUserIdentifierGoogleUseCase {
   /**

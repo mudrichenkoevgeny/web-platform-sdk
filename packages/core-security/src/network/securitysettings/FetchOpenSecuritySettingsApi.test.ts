@@ -4,8 +4,8 @@ import {
   DeviceInfoProviderMock,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchOpenSecuritySettingsApi } from './FetchOpenSecuritySettingsApi'
-import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchOpenSecuritySettingsApi } from '@/network/securitysettings/FetchOpenSecuritySettingsApi'
+import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenSecuritySettingsApi', () => {
   const samplePayload: OpenSecuritySettingsPayload = {

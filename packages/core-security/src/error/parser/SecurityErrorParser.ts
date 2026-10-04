@@ -3,9 +3,10 @@ import {
   SecurityErrorArgs,
   CommonErrorArgs
 } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
-import { enSecurityStrings, CoreSecurityStrings } from '@/locales/index'
+import { enSecurityStrings } from '@/locales/index'
+import type { CoreSecurityStrings } from "@/locales/index";
 
 /**
  * AppErrorParser implementation for security-domain error codes.

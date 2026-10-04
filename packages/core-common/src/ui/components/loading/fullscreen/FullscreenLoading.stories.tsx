@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { FullscreenLoading } from './FullscreenLoading'
+import { FullscreenLoading } from '@/ui/components/loading/fullscreen/FullscreenLoading'
 
 const meta: Meta<typeof FullscreenLoading> = {
   title: 'Core/Loading/FullscreenLoading',

@@ -1,6 +1,6 @@
-import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenSecuritySettingsRepository } from '@/repository/OpenSecuritySettingsRepository'
-import { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/PasswordPolicyValidator'
+import type { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/PasswordPolicyValidator'
 import { SecurityError } from '@/error/model/SecurityError'
 import { OpenPasswordPolicy } from '@/domain/model/OpenSecuritySettings'
 

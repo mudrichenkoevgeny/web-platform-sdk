@@ -1,8 +1,9 @@
-import { AppResult, AppError, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsRepository, OpenSecuritySettingsObserver } from '@/repository/OpenSecuritySettingsRepository'
-import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { OpenSecuritySettingsRepository } from '@/repository/OpenSecuritySettingsRepository'
+import type { OpenSecuritySettingsObserver } from "@/repository/OpenSecuritySettingsRepository";
+import type { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 import { openSecuritySettingsMock } from '@/domain/model/OpenSecuritySettingsMock'
-
 /**
  * Configuration options for {@link OpenSecuritySettingsRepositoryMock}.
  */

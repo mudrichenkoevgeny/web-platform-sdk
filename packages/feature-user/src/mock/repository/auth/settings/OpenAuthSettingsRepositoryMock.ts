@@ -1,7 +1,7 @@
-import { AppError, AppResult, appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link OpenAuthSettingsRepository}.
  */

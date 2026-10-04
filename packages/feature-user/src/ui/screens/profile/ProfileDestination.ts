@@ -1,4 +1,4 @@
-import { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Union representing destinations in the profile management stack router.

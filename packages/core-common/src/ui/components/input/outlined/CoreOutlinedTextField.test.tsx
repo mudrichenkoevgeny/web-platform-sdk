@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CoreOutlinedTextField } from './CoreOutlinedTextField'
+import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreOutlinedTextField', () => {

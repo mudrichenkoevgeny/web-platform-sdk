@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TotpMainScreen } from './TotpMainScreen'
-import { TotpMainStoreDependencies } from './TotpMainStore'
+import { TotpMainScreen } from '@/ui/screens/profile/totp/main/TotpMainScreen'
+import type { TotpMainStoreDependencies } from '@/ui/screens/profile/totp/main/TotpMainStore'
 
 const createMockDeps = (user = {
   id: 'usr_123',

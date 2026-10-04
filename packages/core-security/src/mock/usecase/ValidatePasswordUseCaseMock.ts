@@ -1,4 +1,4 @@
-import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ValidatePasswordUseCase } from '@/usecase/ValidatePasswordUseCase'
 import { SecurityError } from '@/error/model/SecurityError'
 

@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Sends a registration confirmation code to sign-up email address.

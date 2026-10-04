@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
-import { AppResult, AppError, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenGlobalSettingsRepositoryImpl } from './OpenGlobalSettingsRepositoryImpl'
-import { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
+import { WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenGlobalSettingsRepositoryImpl } from '@/repository/OpenGlobalSettingsRepositoryImpl'
+import type { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
 import { EncryptedOpenGlobalSettingsStorage } from '@/storage/globalsettings/EncryptedOpenGlobalSettingsStorage'
 import { toOpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
 import { SettingsWebSocketEventTypes } from '@/network/contract/SettingsWebSocketEventTypes'
-
 describe('OpenGlobalSettingsRepositoryImpl', () => {
   const samplePayload: OpenGlobalSettingsPayload = {
     privacy_policy_url: 'https://example.com/privacy',

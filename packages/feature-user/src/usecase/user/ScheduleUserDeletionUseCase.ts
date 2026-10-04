@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserRepository } from '@/repository/user/UserRepository'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserRepository } from '@/repository/user/UserRepository'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Schedules current user account for permanent deletion. */
 export class ScheduleUserDeletionUseCase {

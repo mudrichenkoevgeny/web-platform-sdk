@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { WebExternalLauncher, getExternalLauncher } from './ExternalLauncher'
+import { WebExternalLauncher, getExternalLauncher } from '@/platform/externallauncher/ExternalLauncher'
 
 describe('WebExternalLauncher', () => {
   it('openUrl calls window.open with noopener,noreferrer', () => {

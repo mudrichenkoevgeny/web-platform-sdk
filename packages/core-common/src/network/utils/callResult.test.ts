@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import { callResult } from './callResult'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { callResult } from '@/network/utils/callResult'
 import { ApiException } from '@/error/model/ApiException'
 import { ServerError } from '@/error/model/ServerError'
 import { CommonErrorNoInternetConnection, CommonErrorNetwork, CommonErrorContractViolation, CommonErrorInternal } from '@/error/model/CommonError'

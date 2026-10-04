@@ -1,4 +1,4 @@
-import { GoogleAuthService } from './google/GoogleAuthService'
+import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
 
 /**
  * Platform-provided authentication integrations for the user feature.

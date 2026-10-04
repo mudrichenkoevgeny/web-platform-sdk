@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreTextButton } from './CoreTextButton'
+import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 
 const meta: Meta<typeof CoreTextButton> = {
   title: 'Core/Button/CoreTextButton',

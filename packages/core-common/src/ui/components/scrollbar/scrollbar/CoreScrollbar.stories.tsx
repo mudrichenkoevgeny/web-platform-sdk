@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreVerticalScrollbar } from './CoreScrollbar'
+import { CoreVerticalScrollbar } from '@/ui/components/scrollbar/scrollbar/CoreScrollbar'
 
 const meta: Meta<typeof CoreVerticalScrollbar> = {
   title: 'Core/Scrollbar/CoreVerticalScrollbar',

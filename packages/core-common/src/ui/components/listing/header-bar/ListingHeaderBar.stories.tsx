@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ListingHeaderBar } from './ListingHeaderBar'
+import { ListingHeaderBar } from '@/ui/components/listing/header-bar/ListingHeaderBar'
 
 const meta: Meta<typeof ListingHeaderBar> = {
   title: 'Core/Listing/ListingHeaderBar',

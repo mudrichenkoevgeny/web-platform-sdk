@@ -1,13 +1,13 @@
-import { AppError, AppResult, isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSecurityRepository } from './UserSecurityRepository'
+import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
 import { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
 import { UserStorage } from '@/storage/user/UserStorage'
 import {
   toTotpRecoveryCodes,
-  toTotpSetup,
-  TotpRecoveryCodes,
-  TotpSetup
+  toTotpSetup
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { TotpRecoveryCodes, TotpSetup } from "@mudrichenkoevgeny/shared-foundation";
 
 /**
  * Implementation of {@link UserSecurityRepository} communicating with {@link UserSecurityApi}

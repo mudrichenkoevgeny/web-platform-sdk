@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { toUserIdOrThrow, toUserIdentifierIdOrThrow, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AccountLockoutType, UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByEmailUseCase } from './LoginByEmailUseCase'
-import { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
+import { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
+import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('LoginByEmailUseCase', () => {
   let mockLoginRepository: LoginRepository

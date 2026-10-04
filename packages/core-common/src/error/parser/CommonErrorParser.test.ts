@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonErrorParser } from './CommonErrorParser'
+import { CommonErrorParser } from '@/error/parser/CommonErrorParser'
 import { CommonError } from '@/model/CommonError'
 import { ServerError } from '@/model/ServerError'
 import { generateErrorId } from '@/model/ErrorId'

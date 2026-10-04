@@ -1,7 +1,7 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Retrieves specific identifier details by its unique id for current account. */
 export class GetUserIdentifierUseCase {

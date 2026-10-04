@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CoreBodyText, CoreSmallText, CoreTitleText } from './CoreText'
+import { CoreBodyText, CoreSmallText, CoreTitleText } from '@/ui/components/text/body/CoreText'
 
 describe('CoreText components', () => {
   it('renders CoreBodyText correctly', () => {

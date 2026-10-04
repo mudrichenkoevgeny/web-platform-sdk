@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Auth-related remote settings repository contract. */
 export interface OpenAuthSettingsRepository {

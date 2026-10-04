@@ -1,4 +1,4 @@
-import { AppError } from '@/error/model/AppError'
+import type { AppError } from '@/error/model/AppError'
 import { CommonError } from '@/error/model/CommonError'
 
 /**

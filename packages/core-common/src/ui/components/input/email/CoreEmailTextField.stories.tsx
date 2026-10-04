@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreEmailTextField } from './CoreEmailTextField'
+import { CoreEmailTextField } from '@/ui/components/input/email/CoreEmailTextField'
 
 const meta: Meta<typeof CoreEmailTextField> = {
   title: 'Core/Input/CoreEmailTextField',

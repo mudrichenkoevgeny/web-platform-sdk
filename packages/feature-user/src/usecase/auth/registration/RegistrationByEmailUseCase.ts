@@ -1,9 +1,9 @@
-import { AppError, AppResult, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Registers a new account by email and, on success, stores session tokens and new user snapshot.
  */
@@ -29,11 +29,7 @@ export class RegistrationByEmailUseCase {
    * @param confirmationCode - Code from confirmation email
    * @returns AuthData on success or AppError
    */
-  public async execute(
-    email: string,
-    password: string,
-    confirmationCode: string
-  ): Promise<AppResult<AuthData, AppError>> {
+  public async execute(email: string, password: string, confirmationCode: string): Promise<AppResult<AuthData, AppError>> {
     const result = await this.registrationRepository.registerByEmail(email, password, confirmationCode)
     if (isSuccess(result)) {
       await this.authStorage.updateTokens(result.data.sessionToken)

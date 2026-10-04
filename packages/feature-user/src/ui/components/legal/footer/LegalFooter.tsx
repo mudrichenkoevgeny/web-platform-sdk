@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 
 /**
  * Props for the {@link LegalFooter} component.

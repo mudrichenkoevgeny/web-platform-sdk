@@ -13,12 +13,13 @@ import {
   icons,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpMainProvider,
-  TotpMainStoreDependencies,
   useTotpMainStore
-} from './TotpMainStore'
+} from '@/ui/screens/profile/totp/main/TotpMainStore'
+import type { TotpMainStoreDependencies } from "@/ui/screens/profile/totp/main/TotpMainStore";
 
 /**
  * Automation test tags for {@link TotpMainScreen}.

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { PagingFooter } from './PagingFooter'
+import { PagingFooter } from '@/ui/components/listing/paging-footer/PagingFooter'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('PagingFooter', () => {

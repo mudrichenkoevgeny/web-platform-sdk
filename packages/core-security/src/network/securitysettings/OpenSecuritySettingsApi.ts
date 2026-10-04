@@ -1,5 +1,6 @@
 import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 
 /**
  * Direct HTTP REST API client interface for fetching open security settings.

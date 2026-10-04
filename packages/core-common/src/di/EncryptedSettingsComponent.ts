@@ -1,4 +1,4 @@
-import { EncryptedSettings } from '@/storage/EncryptedSettings'
+import type { EncryptedSettings } from '@/storage/EncryptedSettings'
 import { getSettingsFactory } from '@/storage/WebCryptoSettings'
 
 /**

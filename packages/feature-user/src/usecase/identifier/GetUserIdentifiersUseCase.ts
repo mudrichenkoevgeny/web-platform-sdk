@@ -1,9 +1,9 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   PagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
-import { GetUserIdentifiersParams, IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetUserIdentifiersParams, IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of identifiers for current account. */
 export class GetUserIdentifiersUseCase {

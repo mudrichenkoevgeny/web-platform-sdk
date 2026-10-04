@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { HttpClient } from './HttpClient'
+import { HttpClient } from '@/network/httpclient/HttpClient'
 import { WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
 import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'

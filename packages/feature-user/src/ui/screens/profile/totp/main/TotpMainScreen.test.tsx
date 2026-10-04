@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TotpMainScreen, TotpMainTestTags } from './TotpMainScreen'
-import { TotpMainStoreDependencies } from './TotpMainStore'
+import { TotpMainScreen, TotpMainTestTags } from '@/ui/screens/profile/totp/main/TotpMainScreen'
+import type { TotpMainStoreDependencies } from '@/ui/screens/profile/totp/main/TotpMainStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('TotpMainScreen', () => {

@@ -3,17 +3,16 @@ import {
   AccountLockoutType,
   toUserIdOrThrow,
   UserAccountStatus,
-  UserDetailsPayload,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import { ErrorId, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketMessageHandler } from './UserWebSocketMessageHandler'
+import type { UserDetailsPayload } from "@mudrichenkoevgeny/shared-foundation";
+import type { ErrorId, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserWebSocketMessageHandler } from '@/network/websocket/messagehandler/UserWebSocketMessageHandler'
 import { UserWebSocketEventTypes } from '@/contract/UserWebSocketEventTypes'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { UserRepository } from '@/repository/user/UserRepository'
-import { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
-
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { UserRepository } from '@/repository/user/UserRepository'
+import type { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
 describe('UserWebSocketMessageHandler', () => {
   let userStorage: UserStorage
   let userRepository: UserRepository

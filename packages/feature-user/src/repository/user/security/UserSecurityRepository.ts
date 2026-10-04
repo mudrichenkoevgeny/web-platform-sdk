@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Manages security settings, multifactor authentication (TOTP), and recovery codes

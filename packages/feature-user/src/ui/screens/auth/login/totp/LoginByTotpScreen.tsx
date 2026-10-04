@@ -12,14 +12,15 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import { FieldValidator } from '@/validator/FieldValidator'
 import {
   LoginByTotpMode,
   LoginByTotpProvider,
-  LoginByTotpStoreDependencies,
   useLoginByTotpStore
-} from './LoginByTotpStore'
+} from '@/ui/screens/auth/login/totp/LoginByTotpStore'
+import type { LoginByTotpStoreDependencies } from "@/ui/screens/auth/login/totp/LoginByTotpStore";
 
 const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

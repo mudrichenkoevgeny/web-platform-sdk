@@ -1,10 +1,10 @@
-import { AccessTokenChangeListener } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AccessTokenChangeListener } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   UserIdentifierId,
   UserSessionId
 } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * In-memory {@link AuthStorage} mock for tests and previews.

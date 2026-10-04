@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Returns cached public auth settings when loaded/stored; otherwise initiates network load.

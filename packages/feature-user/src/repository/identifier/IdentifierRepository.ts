@@ -1,13 +1,13 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Parameters for filtering and paginating user identifiers. */
 export interface GetUserIdentifiersParams {

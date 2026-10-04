@@ -1,12 +1,12 @@
-import { AppError, AppResult, appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,
   UserIdentifierPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { ResetPasswordApi } from '@/network/api/auth/resetpassword/ResetPasswordApi'
-
 /**
  * Mock implementation of {@link ResetPasswordApi}.
  */

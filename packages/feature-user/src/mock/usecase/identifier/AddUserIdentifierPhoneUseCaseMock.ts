@@ -1,9 +1,9 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/AddUserIdentifierPhoneUseCase'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
 import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /** Mock implementation of {@link AddUserIdentifierPhoneUseCase}. */
 export class AddUserIdentifierPhoneUseCaseMock extends AddUserIdentifierPhoneUseCase {
   public executeCalls = 0

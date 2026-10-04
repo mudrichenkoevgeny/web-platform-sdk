@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { PagingFooter } from './PagingFooter'
+import { PagingFooter } from '@/ui/components/listing/paging-footer/PagingFooter'
 
 const meta: Meta<typeof PagingFooter> = {
   title: 'Core/Listing/PagingFooter',

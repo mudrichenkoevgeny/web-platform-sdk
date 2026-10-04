@@ -9,12 +9,13 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpRecoveryCodesProvider,
-  TotpRecoveryCodesStoreDependencies,
   useTotpRecoveryCodesStore
-} from './TotpRecoveryCodesStore'
+} from '@/ui/screens/profile/totp/recovery/TotpRecoveryCodesStore'
+import type { TotpRecoveryCodesStoreDependencies } from "@/ui/screens/profile/totp/recovery/TotpRecoveryCodesStore";
 
 /**
  * Automation test tags for {@link TotpRecoveryCodesScreen}.

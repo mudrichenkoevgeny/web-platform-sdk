@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginRootContainer } from './LoginRootContainer'
+import { LoginRootContainer } from '@/ui/screens/auth/login/root/LoginRootContainer'
 
 const meta: Meta<typeof LoginRootContainer> = {
   title: 'Feature/User/Auth/Login/LoginRootContainer',

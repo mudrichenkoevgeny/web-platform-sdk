@@ -1,4 +1,4 @@
-import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
 
 /**

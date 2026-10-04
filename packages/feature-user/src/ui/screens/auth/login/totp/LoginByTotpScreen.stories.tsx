@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByTotpScreen } from './LoginByTotpScreen'
-import { LoginByTotpStoreDependencies } from './LoginByTotpStore'
+import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
+import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/LoginByTotpStore'
 
 const createMockDeps = (): LoginByTotpStoreDependencies => ({
   mfaToken: 'mock_mfa_token',

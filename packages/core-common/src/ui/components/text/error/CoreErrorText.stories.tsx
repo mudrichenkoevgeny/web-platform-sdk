@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreErrorText } from './CoreErrorText'
+import { CoreErrorText } from '@/ui/components/text/error/CoreErrorText'
 
 const meta: Meta<typeof CoreErrorText> = {
   title: 'Core/Text/CoreErrorText',

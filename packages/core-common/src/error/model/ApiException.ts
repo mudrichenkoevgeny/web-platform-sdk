@@ -1,4 +1,4 @@
-import { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
+import type { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Exception thrown when an HTTP API call returns a structured server error response payload.

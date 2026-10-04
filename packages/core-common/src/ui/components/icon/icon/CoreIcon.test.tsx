@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CoreIcon } from './CoreIcon'
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
 
 describe('CoreIcon', () => {

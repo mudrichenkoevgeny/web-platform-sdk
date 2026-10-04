@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthHttpClientConfigPlugin } from './AuthHttpClientConfigPlugin'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
+import { AuthHttpClientConfigPlugin } from '@/network/httpclient/AuthHttpClientConfigPlugin'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
 
 describe('AuthHttpClientConfigPlugin', () => {
   let mockAuthStorage: AuthStorage

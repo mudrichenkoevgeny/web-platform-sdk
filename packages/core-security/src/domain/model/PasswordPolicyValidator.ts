@@ -1,4 +1,4 @@
-import { OpenPasswordPolicy } from './OpenSecuritySettings'
+import { OpenPasswordPolicy } from '@/domain/model/OpenSecuritySettings'
 
 /** Represents individual reasons why a password might fail policy validation. */
 export type PasswordPolicyFailReason =

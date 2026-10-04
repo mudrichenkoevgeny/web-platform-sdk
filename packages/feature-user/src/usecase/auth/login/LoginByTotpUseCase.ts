@@ -1,9 +1,9 @@
-import { AppError, AppResult, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Completes MFA flow using a time-based one-time password (TOTP) and, on success, persists session tokens and user snapshot.
  */

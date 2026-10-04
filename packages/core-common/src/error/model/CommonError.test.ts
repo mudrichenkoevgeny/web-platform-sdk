@@ -7,7 +7,7 @@ import {
   CommonErrorNetwork,
   CommonErrorContractViolation,
   CommonErrorLifecycle
-} from './CommonError'
+} from '@/error/model/CommonError'
 
 describe('CommonError', () => {
   it('creates unknown error', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { WebCryptoSettings, getSettingsFactory } from './WebCryptoSettings'
+import { WebCryptoSettings, getSettingsFactory } from '@/storage/WebCryptoSettings'
 
 class MockLocalStorage implements Storage {
   private store = new Map<string, string>()

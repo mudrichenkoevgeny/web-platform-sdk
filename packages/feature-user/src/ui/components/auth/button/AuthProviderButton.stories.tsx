@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthProviderButton } from './AuthProviderButton'
-import { AuthProviderButtonMode } from './AuthProviderButtonMode'
+import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
+import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
 
 const meta: Meta<typeof AuthProviderButton> = {
   title: 'Feature/User/Auth/AuthProviderButton',

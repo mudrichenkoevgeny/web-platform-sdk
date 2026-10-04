@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { SelfSessionListScreen, SelfSessionListTestTags } from './SelfSessionListScreen'
-import { SelfSessionListStoreDependencies } from './SelfSessionListStore'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfSessionListScreen, SelfSessionListTestTags } from '@/ui/screens/profile/session/list/SelfSessionListScreen'
+import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/SelfSessionListStore'
 
 describe('SelfSessionListScreen', () => {
   const session1: UserSession = {

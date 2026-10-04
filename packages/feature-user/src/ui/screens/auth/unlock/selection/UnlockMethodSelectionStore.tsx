@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { AccountLockoutType } from "@mudrichenkoevgeny/shared-foundation";
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserError } from '@/error/model/UserError'
-import { UnlockByGoogleUseCase } from '@/usecase/auth/unlock/UnlockByGoogleUseCase'
-import { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
-
+import type { UnlockByGoogleUseCase } from '@/usecase/auth/unlock/UnlockByGoogleUseCase'
+import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
 /**
  * State contract for {@link UnlockMethodSelectionScreen}.
  */

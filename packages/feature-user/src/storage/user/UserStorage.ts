@@ -1,4 +1,4 @@
-import {
+import type {
   ClientType,
   PagedResult,
   SortOrder,
@@ -10,9 +10,9 @@ import {
   UserSessionPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Observer listener signature for current user profile changes.
@@ -32,6 +32,37 @@ export type UserSessionsListChangeListener = (result: PagedResult<UserSession>) 
 /**
  * Persists user-scoped profile data (current user snapshot, identifiers, sessions) for offline and UI use.
  */
+
+export interface GetUserIdentifiersListParams {
+  pageNumber?: number | null
+  pageSize?: number | null
+  sortBy?: UserSortValues.UserIdentifierSortBy | null
+  sortOrder?: SortOrder | null
+  userIds?: string[] | null
+  userAuthProviders?: UserAuthProvider[] | null
+  identifiers?: string[] | null
+}
+
+export interface GetUserSessionsListParams {
+  pageNumber?: number | null
+  pageSize?: number | null
+  sortBy?: UserSortValues.UserSessionSortBy | null
+  sortOrder?: SortOrder | null
+  userIds?: string[] | null
+  userRoles?: UserRole[] | null
+  identifiers?: string[] | null
+  identifierIds?: string[] | null
+  userAuthProviders?: UserAuthProvider[] | null
+  clientTypes?: ClientType[] | null
+  userAgents?: string[] | null
+  ipAddresses?: string[] | null
+  languages?: string[] | null
+  deviceIds?: string[] | null
+  deviceNames?: string[] | null
+  appVersions?: string[] | null
+  operationSystemVersions?: string[] | null
+}
+
 export interface UserStorage {
   /**
    * Retrieves cached user details snapshot, or null if unstored.

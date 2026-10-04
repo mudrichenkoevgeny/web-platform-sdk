@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserSessionId, toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { GetSessionsUseCase } from '@/usecase/session/GetSessionsUseCase'
-import { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
-import { DeleteAllOtherSessionsUseCase } from '@/usecase/session/DeleteAllOtherSessionsUseCase'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-
+import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetSessionsUseCase } from '@/usecase/session/GetSessionsUseCase'
+import type { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
+import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/DeleteAllOtherSessionsUseCase'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
 /**
  * Discriminated union representing active screen state for {@link SelfSessionListScreen}.
  */

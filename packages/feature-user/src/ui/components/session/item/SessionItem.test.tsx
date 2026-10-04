@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SessionItem } from './SessionItem'
+import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import { enUserStrings } from '@/locales/index'
 import { userSessionMock } from '@mudrichenkoevgeny/shared-foundation'
 

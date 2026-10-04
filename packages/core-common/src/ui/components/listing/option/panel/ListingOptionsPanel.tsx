@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import {
+import type {
   ListingOptionsConfig,
   ListingSortState,
   ListingFilterState

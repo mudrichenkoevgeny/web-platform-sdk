@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Access to the signed-in user snapshot and profile management operations.

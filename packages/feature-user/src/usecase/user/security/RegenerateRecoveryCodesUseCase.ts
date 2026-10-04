@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
-import { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
+import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Invalidates current recovery codes and generates fresh replacement set. */
 export class RegenerateRecoveryCodesUseCase {

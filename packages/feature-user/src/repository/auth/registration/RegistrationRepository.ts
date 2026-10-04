@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Email-based registration repository contract. */
 export interface RegistrationRepository {

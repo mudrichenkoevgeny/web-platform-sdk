@@ -10,13 +10,14 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AccountLockoutType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   UnlockMethodSelectionProvider,
-  UnlockMethodSelectionStoreDependencies,
   useUnlockMethodSelectionStore
-} from './UnlockMethodSelectionStore'
+} from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionStore'
+import type { UnlockMethodSelectionStoreDependencies } from "@/ui/screens/auth/unlock/selection/UnlockMethodSelectionStore";
 
 const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

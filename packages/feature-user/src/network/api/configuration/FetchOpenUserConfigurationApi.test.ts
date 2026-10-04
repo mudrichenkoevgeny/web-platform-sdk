@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import { HttpClient, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { FetchOpenUserConfigurationApi } from './FetchOpenUserConfigurationApi'
-
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { HttpClient } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchOpenUserConfigurationApi } from '@/network/api/configuration/FetchOpenUserConfigurationApi'
 describe('FetchOpenUserConfigurationApi', () => {
   it('dispatches GET request for open user configuration', async () => {
     const mockPayload: OpenUserConfigurationPayload = {

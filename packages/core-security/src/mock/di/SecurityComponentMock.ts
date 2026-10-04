@@ -1,4 +1,5 @@
-import { SecurityComponent, SecurityComponentConfig } from '@/di/SecurityComponent'
+import { SecurityComponent } from '@/di/SecurityComponent'
+import type { SecurityComponentConfig } from "@/di/SecurityComponent";
 import {
   WebSocketServiceMock,
   HttpClient,
@@ -7,7 +8,6 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenSecuritySettingsApiMock } from '@/network/OpenSecuritySettingsApiMock'
 import { OpenSecuritySettingsStorageMock } from '@/storage/OpenSecuritySettingsStorageMock'
-
 /**
  * Creates a pre-configured {@link SecurityComponent} instance for testing and Storybook preview purposes.
  *

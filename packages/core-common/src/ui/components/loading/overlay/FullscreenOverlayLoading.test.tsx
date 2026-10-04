@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { FullscreenOverlayLoading } from './FullscreenOverlayLoading'
+import { FullscreenOverlayLoading } from '@/ui/components/loading/overlay/FullscreenOverlayLoading'
 
 describe('FullscreenOverlayLoading', () => {
   it('renders overlay spinner with role status', () => {

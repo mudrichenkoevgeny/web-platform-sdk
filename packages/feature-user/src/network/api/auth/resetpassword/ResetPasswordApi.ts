@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,

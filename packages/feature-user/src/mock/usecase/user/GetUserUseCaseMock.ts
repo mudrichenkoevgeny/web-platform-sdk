@@ -1,9 +1,9 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { GetUserUseCase } from '@/usecase/user/GetUserUseCase'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 import { UserRepositoryMock } from '@/repository/user/UserRepositoryMock'
 import { userDetailsMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /** Mock implementation of {@link GetUserUseCase}. */
 export class GetUserUseCaseMock extends GetUserUseCase {
   public executeCalls = 0

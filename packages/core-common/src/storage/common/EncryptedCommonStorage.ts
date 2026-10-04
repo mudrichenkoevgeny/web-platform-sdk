@@ -1,5 +1,5 @@
 import { EncryptedSettings } from '@/EncryptedSettings'
-import { CommonStorage } from './CommonStorage'
+import type { CommonStorage } from '@/storage/common/CommonStorage'
 
 /**
  * CommonStorage implementation backed by {@link EncryptedSettings}.

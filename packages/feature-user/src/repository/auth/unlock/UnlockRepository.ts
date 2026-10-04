@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Operations for self-service account unlocking. */
 export interface UnlockRepository {

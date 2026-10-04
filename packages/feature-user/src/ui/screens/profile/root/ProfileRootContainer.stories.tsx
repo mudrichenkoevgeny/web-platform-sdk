@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ProfileRootContainer } from './ProfileRootContainer'
+import { ProfileRootContainer } from '@/ui/screens/profile/root/ProfileRootContainer'
 
 const meta: Meta<typeof ProfileRootContainer> = {
   title: 'Feature/User/Profile/Root/ProfileRootContainer',

@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
 
 /** Removes an existing identifier from current user profile. */
 export class DeleteUserIdentifierUseCase {

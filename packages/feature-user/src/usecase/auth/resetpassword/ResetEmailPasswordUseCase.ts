@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Completes password reset for email flow using server-issued confirmation code.

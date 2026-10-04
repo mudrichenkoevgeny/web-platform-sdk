@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   ClientType,
   PagedResult,
   SortOrder,
@@ -7,7 +7,7 @@ import {
   UserSessionId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Parameters for filtering and paginating sessions. */
 export interface GetSessionsParams {

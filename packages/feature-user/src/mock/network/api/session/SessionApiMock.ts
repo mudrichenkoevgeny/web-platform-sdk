@@ -1,5 +1,6 @@
-import { AppError, AppResult, appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type {
   DeletedSessionsPayload,
   PagedResult,
   UserSessionId,
@@ -7,7 +8,6 @@ import {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionApi } from '@/network/api/session/SessionApi'
-
 /**
  * Mock implementation of {@link SessionApi}.
  */

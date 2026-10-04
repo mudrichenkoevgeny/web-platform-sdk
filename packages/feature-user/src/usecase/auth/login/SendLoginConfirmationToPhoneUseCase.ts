@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Requests a login confirmation code to be sent to the given phone (subject to repository rate limits).

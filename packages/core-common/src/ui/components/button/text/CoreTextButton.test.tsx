@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CoreTextButton } from './CoreTextButton'
+import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreTextButton', () => {

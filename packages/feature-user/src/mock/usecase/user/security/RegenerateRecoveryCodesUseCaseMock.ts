@@ -1,8 +1,8 @@
-import { AppError, AppResult, appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/RegenerateRecoveryCodesUseCase'
-import { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
+import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { UserSecurityRepositoryMock } from '@/repository/user/security/UserSecurityRepositoryMock'
-
 /** Mock implementation of {@link RegenerateRecoveryCodesUseCase}. */
 export class RegenerateRecoveryCodesUseCaseMock extends RegenerateRecoveryCodesUseCase {
   public executeCalls = 0

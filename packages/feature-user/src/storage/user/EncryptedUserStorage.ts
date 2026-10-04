@@ -1,41 +1,33 @@
+import type { GetUserIdentifiersListParams, GetUserSessionsListParams } from '@/storage/user/UserStorage'
 import {
-  ClientType,
-  PagedResult,
   pagedResultSchema,
   SortOrder,
   userDetailsPayloadSchema,
-  UserAuthProvider,
-  UserIdentifierId,
-  UserIdentifierPayload,
   userIdentifierPayloadSchema,
-  UserRole,
-  UserSessionId,
-  UserSessionPayload,
   userSessionPayloadSchema,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { ClientType, PagedResult, UserAuthProvider, UserIdentifierId, UserIdentifierPayload, UserRole, UserSessionId, UserSessionPayload } from "@mudrichenkoevgeny/shared-foundation";
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
-  UserChangeListener,
-  UserIdentifiersListChangeListener,
-  UserSessionsListChangeListener,
   UserStorage
-} from './UserStorage'
+} from '@/storage/user/UserStorage'
+import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/UserStorage";
 import {
   toUserDetails,
-  toUserDetailsPayload,
-  UserDetails
+  toUserDetailsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetails } from "@mudrichenkoevgeny/shared-foundation";
 import {
   toUserIdentifier,
-  toUserIdentifierPayload,
-  UserIdentifier
+  toUserIdentifierPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from "@mudrichenkoevgeny/shared-foundation";
 import {
   toUserSession,
-  toUserSessionPayload,
-  UserSession
+  toUserSessionPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from "@mudrichenkoevgeny/shared-foundation";
 
 const KEY_CURRENT_USER = 'current_user'
 const KEY_USER_IDENTIFIERS = 'user_identifiers_list'
@@ -138,25 +130,25 @@ export class EncryptedUserStorage implements UserStorage {
     }
 
     const filteredItems = allItems.filter((item) => {
-      const matchesUserIds = !userIds || userIds.includes(item.userId)
-      const matchesProvider = !userAuthProviders || userAuthProviders.includes(item.userAuthProvider)
-      const matchesValue = !identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
+      const matchesUserIds = !params?.userIds || userIds.includes(item.userId)
+      const matchesProvider = !params?.userAuthProviders || userAuthProviders.includes(item.userAuthProvider)
+      const matchesValue = !params?.identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
       return matchesUserIds && matchesProvider && matchesValue
     })
 
-    if (sortBy === UserSortValues.UserIdentifierSortBy.CREATED_AT) {
-      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
-    } else if (sortBy === UserSortValues.UserIdentifierSortBy.UPDATED_AT) {
+    if (params?.params?.sortBy === UserSortValues.UserIdentifierSortBy.CREATED_AT) {
+      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
+    } else if (params?.params?.sortBy === UserSortValues.UserIdentifierSortBy.UPDATED_AT) {
       filteredItems.sort((a, b) => {
         const timeA = a.updatedAt ?? 0
         const timeB = b.updatedAt ?? 0
-        return sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
+        return params?.params?.sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
       })
     }
 
     const totalCount = filteredItems.length
-    const requestedPage = pageNumber ?? 1
-    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = params?.params?.pageNumber ?? 1
+    const requestedSize = params?.params?.pageSize ?? (totalCount > 0 ? totalCount : 20)
 
     if (requestedSize <= 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
@@ -325,19 +317,19 @@ export class EncryptedUserStorage implements UserStorage {
     }
 
     const filteredItems = allItems.filter((item) => {
-      const matchesUserIds = !userIds || userIds.includes(item.userId)
-      const matchesUserRoles = !userRoles || userRoles.includes(item.userRole)
-      const matchesIdentifiers = !identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
-      const matchesIdentifierIds = !identifierIds || identifierIds.includes(item.identifierId)
-      const matchesProviders = !userAuthProviders || userAuthProviders.includes(item.identifierAuthProvider)
-      const matchesClientTypes = !clientTypes || (item.deviceInfo.clientType && clientTypes.includes(item.deviceInfo.clientType))
-      const matchesUserAgents = !userAgents || (item.userAgent && userAgents.some((pattern) => item.userAgent?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesIpAddresses = !ipAddresses || (item.ipAddress && ipAddresses.some((pattern) => item.ipAddress?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesLanguages = !languages || (item.deviceInfo.language && languages.some((pattern) => item.deviceInfo.language?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesDeviceIds = !deviceIds || (item.deviceInfo.deviceId && deviceIds.includes(item.deviceInfo.deviceId))
-      const matchesDeviceNames = !deviceNames || (item.deviceInfo.deviceName && deviceNames.some((pattern) => item.deviceInfo.deviceName?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesAppVersions = !appVersions || (item.deviceInfo.appVersion && appVersions.some((pattern) => item.deviceInfo.appVersion?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesOsVersions = !operationSystemVersions || (item.deviceInfo.operationSystemVersion && operationSystemVersions.some((pattern) => item.deviceInfo.operationSystemVersion?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesUserIds = !params?.userIds || userIds.includes(item.userId)
+      const matchesUserRoles = !params?.userRoles || params.params.userRoles.includes(item.userRole)
+      const matchesIdentifiers = !params?.identifiers || params.identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
+      const matchesIdentifierIds = !params?.identifierIds || params.params.identifierIds.includes(item.identifierId)
+      const matchesProviders = !params?.userAuthProviders || params.userAuthProviders.includes(item.identifierAuthProvider)
+      const matchesClientTypes = !params?.clientTypes || (item.deviceInfo.clientType && params.params.clientTypes.includes(item.deviceInfo.clientType))
+      const matchesUserAgents = !params?.userAgents || (item.userAgent && params.params.userAgents.some((pattern) => item.userAgent?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesIpAddresses = !params?.ipAddresses || (item.ipAddress && params.params.ipAddresses.some((pattern) => item.ipAddress?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesLanguages = !params?.languages || (item.deviceInfo.language && params.params.languages.some((pattern) => item.deviceInfo.language?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesDeviceIds = !params?.deviceIds || (item.deviceInfo.deviceId && params.params.deviceIds.includes(item.deviceInfo.deviceId))
+      const matchesDeviceNames = !params?.deviceNames || (item.deviceInfo.deviceName && params.params.deviceNames.some((pattern) => item.deviceInfo.deviceName?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesAppVersions = !params?.appVersions || (item.deviceInfo.appVersion && params.params.appVersions.some((pattern) => item.deviceInfo.appVersion?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesOsVersions = !params?.operationSystemVersions || (item.deviceInfo.operationSystemVersion && params.params.operationSystemVersions.some((pattern) => item.deviceInfo.operationSystemVersion?.toLowerCase().includes(pattern.toLowerCase())))
 
       return matchesUserIds && matchesUserRoles && matchesIdentifiers && matchesIdentifierIds &&
         matchesProviders && matchesClientTypes && matchesUserAgents && matchesIpAddresses &&
@@ -345,25 +337,25 @@ export class EncryptedUserStorage implements UserStorage {
         matchesOsVersions
     })
 
-    if (sortBy === UserSortValues.UserSessionSortBy.LAST_ACCESSED_AT) {
-      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.lastAccessedAt - a.lastAccessedAt : a.lastAccessedAt - b.lastAccessedAt))
-    } else if (sortBy === UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT) {
-      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.lastReauthenticatedAt - a.lastReauthenticatedAt : a.lastReauthenticatedAt - b.lastReauthenticatedAt))
-    } else if (sortBy === UserSortValues.UserSessionSortBy.EXPIRES_AT) {
-      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.expiresAt - a.expiresAt : a.expiresAt - b.expiresAt))
-    } else if (sortBy === UserSortValues.UserSessionSortBy.CREATED_AT) {
-      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
-    } else if (sortBy === UserSortValues.UserSessionSortBy.UPDATED_AT) {
+    if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.LAST_ACCESSED_AT) {
+      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.lastAccessedAt - a.lastAccessedAt : a.lastAccessedAt - b.lastAccessedAt))
+    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT) {
+      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.lastReauthenticatedAt - a.lastReauthenticatedAt : a.lastReauthenticatedAt - b.lastReauthenticatedAt))
+    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.EXPIRES_AT) {
+      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.expiresAt - a.expiresAt : a.expiresAt - b.expiresAt))
+    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.CREATED_AT) {
+      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
+    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.UPDATED_AT) {
       filteredItems.sort((a, b) => {
         const timeA = a.updatedAt ?? 0
         const timeB = b.updatedAt ?? 0
-        return sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
+        return params?.params?.sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
       })
     }
 
     const totalCount = filteredItems.length
-    const requestedPage = pageNumber ?? 1
-    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = params?.params?.pageNumber ?? 1
+    const requestedSize = params?.params?.pageSize ?? (totalCount > 0 ? totalCount : 20)
 
     if (requestedSize <= 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }

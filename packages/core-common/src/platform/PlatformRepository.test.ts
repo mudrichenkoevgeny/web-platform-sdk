@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import { PlatformRepositoryImpl } from './PlatformRepository'
-import { DeviceInfoProvider } from './deviceinfo/DeviceInfoProvider'
-import { ExternalLauncher } from './externallauncher/ExternalLauncher'
-import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { PlatformRepositoryImpl } from '@/platform/PlatformRepository'
+import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import type { ExternalLauncher } from '@/platform/externallauncher/ExternalLauncher'
+import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('PlatformRepository', () => {
   const dummyInfo: ClientDeviceInfoPayload = {

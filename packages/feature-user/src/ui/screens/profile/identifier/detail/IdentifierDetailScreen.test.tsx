@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierDetailScreen, IdentifierDetailTestTags } from './IdentifierDetailScreen'
-import { IdentifierDetailStoreDependencies } from './IdentifierDetailStore'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { IdentifierDetailScreen, IdentifierDetailTestTags } from '@/ui/screens/profile/identifier/detail/IdentifierDetailScreen'
+import type { IdentifierDetailStoreDependencies } from '@/ui/screens/profile/identifier/detail/IdentifierDetailStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('IdentifierDetailScreen', () => {

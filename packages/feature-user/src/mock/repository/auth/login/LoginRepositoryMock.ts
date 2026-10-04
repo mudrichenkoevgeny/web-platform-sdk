@@ -1,9 +1,9 @@
-import { AppError, AppResult, appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link LoginRepository}.
  */

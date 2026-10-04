@@ -11,12 +11,13 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   IdentifierDetailProvider,
-  IdentifierDetailStoreDependencies,
   useIdentifierDetailStore
-} from './IdentifierDetailStore'
+} from '@/ui/screens/profile/identifier/detail/IdentifierDetailStore'
+import type { IdentifierDetailStoreDependencies } from "@/ui/screens/profile/identifier/detail/IdentifierDetailStore";
 
 /**
  * Automation test tags for {@link IdentifierDetailScreen}.

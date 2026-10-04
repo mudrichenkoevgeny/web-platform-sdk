@@ -1,4 +1,4 @@
-import { ErrorId } from './ErrorId'
+import type { ErrorId } from '@/error/model/ErrorId'
 
 /**
  * Base representation of an application error across SDK modules.

@@ -1,11 +1,11 @@
 import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsStorage } from './OpenGlobalSettingsStorage'
+import { OpenGlobalSettingsStorage } from '@/storage/globalsettings/OpenGlobalSettingsStorage'
 import {
-  OpenGlobalSettings,
   toOpenGlobalSettings,
   toOpenGlobalSettingsPayload
 } from '@/domain/model/OpenGlobalSettings'
+import type { OpenGlobalSettings } from "@/domain/model/OpenGlobalSettings";
 
 const KEY_GLOBAL_SETTINGS = 'global_settings'
 

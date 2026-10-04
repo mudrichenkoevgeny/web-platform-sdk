@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SessionItem } from './SessionItem'
+import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import { userSessionMock } from '@mudrichenkoevgeny/shared-foundation'
 
 const meta: Meta<typeof SessionItem> = {

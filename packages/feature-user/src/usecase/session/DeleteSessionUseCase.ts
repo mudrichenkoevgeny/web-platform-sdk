@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionRepository } from '@/repository/session/SessionRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { SessionRepository } from '@/repository/session/SessionRepository'
 
 /** Deletes a specific active session for current account. */
 export class DeleteSessionUseCase {

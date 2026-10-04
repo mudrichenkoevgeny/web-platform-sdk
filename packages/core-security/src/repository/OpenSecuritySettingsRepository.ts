@@ -1,5 +1,5 @@
-import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 
 /** Observer callback for security settings changes. */
 export type OpenSecuritySettingsObserver = (settings: OpenSecuritySettings | null) => void

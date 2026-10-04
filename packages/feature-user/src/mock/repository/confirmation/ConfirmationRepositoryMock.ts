@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ConfirmationRepository } from '@/repository/confirmation/ConfirmationRepository'
-import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
+import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Mock implementation of {@link ConfirmationRepository}.

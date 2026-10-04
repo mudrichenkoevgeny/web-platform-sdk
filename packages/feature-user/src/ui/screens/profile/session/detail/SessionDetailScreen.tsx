@@ -13,12 +13,13 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   SessionDetailProvider,
-  SessionDetailStoreDependencies,
   useSessionDetailStore
-} from './SessionDetailStore'
+} from '@/ui/screens/profile/session/detail/SessionDetailStore'
+import type { SessionDetailStoreDependencies } from "@/ui/screens/profile/session/detail/SessionDetailStore";
 
 /**
  * Automation test tags for {@link SessionDetailScreen}.

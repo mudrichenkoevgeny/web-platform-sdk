@@ -1,5 +1,5 @@
 import { OpenAuthSettingsStorage } from '@/storage/auth/settings/OpenAuthSettingsStorage'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Mock implementation of {@link OpenAuthSettingsStorage}.

@@ -8,13 +8,14 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import { AppType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import {
   MainProfileProvider,
-  MainProfileStoreDependencies,
   useMainProfileStore
-} from './MainProfileStore'
+} from '@/ui/screens/profile/main/MainProfileStore'
+import type { MainProfileStoreDependencies } from "@/ui/screens/profile/main/MainProfileStore";
 
 /**
  * Automation test tags for {@link MainProfileScreen}.

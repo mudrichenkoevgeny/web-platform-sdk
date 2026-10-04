@@ -1,4 +1,4 @@
-import {
+import type {
   PagedResult,
   UserIdentifierId,
   UserIdentifierPayload,
@@ -6,14 +6,14 @@ import {
   UserSessionPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  UserChangeListener,
-  UserIdentifiersListChangeListener,
-  UserSessionsListChangeListener,
   UserStorage
 } from '@/storage/user/UserStorage'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdentifier, UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession, UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/UserStorage";
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from "@mudrichenkoevgeny/shared-foundation";
+import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from "@mudrichenkoevgeny/shared-foundation";
 
 /**
  * In-memory {@link UserStorage} mock for tests and previews.

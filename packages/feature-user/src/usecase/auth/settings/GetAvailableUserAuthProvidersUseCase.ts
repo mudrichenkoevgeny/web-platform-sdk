@@ -1,8 +1,8 @@
-import { AppError, AppResult, appResultFailure, appResultSuccess, CommonError, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, appResultSuccess, CommonError, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AppType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
-import { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
+import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Loads auth settings and exposes which sign-in providers the backend allows for this app.
  */

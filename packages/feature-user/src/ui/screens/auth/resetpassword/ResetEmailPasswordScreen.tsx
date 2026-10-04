@@ -13,12 +13,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   ResetEmailPasswordProvider,
-  ResetEmailPasswordStoreDependencies,
   useResetEmailPasswordStore
-} from './ResetEmailPasswordStore'
+} from '@/ui/screens/auth/resetpassword/ResetEmailPasswordStore'
+import type { ResetEmailPasswordStoreDependencies } from "@/ui/screens/auth/resetpassword/ResetEmailPasswordStore";
 
 const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)

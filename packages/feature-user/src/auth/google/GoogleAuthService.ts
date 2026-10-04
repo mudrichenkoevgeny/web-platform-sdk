@@ -1,4 +1,4 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
 /**
  * Cross-platform contract for Google Sign-In used by user login flows.

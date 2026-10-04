@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { UnlockOtpScreen } from './UnlockOtpScreen'
-import { UnlockOtpStoreDependencies } from './UnlockOtpStore'
+import { UnlockOtpScreen } from '@/ui/screens/auth/unlock/otp/UnlockOtpScreen'
+import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/UnlockOtpStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('UnlockOtpScreen', () => {

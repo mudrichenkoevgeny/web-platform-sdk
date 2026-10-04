@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { CommonWebSocketMessageHandler } from './CommonWebSocketMessageHandler'
+import { CommonWebSocketMessageHandler } from '@/network/websocket/messagehandler/CommonWebSocketMessageHandler'
 import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
-import { SocketFrame } from '@/model/websocket/SocketFrame'
+import type { SocketFrame } from '@/model/websocket/SocketFrame'
 
 describe('CommonWebSocketMessageHandler', () => {
   const handler = new CommonWebSocketMessageHandler()

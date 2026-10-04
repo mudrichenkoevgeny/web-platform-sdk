@@ -10,7 +10,7 @@ import {
   flatMap,
   flatMapSuccess,
   mapSuccess
-} from './AppResult'
+} from '@/result/AppResult'
 import { CommonError } from '@/error/model/CommonError'
 import { ClientCommonErrorCodes } from '@/error/naming/ClientCommonErrorCodes'
 

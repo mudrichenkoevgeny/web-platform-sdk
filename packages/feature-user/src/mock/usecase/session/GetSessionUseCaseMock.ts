@@ -1,10 +1,10 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import { GetSessionUseCase } from '@/usecase/session/GetSessionUseCase'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionRepositoryMock } from '@/repository/session/SessionRepositoryMock'
 import { userSessionMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /** Mock implementation of {@link GetSessionUseCase}. */
 export class GetSessionUseCaseMock extends GetSessionUseCase {
   public executeCalls = 0

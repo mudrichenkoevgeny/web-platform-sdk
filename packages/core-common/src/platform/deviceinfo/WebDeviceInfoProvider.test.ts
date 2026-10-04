@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { WebDeviceInfoProvider } from './DeviceInfoProvider'
+import { WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
 import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
 

@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppError, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
-import { UserRepository } from '@/repository/user/UserRepository'
-import { SetupTotpUseCase } from '@/usecase/user/security/SetupTotpUseCase'
-import { EnableTotpUseCase } from '@/usecase/user/security/EnableTotpUseCase'
-import { DisableTotpUseCase } from '@/usecase/user/security/DisableTotpUseCase'
-
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserRepository } from '@/repository/user/UserRepository'
+import type { SetupTotpUseCase } from '@/usecase/user/security/SetupTotpUseCase'
+import type { EnableTotpUseCase } from '@/usecase/user/security/EnableTotpUseCase'
+import type { DisableTotpUseCase } from '@/usecase/user/security/DisableTotpUseCase'
 /**
  * Discriminated union representing active screen state for {@link TotpMainScreen}.
  */

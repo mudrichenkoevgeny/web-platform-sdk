@@ -1,9 +1,9 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /**
  * Mock implementation of {@link ResetPasswordRepository}.
  */

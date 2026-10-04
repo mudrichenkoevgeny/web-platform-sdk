@@ -1,7 +1,7 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionRepository } from '@/repository/session/SessionRepository'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { SessionRepository } from '@/repository/session/SessionRepository'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns details of a specific session owned by current account. */
 export class GetSessionUseCase {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LegalFooter } from './LegalFooter'
+import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
 import { enUserStrings } from '@/locales/index'
 
 describe('LegalFooter', () => {

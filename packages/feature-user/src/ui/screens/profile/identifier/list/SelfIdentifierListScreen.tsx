@@ -14,18 +14,18 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
+import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
 import {
-  AddIdentifierDialogState,
   SelfIdentifierListProvider,
-  SelfIdentifierListStoreDependencies,
   useSelfIdentifierListStore
-} from './SelfIdentifierListStore'
+} from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
+import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from "@/ui/screens/profile/identifier/list/SelfIdentifierListStore";
 
 /**
  * Automation test tags for {@link SelfIdentifierListScreen}.

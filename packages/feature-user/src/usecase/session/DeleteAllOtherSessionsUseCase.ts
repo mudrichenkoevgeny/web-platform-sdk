@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SessionRepository } from '@/repository/session/SessionRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { SessionRepository } from '@/repository/session/SessionRepository'
 
 /** Deletes all sessions for current authenticated account except the one used for this request. */
 export class DeleteAllOtherSessionsUseCase {

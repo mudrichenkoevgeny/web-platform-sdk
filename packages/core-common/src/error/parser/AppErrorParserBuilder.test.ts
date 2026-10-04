@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { AppErrorParserBuilder, AppErrorParserResolver } from './AppErrorParserBuilder'
-import { AppErrorParser } from './AppErrorParser'
+import { AppErrorParserBuilder, AppErrorParserResolver } from '@/error/parser/AppErrorParserBuilder'
+import type { AppErrorParser } from '@/error/parser/AppErrorParser'
 import { CommonError } from '@/model/CommonError'
-import { AppError } from '@/model/AppError'
+import type { AppError } from '@/model/AppError'
 
 describe('AppErrorParserBuilder', () => {
   const commonParser: AppErrorParser = {

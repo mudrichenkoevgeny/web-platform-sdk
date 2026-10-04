@@ -4,8 +4,8 @@ import {
   DeviceInfoProviderMock,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchOpenGlobalSettingsApi } from './FetchOpenGlobalSettingsApi'
-import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchOpenGlobalSettingsApi } from '@/network/globalsettings/FetchOpenGlobalSettingsApi'
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenGlobalSettingsApi', () => {
   const samplePayload: OpenGlobalSettingsPayload = {

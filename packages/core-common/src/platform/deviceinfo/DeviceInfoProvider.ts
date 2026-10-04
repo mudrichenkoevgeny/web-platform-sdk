@@ -1,5 +1,5 @@
-import { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonStorage } from '@/storage/common/CommonStorage'
+import type { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
+import type { CommonStorage } from '@/storage/common/CommonStorage'
 import { UserAgentParser } from '@/parser/UserAgentParser'
 
 /**

@@ -1,4 +1,5 @@
-import { SettingsComponent, SettingsComponentConfig } from '@/di/SettingsComponent'
+import { SettingsComponent } from '@/di/SettingsComponent'
+import type { SettingsComponentConfig } from "@/di/SettingsComponent";
 import {
   WebSocketServiceMock,
   HttpClient,
@@ -7,7 +8,6 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenGlobalSettingsApiMock } from '@/network/OpenGlobalSettingsApiMock'
 import { OpenGlobalSettingsStorageMock } from '@/storage/OpenGlobalSettingsStorageMock'
-
 /**
  * Creates a pre-configured {@link SettingsComponent} instance for testing and Storybook preview purposes.
  *

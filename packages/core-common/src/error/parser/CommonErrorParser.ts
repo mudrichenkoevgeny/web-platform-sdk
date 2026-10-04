@@ -1,8 +1,9 @@
 import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import { AppError } from '@/model/AppError'
-import { AppErrorParser } from './AppErrorParser'
+import type { AppErrorParser } from '@/error/parser/AppErrorParser'
 import { ClientCommonErrorCodes } from '@/naming/ClientCommonErrorCodes'
-import { enStrings, CoreCommonStrings } from '@/locales/index'
+import { enStrings } from '@/locales/index'
+import type { CoreCommonStrings } from "@/locales/index";
 
 /**
  * Default error parser resolving common SDK and server error codes to localized strings.

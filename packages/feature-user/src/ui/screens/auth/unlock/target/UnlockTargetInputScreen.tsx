@@ -11,14 +11,15 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/FieldValidator'
 import {
   UnlockTargetInputProvider,
-  UnlockTargetInputStoreDependencies,
   useUnlockTargetInputStore
-} from './UnlockTargetInputStore'
+} from '@/ui/screens/auth/unlock/target/UnlockTargetInputStore'
+import type { UnlockTargetInputStoreDependencies } from "@/ui/screens/auth/unlock/target/UnlockTargetInputStore";
 
 const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

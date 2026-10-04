@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserIdentifierId, UserId, UserSessionId, toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { GetSessionUseCase } from '@/usecase/session/GetSessionUseCase'
-import { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-
+import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId, UserId, UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetSessionUseCase } from '@/usecase/session/GetSessionUseCase'
+import type { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
 /**
  * Discriminated union representing active screen state for {@link SessionDetailScreen}.
  */

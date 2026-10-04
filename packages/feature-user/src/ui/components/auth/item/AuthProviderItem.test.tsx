@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthProviderItem } from './AuthProviderItem'
+import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
 import { enUserStrings } from '@/locales/index'
 
 describe('AuthProviderItem', () => {

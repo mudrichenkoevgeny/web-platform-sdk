@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthProviderGrid } from './AuthProviderGrid'
+import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
 
 const meta: Meta<typeof AuthProviderGrid> = {
   title: 'Feature/User/Auth/AuthProviderGrid',

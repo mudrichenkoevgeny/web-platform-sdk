@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { isNoInternetException } from './isNoInternetException'
+import { isNoInternetException } from '@/network/utils/isNoInternetException'
 
 describe('isNoInternetException', () => {
   it('returns true when navigator.onLine is false', () => {

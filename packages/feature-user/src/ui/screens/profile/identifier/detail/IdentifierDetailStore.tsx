@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserIdentifierId, UserId, toUserIdentifierIdOrNull, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, AppResult, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { GetUserIdentifierUseCase } from '@/usecase/identifier/GetUserIdentifierUseCase'
-import { DeleteUserIdentifierUseCase } from '@/usecase/identifier/DeleteUserIdentifierUseCase'
-import { EmailChangePasswordUseCase } from '@/usecase/identifier/EmailChangePasswordUseCase'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-
+import { toUserIdentifierIdOrNull, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId, UserId } from "@mudrichenkoevgeny/shared-foundation";
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetUserIdentifierUseCase } from '@/usecase/identifier/GetUserIdentifierUseCase'
+import type { DeleteUserIdentifierUseCase } from '@/usecase/identifier/DeleteUserIdentifierUseCase'
+import type { EmailChangePasswordUseCase } from '@/usecase/identifier/EmailChangePasswordUseCase'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
 /**
  * Discriminated union representing active screen state for {@link IdentifierDetailScreen}.
  */

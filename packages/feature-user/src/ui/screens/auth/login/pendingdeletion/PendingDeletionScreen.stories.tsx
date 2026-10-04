@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { PendingDeletionScreen } from './PendingDeletionScreen'
-import { PendingDeletionStoreDependencies } from './PendingDeletionStore'
+import { PendingDeletionScreen } from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionScreen'
+import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore'
 
 const createMockDeps = (): PendingDeletionStoreDependencies => ({
   restoreUserUseCase: {

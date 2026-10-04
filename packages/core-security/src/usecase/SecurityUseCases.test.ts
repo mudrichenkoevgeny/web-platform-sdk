@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { RefreshOpenSecuritySettingsUseCase } from './RefreshOpenSecuritySettingsUseCase'
-import { ValidatePasswordUseCase } from './ValidatePasswordUseCase'
+import { RefreshOpenSecuritySettingsUseCase } from '@/usecase/RefreshOpenSecuritySettingsUseCase'
+import { ValidatePasswordUseCase } from '@/usecase/ValidatePasswordUseCase'
 import { PasswordPolicyValidator } from '@/domain/model/PasswordPolicyValidator'
 import { OpenSecuritySettingsRepositoryMock } from '@/mock/repository/OpenSecuritySettingsRepositoryMock'
 import { ClientSecurityErrorCodes } from '@/error/naming/ClientSecurityErrorCodes'
-import { SecurityError } from '@/error/model/SecurityError'
+import type { SecurityError } from '@/error/model/SecurityError'
 
 describe('Security Use Cases', () => {
   describe('RefreshOpenSecuritySettingsUseCase', () => {

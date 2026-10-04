@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreOutlinedTextField } from './CoreOutlinedTextField'
+import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 
 const meta: Meta<typeof CoreOutlinedTextField> = {
   title: 'Core/Input/CoreOutlinedTextField',

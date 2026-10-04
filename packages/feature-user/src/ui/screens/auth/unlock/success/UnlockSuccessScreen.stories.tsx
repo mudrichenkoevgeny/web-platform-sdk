@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UnlockSuccessScreen } from './UnlockSuccessScreen'
+import { UnlockSuccessScreen } from '@/ui/screens/auth/unlock/success/UnlockSuccessScreen'
 
 const meta: Meta<typeof UnlockSuccessScreen> = {
   title: 'Feature/User/Auth/Unlock/Success/UnlockSuccessScreen',

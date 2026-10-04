@@ -10,13 +10,14 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import {
   SelfSessionListProvider,
-  SelfSessionListStoreDependencies,
   useSelfSessionListStore
-} from './SelfSessionListStore'
+} from '@/ui/screens/profile/session/list/SelfSessionListStore'
+import type { SelfSessionListStoreDependencies } from "@/ui/screens/profile/session/list/SelfSessionListStore";
 
 /**
  * Automation test tags for {@link SelfSessionListScreen}.

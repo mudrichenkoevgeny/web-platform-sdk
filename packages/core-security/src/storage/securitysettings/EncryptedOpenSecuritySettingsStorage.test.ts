@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedOpenSecuritySettingsStorage } from './EncryptedOpenSecuritySettingsStorage'
-import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import { EncryptedOpenSecuritySettingsStorage } from '@/storage/securitysettings/EncryptedOpenSecuritySettingsStorage'
+import type { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 
 describe('EncryptedOpenSecuritySettingsStorage', () => {
   const sampleSettings: OpenSecuritySettings = {

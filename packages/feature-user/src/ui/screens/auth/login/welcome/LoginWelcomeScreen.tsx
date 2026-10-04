@@ -9,16 +9,17 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
 import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
 import {
   LoginWelcomeProvider,
-  LoginWelcomeStoreDependencies,
   useLoginWelcomeStore
-} from './LoginWelcomeStore'
+} from '@/ui/screens/auth/login/welcome/LoginWelcomeStore'
+import type { LoginWelcomeStoreDependencies } from "@/ui/screens/auth/login/welcome/LoginWelcomeStore";
 
 /**
  * Internal content component rendering login welcome UI states (loading, error, providers list, legal footer).

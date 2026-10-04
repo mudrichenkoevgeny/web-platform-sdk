@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render } from '@testing-library/react'
-import { CoreVerticalScrollbar, CoreLazyColumnScrollbar } from './CoreScrollbar'
+import { CoreVerticalScrollbar, CoreLazyColumnScrollbar } from '@/ui/components/scrollbar/scrollbar/CoreScrollbar'
 
 describe('CoreScrollbar', () => {
   it('renders null as Web scrollbars are handled natively via CSS container styles', () => {

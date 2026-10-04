@@ -1,5 +1,5 @@
-import { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Observes the in-memory public auth settings snapshot.

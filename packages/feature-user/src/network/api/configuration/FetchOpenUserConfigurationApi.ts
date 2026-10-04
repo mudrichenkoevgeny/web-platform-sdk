@@ -1,7 +1,7 @@
-import { AppError, AppResult, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenUserConfigurationApi } from './OpenUserConfigurationApi'
-
+import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenUserConfigurationApi } from '@/network/api/configuration/OpenUserConfigurationApi'
 /** {@link OpenUserConfigurationApi} implementation backed by {@link HttpClient}. */
 export class FetchOpenUserConfigurationApi implements OpenUserConfigurationApi {
   /**

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CoreErrorText } from './CoreErrorText'
+import { CoreErrorText } from '@/ui/components/text/error/CoreErrorText'
 
 describe('CoreErrorText', () => {
   it('renders error message text with error styling', () => {

@@ -4,8 +4,8 @@ import {
   toUserSessionIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedAuthStorage } from './EncryptedAuthStorage'
-import { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import { EncryptedAuthStorage } from '@/storage/auth/EncryptedAuthStorage'
+import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedAuthStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock

@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AppType, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { SelfIdentifierListScreen, IdentifierListTestTags } from './SelfIdentifierListScreen'
-import { SelfIdentifierListStoreDependencies } from './SelfIdentifierListStore'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfIdentifierListScreen, IdentifierListTestTags } from '@/ui/screens/profile/identifier/list/SelfIdentifierListScreen'
+import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
 
 describe('SelfIdentifierListScreen', () => {
   const mockIdentifier1: UserIdentifier = {

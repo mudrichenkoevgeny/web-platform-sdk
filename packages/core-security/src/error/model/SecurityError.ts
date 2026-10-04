@@ -1,7 +1,7 @@
 import { SecurityErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
-import { ErrorId, generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
-
 /** Error indicating security/password policy settings could not be fetched. */
 export type SecurityErrorPasswordPolicyUnavailable = {
   readonly id: ErrorId

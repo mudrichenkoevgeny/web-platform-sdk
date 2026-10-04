@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedOpenGlobalSettingsStorage } from './EncryptedOpenGlobalSettingsStorage'
-import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
+import { EncryptedOpenGlobalSettingsStorage } from '@/storage/globalsettings/EncryptedOpenGlobalSettingsStorage'
+import type { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
 
 describe('EncryptedOpenGlobalSettingsStorage', () => {
   const sampleSettings: OpenGlobalSettings = {

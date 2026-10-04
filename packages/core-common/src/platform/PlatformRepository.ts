@@ -1,6 +1,6 @@
-import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { DeviceInfoProvider } from './deviceinfo/DeviceInfoProvider'
-import { ExternalLauncher } from './externallauncher/ExternalLauncher'
+import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import type { ExternalLauncher } from '@/platform/externallauncher/ExternalLauncher'
 
 /**
  * Repository interface for interacting with device platform capabilities.

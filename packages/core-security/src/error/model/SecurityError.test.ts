@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { SecurityError } from './SecurityError'
+import { SecurityError } from '@/error/model/SecurityError'
 import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
 
 describe('SecurityError', () => {

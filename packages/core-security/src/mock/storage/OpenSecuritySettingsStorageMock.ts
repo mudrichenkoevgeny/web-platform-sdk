@@ -1,5 +1,5 @@
 import { OpenSecuritySettingsStorage } from '@/storage/securitysettings/OpenSecuritySettingsStorage'
-import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import type { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 
 /**
  * Mock in-memory implementation of {@link OpenSecuritySettingsStorage}.

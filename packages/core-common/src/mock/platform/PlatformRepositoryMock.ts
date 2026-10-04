@@ -1,7 +1,7 @@
-import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { PlatformRepository } from '@/platform/PlatformRepository'
-import { DeviceInfoProviderMock } from './DeviceInfoProviderMock'
-import { ExternalLauncherMock } from './ExternalLauncherMock'
+import { DeviceInfoProviderMock } from '@/mock/platform/DeviceInfoProviderMock'
+import { ExternalLauncherMock } from '@/mock/platform/ExternalLauncherMock'
 
 /**
  * Mock implementation of {@link PlatformRepository} combining device information and external launching mocks.

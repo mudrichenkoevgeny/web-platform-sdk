@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SessionRepository } from '@/repository/session/SessionRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { SessionRepository } from '@/repository/session/SessionRepository'
 
 /** Performs re-authentication via TOTP for current session to update its trust level. */
 export class ReauthenticateSessionUseCase {

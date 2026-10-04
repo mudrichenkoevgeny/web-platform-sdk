@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ProfileRootContainer } from './ProfileRootContainer'
+import { ProfileRootContainer } from '@/ui/screens/profile/root/ProfileRootContainer'
 
 describe('ProfileRootContainer', () => {
   it('renders children inside dialog modal', () => {

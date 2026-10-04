@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
 
 /** Disables TOTP multifactor authentication for current account. */
 export class DisableTotpUseCase {

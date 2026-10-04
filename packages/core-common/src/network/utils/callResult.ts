@@ -3,7 +3,7 @@ import { AppError } from '@/error/model/AppError'
 import { ApiException } from '@/error/model/ApiException'
 import { toServerError } from '@/error/mapper/toServerError'
 import { CommonError } from '@/error/model/CommonError'
-import { isNoInternetException } from './isNoInternetException'
+import { isNoInternetException } from '@/network/utils/isNoInternetException'
 
 /**
  * Safely executes an async function and wraps the returned result or caught exception into an {@link AppResult}.

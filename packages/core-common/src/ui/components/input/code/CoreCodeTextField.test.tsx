@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CoreCodeTextField } from './CoreCodeTextField'
+import { CoreCodeTextField } from '@/ui/components/input/code/CoreCodeTextField'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreCodeTextField', () => {

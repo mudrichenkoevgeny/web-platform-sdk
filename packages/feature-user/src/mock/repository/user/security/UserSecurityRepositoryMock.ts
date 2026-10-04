@@ -1,7 +1,7 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
-import { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link UserSecurityRepository}.
  */

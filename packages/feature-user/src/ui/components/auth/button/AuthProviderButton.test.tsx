@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthProviderButton } from './AuthProviderButton'
-import { AuthProviderButtonMode } from './AuthProviderButtonMode'
+import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
+import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
 import { enUserStrings } from '@/locales/index'
 
 describe('AuthProviderButton', () => {

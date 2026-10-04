@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/UserError'
-import { UserRepository } from '@/repository/user/UserRepository'
-import { LogoutUseCase } from '@/usecase/session/LogoutUseCase'
-import { ScheduleUserDeletionUseCase } from '@/usecase/user/ScheduleUserDeletionUseCase'
-import { GetUserUseCase } from '@/usecase/user/GetUserUseCase'
-import { GetAuthSettingsUseCase } from '@/usecase/auth/settings/GetAuthSettingsUseCase'
-import { ObserveAuthSettingsUseCase } from '@/usecase/auth/settings/ObserveAuthSettingsUseCase'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { UserRepository } from '@/repository/user/UserRepository'
+import type { LogoutUseCase } from '@/usecase/session/LogoutUseCase'
+import type { ScheduleUserDeletionUseCase } from '@/usecase/user/ScheduleUserDeletionUseCase'
+import type { GetUserUseCase } from '@/usecase/user/GetUserUseCase'
+import type { GetAuthSettingsUseCase } from '@/usecase/auth/settings/GetAuthSettingsUseCase'
+import type { ObserveAuthSettingsUseCase } from '@/usecase/auth/settings/ObserveAuthSettingsUseCase'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Discriminated union representing the active screen state for {@link MainProfileScreen}.
  */

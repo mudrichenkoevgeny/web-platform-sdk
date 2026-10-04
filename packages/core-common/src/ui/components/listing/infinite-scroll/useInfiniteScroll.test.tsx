@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render } from '@testing-library/react'
-import { useInfiniteScroll } from './useInfiniteScroll'
+import { useInfiniteScroll } from '@/ui/components/listing/infinite-scroll/useInfiniteScroll'
 
 describe('useInfiniteScroll', () => {
   let mockObserve: ReturnType<typeof vi.fn>

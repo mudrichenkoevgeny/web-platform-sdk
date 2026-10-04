@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { EncryptedCommonStorage } from './EncryptedCommonStorage'
+import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
 
 describe('EncryptedCommonStorage', () => {

@@ -1,4 +1,4 @@
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Interface for persisting cached open authentication settings.

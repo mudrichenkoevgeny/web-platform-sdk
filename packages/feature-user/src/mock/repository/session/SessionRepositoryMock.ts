@@ -1,5 +1,6 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type {
   ClientType,
   PagedResult,
   SortOrder,
@@ -8,9 +9,8 @@ import {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionRepository } from '@/repository/session/SessionRepository'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import { userSessionMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /**
  * Mock implementation of {@link SessionRepository}.
  */

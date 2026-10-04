@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthProviderItem } from './AuthProviderItem'
+import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
 
 const meta: Meta<typeof AuthProviderItem> = {
   title: 'Feature/User/Auth/AuthProviderItem',

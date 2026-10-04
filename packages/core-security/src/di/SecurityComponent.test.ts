@@ -5,7 +5,7 @@ import {
   EncryptedSettingsMock,
   DeviceInfoProviderMock
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SecurityComponent } from './SecurityComponent'
+import { SecurityComponent } from '@/di/SecurityComponent'
 
 describe('SecurityComponent', () => {
   it('initializes all modules and exposes dependencies', () => {

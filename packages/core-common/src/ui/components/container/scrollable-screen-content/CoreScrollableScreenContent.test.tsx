@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { CoreScrollableScreenContent } from './CoreScrollableScreenContent'
+import { CoreScrollableScreenContent } from '@/ui/components/container/scrollable-screen-content/CoreScrollableScreenContent'
 
 describe('CoreScrollableScreenContent', () => {
   it('renders children within container', () => {

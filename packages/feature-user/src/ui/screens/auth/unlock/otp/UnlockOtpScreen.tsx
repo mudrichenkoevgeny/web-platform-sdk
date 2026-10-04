@@ -11,12 +11,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   UnlockOtpProvider,
-  UnlockOtpStoreDependencies,
   useUnlockOtpStore
-} from './UnlockOtpStore'
+} from '@/ui/screens/auth/unlock/otp/UnlockOtpStore'
+import type { UnlockOtpStoreDependencies } from "@/ui/screens/auth/unlock/otp/UnlockOtpStore";
 
 const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

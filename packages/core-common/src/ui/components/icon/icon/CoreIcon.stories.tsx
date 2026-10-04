@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreIcon } from './CoreIcon'
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
 
 const meta: Meta<typeof CoreIcon> = {

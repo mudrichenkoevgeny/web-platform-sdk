@@ -8,12 +8,12 @@ import {
   AccountLockoutType,
   UserAccountStatus
 } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
 import { UserErrorArgs, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
+import type { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
 import { FieldValidator } from '@/validator/FieldValidator'
-
 /**
  * Union representing the active screen state for {@link LoginByEmailScreen}.
  */

@@ -1,5 +1,5 @@
 import { OpenAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { availableAuthProvidersPayloadMock } from './availableAuthProvidersPayloadMock'
+import { availableAuthProvidersPayloadMock } from '@/mock/network/model/auth/settings/availableAuthProvidersPayloadMock'
 
 /**
  * Creates a mock {@link OpenAuthSettingsPayload} instance.

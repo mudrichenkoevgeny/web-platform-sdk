@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
-import { MainProfileScreen, MainProfileTestTags } from './MainProfileScreen'
-import { MainProfileStoreDependencies } from './MainProfileStore'
+import { MainProfileScreen, MainProfileTestTags } from '@/ui/screens/profile/main/MainProfileScreen'
+import type { MainProfileStoreDependencies } from '@/ui/screens/profile/main/MainProfileStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('MainProfileScreen', () => {

@@ -1,20 +1,17 @@
 import {
   CommonError,
-  SocketFrame,
-  WebSocketMessageHandler,
-  WebSocketMessageHandlerResult,
   webSocketMessageHandlerResultError,
   webSocketMessageHandlerResultHandled,
   webSocketMessageHandlerResultNotHandled
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { SocketFrame, WebSocketMessageHandler, WebSocketMessageHandlerResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { userDetailsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-import { UserRepository } from '@/repository/user/UserRepository'
-import { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { UserRepository } from '@/repository/user/UserRepository'
+import type { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
 import { UserWebSocketEventTypes } from '@/contract/UserWebSocketEventTypes'
 import { toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
-
 /**
  * Interprets user-related WebSocket frames (`UserWebSocketEventTypes`) for unauthorized sessions,
  * account status, and session termination.

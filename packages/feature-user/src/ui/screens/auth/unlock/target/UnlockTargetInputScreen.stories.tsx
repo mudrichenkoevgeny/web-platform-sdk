@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { UnlockTargetInputScreen } from './UnlockTargetInputScreen'
-import { UnlockTargetInputStoreDependencies } from './UnlockTargetInputStore'
+import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
+import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/UnlockTargetInputStore'
 
 const createMockDeps = (method: UnlockMethod = UnlockMethod.EMAIL): UnlockTargetInputStoreDependencies => ({
   method,

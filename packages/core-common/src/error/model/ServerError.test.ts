@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { ServerError } from './ServerError'
-import { generateErrorId } from './ErrorId'
+import { ServerError } from '@/error/model/ServerError'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 describe('ServerError', () => {
   it('constructs server error with args defaulting to empty object', () => {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ListingOptionsPanel } from './ListingOptionsPanel'
+import { ListingOptionsPanel } from '@/ui/components/listing/option/panel/ListingOptionsPanel'
 
 const meta: Meta<typeof ListingOptionsPanel> = {
   title: 'Core/Listing/ListingOptionsPanel',

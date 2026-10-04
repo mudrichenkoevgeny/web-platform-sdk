@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getSettingsFactory, WebCryptoSettingsFactory } from './WebCryptoSettings'
+import { getSettingsFactory, WebCryptoSettingsFactory } from '@/storage/WebCryptoSettings'
 
 describe('SettingsFactory', () => {
   it('creates an EncryptedSettings instance', () => {

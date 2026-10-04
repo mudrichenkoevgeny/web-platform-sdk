@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { GetOpenGlobalSettingsUseCase } from './GetOpenGlobalSettingsUseCase'
-import { RefreshOpenGlobalSettingsUseCase } from './RefreshOpenGlobalSettingsUseCase'
+import { GetOpenGlobalSettingsUseCase } from '@/usecase/GetOpenGlobalSettingsUseCase'
+import { RefreshOpenGlobalSettingsUseCase } from '@/usecase/RefreshOpenGlobalSettingsUseCase'
 import { OpenGlobalSettingsRepositoryMock } from '@/mock/repository/OpenGlobalSettingsRepositoryMock'
 
 describe('Settings Use Cases', () => {

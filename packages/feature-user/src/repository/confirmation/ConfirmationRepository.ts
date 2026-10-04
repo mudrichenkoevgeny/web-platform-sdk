@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Client-side rate limiting for confirmation flows keyed by ConfirmationType and identifier.

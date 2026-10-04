@@ -6,10 +6,10 @@ import {
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSecurityRepositoryImpl } from './UserSecurityRepositoryImpl'
-import { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
-import { UserStorage } from '@/storage/user/UserStorage'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { UserSecurityRepositoryImpl } from '@/repository/user/security/UserSecurityRepositoryImpl'
+import type { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
+import type { UserStorage } from '@/storage/user/UserStorage'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('UserSecurityRepositoryImpl', () => {
   let mockApi: UserSecurityApi

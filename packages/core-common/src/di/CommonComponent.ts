@@ -1,20 +1,22 @@
-import { EncryptedSettings } from '@/storage/EncryptedSettings'
-import { CommonStorage } from '@/storage/common/CommonStorage'
+import type { EncryptedSettings } from '@/storage/EncryptedSettings'
+import type { CommonStorage } from '@/storage/common/CommonStorage'
 import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
-import { ExternalLauncher, getExternalLauncher } from '@/platform/externallauncher/ExternalLauncher'
-import { DeviceInfoProvider, WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
-import { PlatformRepository, PlatformRepositoryImpl } from '@/platform/PlatformRepository'
+import { getExternalLauncher } from '@/platform/externallauncher/ExternalLauncher'
+import type { ExternalLauncher } from "@/platform/externallauncher/ExternalLauncher";
+import { WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import type { DeviceInfoProvider } from "@/platform/deviceinfo/DeviceInfoProvider";
+import { PlatformRepositoryImpl } from '@/platform/PlatformRepository'
+import type { PlatformRepository } from "@/platform/PlatformRepository";
 import { HttpClient } from '@/network/httpclient/HttpClient'
-import { HttpClientConfigPlugin } from '@/network/httpclient/HttpClientConfigPlugin'
-import { AccessTokenProvider } from '@/network/provider/AccessTokenProvider'
-import { WebSocketService } from '@/network/websocket/service/WebSocketService'
+import type { HttpClientConfigPlugin } from '@/network/httpclient/HttpClientConfigPlugin'
+import type { AccessTokenProvider } from '@/network/provider/AccessTokenProvider'
+import type { WebSocketService } from '@/network/websocket/service/WebSocketService'
 import { WebWebSocketService } from '@/network/websocket/service/WebWebSocketService'
-import { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
+import type { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
 import { CommonWebSocketMessageHandler } from '@/network/websocket/messagehandler/CommonWebSocketMessageHandler'
 import { AppErrorParser } from '@/error/parser/AppErrorParser'
 import { AppErrorParserBuilder } from '@/error/parser/AppErrorParserBuilder'
 import { CommonErrorParser } from '@/error/parser/CommonErrorParser'
-
 /**
  * Configuration options required to instantiate {@link CommonComponent}.
  */

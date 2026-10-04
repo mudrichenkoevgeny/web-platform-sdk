@@ -1,5 +1,5 @@
-import { MfaChallengeHandler } from './MfaChallengeHandler'
-import { MfaChallengeRequest } from './MfaChallengeRequest'
+import { MfaChallengeHandler } from '@/network/httpclient/mfa/MfaChallengeHandler'
+import { MfaChallengeRequest } from '@/network/httpclient/mfa/MfaChallengeRequest'
 
 /** Listener callback signature for MFA request updates. */
 export type MfaRequestListener = (request: MfaChallengeRequest | null) => void

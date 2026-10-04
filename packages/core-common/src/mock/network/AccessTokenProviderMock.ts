@@ -1,4 +1,5 @@
-import { AccessTokenProvider, AccessTokenChangeListener } from '@/network/provider/AccessTokenProvider'
+import { AccessTokenProvider } from '@/network/provider/AccessTokenProvider'
+import type { AccessTokenChangeListener } from "@/network/provider/AccessTokenProvider";
 
 /**
  * Mock implementation of {@link AccessTokenProvider} for testing authentication state handling.

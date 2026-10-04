@@ -1,10 +1,10 @@
-import { apiErrorResponseSchema, ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
-import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import { apiErrorResponseSchema } from '@mudrichenkoevgeny/shared-foundation'
+import type { ApiErrorResponse } from "@mudrichenkoevgeny/shared-foundation";
+import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
 import { CommonHttpHeaders } from '@/contract/CommonHttpHeaders'
-import { HttpClientConfigPlugin } from './HttpClientConfigPlugin'
+import type { HttpClientConfigPlugin } from '@/network/httpclient/HttpClientConfigPlugin'
 import { ApiException } from '@/error/model/ApiException'
 import { generateErrorId } from '@/error/model/ErrorId'
-
 /** Configuration options for {@link HttpClient}. */
 export interface HttpClientConfig {
   /** Target API base URL. */

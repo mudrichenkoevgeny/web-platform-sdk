@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { GetRecoveryCodesUseCase } from '@/usecase/user/security/GetRecoveryCodesUseCase'
-import { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/RegenerateRecoveryCodesUseCase'
-
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetRecoveryCodesUseCase } from '@/usecase/user/security/GetRecoveryCodesUseCase'
+import type { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/RegenerateRecoveryCodesUseCase'
 /**
  * Discriminated union representing active screen state for {@link TotpRecoveryCodesScreen}.
  */

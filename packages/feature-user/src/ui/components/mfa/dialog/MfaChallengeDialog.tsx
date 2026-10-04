@@ -5,9 +5,9 @@ import {
   CoreTextButton,
   CoreScreenTitleText
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
-import { MfaChallengeRequest } from '@/network/httpclient/mfa/MfaChallengeRequest'
-
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
+import type { MfaChallengeRequest } from '@/network/httpclient/mfa/MfaChallengeRequest'
 export interface MfaChallengeDialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onConfirm'> {
   request: MfaChallengeRequest
   onConfirm: (code: string) => void

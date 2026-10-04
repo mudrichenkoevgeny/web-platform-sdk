@@ -1,9 +1,9 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   PagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
-import { GetSessionsParams, SessionRepository } from '@/repository/session/SessionRepository'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { GetSessionsParams, SessionRepository } from '@/repository/session/SessionRepository'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of active sessions for current account. */
 export class GetSessionsUseCase {

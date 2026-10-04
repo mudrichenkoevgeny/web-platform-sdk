@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
 
 /** Updates account password using current credentials. */
 export class EmailChangePasswordUseCase {

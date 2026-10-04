@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
-import { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
+import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
+import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
 import { FieldValidator } from '@/validator/FieldValidator'
-
 /**
  * Union representing the active screen state for {@link UnlockTargetInputScreen}.
  */

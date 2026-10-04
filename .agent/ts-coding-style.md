@@ -10,8 +10,14 @@ alwaysApply: true
 - **Strict Ban (Comments):** Do not write or preserve comments in the code.
 - **Strict Ban (Trailing Commas):** Do not write trailing commas in arguments, parameters, objects, or arrays.
 - **No Implicit Any:** Code must strictly pass TS `strict` mode.
+- **Strict Ban (FQN in code):** Do not write fully qualified names (FQN) or deep relative paths (`../../`). Always use absolute path aliases (e.g. `@/domain/User`).
+- **Type-only Imports:** Use `import type` when an imported entity is used exclusively as a type (in generics, annotations, etc.) and does not participate in runtime logic. Mixes (e.g. `import { value, type Type }`) are allowed or split them into separate import statements.
 
-## 2. Control Flow
+## 2. Architecture: UseCases & Params
+- **UseCase Methods:** UseCases must only define a single `public async execute(...)` method. Legacy names like `invoke` are strictly forbidden.
+- **Options Object (Params):** For methods with 3+ optional parameters (e.g., pagination, filtering), strictly avoid positional arguments. Implement an Options Object interface (e.g. `GetSessionsParams`) to prevent chains of `null` arguments.
+
+## 3. Control Flow
 - **Braces for `if` and `return`:** Always use block bodies `{ ... }` for `if` statements. Single-line `if (condition) return` is strictly forbidden.
 - **State Exhaustiveness:** When switching over state unions, always use a `switch` statement or a Record map that exhaustively covers all cases. Do not use default cases for strictly typed unions.
 

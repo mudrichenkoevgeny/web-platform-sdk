@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FeatureUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from '@/locales/index'
 import { AuthProviderItem } from '@/item/AuthProviderItem'
 
 /**

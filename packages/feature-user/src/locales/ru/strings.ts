@@ -1,4 +1,4 @@
-import { FeatureUserStrings } from '../en/strings'
+import type { FeatureUserStrings } from '@/locales/en/strings'
 
 /** Russian localized string dictionary for feature-user. */
 export const ruUserStrings: FeatureUserStrings = {

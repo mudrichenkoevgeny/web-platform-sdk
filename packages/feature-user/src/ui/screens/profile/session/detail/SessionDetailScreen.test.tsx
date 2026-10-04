@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionDetailScreen, SessionDetailTestTags } from './SessionDetailScreen'
-import { SessionDetailStoreDependencies } from './SessionDetailStore'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { SessionDetailScreen, SessionDetailTestTags } from '@/ui/screens/profile/session/detail/SessionDetailScreen'
+import type { SessionDetailStoreDependencies } from '@/ui/screens/profile/session/detail/SessionDetailStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('SessionDetailScreen', () => {

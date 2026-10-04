@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppError, isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
-import { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
-import { UnlockByEmailUseCase } from '@/usecase/auth/unlock/UnlockByEmailUseCase'
-import { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/UnlockByPhoneUseCase'
-
+import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
+import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
+import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/UnlockByEmailUseCase'
+import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/UnlockByPhoneUseCase'
 /**
  * Union representing the active screen state for {@link UnlockOtpScreen}.
  */

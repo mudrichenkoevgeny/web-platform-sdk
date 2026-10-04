@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { FullscreenError } from './FullscreenError'
+import { FullscreenError } from '@/ui/components/error/fullscreen/FullscreenError'
 import { CommonError } from '@/error/model/CommonError'
 
 const meta: Meta<typeof FullscreenError> = {

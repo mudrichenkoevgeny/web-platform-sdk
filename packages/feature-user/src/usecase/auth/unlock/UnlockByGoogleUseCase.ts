@@ -1,8 +1,8 @@
-import { AppError, AppResult, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
-
+import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
+import type { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
 /**
  * Google unlock flow: obtains Google ID credential token via GoogleAuthService,
  * then submits it to UnlockRepository to unlock the account.

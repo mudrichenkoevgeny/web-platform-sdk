@@ -1,4 +1,4 @@
-import { CoreSecurityStrings } from '@/en/strings'
+import type { CoreSecurityStrings } from '@/en/strings'
 
 export const ruSecurityStrings: CoreSecurityStrings = {
   error_security_mfa_confirmation_required: 'Требуется подтверждение аутентификации.',

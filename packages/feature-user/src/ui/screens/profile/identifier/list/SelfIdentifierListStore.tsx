@@ -1,19 +1,19 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppType, UserAuthProvider, UserIdentifierId, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId } from "@mudrichenkoevgeny/shared-foundation";
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/FieldValidator'
-import { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
-import { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
-import { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddEmailIdentifierConfirmationUseCase'
-import { AddUserIdentifierEmailUseCase } from '@/usecase/identifier/AddUserIdentifierEmailUseCase'
-import { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddPhoneIdentifierConfirmationUseCase'
-import { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/AddUserIdentifierPhoneUseCase'
-import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/AddUserIdentifierGoogleUseCase'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
-
+import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
+import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
+import type { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddEmailIdentifierConfirmationUseCase'
+import type { AddUserIdentifierEmailUseCase } from '@/usecase/identifier/AddUserIdentifierEmailUseCase'
+import type { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddPhoneIdentifierConfirmationUseCase'
+import type { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/AddUserIdentifierPhoneUseCase'
+import type { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/AddUserIdentifierGoogleUseCase'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { AuthStorage } from '@/storage/auth/AuthStorage'
 /**
  * State machine steps for the add-identifier modal dialog.
  */

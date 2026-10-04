@@ -1,17 +1,14 @@
 import {
   toUserIdentifierIdOrNull,
-  toUserSessionIdOrNull,
-  UserIdentifierId,
-  UserSessionId
+  toUserSessionIdOrNull
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId, UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
 import {
-  AccessTokenChangeListener,
-  AccessTokenProvider,
-  EncryptedSettings
+  AccessTokenProvider
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AuthStorage } from './AuthStorage'
-import { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { AccessTokenChangeListener, EncryptedSettings } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 const KEY_ACCESS_TOKEN = 'auth_access_token'
 const KEY_REFRESH_TOKEN = 'auth_refresh_token'
 const KEY_EXPIRES_AT = 'auth_expires_at'

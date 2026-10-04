@@ -1,11 +1,11 @@
-import { AppError, AppResult, appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type {
   TotpRecoveryCodesPayload,
   TotpSetupPayload,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
-
 /**
  * Mock implementation of {@link UserSecurityApi}.
  */

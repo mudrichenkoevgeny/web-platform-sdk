@@ -1,5 +1,6 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
@@ -7,10 +8,9 @@ import {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
-
 /**
  * Mock implementation of {@link IdentifierRepository}.
  */

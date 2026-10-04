@@ -1,7 +1,7 @@
 import { OpenGlobalSettingsPayload, OpenGlobalSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { HttpClient, callResult, AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsApi } from './OpenGlobalSettingsApi'
-
+import { callResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { HttpClient, AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
 /**
  * Fetch HTTP client implementation of {@link OpenGlobalSettingsApi}.
  */

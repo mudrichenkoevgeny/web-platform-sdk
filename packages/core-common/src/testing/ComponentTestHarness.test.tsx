@@ -1,7 +1,7 @@
-import React from 'react'
+import type React from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { ComponentTestHarness } from './ComponentTestHarness'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 import { useCommonComponent } from '@/context/SdkProvider'
 
 const TestChild: React.FC = () => {

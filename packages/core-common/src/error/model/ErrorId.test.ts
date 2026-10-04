@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateErrorId, toErrorIdOrNull, toErrorIdOrThrow } from './ErrorId'
+import { generateErrorId, toErrorIdOrNull, toErrorIdOrThrow } from '@/error/model/ErrorId'
 
 describe('ErrorId', () => {
   it('generateErrorId creates a valid ErrorId UUID', () => {

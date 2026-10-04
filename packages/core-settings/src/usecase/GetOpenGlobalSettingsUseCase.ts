@@ -1,5 +1,5 @@
-import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
 import { OpenGlobalSettingsRepository } from '@/repository/OpenGlobalSettingsRepository'
 
 /**

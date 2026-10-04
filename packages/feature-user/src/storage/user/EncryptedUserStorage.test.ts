@@ -12,9 +12,9 @@ import {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedUserStorage } from './EncryptedUserStorage'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { EncryptedUserStorage } from '@/storage/user/EncryptedUserStorage'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedUserStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock

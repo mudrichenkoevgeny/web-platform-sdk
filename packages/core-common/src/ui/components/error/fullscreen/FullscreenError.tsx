@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { AppError } from '@/error/model/AppError'
+import type { AppError } from '@/error/model/AppError'
 import { useAppErrorParser } from '@/context/SdkProvider'
 import { CoreButton } from '@/ui/components/button/button/CoreButton'
 import { enStrings } from '@/locales/en/strings'

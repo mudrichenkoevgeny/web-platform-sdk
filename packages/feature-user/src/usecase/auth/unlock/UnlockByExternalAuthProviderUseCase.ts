@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
 
 /** Unlocks an account using an external authentication provider token. */
 export class UnlockByExternalAuthProviderUseCase {

@@ -1,8 +1,8 @@
-import { AccessTokenProvider } from '@/provider/AccessTokenProvider'
-import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
-import { SocketFrame } from '@/model/websocket/SocketFrame'
-import { WebSocketMessageHandler } from '@/messagehandler/WebSocketMessageHandler'
-import { WebSocketService, SocketEventListener } from './WebSocketService'
+import type { AccessTokenProvider } from '@/provider/AccessTokenProvider'
+import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import type { SocketFrame } from '@/model/websocket/SocketFrame'
+import type { WebSocketMessageHandler } from '@/messagehandler/WebSocketMessageHandler'
+import type { WebSocketService, SocketEventListener } from '@/network/websocket/service/WebSocketService'
 import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
 import { generateErrorId } from '@/error/model/ErrorId'
 

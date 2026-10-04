@@ -1,7 +1,7 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { DeleteAllOtherSessionsUseCase } from '@/usecase/session/DeleteAllOtherSessionsUseCase'
 import { SessionRepositoryMock } from '@/repository/session/SessionRepositoryMock'
-
 /** Mock implementation of {@link DeleteAllOtherSessionsUseCase}. */
 export class DeleteAllOtherSessionsUseCaseMock extends DeleteAllOtherSessionsUseCase {
   public executeCalls = 0

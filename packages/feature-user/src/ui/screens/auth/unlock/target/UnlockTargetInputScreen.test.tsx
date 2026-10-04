@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { UnlockTargetInputScreen } from './UnlockTargetInputScreen'
-import { UnlockTargetInputStoreDependencies } from './UnlockTargetInputStore'
+import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
+import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/UnlockTargetInputStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('UnlockTargetInputScreen', () => {

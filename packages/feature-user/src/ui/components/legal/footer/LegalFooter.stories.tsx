@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LegalFooter } from './LegalFooter'
+import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
 
 const meta: Meta<typeof LegalFooter> = {
   title: 'Feature/User/Legal/LegalFooter',

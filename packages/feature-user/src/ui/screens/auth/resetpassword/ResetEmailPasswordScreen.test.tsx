@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ResetEmailPasswordScreen } from './ResetEmailPasswordScreen'
-import { ResetEmailPasswordStoreDependencies } from './ResetEmailPasswordStore'
+import { ResetEmailPasswordScreen } from '@/ui/screens/auth/resetpassword/ResetEmailPasswordScreen'
+import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/resetpassword/ResetEmailPasswordStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('ResetEmailPasswordScreen', () => {

@@ -1,6 +1,6 @@
-import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-
 /**
  * Deterministic {@link GoogleAuthService} mock for tests and previews.
  */

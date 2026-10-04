@@ -8,18 +8,16 @@ import {
   UserAuthProvider
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  AppError,
   CommonError,
-  ExternalLauncher,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, ExternalLauncher } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/UserError'
 import { UserErrorArgs, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByGoogleUseCase } from '@/usecase/auth/login/LoginByGoogleUseCase'
-import { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
-
+import type { LoginByGoogleUseCase } from '@/usecase/auth/login/LoginByGoogleUseCase'
+import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
 /**
  * Union representing the active screen state for {@link LoginWelcomeScreen}.
  */

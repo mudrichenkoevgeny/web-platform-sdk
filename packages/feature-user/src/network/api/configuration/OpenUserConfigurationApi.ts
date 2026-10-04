@@ -1,5 +1,5 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Fetch combined user configuration bundle. */
 export interface OpenUserConfigurationApi {

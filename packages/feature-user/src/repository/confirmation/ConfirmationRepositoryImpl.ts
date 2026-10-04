@@ -1,9 +1,9 @@
-import { AppError, AppResult, appResultFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ConfirmationRepository } from './ConfirmationRepository'
-import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { ConfirmationRepository } from '@/repository/confirmation/ConfirmationRepository'
+import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/UserError'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * In-memory implementation of {@link ConfirmationRepository} that records block-until timestamps.
  */

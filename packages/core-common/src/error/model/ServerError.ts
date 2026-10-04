@@ -1,5 +1,5 @@
-import { AppError } from './AppError'
-import { ErrorId } from './ErrorId'
+import type { AppError } from '@/error/model/AppError'
+import type { ErrorId } from '@/error/model/ErrorId'
 
 /**
  * Represents an error returned explicitly by the remote server API.

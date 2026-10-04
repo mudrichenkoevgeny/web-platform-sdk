@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AppError, isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientSecurityErrorCodes, ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
-import { ResetEmailPasswordUseCase } from '@/usecase/auth/resetpassword/ResetEmailPasswordUseCase'
-import { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/resetpassword/SendResetPasswordConfirmationToEmailUseCase'
+import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import type { ValidatePasswordUseCase } from "@mudrichenkoevgeny/web-platform-sdk-core-security";
+import type { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
+import type { ResetEmailPasswordUseCase } from '@/usecase/auth/resetpassword/ResetEmailPasswordUseCase'
+import type { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/resetpassword/SendResetPasswordConfirmationToEmailUseCase'
 import { FieldValidator } from '@/validator/FieldValidator'
-
 /**
  * Union representing the active screen state for {@link ResetEmailPasswordScreen}.
  */

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react'
-import { ChoiceListingFilterDefinition } from '@/listing/ListingModels'
+import type { ChoiceListingFilterDefinition } from '@/listing/ListingModels'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { enStrings } from '@/locales/en/strings'

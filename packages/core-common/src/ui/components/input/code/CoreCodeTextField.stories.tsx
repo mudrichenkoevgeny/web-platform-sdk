@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreCodeTextField } from './CoreCodeTextField'
+import { CoreCodeTextField } from '@/ui/components/input/code/CoreCodeTextField'
 
 const meta: Meta<typeof CoreCodeTextField> = {
   title: 'Core/Input/CoreCodeTextField',

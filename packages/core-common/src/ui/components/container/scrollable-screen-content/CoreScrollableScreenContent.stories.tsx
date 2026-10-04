@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { CoreScrollableScreenContent } from './CoreScrollableScreenContent'
+import { CoreScrollableScreenContent } from '@/ui/components/container/scrollable-screen-content/CoreScrollableScreenContent'
 
 const meta: Meta<typeof CoreScrollableScreenContent> = {
   title: 'Core/Container/CoreScrollableScreenContent',

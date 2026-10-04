@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { resendCountdown } from './resendCountdown'
+import { resendCountdown } from '@/time/resendCountdown'
 
 describe('resendCountdown', () => {
   it('counts down from totalSeconds to 0', async () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ConfirmationRepositoryImpl } from './ConfirmationRepositoryImpl'
+import { ConfirmationRepositoryImpl } from '@/repository/confirmation/ConfirmationRepositoryImpl'
 import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ConfirmationRepositoryImpl', () => {
   it('executes action when no cooldown is active', async () => {

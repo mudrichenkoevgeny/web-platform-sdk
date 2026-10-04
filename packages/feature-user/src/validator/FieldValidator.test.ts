@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { FieldValidator } from './FieldValidator'
+import { FieldValidator } from '@/validator/FieldValidator'
 
 describe('FieldValidator', () => {
   it('validates email addresses correctly', () => {

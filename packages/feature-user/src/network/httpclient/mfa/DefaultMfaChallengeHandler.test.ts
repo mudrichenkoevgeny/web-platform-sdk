@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { DefaultMfaChallengeHandler } from './DefaultMfaChallengeHandler'
+import { DefaultMfaChallengeHandler } from '@/network/httpclient/mfa/DefaultMfaChallengeHandler'
 
 describe('DefaultMfaChallengeHandler', () => {
   it('requests code and resolves on confirm', async () => {

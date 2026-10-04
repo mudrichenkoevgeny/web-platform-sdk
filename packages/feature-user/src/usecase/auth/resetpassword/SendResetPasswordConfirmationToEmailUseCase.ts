@@ -1,6 +1,6 @@
-import { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
-import { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
+import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Sends a password-reset confirmation to account email.

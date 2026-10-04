@@ -1,6 +1,6 @@
 import { AccessTokenProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
-import { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Persists session tokens for the user feature.

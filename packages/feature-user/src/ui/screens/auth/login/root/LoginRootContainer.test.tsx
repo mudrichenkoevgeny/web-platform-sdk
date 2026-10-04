@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginRootContainer } from './LoginRootContainer'
+import { LoginRootContainer } from '@/ui/screens/auth/login/root/LoginRootContainer'
 
 describe('LoginRootContainer', () => {
   it('renders children content and triggers onDismiss when backdrop clicked', async () => {

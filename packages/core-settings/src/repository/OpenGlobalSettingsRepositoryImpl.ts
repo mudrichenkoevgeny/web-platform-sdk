@@ -1,11 +1,13 @@
-import { AppResult, AppError, mapSuccess, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError, WebSocketService, SocketFrame } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenGlobalSettings, toOpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
-import { OpenGlobalSettingsRepository, OpenGlobalSettingsObserver } from './OpenGlobalSettingsRepository'
-import { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
-import { OpenGlobalSettingsStorage } from '@/storage/globalsettings/OpenGlobalSettingsStorage'
+import { toOpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
+import type { OpenGlobalSettings } from "@/domain/model/OpenGlobalSettings";
+import { OpenGlobalSettingsRepository } from '@/repository/OpenGlobalSettingsRepository'
+import type { OpenGlobalSettingsObserver } from "@/repository/OpenGlobalSettingsRepository";
+import type { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
+import type { OpenGlobalSettingsStorage } from '@/storage/globalsettings/OpenGlobalSettingsStorage'
 import { SettingsWebSocketEventTypes } from '@/network/contract/SettingsWebSocketEventTypes'
-
 /**
  * Implementation of {@link OpenGlobalSettingsRepository} handling API fetch, encrypted storage, and WebSocket updates.
  */

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SecurityWebSocketMessageHandler } from './SecurityWebSocketMessageHandler'
+import type { SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { SecurityWebSocketMessageHandler } from '@/network/websocket/messagehandler/SecurityWebSocketMessageHandler'
 
 describe('SecurityWebSocketMessageHandler', () => {
   it('returns NotHandled for unhandled frames', () => {

@@ -2,7 +2,8 @@ import React, { forwardRef } from 'react'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 
 /**
  * Props for the {@link AuthProviderItem} component.

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { AppType, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { SelfIdentifierListScreen } from './SelfIdentifierListScreen'
-import { SelfIdentifierListStoreDependencies } from './SelfIdentifierListStore'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfIdentifierListScreen } from '@/ui/screens/profile/identifier/list/SelfIdentifierListScreen'
+import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
 
 const mockIdentifier1: UserIdentifier = {
   id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),

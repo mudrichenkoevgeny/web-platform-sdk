@@ -1,9 +1,7 @@
 import {
-  WebSocketMessageHandler,
-  WebSocketMessageHandlerResult,
-  webSocketMessageHandlerResultNotHandled,
-  SocketFrame
+  webSocketMessageHandlerResultNotHandled
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { WebSocketMessageHandler, WebSocketMessageHandlerResult, SocketFrame } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 
 /**
  * WebSocket message handler for settings domain frame types.

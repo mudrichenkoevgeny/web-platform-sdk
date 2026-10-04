@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { UserAgentParser } from './UserAgentParser'
+import { UserAgentParser } from '@/platform/parser/UserAgentParser'
 
 describe('UserAgentParser', () => {
   it('parses Chrome on Windows 10/11', () => {

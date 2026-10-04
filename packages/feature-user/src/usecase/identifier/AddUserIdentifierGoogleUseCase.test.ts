@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AddUserIdentifierGoogleUseCase } from './AddUserIdentifierGoogleUseCase'
-import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/AddUserIdentifierGoogleUseCase'
+import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
+import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('AddUserIdentifierGoogleUseCase', () => {
   let mockAuthService: GoogleAuthService

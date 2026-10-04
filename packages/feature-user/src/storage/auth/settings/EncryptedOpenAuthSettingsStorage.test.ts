@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedOpenAuthSettingsStorage } from './EncryptedOpenAuthSettingsStorage'
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import { EncryptedOpenAuthSettingsStorage } from '@/storage/auth/settings/EncryptedOpenAuthSettingsStorage'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedOpenAuthSettingsStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { ListingEmptyState } from './ListingEmptyState'
+import { ListingEmptyState } from '@/ui/components/listing/empty-state/ListingEmptyState'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('ListingEmptyState', () => {

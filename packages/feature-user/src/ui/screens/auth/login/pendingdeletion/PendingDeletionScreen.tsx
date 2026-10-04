@@ -8,12 +8,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings, FeatureUserStrings } from '@/locales/index'
+import { enUserStrings } from '@/locales/index'
+import type { FeatureUserStrings } from "@/locales/index";
 import {
   PendingDeletionProvider,
-  PendingDeletionStoreDependencies,
   usePendingDeletionStore
-} from './PendingDeletionStore'
+} from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore'
+import type { PendingDeletionStoreDependencies } from "@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore";
 
 const PendingDeletionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

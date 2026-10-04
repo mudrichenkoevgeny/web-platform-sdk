@@ -1,4 +1,4 @@
-import { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
+import type { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 import { ServerError } from '@/model/ServerError'
 import { generateErrorId, toErrorIdOrNull } from '@/model/ErrorId'
 

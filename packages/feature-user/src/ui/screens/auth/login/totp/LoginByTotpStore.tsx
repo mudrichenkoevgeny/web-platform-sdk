@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/LoginByTotpRecoveryCodeUseCase'
-import { LoginByTotpUseCase } from '@/usecase/auth/login/LoginByTotpUseCase'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/LoginByTotpRecoveryCodeUseCase'
+import type { LoginByTotpUseCase } from '@/usecase/auth/login/LoginByTotpUseCase'
 import { FieldValidator } from '@/validator/FieldValidator'
-
 /**
  * Mode determining active MFA verification method.
  */

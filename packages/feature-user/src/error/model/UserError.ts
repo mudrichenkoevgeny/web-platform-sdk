@@ -1,7 +1,7 @@
 import { UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { ErrorId, generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ClientUserErrorCodes } from '@/naming/ClientUserErrorCodes'
-
 /**
  * Error emitted when the stored refresh token is rejected or missing while refreshing a session.
  */

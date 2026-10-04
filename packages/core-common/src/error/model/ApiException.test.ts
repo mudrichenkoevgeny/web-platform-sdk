@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ApiException } from './ApiException'
+import { ApiException } from '@/error/model/ApiException'
 
 describe('ApiException', () => {
   it('retains apiErrorResponse payload and prototype', () => {

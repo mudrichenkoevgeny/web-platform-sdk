@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatEpochMillisToDateTime, formatInstantToDateTime } from './dateTimeFormatter'
+import { formatEpochMillisToDateTime, formatInstantToDateTime } from '@/time/dateTimeFormatter'
 
 describe('dateTimeFormatter', () => {
   it('formats epoch millis number correctly', () => {

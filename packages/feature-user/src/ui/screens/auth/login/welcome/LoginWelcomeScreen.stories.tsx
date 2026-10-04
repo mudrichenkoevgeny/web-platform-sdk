@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginWelcomeScreen } from './LoginWelcomeScreen'
-import { LoginWelcomeStoreDependencies } from './LoginWelcomeStore'
+import { LoginWelcomeScreen } from '@/ui/screens/auth/login/welcome/LoginWelcomeScreen'
+import type { LoginWelcomeStoreDependencies } from '@/ui/screens/auth/login/welcome/LoginWelcomeStore'
 
 const createMockDeps = (): LoginWelcomeStoreDependencies => ({
   externalLauncher: { openUrl: () => {}, openMail: () => {}, openFile: () => {} },

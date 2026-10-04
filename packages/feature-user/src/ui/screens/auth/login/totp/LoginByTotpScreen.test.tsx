@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByTotpScreen } from './LoginByTotpScreen'
-import { LoginByTotpStoreDependencies } from './LoginByTotpStore'
+import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
+import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/LoginByTotpStore'
 import { enUserStrings } from '@/locales/index'
 
 describe('LoginByTotpScreen', () => {
