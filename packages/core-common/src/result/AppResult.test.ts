@@ -11,8 +11,8 @@ import {
   flatMapSuccess,
   mapSuccess
 } from './AppResult'
-import { CommonError } from '../error/model/CommonError'
-import { ClientCommonErrorCodes } from '../error/naming/ClientCommonErrorCodes'
+import { CommonError } from '@/error/model/CommonError'
+import { ClientCommonErrorCodes } from '@/error/naming/ClientCommonErrorCodes'
 
 describe('AppResult', () => {
   it('appResultSuccess creates a success result', () => {

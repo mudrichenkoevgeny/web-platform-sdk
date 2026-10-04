@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
-import { CoreIcon } from '../../icon/icon/CoreIcon'
-import { icons } from '../../../../assets/icons/index.js'
+import { cn } from '@/utils/cn'
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
+import { icons } from '@/assets/icons/index.js'
 
 export interface CoreBackButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick: () => void

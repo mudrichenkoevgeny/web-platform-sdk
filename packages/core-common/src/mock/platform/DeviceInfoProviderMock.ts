@@ -1,5 +1,5 @@
 import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { DeviceInfoProvider } from '../../platform/deviceinfo/DeviceInfoProvider'
+import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
 
 /**
  * Mock implementation of {@link DeviceInfoProvider} for supplying predictable device metadata in tests.

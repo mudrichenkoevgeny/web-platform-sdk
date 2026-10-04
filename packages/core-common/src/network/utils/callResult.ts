@@ -1,8 +1,8 @@
-import { AppResult, appResultSuccess, appResultFailure } from '../../result/AppResult'
-import { AppError } from '../../error/model/AppError'
-import { ApiException } from '../../error/model/ApiException'
-import { toServerError } from '../../error/mapper/toServerError'
-import { CommonError } from '../../error/model/CommonError'
+import { AppResult, appResultSuccess, appResultFailure } from '@/result/AppResult'
+import { AppError } from '@/error/model/AppError'
+import { ApiException } from '@/error/model/ApiException'
+import { toServerError } from '@/error/mapper/toServerError'
+import { CommonError } from '@/error/model/CommonError'
 import { isNoInternetException } from './isNoInternetException'
 
 /**

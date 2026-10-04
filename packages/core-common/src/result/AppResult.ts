@@ -1,5 +1,5 @@
-import { AppError } from '../error/model/AppError'
-import { CommonError } from '../error/model/CommonError'
+import { AppError } from '@/error/model/AppError'
+import { CommonError } from '@/error/model/CommonError'
 
 /**
  * Successful result representation holding data payload of type T.

@@ -1,4 +1,4 @@
-import { AppError } from '../error/model/AppError'
+import { AppError } from '@/error/model/AppError'
 
 /** Constants for listing operations. */
 export const ListingConstants = {

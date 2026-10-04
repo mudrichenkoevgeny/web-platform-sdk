@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { callResult } from './callResult'
-import { ApiException } from '../../error/model/ApiException'
-import { ServerError } from '../../error/model/ServerError'
-import { CommonErrorNoInternetConnection, CommonErrorNetwork, CommonErrorContractViolation, CommonErrorInternal } from '../../error/model/CommonError'
-import { isSuccess, isFailure } from '../../result/AppResult'
+import { ApiException } from '@/error/model/ApiException'
+import { ServerError } from '@/error/model/ServerError'
+import { CommonErrorNoInternetConnection, CommonErrorNetwork, CommonErrorContractViolation, CommonErrorInternal } from '@/error/model/CommonError'
+import { isSuccess, isFailure } from '@/result/AppResult'
 
 describe('callResult', () => {
   it('returns AppResultSuccess on successful call', async () => {

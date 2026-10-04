@@ -1,6 +1,6 @@
 import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettings } from '../domain/model/OpenGlobalSettings'
-import { OpenGlobalSettingsRepository } from '../repository/OpenGlobalSettingsRepository'
+import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
+import { OpenGlobalSettingsRepository } from '@/repository/OpenGlobalSettingsRepository'
 
 /**
  * Use case that delegates to {@link OpenGlobalSettingsRepository.refreshOpenGlobalSettings}.
@@ -20,7 +20,7 @@ export class RefreshOpenGlobalSettingsUseCase {
    *
    * @returns AppResult resolving to refreshed OpenGlobalSettings or AppError
    */
-  public async invoke(): Promise<AppResult<OpenGlobalSettings, AppError>> {
+  public async execute(): Promise<AppResult<OpenGlobalSettings, AppError>> {
     return this.openGlobalSettingsRepository.refreshOpenGlobalSettings()
   }
 }

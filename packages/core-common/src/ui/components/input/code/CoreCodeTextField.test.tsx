@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CoreCodeTextField } from './CoreCodeTextField'
-import { ComponentTestHarness } from '../../../../testing/ComponentTestHarness'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreCodeTextField', () => {
   it('renders input with numeric inputMode', () => {

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest'
 import { HttpClient } from './HttpClient'
-import { WebDeviceInfoProvider } from '../../platform/deviceinfo/DeviceInfoProvider'
-import { EncryptedCommonStorage } from '../../storage/common/EncryptedCommonStorage'
-import { createInMemoryEncryptedSettings } from '../../mock/storage/EncryptedSettingsMock'
-import { ApiException } from '../../error/model/ApiException'
-import { CommonHttpHeaders } from '../contract/CommonHttpHeaders'
+import { WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
+import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
+import { ApiException } from '@/error/model/ApiException'
+import { CommonHttpHeaders } from '@/contract/CommonHttpHeaders'
 
 describe('HttpClient', () => {
   const createTestHttpClient = (customFetch: typeof fetch, logger?: (msg: string) => void) => {

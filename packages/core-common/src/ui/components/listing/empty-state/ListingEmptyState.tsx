@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
-import { CoreIcon } from '../../icon/icon/CoreIcon'
-import { icons } from '../../../../assets/icons/index.js'
-import { enStrings } from '../../../../locales/en/strings'
+import { cn } from '@/utils/cn'
+import { CoreIcon } from '@/icon/icon/CoreIcon'
+import { icons } from '@/assets/icons/index.js'
+import { enStrings } from '@/locales/en/strings'
 
 export interface ListingEmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   text?: string

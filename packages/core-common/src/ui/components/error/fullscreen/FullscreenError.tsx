@@ -1,11 +1,11 @@
 import { forwardRef } from 'react'
-import { AppError } from '../../../../error/model/AppError'
-import { useAppErrorParser } from '../../../../context/SdkProvider'
-import { CoreButton } from '../../button/button/CoreButton'
-import { enStrings } from '../../../../locales/en/strings'
-import { cn } from '../../../../utils/cn'
-import { CoreIcon } from '../../icon/icon/CoreIcon'
-import { icons } from '../../../../assets/icons/index.js'
+import { AppError } from '@/error/model/AppError'
+import { useAppErrorParser } from '@/context/SdkProvider'
+import { CoreButton } from '@/ui/components/button/button/CoreButton'
+import { enStrings } from '@/locales/en/strings'
+import { cn } from '@/utils/cn'
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
+import { icons } from '@/assets/icons/index.js'
 
 export interface FullscreenErrorProps extends React.HTMLAttributes<HTMLDivElement> {
   error: AppError

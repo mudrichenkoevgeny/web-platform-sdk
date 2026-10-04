@@ -1,6 +1,6 @@
 import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { AppResult, AppError, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsApi } from '../../network/securitysettings/OpenSecuritySettingsApi'
+import { OpenSecuritySettingsApi } from '@/network/securitysettings/OpenSecuritySettingsApi'
 import { openSecuritySettingsPayloadMock } from './model/OpenSecuritySettingsPayloadMock'
 
 /**

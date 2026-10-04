@@ -1,5 +1,5 @@
-import { EncryptedSettings } from '../storage/EncryptedSettings'
-import { getSettingsFactory } from '../storage/WebCryptoSettings'
+import { EncryptedSettings } from '@/storage/EncryptedSettings'
+import { getSettingsFactory } from '@/storage/WebCryptoSettings'
 
 /**
  * Component container for initializing WebCrypto encrypted settings.

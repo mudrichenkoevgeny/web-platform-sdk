@@ -1,6 +1,6 @@
 import { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
-import { ServerError } from '../model/ServerError'
-import { generateErrorId, toErrorIdOrNull } from '../model/ErrorId'
+import { ServerError } from '@/model/ServerError'
+import { generateErrorId, toErrorIdOrNull } from '@/model/ErrorId'
 
 /**
  * Converts a structured API error response payload into a {@link ServerError}.

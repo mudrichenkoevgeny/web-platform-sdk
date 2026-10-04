@@ -1,0 +1,46 @@
+import type { Meta, StoryObj } from '@storybook/react'
+import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ResetEmailPasswordScreen } from './ResetEmailPasswordScreen'
+import { ResetEmailPasswordStoreDependencies } from './ResetEmailPasswordStore'
+
+const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
+  resetPasswordRepository: {
+    getRemainingResetPasswordConfirmationDelayInSeconds: () => 0
+  } as any,
+  sendResetPasswordConfirmationToEmailUseCase: {
+    execute: async () =>
+      appResultSuccess({
+        retryAfterSeconds: 30
+      })
+  } as any,
+  resetEmailPasswordUseCase: {
+    execute: async () => appResultSuccess(undefined)
+  } as any,
+  validatePasswordUseCase: {
+    invoke: async () => appResultSuccess(undefined)
+  } as any,
+  onBack: () => {},
+  onFinished: () => {}
+})
+
+const meta: Meta<typeof ResetEmailPasswordScreen> = {
+  title: 'Feature/User/Auth/ResetPassword/ResetEmailPasswordScreen',
+  component: ResetEmailPasswordScreen,
+  decorators: [
+    (Story) => (
+      <ComponentTestHarness>
+        <div className="w-[420px] h-[520px] border rounded-xl overflow-hidden">
+          <Story />
+        </div>
+      </ComponentTestHarness>
+    )
+  ],
+  args: {
+    dependencies: createMockDeps()
+  }
+}
+
+export default meta
+type Story = StoryObj<typeof ResetEmailPasswordScreen>
+
+export const Default: Story = {}

@@ -1,10 +1,10 @@
-import { AccessTokenProvider } from '../../provider/AccessTokenProvider'
-import { DeviceInfoProvider } from '../../../platform/deviceinfo/DeviceInfoProvider'
-import { SocketFrame } from '../../model/websocket/SocketFrame'
-import { WebSocketMessageHandler } from '../messagehandler/WebSocketMessageHandler'
+import { AccessTokenProvider } from '@/provider/AccessTokenProvider'
+import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import { SocketFrame } from '@/model/websocket/SocketFrame'
+import { WebSocketMessageHandler } from '@/messagehandler/WebSocketMessageHandler'
 import { WebSocketService, SocketEventListener } from './WebSocketService'
-import { CommonWebSocketEventTypes } from '../../contract/CommonWebSocketEventTypes'
-import { generateErrorId } from '../../../error/model/ErrorId'
+import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 const INITIAL_RECONNECT_DELAY_MS = 2000
 const MAX_RECONNECT_DELAY_MS = 60000

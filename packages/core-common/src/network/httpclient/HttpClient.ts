@@ -1,9 +1,9 @@
 import { apiErrorResponseSchema, ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
-import { DeviceInfoProvider } from '../../platform/deviceinfo/DeviceInfoProvider'
-import { CommonHttpHeaders } from '../contract/CommonHttpHeaders'
+import { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import { CommonHttpHeaders } from '@/contract/CommonHttpHeaders'
 import { HttpClientConfigPlugin } from './HttpClientConfigPlugin'
-import { ApiException } from '../../error/model/ApiException'
-import { generateErrorId } from '../../error/model/ErrorId'
+import { ApiException } from '@/error/model/ApiException'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 /** Configuration options for {@link HttpClient}. */
 export interface HttpClientConfig {
@@ -104,7 +104,7 @@ export class HttpClient {
 
     for (const plugin of this.plugins) {
       if (plugin.onResponse) {
-        response = await plugin.onResponse(response)
+        response = await plugin.onResponse(response, fullUrl, requestInit, this.fetchImpl)
       }
     }
 

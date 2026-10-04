@@ -1,8 +1,8 @@
 import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsRepository } from '../repository/OpenSecuritySettingsRepository'
-import { PasswordPolicyValidator, PasswordPolicyFailReason } from '../domain/model/PasswordPolicyValidator'
-import { SecurityError } from '../error/model/SecurityError'
-import { OpenPasswordPolicy } from '../domain/model/OpenSecuritySettings'
+import { OpenSecuritySettingsRepository } from '@/repository/OpenSecuritySettingsRepository'
+import { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/PasswordPolicyValidator'
+import { SecurityError } from '@/error/model/SecurityError'
+import { OpenPasswordPolicy } from '@/domain/model/OpenSecuritySettings'
 
 /** Default fallback password policy if loading from repository fails. */
 const FALLBACK_PASSWORD_POLICY: OpenPasswordPolicy = {
@@ -35,7 +35,7 @@ export class ValidatePasswordUseCase {
    * @param password - Candidate password to validate
    * @returns AppResult resolving to void on success, or SecurityError on failure
    */
-  public async invoke(password: string): Promise<AppResult<void, AppError>> {
+  public async execute(password: string): Promise<AppResult<void, AppError>> {
     const securitySettingsResult = await this.openSecuritySettingsRepository.getOpenSecuritySettings()
 
     const passwordPolicy = securitySettingsResult.success

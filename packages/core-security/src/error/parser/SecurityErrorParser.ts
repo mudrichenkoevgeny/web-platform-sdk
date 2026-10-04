@@ -4,8 +4,8 @@ import {
   CommonErrorArgs
 } from '@mudrichenkoevgeny/shared-foundation'
 import { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientSecurityErrorCodes } from '../naming/ClientSecurityErrorCodes'
-import { enSecurityStrings, CoreSecurityStrings } from '../../locales/index'
+import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
+import { enSecurityStrings, CoreSecurityStrings } from '@/locales/index'
 
 /**
  * AppErrorParser implementation for security-domain error codes.

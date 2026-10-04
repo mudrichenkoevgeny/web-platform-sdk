@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '../outlined/CoreOutlinedTextField'
+import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '@/outlined/CoreOutlinedTextField'
 
 export interface CoreCodeTextFieldProps extends CoreOutlinedTextFieldProps {}
 

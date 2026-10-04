@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, ErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SecurityErrorParser } from './SecurityErrorParser'
-import { SecurityError } from '../model/SecurityError'
-import { enSecurityStrings, ruSecurityStrings } from '../../locales/index'
+import { SecurityError } from '@/model/SecurityError'
+import { enSecurityStrings, ruSecurityStrings } from '@/locales/index'
 
 describe('SecurityErrorParser', () => {
   const parserEn = new SecurityErrorParser(enSecurityStrings)

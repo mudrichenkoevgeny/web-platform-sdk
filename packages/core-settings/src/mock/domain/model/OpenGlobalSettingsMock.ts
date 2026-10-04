@@ -1,4 +1,4 @@
-import { OpenGlobalSettings } from '../../../domain/model/OpenGlobalSettings'
+import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
 
 /**
  * Creates a mock {@link OpenGlobalSettings} object.

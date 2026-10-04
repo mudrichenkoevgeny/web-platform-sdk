@@ -15,7 +15,15 @@ export interface HttpClientConfigPlugin {
    * Hook invoked after receiving an HTTP response.
    *
    * @param response - Received HTTP response
+   * @param url - Optional request target URL
+   * @param init - Optional request options
+   * @param fetchImpl - Optional fetch implementation function
    * @returns Modified response or original response
    */
-  onResponse?(response: Response): Promise<Response> | Response
+  onResponse?(
+    response: Response,
+    url?: string,
+    init?: RequestInit,
+    fetchImpl?: typeof fetch
+  ): Promise<Response> | Response
 }

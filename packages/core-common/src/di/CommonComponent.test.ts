@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { CommonComponent } from './CommonComponent'
-import { createInMemoryEncryptedSettings } from '../mock/storage/EncryptedSettingsMock'
-import { AccessTokenProviderMock } from '../mock/network/AccessTokenProviderMock'
-import { CommonError } from '../error/model/CommonError'
+import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
+import { AccessTokenProviderMock } from '@/mock/network/AccessTokenProviderMock'
+import { CommonError } from '@/error/model/CommonError'
 
 describe('CommonComponent', () => {
   const createTestComponent = () => {

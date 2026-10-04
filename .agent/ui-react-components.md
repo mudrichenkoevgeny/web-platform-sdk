@@ -26,3 +26,27 @@ alwaysApply: true
 - **Generated Tokens Artifacts:** `tokens.css` and `tokens.ts` (`packages/core-common/src/theme/tokens/`) are generated automatically by the design system toolchain. **Manual modifications to `tokens.css` and `tokens.ts` are strictly prohibited.**
 - **Font Assets Location:** Physical font files (`.woff2`) are copied directly from `platform-design-system` (`assets/fonts/woff2/`) into `packages/core-common/src/assets/fonts/` so `@font-face` rules in `tokens.css` can resolve them.
 - **Theme Wiring:** `ThemeProvider` and `useTheme()` handle light/dark/system mode switching, while `sdkTailwindPreset` maps CSS token variables (`var(--color-primary)`, `var(--spacing-md)`, etc.) directly into Tailwind CSS utility classes.
+
+## 6. UI Component & Screen Dedicated Folder Grouping
+- **Strict Single-Folder Grouping:** Every UI component or screen (`*.tsx`) must be placed in its own dedicated subfolder together with its corresponding Unit/UI Test (`*.test.tsx`) and Storybook Preview (`*.stories.tsx`).
+- **Directory Structure:**
+  - `src/ui/components/<category>/<component-name>/<ComponentName>.tsx`
+  - `src/ui/components/<category>/<component-name>/<ComponentName>.test.tsx`
+  - `src/ui/components/<category>/<component-name>/<ComponentName>.stories.tsx`
+- **Flat Lists Ban:** Placing multiple UI components or screens directly into a flat parent directory is strictly forbidden.
+
+## 7. Accessibility Mandate (Keyboard Navigation)
+- **Keyboard Access:** All interactive elements (clickable cards, items, custom buttons) must be fully navigable via keyboard.
+- **Custom Clickable Containers:** If a non-`<button>` container element (e.g. `<div>`) receives a click handler (`onClick` / `onSessionClick`):
+  - Must conditionally specify `role={onClick ? 'button' : undefined}`.
+  - Must specify `tabIndex={onClick ? 0 : undefined}` to participate in tab order.
+  - Must specify `onKeyDown` handler to trigger click on `Enter` and `Space` (`' '`) keys.
+  - Must include focus indicator styles (e.g., `focus:outline-none focus:ring-2 focus:ring-primary`).
+
+## 8. Screen Store Context Isolation
+- **Per-Instance Stores:** Screen-level stores must be created per component instance using `createStore()` (vanilla Zustand) + React Context Provider + `useStore(context, selector)` hook.
+- **No Global Singletons for Screens:** Global `create()` stores are strictly forbidden for screen UI states, form inputs, and step transitions to prevent state leakage across multiple mounted SDK widgets or screens.
+
+
+
+

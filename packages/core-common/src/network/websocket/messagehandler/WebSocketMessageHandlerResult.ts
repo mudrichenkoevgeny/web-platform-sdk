@@ -1,5 +1,5 @@
-import { AppError } from '../../../error/model/AppError'
-import { SocketFrame } from '../../model/websocket/SocketFrame'
+import { AppError } from '@/error/model/AppError'
+import { SocketFrame } from '@/model/websocket/SocketFrame'
 
 /**
  * Result returned by a {@link WebSocketMessageHandler} handling an incoming frame.

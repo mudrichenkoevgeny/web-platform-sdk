@@ -1,8 +1,8 @@
-import { WebSocketService, SocketEventListener } from '../../network/websocket/service/WebSocketService'
-import { WebSocketMessageHandler } from '../../network/websocket/messagehandler/WebSocketMessageHandler'
-import { SocketFrame } from '../../network/model/websocket/SocketFrame'
-import { CommonWebSocketEventTypes } from '../../network/contract/CommonWebSocketEventTypes'
-import { generateErrorId } from '../../error/model/ErrorId'
+import { WebSocketService, SocketEventListener } from '@/network/websocket/service/WebSocketService'
+import { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
+import { SocketFrame } from '@/network/model/websocket/SocketFrame'
+import { CommonWebSocketEventTypes } from '@/network/contract/CommonWebSocketEventTypes'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 /**
  * Mock implementation of {@link WebSocketService} for unit testing WebSocket interactions.

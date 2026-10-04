@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CoreOutlinedTextField } from './CoreOutlinedTextField'
-import { ComponentTestHarness } from '../../../../testing/ComponentTestHarness'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreOutlinedTextField', () => {
   it('renders label and handles text input', async () => {

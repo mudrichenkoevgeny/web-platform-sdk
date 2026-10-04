@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { cn } from '../../../../utils/cn'
+import { cn } from '@/utils/cn'
 
 export interface CoreOutlinedTextFieldProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'placeholder'> {

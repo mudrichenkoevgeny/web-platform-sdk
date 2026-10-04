@@ -1,5 +1,5 @@
 import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettings } from '../domain/model/OpenGlobalSettings'
+import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
 
 /** Observer callback signature for global settings changes. */
 export type OpenGlobalSettingsObserver = (settings: OpenGlobalSettings | null) => void

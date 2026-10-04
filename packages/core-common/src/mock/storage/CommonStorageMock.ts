@@ -1,4 +1,4 @@
-import { CommonStorage } from '../../storage/common/CommonStorage'
+import { CommonStorage } from '@/storage/common/CommonStorage'
 
 /**
  * Mock in-memory implementation of {@link CommonStorage} for storing device credentials during tests.

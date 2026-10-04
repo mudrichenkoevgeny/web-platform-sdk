@@ -1,13 +1,13 @@
 import { EncryptedSettings, HttpClient, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsStorage } from '../storage/globalsettings/OpenGlobalSettingsStorage'
-import { EncryptedOpenGlobalSettingsStorage } from '../storage/globalsettings/EncryptedOpenGlobalSettingsStorage'
-import { OpenGlobalSettingsApi } from '../network/globalsettings/OpenGlobalSettingsApi'
-import { FetchOpenGlobalSettingsApi } from '../network/globalsettings/FetchOpenGlobalSettingsApi'
-import { OpenGlobalSettingsRepository } from '../repository/OpenGlobalSettingsRepository'
-import { OpenGlobalSettingsRepositoryImpl } from '../repository/OpenGlobalSettingsRepositoryImpl'
-import { GetOpenGlobalSettingsUseCase } from '../usecase/GetOpenGlobalSettingsUseCase'
-import { RefreshOpenGlobalSettingsUseCase } from '../usecase/RefreshOpenGlobalSettingsUseCase'
-import { SettingsWebSocketMessageHandler } from '../network/websockets/messagehandler/SettingsWebSocketMessageHandler'
+import { OpenGlobalSettingsStorage } from '@/storage/globalsettings/OpenGlobalSettingsStorage'
+import { EncryptedOpenGlobalSettingsStorage } from '@/storage/globalsettings/EncryptedOpenGlobalSettingsStorage'
+import { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
+import { FetchOpenGlobalSettingsApi } from '@/network/globalsettings/FetchOpenGlobalSettingsApi'
+import { OpenGlobalSettingsRepository } from '@/repository/OpenGlobalSettingsRepository'
+import { OpenGlobalSettingsRepositoryImpl } from '@/repository/OpenGlobalSettingsRepositoryImpl'
+import { GetOpenGlobalSettingsUseCase } from '@/usecase/GetOpenGlobalSettingsUseCase'
+import { RefreshOpenGlobalSettingsUseCase } from '@/usecase/RefreshOpenGlobalSettingsUseCase'
+import { SettingsWebSocketMessageHandler } from '@/network/websockets/messagehandler/SettingsWebSocketMessageHandler'
 
 /**
  * Configuration options required to instantiate {@link SettingsComponent}.

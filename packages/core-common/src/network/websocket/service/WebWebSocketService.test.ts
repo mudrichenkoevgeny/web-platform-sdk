@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { WebWebSocketService } from './WebWebSocketService'
-import { AccessTokenProviderMock } from '../../../mock/network/AccessTokenProviderMock'
-import { WebDeviceInfoProvider } from '../../../platform/deviceinfo/DeviceInfoProvider'
-import { EncryptedCommonStorage } from '../../../storage/common/EncryptedCommonStorage'
-import { createInMemoryEncryptedSettings } from '../../../mock/storage/EncryptedSettingsMock'
-import { CommonWebSocketMessageHandler } from '../messagehandler/CommonWebSocketMessageHandler'
-import { SocketFrame } from '../../model/websocket/SocketFrame'
-import { CommonWebSocketEventTypes } from '../../contract/CommonWebSocketEventTypes'
+import { AccessTokenProviderMock } from '@/mock/network/AccessTokenProviderMock'
+import { WebDeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
+import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
+import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
+import { CommonWebSocketMessageHandler } from '@/messagehandler/CommonWebSocketMessageHandler'
+import { SocketFrame } from '@/model/websocket/SocketFrame'
+import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
 
 class MockWebSocket {
   public readyState = 1 // OPEN

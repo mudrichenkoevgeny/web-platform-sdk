@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CoreEmailTextField } from './CoreEmailTextField'
-import { ComponentTestHarness } from '../../../../testing/ComponentTestHarness'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('CoreEmailTextField', () => {
   it('renders default Email label and type', () => {

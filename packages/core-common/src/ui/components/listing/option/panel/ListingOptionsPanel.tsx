@@ -3,13 +3,13 @@ import {
   ListingOptionsConfig,
   ListingSortState,
   ListingFilterState
-} from '../../../../../listing/ListingModels'
-import { CoreButton } from '../../../button/button/CoreButton'
-import { ListingChoiceDropdown } from '../dropdown/ListingChoiceDropdown'
-import { CoreOutlinedTextField } from '../../../input/outlined/CoreOutlinedTextField'
-import { CoreTextButton } from '../../../button/text/CoreTextButton'
-import { enStrings } from '../../../../../locales/en/strings'
-import { cn } from '../../../../../utils/cn'
+} from '@/listing/ListingModels'
+import { CoreButton } from '@/ui/components/button/button/CoreButton'
+import { ListingChoiceDropdown } from '@/dropdown/ListingChoiceDropdown'
+import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
+import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
+import { enStrings } from '@/locales/en/strings'
+import { cn } from '@/utils/cn'
 
 export interface ListingOptionsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   config: ListingOptionsConfig

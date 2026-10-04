@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PagingFooter } from './PagingFooter'
-import { ComponentTestHarness } from '../../../../testing/ComponentTestHarness'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('PagingFooter', () => {
   it('displays page info and handles page changes', async () => {

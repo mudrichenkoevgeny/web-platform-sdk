@@ -1,10 +1,10 @@
 import { AppResult, AppError, mapSuccess, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenSecuritySettings, toOpenSecuritySettings } from '../domain/model/OpenSecuritySettings'
+import { OpenSecuritySettings, toOpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 import { OpenSecuritySettingsRepository, OpenSecuritySettingsObserver } from './OpenSecuritySettingsRepository'
-import { OpenSecuritySettingsApi } from '../network/securitysettings/OpenSecuritySettingsApi'
-import { OpenSecuritySettingsStorage } from '../storage/securitysettings/OpenSecuritySettingsStorage'
-import { SecurityWebSocketEventTypes } from '../network/contract/SecurityWebSocketEventTypes'
+import { OpenSecuritySettingsApi } from '@/network/securitysettings/OpenSecuritySettingsApi'
+import { OpenSecuritySettingsStorage } from '@/storage/securitysettings/OpenSecuritySettingsStorage'
+import { SecurityWebSocketEventTypes } from '@/network/contract/SecurityWebSocketEventTypes'
 
 /**
  * Implementation of {@link OpenSecuritySettingsRepository} handling API fetch, encrypted storage, and WebSocket updates.

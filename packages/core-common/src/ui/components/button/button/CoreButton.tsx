@@ -1,11 +1,23 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
+import { cn } from '@/utils/cn'
 
+/**
+ * Props for the {@link CoreButton} component.
+ */
 export interface CoreButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  label: string
+  /**
+   * Button label content or React element.
+   */
+  label: React.ReactNode
+  /**
+   * Shows a loading spinner instead of label when true.
+   */
   isLoading?: boolean
 }
 
+/**
+ * Core button component styled with design system tokens and Tailwind CSS.
+ */
 export const CoreButton = forwardRef<HTMLButtonElement, CoreButtonProps>(
   ({ label, isLoading = false, disabled = false, className, type = 'button', ...rest }, ref) => {
     const isButtonDisabled = disabled || isLoading

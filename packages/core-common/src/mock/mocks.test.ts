@@ -9,7 +9,7 @@ import { PlatformRepositoryMock } from './platform/PlatformRepositoryMock'
 import { CommonStorageMock } from './storage/CommonStorageMock'
 import { EncryptedSettingsMock } from './storage/EncryptedSettingsMock'
 import { createMockCommonComponent } from './di/CommonComponentMock'
-import { CommonError } from '../error/model/CommonError'
+import { CommonError } from '@/error/model/CommonError'
 
 describe('Domain Mocks', () => {
   it('AppErrorParserMock parses registered codes and fallback', () => {

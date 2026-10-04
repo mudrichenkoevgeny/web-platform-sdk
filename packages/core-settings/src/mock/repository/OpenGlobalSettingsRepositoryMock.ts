@@ -1,7 +1,7 @@
 import { AppResult, AppError, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsRepository, OpenGlobalSettingsObserver } from '../../repository/OpenGlobalSettingsRepository'
-import { OpenGlobalSettings } from '../../domain/model/OpenGlobalSettings'
-import { openGlobalSettingsMock } from '../domain/model/OpenGlobalSettingsMock'
+import { OpenGlobalSettingsRepository, OpenGlobalSettingsObserver } from '@/repository/OpenGlobalSettingsRepository'
+import { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
+import { openGlobalSettingsMock } from '@/domain/model/OpenGlobalSettingsMock'
 
 /**
  * Configuration options for {@link OpenGlobalSettingsRepositoryMock}.

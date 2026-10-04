@@ -1,6 +1,6 @@
 import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { AppResult, AppError, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsApi } from '../../network/globalsettings/OpenGlobalSettingsApi'
+import { OpenGlobalSettingsApi } from '@/network/globalsettings/OpenGlobalSettingsApi'
 import { openGlobalSettingsPayloadMock } from './model/OpenGlobalSettingsPayloadMock'
 
 /**

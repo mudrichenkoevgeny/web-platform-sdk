@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react'
-import { CommonComponent } from '../di/CommonComponent'
-import { AppErrorParser } from '../error/parser/AppErrorParser'
-import { CommonErrorParser } from '../error/parser/CommonErrorParser'
+import { CommonComponent } from '@/di/CommonComponent'
+import { AppErrorParser } from '@/error/parser/AppErrorParser'
+import { CommonErrorParser } from '@/error/parser/CommonErrorParser'
 
 const CommonComponentContext = createContext<CommonComponent | null>(null)
 const ErrorParserContext = createContext<AppErrorParser>(new CommonErrorParser())

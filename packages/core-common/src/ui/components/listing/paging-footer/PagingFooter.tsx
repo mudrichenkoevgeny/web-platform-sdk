@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
-import { CoreBackButton } from '../../button/back/CoreBackButton'
-import { enStrings } from '../../../../locales/en/strings'
+import { cn } from '@/utils/cn'
+import { CoreBackButton } from '@/button/back/CoreBackButton'
+import { enStrings } from '@/locales/en/strings'
 
 export interface PagingFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage: number

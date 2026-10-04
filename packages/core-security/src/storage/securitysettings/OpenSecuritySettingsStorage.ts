@@ -1,4 +1,4 @@
-import { OpenSecuritySettings } from '../../domain/model/OpenSecuritySettings'
+import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
 
 /**
  * Persistence port for {@link OpenSecuritySettings} storage implementations.

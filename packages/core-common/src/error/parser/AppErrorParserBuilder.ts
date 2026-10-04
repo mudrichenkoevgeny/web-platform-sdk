@@ -1,4 +1,4 @@
-import { AppError } from '../model/AppError'
+import { AppError } from '@/model/AppError'
 import { AppErrorParser } from './AppErrorParser'
 
 /**

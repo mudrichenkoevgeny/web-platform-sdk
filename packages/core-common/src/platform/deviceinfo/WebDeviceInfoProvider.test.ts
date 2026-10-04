@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { WebDeviceInfoProvider } from './DeviceInfoProvider'
-import { EncryptedCommonStorage } from '../../storage/common/EncryptedCommonStorage'
-import { createInMemoryEncryptedSettings } from '../../mock/storage/EncryptedSettingsMock'
+import { EncryptedCommonStorage } from '@/storage/common/EncryptedCommonStorage'
+import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
 
 describe('WebDeviceInfoProvider', () => {
   it('returns ClientDeviceInfoPayload with storage device_id and parsed userAgent', async () => {

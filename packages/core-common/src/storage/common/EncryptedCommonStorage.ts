@@ -1,4 +1,4 @@
-import { EncryptedSettings } from '../EncryptedSettings'
+import { EncryptedSettings } from '@/EncryptedSettings'
 import { CommonStorage } from './CommonStorage'
 
 /**

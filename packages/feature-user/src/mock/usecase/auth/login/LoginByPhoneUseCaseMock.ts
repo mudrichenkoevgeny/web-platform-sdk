@@ -1,0 +1,22 @@
+import { AppError, AppResult, appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { LoginByPhoneUseCase } from '@/usecase/auth/login/LoginByPhoneUseCase'
+import { AuthData } from '@mudrichenkoevgeny/shared-foundation'
+import { LoginRepositoryMock } from '@/repository/auth/login/LoginRepositoryMock'
+import { AuthStorageMock } from '@/storage/auth/AuthStorageMock'
+import { UserStorageMock } from '@/storage/user/UserStorageMock'
+
+/**
+ * Mock implementation of {@link LoginByPhoneUseCase}.
+ */
+export class LoginByPhoneUseCaseMock extends LoginByPhoneUseCase {
+  public resultProvider: (phoneNumber: string, confirmationCode: string) => Promise<AppResult<AuthData, AppError>> =
+    async () => appResultFailure(CommonError.unknown())
+
+  public constructor() {
+    super(new LoginRepositoryMock(), new AuthStorageMock(), new UserStorageMock())
+  }
+
+  public override async execute(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthData, AppError>> {
+    return this.resultProvider(phoneNumber, confirmationCode)
+  }
+}

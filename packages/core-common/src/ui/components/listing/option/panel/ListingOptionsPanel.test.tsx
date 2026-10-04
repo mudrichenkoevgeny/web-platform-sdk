@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ListingOptionsPanel } from './ListingOptionsPanel'
-import { ListingOptionsConfig } from '../../../../../listing/ListingModels'
-import { ComponentTestHarness } from '../../../../../testing/ComponentTestHarness'
+import { ListingOptionsConfig } from '@/listing/ListingModels'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('ListingOptionsPanel', () => {
   const dummyConfig: ListingOptionsConfig = {

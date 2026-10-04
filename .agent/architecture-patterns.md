@@ -29,3 +29,8 @@ alwaysApply: true
 
 ## 5. Persistence
 - **EncryptedSettings:** Interface in `core-common`. Implementation must wrap `window.localStorage` (or `sessionStorage`) using the Web Crypto API for encryption. Do not expose raw tokens.
+
+## 6. Screen State Machines (Isolated Per-Instance Zustand Stores)
+- **Isolated Instances Mandate:** Screen-level and component-level stores must NOT be global singletons (`create()`). Because the SDK can be mounted in multiple widgets or routes simultaneously on a single host page, global singletons would leak form inputs and UI state across instances.
+- **Zustand + React Context Pattern:** Screen stores must be instantiated per component mount using `createStore()` (vanilla Zustand), wrapped in a React Context Provider (via `useRef` to maintain store identity across re-renders), and consumed via `useStore(context, selector)`.
+- **Lifecycle Alignment:** This guarantees every mounted screen receives its own isolated state machine that is garbage-collected on unmount, perfectly matching Decompose's `ComponentContext` / ViewModel lifecycle.

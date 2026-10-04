@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FullscreenError } from './FullscreenError'
-import { CommonError } from '../../../../error/model/CommonError'
-import { ComponentTestHarness } from '../../../../testing/ComponentTestHarness'
+import { CommonError } from '@/error/model/CommonError'
+import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('FullscreenError', () => {
   it('renders error message and shows retry button for retryable error', async () => {

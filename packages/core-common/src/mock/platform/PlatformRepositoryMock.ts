@@ -1,5 +1,5 @@
 import { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { PlatformRepository } from '../../platform/PlatformRepository'
+import { PlatformRepository } from '@/platform/PlatformRepository'
 import { DeviceInfoProviderMock } from './DeviceInfoProviderMock'
 import { ExternalLauncherMock } from './ExternalLauncherMock'
 

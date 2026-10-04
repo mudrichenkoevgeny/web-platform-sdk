@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonErrorParser } from './CommonErrorParser'
-import { CommonError } from '../model/CommonError'
-import { ServerError } from '../model/ServerError'
-import { generateErrorId } from '../model/ErrorId'
-import { ruStrings } from '../../locales/ru/strings'
+import { CommonError } from '@/model/CommonError'
+import { ServerError } from '@/model/ServerError'
+import { generateErrorId } from '@/model/ErrorId'
+import { ruStrings } from '@/locales/ru/strings'
 
 describe('CommonErrorParser', () => {
   const parser = new CommonErrorParser()

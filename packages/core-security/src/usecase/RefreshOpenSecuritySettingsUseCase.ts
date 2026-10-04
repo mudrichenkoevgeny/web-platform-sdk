@@ -1,6 +1,6 @@
 import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettings } from '../domain/model/OpenSecuritySettings'
-import { OpenSecuritySettingsRepository } from '../repository/OpenSecuritySettingsRepository'
+import { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import { OpenSecuritySettingsRepository } from '@/repository/OpenSecuritySettingsRepository'
 
 /**
  * Use case that delegates to {@link OpenSecuritySettingsRepository.refreshOpenSecuritySettings}.
@@ -20,7 +20,7 @@ export class RefreshOpenSecuritySettingsUseCase {
    *
    * @returns Promise resolving to AppResult with refreshed settings or error
    */
-  public async invoke(): Promise<AppResult<OpenSecuritySettings, AppError>> {
+  public async execute(): Promise<AppResult<OpenSecuritySettings, AppError>> {
     return this.openSecuritySettingsRepository.refreshOpenSecuritySettings()
   }
 }

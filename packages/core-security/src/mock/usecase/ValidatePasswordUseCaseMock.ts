@@ -1,6 +1,6 @@
 import { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ValidatePasswordUseCase } from '../../usecase/ValidatePasswordUseCase'
-import { SecurityError } from '../../error/model/SecurityError'
+import { ValidatePasswordUseCase } from '@/usecase/ValidatePasswordUseCase'
+import { SecurityError } from '@/error/model/SecurityError'
 
 /**
  * Mock implementation of {@link ValidatePasswordUseCase} for testing UI components.
@@ -22,7 +22,7 @@ export class ValidatePasswordUseCaseMock extends ValidatePasswordUseCase {
    * @param _password - Candidate password (ignored)
    * @returns Configured mock result
    */
-  public async invoke(_password: string): Promise<AppResult<void, AppError>> {
+  public async execute(_password: string): Promise<AppResult<void, AppError>> {
     if (this.shouldFail) {
       return { success: false, error: SecurityError.passwordTooShort(8) }
     }

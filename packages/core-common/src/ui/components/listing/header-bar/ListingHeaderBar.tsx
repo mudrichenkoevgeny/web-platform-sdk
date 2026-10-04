@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
-import { CoreIcon } from '../../icon/icon/CoreIcon'
-import { icons } from '../../../../assets/icons/index.js'
-import { CoreTextButton } from '../../button/text/CoreTextButton'
-import { enStrings } from '../../../../locales/en/strings'
+import { cn } from '@/utils/cn'
+import { CoreIcon } from '@/icon/icon/CoreIcon'
+import { icons } from '@/assets/icons/index.js'
+import { CoreTextButton } from '@/button/text/CoreTextButton'
+import { enStrings } from '@/locales/en/strings'
 
 export interface ListingHeaderBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onRefreshClick?: () => void

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
+import { cn } from '@/utils/cn'
 
 export interface CoreIconProps extends Omit<React.SVGProps<SVGSVGElement>, 'src'> {
   src: React.ComponentType<React.SVGProps<SVGSVGElement>> | string

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CoreIcon } from './CoreIcon'
-import { icons } from '../../../../assets/icons/index.js'
+import { icons } from '@/assets/icons/index.js'
 
 describe('CoreIcon', () => {
   it('renders SVG component icon when src is a React component', () => {

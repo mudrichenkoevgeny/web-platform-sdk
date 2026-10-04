@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { AppResult, AppError, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSecuritySettingsRepositoryImpl } from './OpenSecuritySettingsRepositoryImpl'
-import { OpenSecuritySettingsApi } from '../network/securitysettings/OpenSecuritySettingsApi'
-import { EncryptedOpenSecuritySettingsStorage } from '../storage/securitysettings/EncryptedOpenSecuritySettingsStorage'
-import { toOpenSecuritySettings } from '../domain/model/OpenSecuritySettings'
-import { SecurityWebSocketEventTypes } from '../network/contract/SecurityWebSocketEventTypes'
+import { OpenSecuritySettingsApi } from '@/network/securitysettings/OpenSecuritySettingsApi'
+import { EncryptedOpenSecuritySettingsStorage } from '@/storage/securitysettings/EncryptedOpenSecuritySettingsStorage'
+import { toOpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
+import { SecurityWebSocketEventTypes } from '@/network/contract/SecurityWebSocketEventTypes'
 
 describe('OpenSecuritySettingsRepositoryImpl', () => {
   const samplePayload: OpenSecuritySettingsPayload = {

@@ -19,6 +19,11 @@ export default defineConfig(async ({ command, mode }) => {
 
   return {
     plugins,
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, 'src')
+      }
+    },
     test: {
       globals: true,
       environment: 'jsdom',

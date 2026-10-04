@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
-import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '../outlined/CoreOutlinedTextField'
-import { enStrings } from '../../../../locales/en/strings'
+import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '@/outlined/CoreOutlinedTextField'
+import { enStrings } from '@/locales/en/strings'
 
 export interface CoreEmailTextFieldProps extends CoreOutlinedTextFieldProps {}
 

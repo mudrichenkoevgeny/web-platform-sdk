@@ -5,7 +5,7 @@ import {
   OpenSecuritySettings,
   toOpenSecuritySettings,
   toOpenSecuritySettingsPayload
-} from '../../domain/model/OpenSecuritySettings'
+} from '@/domain/model/OpenSecuritySettings'
 
 const KEY_SECURITY_SETTINGS = 'security_settings'
 

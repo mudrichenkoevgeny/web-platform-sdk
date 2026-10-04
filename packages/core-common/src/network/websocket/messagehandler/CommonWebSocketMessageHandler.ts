@@ -1,5 +1,5 @@
-import { CommonWebSocketEventTypes } from '../../contract/CommonWebSocketEventTypes'
-import { SocketFrame } from '../../model/websocket/SocketFrame'
+import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
+import { SocketFrame } from '@/model/websocket/SocketFrame'
 import { WebSocketMessageHandler } from './WebSocketMessageHandler'
 import {
   WebSocketMessageHandlerResult,
@@ -7,7 +7,7 @@ import {
   webSocketMessageHandlerResultNotHandled,
   webSocketMessageHandlerResultSend
 } from './WebSocketMessageHandlerResult'
-import { generateErrorId } from '../../../error/model/ErrorId'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 /**
  * Framework message handler managing system WebSocket events such as PING/PONG and INITIALIZE.

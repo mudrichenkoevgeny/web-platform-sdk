@@ -5,7 +5,7 @@ import {
   OpenGlobalSettings,
   toOpenGlobalSettings,
   toOpenGlobalSettingsPayload
-} from '../../domain/model/OpenGlobalSettings'
+} from '@/domain/model/OpenGlobalSettings'
 
 const KEY_GLOBAL_SETTINGS = 'global_settings'
 

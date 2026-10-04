@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { cn } from '../../../../utils/cn'
+import { cn } from '@/utils/cn'
 
 export interface CoreScrollableScreenContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode

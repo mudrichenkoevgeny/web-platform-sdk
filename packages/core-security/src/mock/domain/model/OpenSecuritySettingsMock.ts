@@ -2,7 +2,7 @@ import {
   OpenPasswordPolicy,
   OtpConfirmation,
   OpenSecuritySettings
-} from '../../../domain/model/OpenSecuritySettings'
+} from '@/domain/model/OpenSecuritySettings'
 
 /**
  * Creates a mock {@link OpenPasswordPolicy} object.

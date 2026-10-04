@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@mudrichenkoevgeny/shared-foundation':
-      specifier: ^0.0.47
-      version: 0.0.47
+      specifier: ^0.0.48
+      version: 0.0.48
     '@testing-library/react':
       specifier: ^16.0.0
       version: 16.3.3
@@ -237,7 +237,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -289,7 +289,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -347,7 +347,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -402,7 +402,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -469,7 +469,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -536,7 +536,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.47
+        version: 0.0.48
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -546,9 +546,15 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../core-settings
+      '@types/qrcode.react':
+        specifier: ^3.0.0
+        version: 3.0.0(react@19.3.0)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      qrcode.react:
+        specifier: ^4.2.0
+        version: 4.2.0(react@19.3.0)
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.3.0
@@ -958,8 +964,8 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@mudrichenkoevgeny/shared-foundation@0.0.47':
-    resolution: {integrity: sha512-62YvWt4yFN8gPmJO4FAOdDcH/t8ol4kJZ+R+lSrQ6FJd2d8kih/lqB1pmuUBFQjSCZhPnZ3VzZ5bDEuBd6miYg==}
+  '@mudrichenkoevgeny/shared-foundation@0.0.48':
+    resolution: {integrity: sha512-F4FxmDgmxsMEP3g5GXPtZe6w/VsbscsE1dnxWW9HnPCu5okEkvkiWynRSJ+/d7RFGgKoKpf2U3QV954eCuXfMg==}
 
   '@napi-rs/wasm-runtime@1.2.4':
     resolution: {integrity: sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g==}
@@ -1486,6 +1492,10 @@ packages:
 
   '@types/node@26.6.3':
     resolution: {integrity: sha512-dsqMQQoeTLqu9wynDD00q573mNzso3IdQOAfHRJqLCcmCFPoGo9A1bDpUcv/9tnKpErQWv9uKeGfl37EIS02Yg==}
+
+  '@types/qrcode.react@3.0.0':
+    resolution: {integrity: sha512-VPHYhnDfvt4LjlWajpYWRBVqmftEEza3GJVhe8sS5Wew0n4nTkg3+2MYunAiU6t04AZt0s/hkkMovefWeENjAQ==}
+    deprecated: This is a stub types definition. qrcode.react provides its own type definitions, so you do not need this installed.
 
   '@types/react-dom@19.3.0':
     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
@@ -2418,6 +2428,11 @@ packages:
     resolution: {integrity: sha512-+Owyggi9IxT1ePKGafcI87ubSmxol6smwJ+RAHDQlx9+9cPwFWDiKFFCPuWhr9ignlGpZ9vDQLw67N4dcTVFEA==}
     engines: {node: '>=20'}
 
+  qrcode.react@4.2.0:
+    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
 
@@ -3195,7 +3210,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@mudrichenkoevgeny/shared-foundation@0.0.47':
+  '@mudrichenkoevgeny/shared-foundation@0.0.48':
     dependencies:
       zod: 3.25.76
 
@@ -3576,6 +3591,12 @@ snapshots:
   '@types/node@26.6.3':
     dependencies:
       undici-types: 8.9.0
+
+  '@types/qrcode.react@3.0.0(react@19.3.0)':
+    dependencies:
+      qrcode.react: 4.2.0(react@19.3.0)
+    transitivePeerDependencies:
+      - react
 
   '@types/react-dom@19.3.0(@types/react@19.3.0)':
     dependencies:
@@ -4483,6 +4504,10 @@ snapshots:
   qified@0.10.1:
     dependencies:
       hookified: 2.2.0
+
+  qrcode.react@4.2.0(react@19.3.0):
+    dependencies:
+      react: 19.3.0
 
   quansync@0.2.11: {}
 

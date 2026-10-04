@@ -1,0 +1,20 @@
+import { AppError, AppResult, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { RestoreUserUseCase } from '@/usecase/user/RestoreUserUseCase'
+import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { UserRepositoryMock } from '@/repository/user/UserRepositoryMock'
+import { userDetailsMock } from '@mudrichenkoevgeny/shared-foundation'
+
+/** Mock implementation of {@link RestoreUserUseCase}. */
+export class RestoreUserUseCaseMock extends RestoreUserUseCase {
+  public executeCalls = 0
+  public resultProvider: () => Promise<AppResult<UserDetails, AppError>> = async () => appResultSuccess(userDetailsMock())
+
+  public constructor() {
+    super(new UserRepositoryMock())
+  }
+
+  public override async invoke(): Promise<AppResult<UserDetails, AppError>> {
+    this.executeCalls++
+    return this.resultProvider()
+  }
+}
