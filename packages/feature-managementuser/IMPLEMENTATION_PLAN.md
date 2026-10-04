@@ -23,15 +23,15 @@ This document outlines the step-by-step implementation plan for the `feature-man
 ## 🏗️ Implementation Phases
 
 ### Phase 1: Management Storage & Network APIs
-- [ ] Implement Encrypted Storage wrappers (`EncryptedManagementAuthSettingsStorage`, `EncryptedManagementGlobalSettingsStorage`, `EncryptedManagementSecuritySettingsStorage`).
-- [ ] Implement Management APIs (`ManagementAuditApi`, `SelfManagementLoginApi`, `ManagementAuthSettingsApi`, `SelfManagementUnlockApi`, `ManagementUserConfigurationApi`, `ManagementGlobalSettingsApi`, `ManagementIdentifierApi`, `SelfManagementIdentifiersApi`, `ManagementSecuritySettingsApi`, `ManagementSessionApi`, `SelfManagementSessionApi`, `ManagementUserApi`, `SelfManagementUserApi`, `ManagementUserSecurityApi`).
-- [ ] Write unit tests for Management APIs and Storage.
+- [x] Implement Encrypted Storage wrappers (`EncryptedManagementAuthSettingsStorage`, `EncryptedManagementGlobalSettingsStorage`, `EncryptedManagementSecuritySettingsStorage`).
+- [x] Implement Management APIs (`ManagementAuditApi`, `SelfManagementLoginApi`, `ManagementAuthSettingsApi`, `SelfManagementUnlockApi`, `ManagementUserConfigurationApi`, `ManagementGlobalSettingsApi`, `ManagementIdentifierApi`, `SelfManagementIdentifiersApi`, `ManagementSecuritySettingsApi`, `ManagementSessionApi`, `SelfManagementSessionApi`, `ManagementUserApi`, `SelfManagementUserApi`, `ManagementUserSecurityApi`).
+- [x] Write unit tests for Management APIs and Storage.
 
 ### Phase 2: Management Repositories
-- [ ] Implement `ManagementAuditRepositoryImpl`.
-- [ ] Implement Management Auth Repositories (`SelfManagementLoginRepositoryImpl`, `SelfManagementRefreshTokenRepositoryImpl`, `SelfManagementResetPasswordRepositoryImpl`, `ManagementAuthSettingsRepositoryImpl`, `SelfManagementUnlockRepositoryImpl`).
-- [ ] Implement `ManagementGlobalSettingsRepositoryImpl`, `ManagementIdentifierRepositoryImpl`, `SelfManagementIdentifierRepositoryImpl`, `ManagementSecuritySettingsRepositoryImpl`, `ManagementSessionRepositoryImpl`, `SelfManagementSessionRepositoryImpl`, `ManagementUserRepositoryImpl`, `SelfManagementUserRepositoryImpl`, `ManagementUserSecurityRepositoryImpl`, `SelfManagementUserSecurityRepositoryImpl`.
-- [ ] Write unit tests for Management Repositories.
+- [x] Implement `ManagementAuditRepositoryImpl`.
+- [x] Implement Management Auth Repositories (`SelfManagementLoginRepositoryImpl`, `SelfManagementRefreshTokenRepositoryImpl`, `SelfManagementResetPasswordRepositoryImpl`, `ManagementAuthSettingsRepositoryImpl`, `SelfManagementUnlockRepositoryImpl`).
+- [x] Implement `ManagementGlobalSettingsRepositoryImpl`, `ManagementIdentifierRepositoryImpl`, `SelfManagementIdentifierRepositoryImpl`, `ManagementSecuritySettingsRepositoryImpl`, `ManagementSessionRepositoryImpl`, `SelfManagementSessionRepositoryImpl`, `ManagementUserRepositoryImpl`, `SelfManagementUserRepositoryImpl`, `ManagementUserSecurityRepositoryImpl`, `SelfManagementUserSecurityRepositoryImpl`.
+- [x] Write unit tests for Management Repositories.
 
 ### Phase 3: Domain Use Cases
 - [ ] Implement Audit Use Cases (`GetAuditEventsUseCase`, `GetAuditEventUseCase`).

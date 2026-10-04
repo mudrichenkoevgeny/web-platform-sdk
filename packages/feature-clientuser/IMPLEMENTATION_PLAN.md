@@ -23,14 +23,14 @@ This document outlines the step-by-step implementation plan for the `feature-cli
 ## 🏗️ Implementation Phases
 
 ### Phase 1: Network API Layer (Client Boundaries)
-- [ ] Implement Open APIs for client users (`OpenLoginApi`, `OpenRegistrationApi`, `OpenAuthSettingsApi`, `OpenUnlockApi`, `OpenIdentifiersApi`, `OpenSessionApi`, `OpenUserApi`, `OpenUserSecurityApi`).
-- [ ] Implement Fetch / HTTP wrappers (`KtorOpenLoginApi`, `KtorRegistrationApi`, `KtorResetPasswordApi`, `KtorOpenAuthSettingsApi`, `KtorOpenUnlockApi`, `KtorOpenIdentifiersApi`, `KtorOpenSessionApi`, `KtorOpenUserApi`, `KtorOpenUserUserSecurityApi`).
-- [ ] Write unit tests for Client APIs.
+- [x] Implement Open APIs for client users (`OpenLoginApi`, `RegistrationApi`, `OpenAuthSettingsApi`, `OpenUnlockApi`, `OpenIdentifiersApi`, `SessionApi`, `OpenUserApi`, `UserSecurityApi`).
+- [x] Implement Fetch / HTTP wrappers (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchResetPasswordApi`, `FetchOpenAuthSettingsApi`, `FetchOpenUnlockApi`, `FetchOpenIdentifiersApi`, `FetchOpenSessionApi`, `FetchOpenUserApi`, `FetchOpenUserSecurityApi`).
+- [x] Write unit tests for Client APIs.
 
 ### Phase 2: Repositories
-- [ ] Implement Open Repositories (`OpenLoginRepositoryImpl`, `OpenRefreshTokenRepositoryImpl`, `OpenRegistrationRepositoryImpl`, `OpenResetPasswordRepositoryImpl`, `OpenAuthSettingsRepositoryImpl`, `OpenUnlockRepositoryImpl`).
-- [ ] Implement `OpenIdentifierRepositoryImpl`, `OpenSessionRepositoryImpl`, `OpenUserRepositoryImpl`, `OpenUserSecurityRepositoryImpl`.
-- [ ] Write unit tests for Open Repositories.
+- [x] Implement Open Repositories (`OpenLoginRepositoryImpl`, `OpenRefreshTokenRepositoryImpl`, `OpenRegistrationRepositoryImpl`, `OpenResetPasswordRepositoryImpl`, `OpenAuthSettingsRepositoryImpl`, `OpenUnlockRepositoryImpl`).
+- [x] Implement `OpenIdentifierRepositoryImpl`, `OpenSessionRepositoryImpl`, `OpenUserRepositoryImpl`, `OpenUserSecurityRepositoryImpl`.
+- [x] Write unit tests for Open Repositories.
 
 ### Phase 3: Domain Use Cases
 - [ ] Implement `RefreshOpenAuthSettingsUseCase`.
