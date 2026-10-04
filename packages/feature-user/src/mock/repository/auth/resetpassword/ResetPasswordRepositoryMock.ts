@@ -3,7 +3,7 @@ import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-co
 import { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
+import { userIdentifierMock } from '@/mock/domain/model/identifier/userIdentifierMock'
 /**
  * Mock implementation of {@link ResetPasswordRepository}.
  */

@@ -78,7 +78,7 @@ export const AuthProviderItem = forwardRef<HTMLButtonElement, AuthProviderItemPr
 
     const iconClassName = cn(
       authProvider === UserAuthProvider.GOOGLE ? '' : 'text-primary-foreground',
-      authProvider === UserAuthProvider.APPLE ? 'scale-[1.08] -translate-y-[1px]' : ''
+      authProvider === UserAuthProvider.APPLE ? 'scale-105 -translate-y-px' : ''
     )
 
     return (

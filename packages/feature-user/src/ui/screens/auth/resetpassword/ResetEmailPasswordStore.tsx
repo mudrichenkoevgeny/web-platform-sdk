@@ -94,6 +94,7 @@ export const createResetEmailPasswordStore = (
   initialState?: ResetEmailPasswordScreenState
 ) => {
   let timerController: AbortController | null = null
+  let validationRequestId = 0
 
   const startTimer = (
     seconds: number,
@@ -215,7 +216,13 @@ export const createResetEmailPasswordStore = (
         }
       })
 
+      const currentRequestId = ++validationRequestId
       const validationResult = await deps.validatePasswordUseCase.execute(password)
+
+      if (currentRequestId !== validationRequestId) {
+        return
+      }
+
       let isPasswordValid = false
       if (isSuccess(validationResult)) {
         isPasswordValid = true

@@ -2,7 +2,7 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddEmailIdentifierConfirmationUseCase'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
 /** Mock implementation of {@link SendAddEmailIdentifierConfirmationUseCase}. */
 export class SendAddEmailIdentifierConfirmationUseCaseMock extends SendAddEmailIdentifierConfirmationUseCase {
   public executeCalls = 0
@@ -13,7 +13,7 @@ export class SendAddEmailIdentifierConfirmationUseCaseMock extends SendAddEmailI
     super(new IdentifierRepositoryMock())
   }
 
-  public override async invoke(email: string): Promise<AppResult<OtpConfirmation, AppError>> {
+  public override async execute(email: string): Promise<AppResult<OtpConfirmation, AppError>> {
     this.executeCalls++
     return this.resultProvider(email)
   }

@@ -2,7 +2,7 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SendRegistrationConfirmationToEmailUseCase } from '@/usecase/auth/registration/SendRegistrationConfirmationToEmailUseCase'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { RegistrationRepositoryMock } from '@/repository/auth/registration/RegistrationRepositoryMock'
+import { RegistrationRepositoryMock } from '@/mock/repository/auth/registration/RegistrationRepositoryMock'
 /**
  * Mock implementation of {@link SendRegistrationConfirmationToEmailUseCase}.
  */

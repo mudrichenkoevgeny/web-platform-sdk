@@ -1,7 +1,7 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { EmailChangePasswordUseCase } from '@/usecase/identifier/EmailChangePasswordUseCase'
-import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
 /** Mock implementation of {@link EmailChangePasswordUseCase}. */
 export class EmailChangePasswordUseCaseMock extends EmailChangePasswordUseCase {
   public executeCalls = 0
@@ -12,7 +12,7 @@ export class EmailChangePasswordUseCaseMock extends EmailChangePasswordUseCase {
     super(new IdentifierRepositoryMock())
   }
 
-  public override async invoke(email: string, oldPass: string, newPass: string): Promise<AppResult<void, AppError>> {
+  public override async execute(email: string, oldPass: string, newPass: string): Promise<AppResult<void, AppError>> {
     this.executeCalls++
     return this.resultProvider(email, oldPass, newPass)
   }

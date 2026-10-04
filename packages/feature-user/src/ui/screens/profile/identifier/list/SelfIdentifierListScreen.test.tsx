@@ -81,7 +81,7 @@ describe('SelfIdentifierListScreen', () => {
     const addBtn = screen.getByTestId(IdentifierListTestTags.ADD_IDENTIFIER_BUTTON)
     await user.click(addBtn)
 
-    expect(deps.getAvailableUserAuthProvidersUseCase?.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.getAvailableUserAuthProvidersUseCase?.execute).toHaveBeenCalledTimes(1)
     expect(await screen.findByTestId(IdentifierListTestTags.ADD_IDENTIFIER_DIALOG_TITLE)).not.toBeNull()
   })
 

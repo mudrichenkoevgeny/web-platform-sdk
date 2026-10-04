@@ -8,14 +8,14 @@ import type { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-fou
 export class UserSecurityRepositoryMock implements UserSecurityRepository {
   public totpSetupResultProvider: () => Promise<AppResult<TotpSetup, AppError>> = async () =>
     appResultSuccess({
-      totpSecretKey: 'MOCK_SECRET_KEY',
-      totpOtpAuthUrl: 'otpauth://totp/mock',
+      secretKey: 'MOCK_SECRET_KEY',
+      otpAuthUrl: 'otpauth://totp/mock',
       mfaToken: 'mock_mfa_token'
     })
 
   public enableTotpResultProvider: (mfaToken: string, code: string) => Promise<AppResult<TotpRecoveryCodes, AppError>> = async () =>
     appResultSuccess({
-      totpRecoveryCodes: ['rec_1', 'rec_2']
+      codes: ['rec_1', 'rec_2']
     })
 
   public disableTotpResultProvider: () => Promise<AppResult<void, AppError>> = async () =>
@@ -23,12 +23,12 @@ export class UserSecurityRepositoryMock implements UserSecurityRepository {
 
   public recoveryCodesResultProvider: () => Promise<AppResult<TotpRecoveryCodes, AppError>> = async () =>
     appResultSuccess({
-      totpRecoveryCodes: ['rec_1', 'rec_2']
+      codes: ['rec_1', 'rec_2']
     })
 
   public regenerateRecoveryCodesResultProvider: () => Promise<AppResult<TotpRecoveryCodes, AppError>> = async () =>
     appResultSuccess({
-      totpRecoveryCodes: ['rec_3', 'rec_4']
+      codes: ['rec_3', 'rec_4']
     })
 
   public lastMfaToken: string | null = null

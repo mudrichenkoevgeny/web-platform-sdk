@@ -91,7 +91,7 @@ describe('SelfSessionListScreen', () => {
     const revokeAllBtn = screen.getByTestId(SelfSessionListTestTags.REVOKE_ALL_OTHERS_BUTTON)
     await user.click(revokeAllBtn)
 
-    expect(deps.deleteAllOtherSessionsUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.deleteAllOtherSessionsUseCase.execute).toHaveBeenCalledTimes(1)
   })
 
   it('triggers onBack when back button is clicked', async () => {

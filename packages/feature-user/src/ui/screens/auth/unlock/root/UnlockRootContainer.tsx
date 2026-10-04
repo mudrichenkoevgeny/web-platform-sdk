@@ -84,8 +84,8 @@ export const UnlockRootContainer = forwardRef<HTMLDivElement, UnlockRootContaine
           className={cn(
             'bg-surface text-surface-foreground border border-border rounded-xl shadow-lg overflow-hidden flex flex-col relative transition-all',
             isMobile
-              ? 'w-full max-w-lg h-[520px] rounded-b-none self-end'
-              : 'w-[420px] h-[520px]',
+              ? 'w-full max-w-lg h-dialog-default rounded-b-none self-end'
+              : 'w-dialog-default h-dialog-default',
             className
           )}
         >

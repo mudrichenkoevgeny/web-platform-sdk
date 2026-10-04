@@ -1,4 +1,4 @@
-import { AppError } from '@/model/AppError'
+import { AppError } from '@/error/model/AppError'
 
 /**
  * Interface for parsing an {@link AppError} into a human-readable localized string.

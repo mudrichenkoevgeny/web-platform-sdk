@@ -33,7 +33,7 @@ describe('EncryptedUserStorage', () => {
     createdAt: Date.now(),
     updatedAt: null,
     scheduledPermanentDeletionAt: null,
-    accountLockoutType: AccountLockoutType.NONE,
+    lockoutType: AccountLockoutType.NONE,
     temporaryLockoutUntil: null
   }
 
@@ -122,19 +122,18 @@ describe('EncryptedUserStorage', () => {
     await storage.addUserSession(dummySession1)
     await storage.addUserSession(dummySession2)
 
-    const sortedByReauth = await storage.getUserSessionsList(
-      1,
-      10,
-      UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT
-    )
+    const sortedByReauth = await storage.getUserSessionsList({
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT
+    })
     expect(sortedByReauth.items[0]?.id).toBe('sess_1')
 
-    const sortedByUpdatedDesc = await storage.getUserSessionsList(
-      1,
-      10,
-      UserSortValues.UserSessionSortBy.UPDATED_AT,
-      undefined
-    )
+    const sortedByUpdatedDesc = await storage.getUserSessionsList({
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: UserSortValues.UserSessionSortBy.UPDATED_AT
+    })
     expect(sortedByUpdatedDesc.items[0]?.id).toBe('sess_1')
   })
 })

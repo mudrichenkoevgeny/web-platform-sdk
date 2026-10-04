@@ -3,7 +3,7 @@ import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-co
 import { OpenGlobalSettingsRepository } from '@/repository/OpenGlobalSettingsRepository'
 import type { OpenGlobalSettingsObserver } from "@/repository/OpenGlobalSettingsRepository";
 import type { OpenGlobalSettings } from '@/domain/model/OpenGlobalSettings'
-import { openGlobalSettingsMock } from '@/domain/model/OpenGlobalSettingsMock'
+import { openGlobalSettingsMock } from '@/mock/domain/model/OpenGlobalSettingsMock'
 /**
  * Configuration options for {@link OpenGlobalSettingsRepositoryMock}.
  */

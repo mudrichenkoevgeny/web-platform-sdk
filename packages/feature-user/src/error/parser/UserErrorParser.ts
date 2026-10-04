@@ -1,7 +1,7 @@
 import { UserErrorCodes, UserErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientUserErrorCodes } from '@/naming/ClientUserErrorCodes'
+import { ClientUserErrorCodes } from '@/error/naming/ClientUserErrorCodes'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
 

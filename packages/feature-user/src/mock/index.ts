@@ -1,10 +1,9 @@
 export * from './auth/google/GoogleAuthServiceMock'
 export * from './auth/UserAuthServicesMock'
-export * from '@mudrichenkoevgeny/shared-foundation'
-export * from '@mudrichenkoevgeny/shared-foundation'
-export * from '@mudrichenkoevgeny/shared-foundation'
-export * from '@mudrichenkoevgeny/shared-foundation'
-export * from '@mudrichenkoevgeny/shared-foundation'
+
+export * from './domain/model/identifier/userIdentifierMock'
+export * from './domain/model/session/userSessionMock'
+export * from './domain/model/user/userDetailsMock'
 
 export * from './network/model/auth/settings/availableAuthProvidersPayloadMock'
 export * from './network/model/auth/settings/openAuthSettingsPayloadMock'

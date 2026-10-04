@@ -44,7 +44,7 @@ export class LoginByGoogleUseCase {
 
     if (isSuccess(loginResult)) {
       await this.authStorage.updateTokens(loginResult.data.sessionToken)
-      await this.userStorage.updateCurrentUser(loginResult.data.user)
+      await this.userStorage.updateCurrentUser(loginResult.data.userDetails)
     }
 
     return loginResult

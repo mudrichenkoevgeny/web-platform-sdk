@@ -21,6 +21,8 @@ import {
 } from '@/ui/screens/profile/totp/main/TotpMainStore'
 import type { TotpMainStoreDependencies } from "@/ui/screens/profile/totp/main/TotpMainStore";
 
+const QR_CODE_SIZE_PX = 180
+
 /**
  * Automation test tags for {@link TotpMainScreen}.
  */
@@ -150,8 +152,8 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               data-testid={TotpMainTestTags.QR_CODE_BOX}
             >
               <QRCodeSVG
-                value={screenState.setup.totpOtpAuthUrl}
-                size={180}
+                value={screenState.setup.otpAuthUrl}
+                size={QR_CODE_SIZE_PX}
                 bgColor="#FFFFFF"
                 fgColor="#000000"
                 level="M"
@@ -170,11 +172,11 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
                   className="font-mono text-sm font-bold tracking-wider text-primary"
                   data-testid={TotpMainTestTags.SECRET_KEY_TEXT}
                 >
-                  {screenState.setup.totpSecretKey}
+                  {screenState.setup.secretKey}
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleCopySecretKey(screenState.setup.totpSecretKey)}
+                  onClick={() => handleCopySecretKey(screenState.setup.secretKey)}
                   className="p-1 hover:bg-accent rounded text-muted-foreground transition-colors"
                   title="Copy secret key"
                   data-testid={TotpMainTestTags.COPY_SECRET_KEY_BUTTON}

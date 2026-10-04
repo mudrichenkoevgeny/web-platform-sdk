@@ -7,7 +7,7 @@ import {
   userSessionPayloadSchema,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ClientType, PagedResult, UserAuthProvider, UserIdentifierId, UserIdentifierPayload, UserRole, UserSessionId, UserSessionPayload } from "@mudrichenkoevgeny/shared-foundation";
+import type { PagedResult, UserIdentifierId, UserIdentifierPayload, UserSessionId, UserSessionPayload } from "@mudrichenkoevgeny/shared-foundation";
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   UserStorage
@@ -115,40 +115,42 @@ export class EncryptedUserStorage implements UserStorage {
   /**
    * Retrieves filtered and paginated user identifiers list.
    */
-  public async getUserIdentifiersList(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
-  ): Promise<PagedResult<UserIdentifier>> {
+  public async getUserIdentifiersList(params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifier>> {
+    const {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortOrder,
+      userIds,
+      userAuthProviders,
+      identifiers
+    } = params || {}
+
     const allItems = await this.getAllUserIdentifiersInternal()
     if (allItems.length === 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
     }
 
     const filteredItems = allItems.filter((item) => {
-      const matchesUserIds = !params?.userIds || userIds.includes(item.userId)
-      const matchesProvider = !params?.userAuthProviders || userAuthProviders.includes(item.userAuthProvider)
-      const matchesValue = !params?.identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
+      const matchesUserIds = !userIds || userIds.includes(item.userId)
+      const matchesProvider = !userAuthProviders || userAuthProviders.includes(item.userAuthProvider)
+      const matchesValue = !identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
       return matchesUserIds && matchesProvider && matchesValue
     })
 
-    if (params?.params?.sortBy === UserSortValues.UserIdentifierSortBy.CREATED_AT) {
-      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
-    } else if (params?.params?.sortBy === UserSortValues.UserIdentifierSortBy.UPDATED_AT) {
+    if (sortBy === UserSortValues.UserIdentifierSortBy.CREATED_AT) {
+      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
+    } else if (sortBy === UserSortValues.UserIdentifierSortBy.UPDATED_AT) {
       filteredItems.sort((a, b) => {
         const timeA = a.updatedAt ?? 0
         const timeB = b.updatedAt ?? 0
-        return params?.params?.sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
+        return sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
       })
     }
 
     const totalCount = filteredItems.length
-    const requestedPage = params?.params?.pageNumber ?? 1
-    const requestedSize = params?.params?.pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = pageNumber ?? 1
+    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
 
     if (requestedSize <= 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
@@ -167,24 +169,10 @@ export class EncryptedUserStorage implements UserStorage {
    */
   public observeUserIdentifiersList(
     listener: UserIdentifiersListChangeListener,
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: GetUserIdentifiersListParams
   ): () => void {
     return this.encryptedSettings.observe(KEY_USER_IDENTIFIERS, async () => {
-      const list = await this.getUserIdentifiersList(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortOrder,
-        userIds,
-        userAuthProviders,
-        identifiers
-      )
+      const list = await this.getUserIdentifiersList(params)
       listener(list)
     })
   }
@@ -292,44 +280,46 @@ export class EncryptedUserStorage implements UserStorage {
   /**
    * Retrieves filtered and paginated active sessions list.
    */
-  public async getUserSessionsList(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userRoles?: UserRole[] | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
-  ): Promise<PagedResult<UserSession>> {
+  public async getUserSessionsList(params?: GetUserSessionsListParams): Promise<PagedResult<UserSession>> {
+    const {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortOrder,
+      userIds,
+      userRoles,
+      identifiers,
+      identifierIds,
+      userAuthProviders,
+      clientTypes,
+      userAgents,
+      ipAddresses,
+      languages,
+      deviceIds,
+      deviceNames,
+      appVersions,
+      operationSystemVersions
+    } = params || {}
+
     const allItems = await this.getAllUserSessionsInternal()
     if (allItems.length === 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
     }
 
     const filteredItems = allItems.filter((item) => {
-      const matchesUserIds = !params?.userIds || userIds.includes(item.userId)
-      const matchesUserRoles = !params?.userRoles || params.params.userRoles.includes(item.userRole)
-      const matchesIdentifiers = !params?.identifiers || params.identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
-      const matchesIdentifierIds = !params?.identifierIds || params.params.identifierIds.includes(item.identifierId)
-      const matchesProviders = !params?.userAuthProviders || params.userAuthProviders.includes(item.identifierAuthProvider)
-      const matchesClientTypes = !params?.clientTypes || (item.deviceInfo.clientType && params.params.clientTypes.includes(item.deviceInfo.clientType))
-      const matchesUserAgents = !params?.userAgents || (item.userAgent && params.params.userAgents.some((pattern) => item.userAgent?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesIpAddresses = !params?.ipAddresses || (item.ipAddress && params.params.ipAddresses.some((pattern) => item.ipAddress?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesLanguages = !params?.languages || (item.deviceInfo.language && params.params.languages.some((pattern) => item.deviceInfo.language?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesDeviceIds = !params?.deviceIds || (item.deviceInfo.deviceId && params.params.deviceIds.includes(item.deviceInfo.deviceId))
-      const matchesDeviceNames = !params?.deviceNames || (item.deviceInfo.deviceName && params.params.deviceNames.some((pattern) => item.deviceInfo.deviceName?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesAppVersions = !params?.appVersions || (item.deviceInfo.appVersion && params.params.appVersions.some((pattern) => item.deviceInfo.appVersion?.toLowerCase().includes(pattern.toLowerCase())))
-      const matchesOsVersions = !params?.operationSystemVersions || (item.deviceInfo.operationSystemVersion && params.params.operationSystemVersions.some((pattern) => item.deviceInfo.operationSystemVersion?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesUserIds = !userIds || userIds.includes(item.userId)
+      const matchesUserRoles = !userRoles || userRoles.includes(item.userRole)
+      const matchesIdentifiers = !identifiers || identifiers.some((pattern) => item.identifier.toLowerCase().includes(pattern.toLowerCase()))
+      const matchesIdentifierIds = !identifierIds || identifierIds.includes(item.identifierId)
+      const matchesProviders = !userAuthProviders || userAuthProviders.includes(item.identifierAuthProvider)
+      const matchesClientTypes = !clientTypes || (item.deviceInfo.clientType && clientTypes.includes(item.deviceInfo.clientType))
+      const matchesUserAgents = !userAgents || (item.userAgent && userAgents.some((pattern) => item.userAgent?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesIpAddresses = !ipAddresses || (item.ipAddress && ipAddresses.some((pattern) => item.ipAddress?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesLanguages = !languages || (item.deviceInfo.language && languages.some((pattern) => item.deviceInfo.language?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesDeviceIds = !deviceIds || (item.deviceInfo.deviceId && deviceIds.includes(item.deviceInfo.deviceId))
+      const matchesDeviceNames = !deviceNames || (item.deviceInfo.deviceName && deviceNames.some((pattern) => item.deviceInfo.deviceName?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesAppVersions = !appVersions || (item.deviceInfo.appVersion && appVersions.some((pattern) => item.deviceInfo.appVersion?.toLowerCase().includes(pattern.toLowerCase())))
+      const matchesOsVersions = !operationSystemVersions || (item.deviceInfo.operationSystemVersion && operationSystemVersions.some((pattern) => item.deviceInfo.operationSystemVersion?.toLowerCase().includes(pattern.toLowerCase())))
 
       return matchesUserIds && matchesUserRoles && matchesIdentifiers && matchesIdentifierIds &&
         matchesProviders && matchesClientTypes && matchesUserAgents && matchesIpAddresses &&
@@ -337,25 +327,25 @@ export class EncryptedUserStorage implements UserStorage {
         matchesOsVersions
     })
 
-    if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.LAST_ACCESSED_AT) {
-      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.lastAccessedAt - a.lastAccessedAt : a.lastAccessedAt - b.lastAccessedAt))
-    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT) {
-      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.lastReauthenticatedAt - a.lastReauthenticatedAt : a.lastReauthenticatedAt - b.lastReauthenticatedAt))
-    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.EXPIRES_AT) {
-      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.expiresAt - a.expiresAt : a.expiresAt - b.expiresAt))
-    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.CREATED_AT) {
-      filteredItems.sort((a, b) => (params?.params?.sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
-    } else if (params?.params?.sortBy === UserSortValues.UserSessionSortBy.UPDATED_AT) {
+    if (sortBy === UserSortValues.UserSessionSortBy.LAST_ACCESSED_AT) {
+      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.lastAccessedAt - a.lastAccessedAt : a.lastAccessedAt - b.lastAccessedAt))
+    } else if (sortBy === UserSortValues.UserSessionSortBy.LAST_REAUTHENTICATED_AT) {
+      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.lastReauthenticatedAt - a.lastReauthenticatedAt : a.lastReauthenticatedAt - b.lastReauthenticatedAt))
+    } else if (sortBy === UserSortValues.UserSessionSortBy.EXPIRES_AT) {
+      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.expiresAt - a.expiresAt : a.expiresAt - b.expiresAt))
+    } else if (sortBy === UserSortValues.UserSessionSortBy.CREATED_AT) {
+      filteredItems.sort((a, b) => (sortOrder === SortOrder.DESC ? b.createdAt - a.createdAt : a.createdAt - b.createdAt))
+    } else if (sortBy === UserSortValues.UserSessionSortBy.UPDATED_AT) {
       filteredItems.sort((a, b) => {
         const timeA = a.updatedAt ?? 0
         const timeB = b.updatedAt ?? 0
-        return params?.params?.sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
+        return sortOrder === SortOrder.DESC ? timeB - timeA : timeA - timeB
       })
     }
 
     const totalCount = filteredItems.length
-    const requestedPage = params?.params?.pageNumber ?? 1
-    const requestedSize = params?.params?.pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = pageNumber ?? 1
+    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
 
     if (requestedSize <= 0) {
       return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
@@ -374,44 +364,10 @@ export class EncryptedUserStorage implements UserStorage {
    */
   public observeUserSessionsList(
     listener: UserSessionsListChangeListener,
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userRoles?: UserRole[] | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
+    params?: GetUserSessionsListParams
   ): () => void {
     return this.encryptedSettings.observe(KEY_USER_SESSIONS, async () => {
-      const list = await this.getUserSessionsList(
-        pageNumber,
-        pageSize,
-        sortBy,
-        sortOrder,
-        userIds,
-        userRoles,
-        identifiers,
-        identifierIds,
-        userAuthProviders,
-        clientTypes,
-        userAgents,
-        ipAddresses,
-        languages,
-        deviceIds,
-        deviceNames,
-        appVersions,
-        operationSystemVersions
-      )
+      const list = await this.getUserSessionsList(params)
       listener(list)
     })
   }

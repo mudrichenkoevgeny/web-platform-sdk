@@ -3,7 +3,7 @@ import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-co
 import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { GetSessionsUseCase } from '@/usecase/session/GetSessionsUseCase'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionRepositoryMock } from '@/repository/session/SessionRepositoryMock'
+import { SessionRepositoryMock } from '@/mock/repository/session/SessionRepositoryMock'
 /** Mock implementation of {@link GetSessionsUseCase}. */
 export class GetSessionsUseCaseMock extends GetSessionsUseCase {
   public executeCalls = 0
@@ -14,7 +14,7 @@ export class GetSessionsUseCaseMock extends GetSessionsUseCase {
     super(new SessionRepositoryMock())
   }
 
-  public override async invoke(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  public override async execute(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserSession>, AppError>> {
     this.executeCalls++
     return this.resultProvider(pageNumber ?? 1, pageSize ?? 10)
   }

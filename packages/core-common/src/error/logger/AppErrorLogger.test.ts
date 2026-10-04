@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getLogMessage, logAppError } from '@/error/logger/AppErrorLogger'
-import { CommonError } from '@/model/CommonError'
-import { ServerError } from '@/model/ServerError'
-import { generateErrorId } from '@/model/ErrorId'
+import { CommonError } from '@/error/model/CommonError'
+import { ServerError } from '@/error/model/ServerError'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 describe('AppErrorLogger', () => {
   it('formats getLogMessage correctly for CommonError without throwable or args', () => {

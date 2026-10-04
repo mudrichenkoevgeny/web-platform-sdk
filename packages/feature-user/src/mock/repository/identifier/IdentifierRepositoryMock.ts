@@ -10,7 +10,7 @@ import type {
 import { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
+import { userIdentifierMock } from '@/mock/domain/model/identifier/userIdentifierMock'
 /**
  * Mock implementation of {@link IdentifierRepository}.
  */

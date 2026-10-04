@@ -28,7 +28,14 @@ export interface IdentifierRepository {
   getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>>
 
   /** Returns a paginated and filtered list of identifiers. */
-  getUserIdentifiers(params?: GetUserIdentifiersParams): Promise<AppResult<PagedResult<UserIdentifier>, AppError>>
+  getUserIdentifiers(
+    pageNumber?: number | null,
+    pageSize?: number | null,
+    sortBy?: UserSortValues.UserIdentifierSortBy | null,
+    sortOrder?: SortOrder | null,
+    userAuthProviders?: UserAuthProvider[] | null,
+    identifiers?: string[] | null
+  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>>
 
   /** Removes an existing identifier from user profile. */
   deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>

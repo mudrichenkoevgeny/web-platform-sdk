@@ -4,7 +4,7 @@ import {
   CommonErrorArgs
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
+import { ClientSecurityErrorCodes } from '@/error/naming/ClientSecurityErrorCodes'
 import { enSecurityStrings } from '@/locales/index'
 import type { CoreSecurityStrings } from "@/locales/index";
 

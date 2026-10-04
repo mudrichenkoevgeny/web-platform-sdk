@@ -267,9 +267,6 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
   }
 
   useEffect(() => {
-    if (initialState) {
-      return
-    }
     const unsubscribe = dependencies.userRepository.observeCurrentUser((user) => {
       if (!user) {
         storeRef.current?.setState({
@@ -301,7 +298,7 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
       }
     })
     return () => unsubscribe()
-  }, [dependencies, initialState])
+  }, [dependencies])
 
   return (
     <TotpMainContext.Provider value={storeRef.current}>

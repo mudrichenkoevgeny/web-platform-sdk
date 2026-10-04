@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { toUserIdentifierIdOrThrow, toUserSessionIdOrThrow, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  toAccessTokenOrThrow,
+  toRefreshTokenOrThrow,
+  toUserIdentifierIdOrThrow,
+  toUserSessionIdOrThrow,
+  UserErrorCodes
+} from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
 import type { RefreshTokenRepository } from '@/repository/auth/refreshtoken/RefreshTokenRepository'
@@ -12,8 +18,8 @@ describe('RefreshTokenUseCase', () => {
   let useCase: RefreshTokenUseCase
 
   const dummySessionToken: SessionToken = {
-    accessToken: { value: 'new_access_123' },
-    refreshToken: { value: 'new_refresh_123' },
+    accessToken: toAccessTokenOrThrow('new_access_123'),
+    refreshToken: toRefreshTokenOrThrow('new_refresh_123'),
     expiresAt: Date.now() + 3600000,
     tokenType: 'Bearer',
     sessionId: toUserSessionIdOrThrow('sess_1'),
@@ -26,7 +32,7 @@ describe('RefreshTokenUseCase', () => {
     } as unknown as RefreshTokenRepository
 
     mockAuthStorage = {
-      getRefreshToken: vi.fn().mockResolvedValue({ value: 'old_refresh_123' }),
+      getRefreshToken: vi.fn().mockResolvedValue('old_refresh_123'),
       updateTokens: vi.fn().mockResolvedValue(undefined)
     } as unknown as AuthStorage
 

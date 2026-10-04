@@ -8,7 +8,7 @@ const meta: Meta<typeof UnlockSuccessScreen> = {
   decorators: [
     (Story) => (
       <ComponentTestHarness>
-        <div className="w-[420px] h-[520px] border rounded-xl overflow-hidden">
+        <div className="w-dialog-default h-dialog-default border rounded-xl overflow-hidden">
           <Story />
         </div>
       </ComponentTestHarness>

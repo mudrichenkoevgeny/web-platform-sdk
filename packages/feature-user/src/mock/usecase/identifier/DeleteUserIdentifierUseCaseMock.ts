@@ -2,7 +2,7 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 import { DeleteUserIdentifierUseCase } from '@/usecase/identifier/DeleteUserIdentifierUseCase'
-import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
 /** Mock implementation of {@link DeleteUserIdentifierUseCase}. */
 export class DeleteUserIdentifierUseCaseMock extends DeleteUserIdentifierUseCase {
   public executeCalls = 0
@@ -13,7 +13,7 @@ export class DeleteUserIdentifierUseCaseMock extends DeleteUserIdentifierUseCase
     super(new IdentifierRepositoryMock())
   }
 
-  public override async invoke(id: UserIdentifierId): Promise<AppResult<void, AppError>> {
+  public override async execute(id: UserIdentifierId): Promise<AppResult<void, AppError>> {
     this.executeCalls++
     return this.resultProvider(id)
   }

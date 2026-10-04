@@ -41,7 +41,7 @@ export interface IdentifierDetailStoreDependencies {
   getUserIdentifierUseCase?: GetUserIdentifierUseCase
   deleteUserIdentifierUseCase?: DeleteUserIdentifierUseCase
   emailChangePasswordUseCase?: EmailChangePasswordUseCase
-  deletePasswordUseCase?: { invoke: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> }
+  deletePasswordUseCase?: { execute: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> }
   deletePassword?: (identifierId: UserIdentifierId) => Promise<void>
   isCurrentIdentifier?: boolean
   authStorage?: AuthStorage

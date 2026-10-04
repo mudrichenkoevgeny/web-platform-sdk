@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { FeatureUserStrings } from '@/locales/index'
-import { AuthProviderItem } from '@/item/AuthProviderItem'
+import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
 
 /**
  * Props for the {@link AuthProviderGrid} component.

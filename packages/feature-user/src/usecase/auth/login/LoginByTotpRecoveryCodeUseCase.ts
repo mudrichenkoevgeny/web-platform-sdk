@@ -32,7 +32,7 @@ export class LoginByTotpRecoveryCodeUseCase {
     const result = await this.loginRepository.loginByTotpRecoveryCode(mfaToken, code)
     if (isSuccess(result)) {
       await this.authStorage.updateTokens(result.data.sessionToken)
-      await this.userStorage.updateCurrentUser(result.data.user)
+      await this.userStorage.updateCurrentUser(result.data.userDetails)
     }
     return result
   }

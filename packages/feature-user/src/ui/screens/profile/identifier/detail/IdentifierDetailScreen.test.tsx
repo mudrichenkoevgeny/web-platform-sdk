@@ -86,7 +86,7 @@ describe('IdentifierDetailScreen', () => {
     const confirmBtn = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
     await user.click(confirmBtn)
 
-    expect(deps.emailChangePasswordUseCase?.invoke).toHaveBeenCalledWith('user@example.com', 'old_secret', 'new_secret')
+    expect(deps.emailChangePasswordUseCase?.execute).toHaveBeenCalledWith('user@example.com', 'old_secret', 'new_secret')
   })
 
   it('calls deletePassword callback when delete password button is clicked', async () => {

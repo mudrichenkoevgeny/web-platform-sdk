@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { SecurityError } from '@/error/model/SecurityError'
-import { ClientSecurityErrorCodes } from '@/naming/ClientSecurityErrorCodes'
+import { ClientSecurityErrorCodes } from '@/error/naming/ClientSecurityErrorCodes'
 
 describe('SecurityError', () => {
   it('creates passwordPolicyUnavailable error as a plain object', () => {

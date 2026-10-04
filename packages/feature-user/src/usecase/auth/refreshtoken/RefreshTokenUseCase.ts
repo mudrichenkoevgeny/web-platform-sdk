@@ -26,11 +26,11 @@ export class RefreshTokenUseCase {
    */
   public async execute(): Promise<AppResult<SessionToken, AppError>> {
     const refreshTokenModel = await this.authStorage.getRefreshToken()
-    if (!refreshTokenModel || !refreshTokenModel.value) {
+    if (!refreshTokenModel) {
       return appResultFailure(UserError.invalidRefreshToken())
     }
 
-    const result = await this.refreshTokenRepository.refreshToken(refreshTokenModel.value)
+    const result = await this.refreshTokenRepository.refreshToken(refreshTokenModel)
     if (isSuccess(result)) {
       await this.authStorage.updateTokens(result.data)
     }

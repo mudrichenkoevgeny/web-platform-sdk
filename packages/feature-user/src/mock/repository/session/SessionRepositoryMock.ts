@@ -10,7 +10,7 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionRepository } from '@/repository/session/SessionRepository'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionMock } from '@mudrichenkoevgeny/shared-foundation'
+import { userSessionMock } from '@/mock/domain/model/session/userSessionMock'
 /**
  * Mock implementation of {@link SessionRepository}.
  */

@@ -27,7 +27,7 @@ export const userDetailsMock = (
   createdAt: Date.now(),
   updatedAt: null,
   scheduledPermanentDeletionAt: null,
-  accountLockoutType: AccountLockoutType.NONE,
+  lockoutType: AccountLockoutType.NONE,
   temporaryLockoutUntil: null,
   ...overrides
 })

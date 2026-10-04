@@ -32,7 +32,7 @@ export class LoginByPhoneUseCase {
     const result = await this.loginRepository.loginByPhone(phoneNumber, confirmationCode)
     if (isSuccess(result)) {
       await this.authStorage.updateTokens(result.data.sessionToken)
-      await this.userStorage.updateCurrentUser(result.data.user)
+      await this.userStorage.updateCurrentUser(result.data.userDetails)
     }
     return result
   }

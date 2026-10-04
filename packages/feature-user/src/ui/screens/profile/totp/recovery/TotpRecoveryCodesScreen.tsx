@@ -62,7 +62,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const { recoveryCodes, showRegenerateConfirmation, actionLoading, actionError } = screenState
 
   const handleCopyAll = async () => {
-    const textToCopy = recoveryCodes.totpRecoveryCodes.join('\n')
+    const textToCopy = recoveryCodes.codes.join('\n')
     await navigator.clipboard.writeText(textToCopy)
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 2000)
@@ -102,7 +102,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           className="w-full p-4 bg-accent/30 rounded-lg border border-border grid grid-cols-2 gap-2 my-2 text-center"
           data-testid={TotpRecoveryCodesTestTags.RECOVERY_CODES_CONTAINER}
         >
-          {recoveryCodes.totpRecoveryCodes.map((code) => (
+          {recoveryCodes.codes.map((code) => (
             <span key={code} className="font-mono text-sm font-semibold tracking-wider text-surface-foreground">
               {code}
             </span>

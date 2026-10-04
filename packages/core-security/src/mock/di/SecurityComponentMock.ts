@@ -6,8 +6,8 @@ import {
   EncryptedSettingsMock,
   DeviceInfoProviderMock
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsApiMock } from '@/network/OpenSecuritySettingsApiMock'
-import { OpenSecuritySettingsStorageMock } from '@/storage/OpenSecuritySettingsStorageMock'
+import { OpenSecuritySettingsApiMock } from '@/mock/network/OpenSecuritySettingsApiMock'
+import { OpenSecuritySettingsStorageMock } from '@/mock/storage/OpenSecuritySettingsStorageMock'
 /**
  * Creates a pre-configured {@link SecurityComponent} instance for testing and Storybook preview purposes.
  *

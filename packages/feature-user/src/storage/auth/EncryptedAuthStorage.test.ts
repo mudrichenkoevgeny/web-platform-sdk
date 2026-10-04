@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
+  toAccessTokenOrThrow,
+  toRefreshTokenOrThrow,
   toUserIdentifierIdOrThrow,
   toUserSessionIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -12,8 +14,8 @@ describe('EncryptedAuthStorage', () => {
   let storage: EncryptedAuthStorage
 
   const dummySessionToken: SessionToken = {
-    accessToken: { value: 'test-access-token' },
-    refreshToken: { value: 'test-refresh-token' },
+    accessToken: toAccessTokenOrThrow('test-access-token'),
+    refreshToken: toRefreshTokenOrThrow('test-refresh-token'),
     expiresAt: Date.now() + 3600000,
     tokenType: 'Bearer',
     sessionId: toUserSessionIdOrThrow('session-123'),
@@ -38,7 +40,7 @@ describe('EncryptedAuthStorage', () => {
     await storage.updateTokens(dummySessionToken)
 
     expect(storage.getAccessToken()).toBe('test-access-token')
-    expect(await storage.getRefreshToken()).toEqual({ value: 'test-refresh-token' })
+    expect(await storage.getRefreshToken()).toBe('test-refresh-token')
     expect(await storage.getSessionId()).toBe('session-123')
     expect(await storage.getIdentifierId()).toBe('identifier-456')
     expect(listener).toHaveBeenCalledWith('test-access-token')

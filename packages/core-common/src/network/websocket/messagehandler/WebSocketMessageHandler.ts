@@ -1,4 +1,4 @@
-import type { SocketFrame } from '@/model/websocket/SocketFrame'
+import type { SocketFrame } from '@/network/model/websocket/SocketFrame'
 import type { WebSocketMessageHandlerResult } from '@/network/websocket/messagehandler/WebSocketMessageHandlerResult'
 
 /**

@@ -19,6 +19,14 @@ export const ProfileRootContainer = forwardRef<HTMLDivElement, ProfileRootContai
     ref
   ) => {
     const dialogRef = useRef<HTMLDivElement>(null)
+    const previousActiveElementRef = useRef<HTMLElement | null>(null)
+
+    useEffect(() => {
+      previousActiveElementRef.current = document.activeElement as HTMLElement
+      return () => {
+        previousActiveElementRef.current?.focus()
+      }
+    }, [])
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,7 +78,7 @@ export const ProfileRootContainer = forwardRef<HTMLDivElement, ProfileRootContai
             'bg-surface text-surface-foreground border border-border rounded-xl shadow-lg overflow-hidden flex flex-col relative transition-all',
             isMobile
               ? 'w-full max-w-lg h-full max-h-screen rounded-b-none self-end'
-              : 'w-full max-w-md h-full max-h-[36rem]',
+              : 'w-full max-w-md h-full max-h-dialog-default',
             className
           )}
         >

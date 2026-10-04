@@ -1,7 +1,7 @@
 import { CommonComponent } from '@/di/CommonComponent'
 import type { CommonComponentConfig } from "@/di/CommonComponent";
-import { EncryptedSettingsMock } from '@/storage/EncryptedSettingsMock'
-import { AccessTokenProviderMock } from '@/network/AccessTokenProviderMock'
+import { EncryptedSettingsMock } from '@/mock/storage/EncryptedSettingsMock'
+import { AccessTokenProviderMock } from '@/mock/network/AccessTokenProviderMock'
 /**
  * Creates a pre-configured {@link CommonComponent} instance for testing and Storybook preview purposes.
  *

@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
-import { CoreOutlinedTextField } from '@/outlined/CoreOutlinedTextField'
-import type { CoreOutlinedTextFieldProps } from "@/outlined/CoreOutlinedTextField";
-import { CoreIcon } from '@/icon/icon/CoreIcon'
+import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
+import type { CoreOutlinedTextFieldProps } from "@/ui/components/input/outlined/CoreOutlinedTextField";
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
 export interface CorePasswordTextFieldProps
   extends Omit<CoreOutlinedTextFieldProps, 'trailingIcon' | 'type'> {

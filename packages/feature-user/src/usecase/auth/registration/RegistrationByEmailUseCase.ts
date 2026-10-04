@@ -33,7 +33,7 @@ export class RegistrationByEmailUseCase {
     const result = await this.registrationRepository.registerByEmail(email, password, confirmationCode)
     if (isSuccess(result)) {
       await this.authStorage.updateTokens(result.data.sessionToken)
-      await this.userStorage.updateCurrentUser(result.data.user)
+      await this.userStorage.updateCurrentUser(result.data.userDetails)
     }
     return result
   }

@@ -3,7 +3,7 @@ import { UserErrorCodes, UserErrorArgs } from '@mudrichenkoevgeny/shared-foundat
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserErrorParser } from '@/error/parser/UserErrorParser'
-import { UserError } from '@/model/UserError'
+import { UserError } from '@/error/model/UserError'
 import { enUserStrings, ruUserStrings } from '@/locales/index'
 describe('UserErrorParser', () => {
   const parserEn = new UserErrorParser(enUserStrings)

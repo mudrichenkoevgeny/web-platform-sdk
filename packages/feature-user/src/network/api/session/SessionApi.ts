@@ -1,4 +1,3 @@
-import type { GetSessionsParams } from '@/repository/session/SessionRepository'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   ClientType,

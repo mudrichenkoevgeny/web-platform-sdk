@@ -79,23 +79,13 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
       session.identifierAuthProvider === UserAuthProvider.APPLE ? 'scale-105 -translate-y-px' : ''
     )
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (onSessionClick && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault()
-        onSessionClick()
-      }
-    }
-
     return (
       <div
         ref={ref}
         data-testid={`SessionItem_${session.id}`}
-        tabIndex={isClickable ? 0 : undefined}
-        onClick={onSessionClick}
-        onKeyDown={handleKeyDown}
         className={cn(
-          'w-full p-4 rounded-lg border transition-colors flex flex-col gap-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary',
-          isClickable ? 'cursor-pointer hover:bg-accent/50' : '',
+          'relative w-full p-4 rounded-lg border transition-colors flex flex-col gap-3 shadow-sm',
+          isClickable ? 'hover:bg-accent/50' : '',
           isCurrentSession
             ? 'bg-primary/10 border-primary text-primary-foreground'
             : 'bg-card border-border',
@@ -103,14 +93,22 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
         )}
         {...rest}
       >
-        <div className="flex items-center gap-2">
+        {isClickable && (
+          <button
+            type="button"
+            aria-label="View session details"
+            onClick={onSessionClick}
+            className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-primary z-0 cursor-pointer"
+          />
+        )}
+        <div className="flex items-center gap-2 relative z-10 pointer-events-none">
           <CoreIcon src={IconComponent} size={22} className={iconClassName} />
           <span className="text-base font-bold text-surface-foreground">
             {session.identifierDisplayName}
           </span>
         </div>
 
-        <div className="flex flex-col gap-1 text-sm text-surface-foreground">
+        <div className="flex flex-col gap-1 text-sm text-surface-foreground relative z-10 pointer-events-none">
           <span className="font-semibold">{deviceName}</span>
           {session.deviceInfo.clientType && (
             <span className="text-xs text-muted-foreground">
@@ -126,7 +124,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
         </div>
 
         {!isCurrentSession && (
-          <div className="pt-2 border-t border-border flex justify-end">
+          <div className="pt-2 border-t border-border flex justify-end relative z-10">
             <button
               type="button"
               aria-label={strings.session_revoke}

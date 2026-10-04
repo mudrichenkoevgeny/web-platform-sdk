@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { ApiErrorResponse, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { toServerError } from '@/error/mapper/toServerError'
-import { generateErrorId } from '@/model/ErrorId'
+import { generateErrorId } from '@/error/model/ErrorId'
 
 describe('toServerError', () => {
   it('maps ApiErrorResponse to ServerError with valid id', () => {

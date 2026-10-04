@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@/utils/cn'
-import { CoreIcon } from '@/icon/icon/CoreIcon'
+import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
-import { CoreTextButton } from '@/button/text/CoreTextButton'
+import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { enStrings } from '@/locales/en/strings'
 
 export interface ListingHeaderBarProps extends React.HTMLAttributes<HTMLDivElement> {

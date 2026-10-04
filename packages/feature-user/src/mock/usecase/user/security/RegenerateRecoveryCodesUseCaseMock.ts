@@ -2,7 +2,7 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/RegenerateRecoveryCodesUseCase'
 import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSecurityRepositoryMock } from '@/repository/user/security/UserSecurityRepositoryMock'
+import { UserSecurityRepositoryMock } from '@/mock/repository/user/security/UserSecurityRepositoryMock'
 /** Mock implementation of {@link RegenerateRecoveryCodesUseCase}. */
 export class RegenerateRecoveryCodesUseCaseMock extends RegenerateRecoveryCodesUseCase {
   public executeCalls = 0
@@ -12,7 +12,7 @@ export class RegenerateRecoveryCodesUseCaseMock extends RegenerateRecoveryCodesU
     super(new UserSecurityRepositoryMock())
   }
 
-  public override async invoke(): Promise<AppResult<TotpRecoveryCodes, AppError>> {
+  public override async execute(): Promise<AppResult<TotpRecoveryCodes, AppError>> {
     this.executeCalls++
     return this.resultProvider()
   }

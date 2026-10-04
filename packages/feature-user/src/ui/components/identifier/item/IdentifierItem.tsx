@@ -46,6 +46,7 @@ export const IdentifierItem = forwardRef<HTMLDivElement, IdentifierItemProps>(
     return (
       <div
         ref={ref}
+        data-testid={`IdentifierItem_${identifier.id}`}
         role={isClickable ? 'button' : undefined}
         tabIndex={isClickable ? 0 : undefined}
         onClick={onClick}

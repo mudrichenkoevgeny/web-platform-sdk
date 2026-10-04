@@ -1,5 +1,5 @@
 import type { AppError } from '@/error/model/AppError'
-import type { SocketFrame } from '@/model/websocket/SocketFrame'
+import type { SocketFrame } from '@/network/model/websocket/SocketFrame'
 
 /**
  * Result returned by a {@link WebSocketMessageHandler} handling an incoming frame.

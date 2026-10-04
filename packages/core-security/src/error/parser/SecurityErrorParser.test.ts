@@ -3,7 +3,7 @@ import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs } from '@mudrich
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SecurityErrorParser } from '@/error/parser/SecurityErrorParser'
-import { SecurityError } from '@/model/SecurityError'
+import { SecurityError } from '@/error/model/SecurityError'
 import { enSecurityStrings, ruSecurityStrings } from '@/locales/index'
 describe('SecurityErrorParser', () => {
   const parserEn = new SecurityErrorParser(enSecurityStrings)

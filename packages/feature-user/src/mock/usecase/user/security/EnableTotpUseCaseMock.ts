@@ -2,7 +2,7 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { EnableTotpUseCase } from '@/usecase/user/security/EnableTotpUseCase'
 import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSecurityRepositoryMock } from '@/repository/user/security/UserSecurityRepositoryMock'
+import { UserSecurityRepositoryMock } from '@/mock/repository/user/security/UserSecurityRepositoryMock'
 /** Mock implementation of {@link EnableTotpUseCase}. */
 export class EnableTotpUseCaseMock extends EnableTotpUseCase {
   public executeCalls = 0
@@ -13,7 +13,7 @@ export class EnableTotpUseCaseMock extends EnableTotpUseCase {
     super(new UserSecurityRepositoryMock())
   }
 
-  public override async invoke(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodes, AppError>> {
+  public override async execute(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodes, AppError>> {
     this.executeCalls++
     return this.resultProvider(mfaToken, code)
   }

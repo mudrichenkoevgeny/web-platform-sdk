@@ -88,7 +88,7 @@ describe('SessionDetailScreen', () => {
 
     await user.click(screen.getByTestId(SessionDetailTestTags.REVOKE_BUTTON))
 
-    expect(deps.deleteSessionUseCase?.invoke).toHaveBeenCalledWith(mockSession.id)
+    expect(deps.deleteSessionUseCase?.execute).toHaveBeenCalledWith(mockSession.id)
     expect(deps.onSessionRevoked).toHaveBeenCalledWith(mockSession.id)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })

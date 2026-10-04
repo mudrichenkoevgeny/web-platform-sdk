@@ -1,6 +1,6 @@
 import { sessionTokenPayloadSchema, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { HttpClientConfigPlugin } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { IS_PUBLIC_API_HEADER } from '@/auth/IsPublicApi'
+import { IS_PUBLIC_API_HEADER } from '@/network/auth/IsPublicApi'
 import type { AuthStorage } from '@/storage/auth/AuthStorage'
 import { toSessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -71,7 +71,7 @@ export class AuthHttpClientConfigPlugin implements HttpClientConfigPlugin {
 
     const token = await this.authStorage.getAccessTokenModel()
     if (token) {
-      headers.set('Authorization', `Bearer ${token.value}`)
+      headers.set('Authorization', `Bearer ${token}`)
     } else {
       this.logger?.('Auth: Missing or expired token in storage')
     }
@@ -155,7 +155,7 @@ export class AuthHttpClientConfigPlugin implements HttpClientConfigPlugin {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: JSON.stringify({ refresh_token: refreshToken.value })
+        body: JSON.stringify({ refresh_token: refreshToken })
       })
 
       if (!refreshResponse.ok) {
@@ -172,7 +172,7 @@ export class AuthHttpClientConfigPlugin implements HttpClientConfigPlugin {
 
       const sessionToken = toSessionToken(validationResult.data)
       await this.authStorage.updateTokens(sessionToken)
-      return sessionToken.accessToken.value
+      return sessionToken.accessToken
     } catch (e: unknown) {
       this.logger?.(`Auth: Token refresh failed with exception: ${String(e)}`)
       return null

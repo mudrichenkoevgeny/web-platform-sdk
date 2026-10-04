@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   AccountLockoutType,
+  UserWebSocketEventTypes,
   toUserIdOrThrow,
   UserAccountStatus,
   UserRole
@@ -8,7 +9,6 @@ import {
 import type { UserDetailsPayload } from "@mudrichenkoevgeny/shared-foundation";
 import type { ErrorId, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserWebSocketMessageHandler } from '@/network/websocket/messagehandler/UserWebSocketMessageHandler'
-import { UserWebSocketEventTypes } from '@/contract/UserWebSocketEventTypes'
 import type { UserStorage } from '@/storage/user/UserStorage'
 import type { AuthStorage } from '@/storage/auth/AuthStorage'
 import type { UserRepository } from '@/repository/user/UserRepository'
@@ -57,7 +57,7 @@ describe('UserWebSocketMessageHandler', () => {
     const result = await handler.handle(frame)
 
     expect(result.kind).toBe('Handled')
-    expect(refreshTokenUseCase.invoke).toHaveBeenCalled()
+    expect(refreshTokenUseCase.execute).toHaveBeenCalled()
   })
 
   it('handles USER_UPDATED frame by updating user storage', async () => {

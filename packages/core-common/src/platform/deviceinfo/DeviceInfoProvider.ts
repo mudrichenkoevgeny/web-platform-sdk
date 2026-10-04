@@ -1,6 +1,6 @@
 import type { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonStorage } from '@/storage/common/CommonStorage'
-import { UserAgentParser } from '@/parser/UserAgentParser'
+import { UserAgentParser } from '@/platform/parser/UserAgentParser'
 
 /**
  * Interface providing platform device metadata.

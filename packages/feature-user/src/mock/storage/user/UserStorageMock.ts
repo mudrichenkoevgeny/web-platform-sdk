@@ -8,7 +8,13 @@ import type {
 import {
   UserStorage
 } from '@/storage/user/UserStorage'
-import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/UserStorage";
+import type {
+  GetUserIdentifiersListParams,
+  GetUserSessionsListParams,
+  UserChangeListener,
+  UserIdentifiersListChangeListener,
+  UserSessionsListChangeListener
+} from '@/storage/user/UserStorage'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifier } from "@mudrichenkoevgeny/shared-foundation";
@@ -64,11 +70,11 @@ export class UserStorageMock implements UserStorage {
     this.notifyUserListeners()
   }
 
-  public async getUserIdentifiersList(): Promise<PagedResult<UserIdentifier>> {
+  public async getUserIdentifiersList(_params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifier>> {
     return this.identifiersPagedResult
   }
 
-  public observeUserIdentifiersList(listener: UserIdentifiersListChangeListener): () => void {
+  public observeUserIdentifiersList(listener: UserIdentifiersListChangeListener, _params?: GetUserIdentifiersListParams): () => void {
     this.identifierListeners.add(listener)
     listener(this.identifiersPagedResult)
     return () => {
@@ -121,11 +127,11 @@ export class UserStorageMock implements UserStorage {
     this.notifyIdentifierListeners()
   }
 
-  public async getUserSessionsList(): Promise<PagedResult<UserSession>> {
+  public async getUserSessionsList(_params?: GetUserSessionsListParams): Promise<PagedResult<UserSession>> {
     return this.sessionsPagedResult
   }
 
-  public observeUserSessionsList(listener: UserSessionsListChangeListener): () => void {
+  public observeUserSessionsList(listener: UserSessionsListChangeListener, _params?: GetUserSessionsListParams): () => void {
     this.sessionListeners.add(listener)
     listener(this.sessionsPagedResult)
     return () => {

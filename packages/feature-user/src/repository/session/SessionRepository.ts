@@ -33,7 +33,23 @@ export interface GetSessionsParams {
  */
 export interface SessionRepository {
   /** Returns a paginated and filtered list of active sessions for current account. */
-  getSessions(params?: GetSessionsParams): Promise<AppResult<PagedResult<UserSession>, AppError>>
+  getSessions(
+    pageNumber?: number | null,
+    pageSize?: number | null,
+    sortBy?: UserSortValues.UserSessionSortBy | null,
+    sortOrder?: SortOrder | null,
+    identifiers?: string[] | null,
+    identifierIds?: string[] | null,
+    userAuthProviders?: UserAuthProvider[] | null,
+    clientTypes?: ClientType[] | null,
+    userAgents?: string[] | null,
+    ipAddresses?: string[] | null,
+    languages?: string[] | null,
+    deviceIds?: string[] | null,
+    deviceNames?: string[] | null,
+    appVersions?: string[] | null,
+    operationSystemVersions?: string[] | null
+  ): Promise<AppResult<PagedResult<UserSession>, AppError>>
 
   /** Returns details of a specific session. */
   getSession(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>>

@@ -2,7 +2,7 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
-import { SessionRepositoryMock } from '@/repository/session/SessionRepositoryMock'
+import { SessionRepositoryMock } from '@/mock/repository/session/SessionRepositoryMock'
 /** Mock implementation of {@link DeleteSessionUseCase}. */
 export class DeleteSessionUseCaseMock extends DeleteSessionUseCase {
   public executeCalls = 0
@@ -12,7 +12,7 @@ export class DeleteSessionUseCaseMock extends DeleteSessionUseCase {
     super(new SessionRepositoryMock())
   }
 
-  public override async invoke(userSessionId: UserSessionId): Promise<AppResult<void, AppError>> {
+  public override async execute(userSessionId: UserSessionId): Promise<AppResult<void, AppError>> {
     this.executeCalls++
     return this.resultProvider(userSessionId)
   }

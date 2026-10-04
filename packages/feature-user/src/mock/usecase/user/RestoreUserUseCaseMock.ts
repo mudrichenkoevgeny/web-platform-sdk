@@ -2,8 +2,8 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { RestoreUserUseCase } from '@/usecase/user/RestoreUserUseCase'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { UserRepositoryMock } from '@/repository/user/UserRepositoryMock'
-import { userDetailsMock } from '@mudrichenkoevgeny/shared-foundation'
+import { UserRepositoryMock } from '@/mock/repository/user/UserRepositoryMock'
+import { userDetailsMock } from '@/mock/domain/model/user/userDetailsMock'
 /** Mock implementation of {@link RestoreUserUseCase}. */
 export class RestoreUserUseCaseMock extends RestoreUserUseCase {
   public executeCalls = 0
@@ -13,7 +13,7 @@ export class RestoreUserUseCaseMock extends RestoreUserUseCase {
     super(new UserRepositoryMock())
   }
 
-  public override async invoke(): Promise<AppResult<UserDetails, AppError>> {
+  public override async execute(): Promise<AppResult<UserDetails, AppError>> {
     this.executeCalls++
     return this.resultProvider()
   }

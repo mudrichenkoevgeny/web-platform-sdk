@@ -1,9 +1,9 @@
-import type { AccessTokenProvider } from '@/provider/AccessTokenProvider'
+import type { AccessTokenProvider } from '@/network/provider/AccessTokenProvider'
 import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
-import type { SocketFrame } from '@/model/websocket/SocketFrame'
-import type { WebSocketMessageHandler } from '@/messagehandler/WebSocketMessageHandler'
+import type { SocketFrame } from '@/network/model/websocket/SocketFrame'
+import type { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
 import type { WebSocketService, SocketEventListener } from '@/network/websocket/service/WebSocketService'
-import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
+import { CommonWebSocketEventTypes } from '@/network/contract/CommonWebSocketEventTypes'
 import { generateErrorId } from '@/error/model/ErrorId'
 
 const INITIAL_RECONNECT_DELAY_MS = 2000

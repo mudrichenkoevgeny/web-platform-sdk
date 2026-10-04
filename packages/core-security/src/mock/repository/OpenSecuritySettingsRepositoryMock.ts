@@ -3,7 +3,7 @@ import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-co
 import { OpenSecuritySettingsRepository } from '@/repository/OpenSecuritySettingsRepository'
 import type { OpenSecuritySettingsObserver } from "@/repository/OpenSecuritySettingsRepository";
 import type { OpenSecuritySettings } from '@/domain/model/OpenSecuritySettings'
-import { openSecuritySettingsMock } from '@/domain/model/OpenSecuritySettingsMock'
+import { openSecuritySettingsMock } from '@/mock/domain/model/OpenSecuritySettingsMock'
 /**
  * Configuration options for {@link OpenSecuritySettingsRepositoryMock}.
  */

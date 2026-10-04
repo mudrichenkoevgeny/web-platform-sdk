@@ -5,7 +5,7 @@ import type {
   ListingFilterState
 } from '@/listing/ListingModels'
 import { CoreButton } from '@/ui/components/button/button/CoreButton'
-import { ListingChoiceDropdown } from '@/dropdown/ListingChoiceDropdown'
+import { ListingChoiceDropdown } from '@/ui/components/listing/option/dropdown/ListingChoiceDropdown'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { enStrings } from '@/locales/en/strings'

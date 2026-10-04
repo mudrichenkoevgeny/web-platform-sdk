@@ -80,7 +80,7 @@ describe('MainProfileScreen', () => {
     const confirmBtn = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
     await user.click(confirmBtn)
 
-    expect(deps.logoutUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.logoutUseCase.execute).toHaveBeenCalledTimes(1)
   })
 
   it('renders sign in button when user is unauthorized', () => {

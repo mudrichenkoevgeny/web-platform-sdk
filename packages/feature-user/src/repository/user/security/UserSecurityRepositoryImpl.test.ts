@@ -29,7 +29,7 @@ describe('UserSecurityRepositoryImpl', () => {
     createdAt: Date.now(),
     updatedAt: null,
     scheduledPermanentDeletionAt: null,
-    accountLockoutType: AccountLockoutType.NONE,
+    lockoutType: AccountLockoutType.NONE,
     temporaryLockoutUntil: null
   }
 
@@ -73,7 +73,7 @@ describe('UserSecurityRepositoryImpl', () => {
 
     expect(isSuccess(result)).toBe(true)
     if (isSuccess(result)) {
-      expect(result.data.totpSecretKey).toBe('SECRET')
+      expect(result.data.secretKey).toBe('SECRET')
     }
   })
 

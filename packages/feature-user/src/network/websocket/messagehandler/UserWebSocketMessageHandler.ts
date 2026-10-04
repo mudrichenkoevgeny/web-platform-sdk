@@ -10,8 +10,7 @@ import type { UserStorage } from '@/storage/user/UserStorage'
 import type { AuthStorage } from '@/storage/auth/AuthStorage'
 import type { UserRepository } from '@/repository/user/UserRepository'
 import type { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
-import { UserWebSocketEventTypes } from '@/contract/UserWebSocketEventTypes'
-import { toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { UserWebSocketEventTypes, toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Interprets user-related WebSocket frames (`UserWebSocketEventTypes`) for unauthorized sessions,
  * account status, and session termination.

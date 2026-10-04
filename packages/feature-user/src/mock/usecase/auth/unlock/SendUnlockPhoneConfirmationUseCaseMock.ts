@@ -1,5 +1,5 @@
 import { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
-import { UnlockRepositoryMock } from '@/repository/auth/unlock/UnlockRepositoryMock'
+import { UnlockRepositoryMock } from '@/mock/repository/auth/unlock/UnlockRepositoryMock'
 
 /**
  * Mock implementation of {@link SendUnlockPhoneConfirmationUseCase}.

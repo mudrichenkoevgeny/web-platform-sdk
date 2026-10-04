@@ -20,7 +20,7 @@ export class AuthStorageMock implements AuthStorage {
   public isTokensCleared = false
 
   public getAccessToken(): string | null {
-    return this.accessToken?.value ?? null
+    return this.accessToken ?? null
   }
 
   public observeAccessToken(listener: AccessTokenChangeListener): () => void {

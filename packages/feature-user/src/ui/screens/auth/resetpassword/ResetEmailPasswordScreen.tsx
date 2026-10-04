@@ -57,6 +57,7 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
 
       <div className="w-full flex-1 flex flex-col justify-center gap-4 my-auto">
         <CoreEmailTextField
+          data-testid="ResetEmailPassword_EmailInput"
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.email}
@@ -73,13 +74,14 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
           )}
         >
           {actionError && (
-            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
+            <CoreErrorText data-testid="ResetEmailPassword_EmailStepErrorText" text={errorParser.parse(actionError) ?? ''} />
           )}
         </div>
       </div>
 
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
+          data-testid="ResetEmailPassword_SendCodeButton"
           type="submit"
           label={strings.send_code}
           disabled={!isEmailValid || actionLoading}
@@ -150,6 +152,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         </p>
 
         <CoreCodeTextField
+          data-testid="ResetEmailPassword_CodeInput"
           value={code}
           onChange={(e) => onCodeChanged(e.target.value)}
           label={strings.confirmation_code}
@@ -160,6 +163,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         />
 
         <CorePasswordTextField
+          data-testid="ResetEmailPassword_PasswordInput"
           value={newPassword}
           onChange={(e) => onPasswordChanged(e.target.value)}
           isPasswordVisible={isPasswordVisible}
@@ -177,7 +181,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
           )}
         >
           {actionError && (
-            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
+            <CoreErrorText data-testid="ResetEmailPassword_ResetStepErrorText" text={errorParser.parse(actionError) ?? ''} />
           )}
         </div>
 
@@ -186,6 +190,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
             <span>{strings.resend_code_timer(resendTimerSeconds)}</span>
           ) : (
             <CoreTextButton
+              data-testid="ResetEmailPassword_ResendButton"
               type="button"
               label={strings.resend_code}
               onClick={onSendCodeClick}
@@ -197,6 +202,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
 
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
+          data-testid="ResetEmailPassword_ConfirmButton"
           type="submit"
           label={strings.confirm}
           disabled={!canConfirm}
@@ -204,6 +210,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         />
 
         <CoreTextButton
+          data-testid="ResetEmailPassword_ChangeEmailButton"
           type="button"
           label={strings.change_email}
           onClick={onResetEmailClick}

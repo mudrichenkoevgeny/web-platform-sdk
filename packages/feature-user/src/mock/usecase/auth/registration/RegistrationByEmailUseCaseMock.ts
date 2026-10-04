@@ -2,8 +2,8 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { RegistrationByEmailUseCase } from '@/usecase/auth/registration/RegistrationByEmailUseCase'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import { RegistrationRepositoryMock } from '@/repository/auth/registration/RegistrationRepositoryMock'
-import { AuthStorageMock } from '@/storage/auth/AuthStorageMock'
+import { RegistrationRepositoryMock } from '@/mock/repository/auth/registration/RegistrationRepositoryMock'
+import { AuthStorageMock } from '@/mock/storage/auth/AuthStorageMock'
 import { UserStorageMock } from '@/storage/user/UserStorageMock'
 /**
  * Mock implementation of {@link RegistrationByEmailUseCase}.

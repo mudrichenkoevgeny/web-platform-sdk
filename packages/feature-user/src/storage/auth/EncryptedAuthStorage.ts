@@ -1,4 +1,6 @@
 import {
+  toAccessTokenOrNull,
+  toRefreshTokenOrNull,
   toUserIdentifierIdOrNull,
   toUserSessionIdOrNull
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -82,7 +84,7 @@ export class EncryptedAuthStorage implements AuthStorage, AccessTokenProvider {
     }
 
     const tokenValue = await this.encryptedSettings.get(KEY_ACCESS_TOKEN)
-    return tokenValue ? { value: tokenValue } : null
+    return toAccessTokenOrNull(tokenValue)
   }
 
   /**
@@ -92,7 +94,7 @@ export class EncryptedAuthStorage implements AuthStorage, AccessTokenProvider {
    */
   public async getRefreshToken(): Promise<RefreshToken | null> {
     const tokenValue = await this.encryptedSettings.get(KEY_REFRESH_TOKEN)
-    return tokenValue ? { value: tokenValue } : null
+    return toRefreshTokenOrNull(tokenValue)
   }
 
   /**
@@ -131,13 +133,13 @@ export class EncryptedAuthStorage implements AuthStorage, AccessTokenProvider {
    * @param sessionToken - Session token details to store
    */
   public async updateTokens(sessionToken: SessionToken): Promise<void> {
-    await this.encryptedSettings.put(KEY_ACCESS_TOKEN, sessionToken.accessToken.value)
-    await this.encryptedSettings.put(KEY_REFRESH_TOKEN, sessionToken.refreshToken.value)
+    await this.encryptedSettings.put(KEY_ACCESS_TOKEN, sessionToken.accessToken)
+    await this.encryptedSettings.put(KEY_REFRESH_TOKEN, sessionToken.refreshToken)
     await this.encryptedSettings.put(KEY_EXPIRES_AT, String(sessionToken.expiresAt))
     await this.encryptedSettings.put(KEY_SESSION_ID, sessionToken.sessionId)
     await this.encryptedSettings.put(KEY_IDENTIFIER_ID, sessionToken.identifierId)
 
-    this.cachedAccessToken = sessionToken.accessToken.value
+    this.cachedAccessToken = sessionToken.accessToken
     this.notifyListeners()
   }
 

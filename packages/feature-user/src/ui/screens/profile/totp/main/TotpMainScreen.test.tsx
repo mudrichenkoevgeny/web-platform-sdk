@@ -53,7 +53,7 @@ describe('TotpMainScreen', () => {
     const setupBtn = screen.getByTestId(TotpMainTestTags.SETUP_TOTP_BUTTON)
     await user.click(setupBtn)
 
-    expect(deps.setupTotpUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.setupTotpUseCase.execute).toHaveBeenCalledTimes(1)
     expect(screen.getByTestId(TotpMainTestTags.SECRET_KEY_TEXT).textContent).toBe('JBSWY3DPEHPK3PXP')
   })
 

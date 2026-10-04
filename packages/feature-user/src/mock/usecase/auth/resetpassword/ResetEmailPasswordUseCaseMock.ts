@@ -2,7 +2,7 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ResetEmailPasswordUseCase } from '@/usecase/auth/resetpassword/ResetEmailPasswordUseCase'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { ResetPasswordRepositoryMock } from '@/repository/auth/resetpassword/ResetPasswordRepositoryMock'
+import { ResetPasswordRepositoryMock } from '@/mock/repository/auth/resetpassword/ResetPasswordRepositoryMock'
 /**
  * Mock implementation of {@link ResetEmailPasswordUseCase}.
  */

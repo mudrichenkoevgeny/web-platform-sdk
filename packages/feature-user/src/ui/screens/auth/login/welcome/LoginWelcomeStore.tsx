@@ -195,7 +195,7 @@ export const createLoginWelcomeStore = (
 
           const result = await deps.loginByGoogleUseCase.execute()
           if (isSuccess(result)) {
-            if (result.data.user.accountStatus === UserAccountStatus.PENDING_DELETION) {
+            if (result.data.userDetails.accountStatus === UserAccountStatus.PENDING_DELETION) {
               deps.onNavigateToPendingDeletion()
             } else {
               deps.onFinished()

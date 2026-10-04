@@ -324,9 +324,6 @@ export const MainProfileProvider: React.FC<MainProfileProviderProps> = ({
   }
 
   useEffect(() => {
-    if (initialState) {
-      return
-    }
     const unsubscribe = dependencies.userRepository.observeCurrentUser((user) => {
       if (user) {
         storeRef.current?.setState({
@@ -351,7 +348,7 @@ export const MainProfileProvider: React.FC<MainProfileProviderProps> = ({
       }
     })
     return () => unsubscribe()
-  }, [dependencies, initialState])
+  }, [dependencies])
 
   return (
     <MainProfileContext.Provider value={storeRef.current}>

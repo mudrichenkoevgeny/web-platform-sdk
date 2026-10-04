@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId } from "@mudrichenkoevgeny/shared-foundation";
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'

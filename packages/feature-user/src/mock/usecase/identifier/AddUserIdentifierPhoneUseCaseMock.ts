@@ -2,8 +2,8 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/AddUserIdentifierPhoneUseCase'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
-import { userIdentifierMock } from '@mudrichenkoevgeny/shared-foundation'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
+import { userIdentifierMock } from '@/mock/domain/model/identifier/userIdentifierMock'
 /** Mock implementation of {@link AddUserIdentifierPhoneUseCase}. */
 export class AddUserIdentifierPhoneUseCaseMock extends AddUserIdentifierPhoneUseCase {
   public executeCalls = 0
@@ -14,7 +14,7 @@ export class AddUserIdentifierPhoneUseCaseMock extends AddUserIdentifierPhoneUse
     super(new IdentifierRepositoryMock())
   }
 
-  public override async invoke(phone: string, code: string): Promise<AppResult<UserIdentifier, AppError>> {
+  public override async execute(phone: string, code: string): Promise<AppResult<UserIdentifier, AppError>> {
     this.executeCalls++
     return this.resultProvider(phone, code)
   }

@@ -1,7 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { toUserIdOrThrow, toUserIdentifierIdOrThrow, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  AccountLockoutType,
+  toAccessTokenOrThrow,
+  toRefreshTokenOrThrow,
+  toUserIdOrThrow,
+  toUserIdentifierIdOrThrow,
+  toUserSessionIdOrThrow,
+  UserAccountStatus,
+  UserRole
+} from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AccountLockoutType, UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
 import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
 import type { AuthStorage } from '@/storage/auth/AuthStorage'
@@ -15,7 +23,7 @@ describe('LoginByEmailUseCase', () => {
   let useCase: LoginByEmailUseCase
 
   const dummyAuthData: AuthData = {
-    user: {
+    userDetails: {
       id: toUserIdOrThrow('usr_1'),
       role: UserRole.CLIENT_USER,
       accountStatus: UserAccountStatus.ACTIVE,
@@ -28,12 +36,12 @@ describe('LoginByEmailUseCase', () => {
       createdAt: Date.now(),
       updatedAt: null,
       scheduledPermanentDeletionAt: null,
-      accountLockoutType: AccountLockoutType.NONE,
+      lockoutType: AccountLockoutType.NONE,
       temporaryLockoutUntil: null
     },
     sessionToken: {
-      accessToken: { value: 'access_123' },
-      refreshToken: { value: 'refresh_123' },
+      accessToken: toAccessTokenOrThrow('access_123'),
+      refreshToken: toRefreshTokenOrThrow('refresh_123'),
       expiresAt: Date.now() + 3600000,
       tokenType: 'Bearer',
       sessionId: toUserSessionIdOrThrow('sess_1'),
@@ -62,6 +70,6 @@ describe('LoginByEmailUseCase', () => {
 
     expect(isSuccess(result)).toBe(true)
     expect(mockAuthStorage.updateTokens).toHaveBeenCalledWith(dummyAuthData.sessionToken)
-    expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith(dummyAuthData.user)
+    expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith(dummyAuthData.userDetails)
   })
 })

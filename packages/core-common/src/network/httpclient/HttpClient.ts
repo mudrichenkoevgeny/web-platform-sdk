@@ -1,7 +1,7 @@
 import { apiErrorResponseSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { ApiErrorResponse } from "@mudrichenkoevgeny/shared-foundation";
 import type { DeviceInfoProvider } from '@/platform/deviceinfo/DeviceInfoProvider'
-import { CommonHttpHeaders } from '@/contract/CommonHttpHeaders'
+import { CommonHttpHeaders } from '@/network/contract/CommonHttpHeaders'
 import type { HttpClientConfigPlugin } from '@/network/httpclient/HttpClientConfigPlugin'
 import { ApiException } from '@/error/model/ApiException'
 import { generateErrorId } from '@/error/model/ErrorId'

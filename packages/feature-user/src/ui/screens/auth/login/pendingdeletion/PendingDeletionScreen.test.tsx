@@ -33,7 +33,7 @@ describe('PendingDeletionScreen', () => {
     const restoreButton = screen.getByRole('button', { name: enUserStrings.restore_account })
     await user.click(restoreButton)
 
-    expect(deps.restoreUserUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.restoreUserUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onRestoreSuccess).toHaveBeenCalledTimes(1)
   })
 
@@ -50,7 +50,7 @@ describe('PendingDeletionScreen', () => {
     const logoutButton = screen.getByRole('button', { name: enUserStrings.logout })
     await user.click(logoutButton)
 
-    expect(deps.logoutUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.logoutUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onSignOut).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,4 +1,4 @@
-import type { CoreCommonStrings } from '@/en/strings'
+import type { CoreCommonStrings } from '@/locales/en/strings'
 
 /** Russian localized string dictionary for core-common. */
 export const ruStrings: CoreCommonStrings = {

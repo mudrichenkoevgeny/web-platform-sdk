@@ -1,5 +1,5 @@
-import type { SocketFrame } from '@/model/websocket/SocketFrame'
-import type { WebSocketMessageHandler } from '@/messagehandler/WebSocketMessageHandler'
+import type { SocketFrame } from '@/network/model/websocket/SocketFrame'
+import type { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
 
 /** Callback listener signature for observing raw socket frame events. */
 export type SocketEventListener = (frame: SocketFrame) => void

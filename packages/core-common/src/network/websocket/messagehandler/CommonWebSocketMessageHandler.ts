@@ -1,5 +1,5 @@
-import { CommonWebSocketEventTypes } from '@/contract/CommonWebSocketEventTypes'
-import type { SocketFrame } from '@/model/websocket/SocketFrame'
+import { CommonWebSocketEventTypes } from '@/network/contract/CommonWebSocketEventTypes'
+import type { SocketFrame } from '@/network/model/websocket/SocketFrame'
 import type { WebSocketMessageHandler } from '@/network/websocket/messagehandler/WebSocketMessageHandler'
 import {
   webSocketMessageHandlerResultHandled,

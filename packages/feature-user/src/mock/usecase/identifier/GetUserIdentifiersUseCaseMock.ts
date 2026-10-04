@@ -3,7 +3,7 @@ import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-co
 import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepositoryMock } from '@/repository/identifier/IdentifierRepositoryMock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
 /** Mock implementation of {@link GetUserIdentifiersUseCase}. */
 export class GetUserIdentifiersUseCaseMock extends GetUserIdentifiersUseCase {
   public executeCalls = 0
@@ -14,7 +14,7 @@ export class GetUserIdentifiersUseCaseMock extends GetUserIdentifiersUseCase {
     super(new IdentifierRepositoryMock())
   }
 
-  public override async invoke(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  public override async execute(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
     this.executeCalls++
     return this.resultProvider(pageNumber ?? 1, pageSize ?? 10)
   }

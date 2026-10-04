@@ -36,7 +36,7 @@ describe('TotpRecoveryCodesScreen', () => {
 
     expect(await screen.findByText('1111-2222')).not.toBeNull()
     expect(screen.getByText('3333-4444')).not.toBeNull()
-    expect(deps.getRecoveryCodesUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.getRecoveryCodesUseCase.execute).toHaveBeenCalledTimes(1)
   })
 
   it('shows regenerate confirmation dialog and calls regenerateRecoveryCodesUseCase', async () => {
@@ -59,7 +59,7 @@ describe('TotpRecoveryCodesScreen', () => {
     const confirmBtn = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
     await user.click(confirmBtn)
 
-    expect(deps.regenerateRecoveryCodesUseCase.invoke).toHaveBeenCalledTimes(1)
+    expect(deps.regenerateRecoveryCodesUseCase.execute).toHaveBeenCalledTimes(1)
     expect(await screen.findByText('AAAA-BBBB')).not.toBeNull()
   })
 

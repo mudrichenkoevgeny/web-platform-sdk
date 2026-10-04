@@ -1,10 +1,10 @@
-import { AppError } from '@/model/AppError'
+import { AppError } from '@/error/model/AppError'
 import {
   CommonErrorInternal,
   CommonErrorNoInternetConnection,
   CommonErrorNetwork,
   CommonErrorContractViolation
-} from '@/model/CommonError'
+} from '@/error/model/CommonError'
 
 /**
  * Formats an {@link AppError} into a detailed string suitable for logging.

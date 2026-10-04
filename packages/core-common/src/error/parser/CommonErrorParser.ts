@@ -1,7 +1,7 @@
 import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError } from '@/model/AppError'
+import { AppError } from '@/error/model/AppError'
 import type { AppErrorParser } from '@/error/parser/AppErrorParser'
-import { ClientCommonErrorCodes } from '@/naming/ClientCommonErrorCodes'
+import { ClientCommonErrorCodes } from '@/error/naming/ClientCommonErrorCodes'
 import { enStrings } from '@/locales/index'
 import type { CoreCommonStrings } from "@/locales/index";
 
