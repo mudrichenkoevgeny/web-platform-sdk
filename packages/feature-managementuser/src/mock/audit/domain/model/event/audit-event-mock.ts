@@ -1,8 +1,6 @@
 import type { AuditEvent } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  AuditActionType,
   AuditActorType,
-  AuditResourceType,
   AuditStatus,
   AuditValueSensitivity,
   toAuditEventIdOrThrow,
@@ -16,8 +14,8 @@ export const auditEventMock = (overrides?: Partial<AuditEvent>): AuditEvent => (
   actorId: null,
   actorType: AuditActorType.USER,
   actorUserRole: null,
-  action: UserAuditActionType.MANAGEMENT_UPDATE_USER as unknown as AuditActionType,
-  resource: UserAuditResourceType.USER as unknown as AuditResourceType,
+  action: UserAuditActionType.MANAGEMENT_UPDATE_USER,
+  resource: UserAuditResourceType.USER,
   resourceId: null,
   resourceValueSensitivity: AuditValueSensitivity.NON_SENSITIVE,
   status: AuditStatus.SUCCESS,

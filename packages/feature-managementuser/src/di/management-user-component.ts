@@ -11,7 +11,9 @@ import type {
   UnlockRepository,
   UserAuthServices,
   UserSecurityRepository,
-  UserStorage
+  UserStorage,
+  UserRepository,
+  IdentifierRepository
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   AddUserIdentifierEmailUseCase,
@@ -56,19 +58,6 @@ import {
   UserWebSocketMessageHandler
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import {
-  commonAuditMetadataKeySchema,
-  CompositeAuditActionTypeParser,
-  CompositeAuditMetadataKeyParser,
-  CompositeAuditResourceTypeParser,
-  securityAuditActionTypeSchema,
-  securityAuditResourceTypeSchema,
-  settingsAuditActionTypeSchema,
-  settingsAuditResourceTypeSchema,
-  userAuditActionTypeSchema,
-  userAuditMetadataKeySchema,
-  userAuditResourceTypeSchema
-} from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
 import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
@@ -122,6 +111,78 @@ import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-managem
 import type { ManagementUserSecurityRepository } from '@/repository/user/security/management-user-security-repository'
 import { ManagementUserSecurityRepositoryImpl } from '@/repository/user/security/management-user-security-repository-impl'
 import { SelfManagementUserSecurityRepositoryImpl } from '@/repository/user/security/self-management-user-security-repository-impl'
+
+class SelfManagementUserRepositoryAdapter implements UserRepository {
+  public constructor(private readonly repo: SelfManagementUserRepository) {}
+
+  public observeCurrentUser(listener: Parameters<UserRepository['observeCurrentUser']>[0]): ReturnType<UserRepository['observeCurrentUser']> {
+    return this.repo.observeCurrentUser(listener)
+  }
+
+  public refreshCurrentUser(): ReturnType<UserRepository['refreshCurrentUser']> {
+    return this.repo.refreshCurrentUser()
+  }
+
+  public async scheduleUserDeletion(): ReturnType<UserRepository['scheduleUserDeletion']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async restoreUser(): ReturnType<UserRepository['restoreUser']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public clearSession(): ReturnType<UserRepository['clearSession']> {
+    return this.repo.clearSession()
+  }
+}
+
+class SelfManagementIdentifierRepositoryAdapter implements IdentifierRepository {
+  public constructor(private readonly repo: SelfManagementIdentifierRepository) {}
+
+  public getUserIdentifier(...args: Parameters<IdentifierRepository['getUserIdentifier']>): ReturnType<IdentifierRepository['getUserIdentifier']> {
+    return this.repo.getUserIdentifier(...args)
+  }
+
+  public getUserIdentifiers(...args: Parameters<IdentifierRepository['getUserIdentifiers']>): ReturnType<IdentifierRepository['getUserIdentifiers']> {
+    return this.repo.getUserIdentifiers(...args)
+  }
+
+  public async deleteUserIdentifier(): ReturnType<IdentifierRepository['deleteUserIdentifier']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async addUserIdentifierEmail(): ReturnType<IdentifierRepository['addUserIdentifierEmail']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async addUserIdentifierPhone(): ReturnType<IdentifierRepository['addUserIdentifierPhone']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async addUserIdentifierExternalAuthProvider(): ReturnType<IdentifierRepository['addUserIdentifierExternalAuthProvider']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async sendAddEmailIdentifierConfirmation(): ReturnType<IdentifierRepository['sendAddEmailIdentifierConfirmation']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public async sendAddPhoneIdentifierConfirmation(): ReturnType<IdentifierRepository['sendAddPhoneIdentifierConfirmation']> {
+    throw new Error('Not supported for management users')
+  }
+
+  public emailChangePassword(...args: Parameters<IdentifierRepository['emailChangePassword']>): ReturnType<IdentifierRepository['emailChangePassword']> {
+    return this.repo.emailChangePassword(...args)
+  }
+
+  public getRemainingEmailConfirmationDelayInSeconds(): ReturnType<IdentifierRepository['getRemainingEmailConfirmationDelayInSeconds']> {
+    return 0
+  }
+
+  public getRemainingPhoneNumberConfirmationDelayInSeconds(): ReturnType<IdentifierRepository['getRemainingPhoneNumberConfirmationDelayInSeconds']> {
+    return 0
+  }
+}
 import { EncryptedManagementAuthSettingsStorage } from '@/storage/auth/settings/encrypted-management-auth-settings-storage'
 import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
 import { EncryptedManagementGlobalSettingsStorage } from '@/storage/global-settings/encrypted-management-global-settings-storage'
@@ -413,27 +474,10 @@ export class ManagementUserComponent {
       this.commonComponent.webSocketService
     )
 
-    const compositeActionTypeParser = new CompositeAuditActionTypeParser([
-      (value: string) => userAuditActionTypeSchema.safeParse(value).data ?? null,
-      (value: string) => securityAuditActionTypeSchema.safeParse(value).data ?? null,
-      (value: string) => settingsAuditActionTypeSchema.safeParse(value).data ?? null
-    ])
-    const compositeResourceTypeParser = new CompositeAuditResourceTypeParser([
-      (value: string) => userAuditResourceTypeSchema.safeParse(value).data ?? null,
-      (value: string) => securityAuditResourceTypeSchema.safeParse(value).data ?? null,
-      (value: string) => settingsAuditResourceTypeSchema.safeParse(value).data ?? null
-    ])
-    const compositeMetadataKeyParser = new CompositeAuditMetadataKeyParser([
-      (value: string) => commonAuditMetadataKeySchema.safeParse(value).data ?? null,
-      (value: string) => userAuditMetadataKeySchema.safeParse(value).data ?? null
-    ])
+    this.managementAuditRepository = new ManagementAuditRepositoryImpl(this.managementAuditApi)
 
-    this.managementAuditRepository = new ManagementAuditRepositoryImpl(
-      this.managementAuditApi,
-      compositeActionTypeParser,
-      compositeResourceTypeParser,
-      compositeMetadataKeyParser
-    )
+    const selfManagementUserRepositoryAdapter = new SelfManagementUserRepositoryAdapter(this.selfManagementUserRepository)
+    const selfManagementIdentifierRepositoryAdapter = new SelfManagementIdentifierRepositoryAdapter(this.selfManagementIdentifierRepository)
 
     this.refreshTokenUseCase = new RefreshTokenUseCase(this.selfManagementRefreshTokenRepository, this.authStorage)
     this.loginByEmailUseCase = new LoginByEmailUseCase(this.selfManagementLoginRepository, this.authStorage, this.userStorage)
@@ -455,9 +499,9 @@ export class ManagementUserComponent {
       this.settingsComponent.globalSettingsRepository,
       this.securityComponent.securitySettingsRepository
     )
-    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, this.selfManagementUserRepository as any)
-    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(this.selfManagementUserRepository as any)
-    this.restoreUserUseCase = new RestoreUserUseCase(this.selfManagementUserRepository as any)
+    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, selfManagementUserRepositoryAdapter)
+    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(selfManagementUserRepositoryAdapter)
+    this.restoreUserUseCase = new RestoreUserUseCase(selfManagementUserRepositoryAdapter)
     this.setupTotpUseCase = new SetupTotpUseCase(this.selfManagementUserSecurityRepository)
     this.enableTotpUseCase = new EnableTotpUseCase(this.selfManagementUserSecurityRepository)
     this.disableTotpUseCase = new DisableTotpUseCase(this.selfManagementUserSecurityRepository)
@@ -468,18 +512,18 @@ export class ManagementUserComponent {
     this.deleteSessionUseCase = new DeleteSessionUseCase(this.selfManagementSessionRepository)
     this.deleteAllOtherSessionsUseCase = new DeleteAllOtherSessionsUseCase(this.selfManagementSessionRepository)
     this.reauthenticateSessionUseCase = new ReauthenticateSessionUseCase(this.selfManagementSessionRepository)
-    this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(this.selfManagementIdentifierRepository as any)
-    this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(this.selfManagementIdentifierRepository as any)
-    this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(this.selfManagementIdentifierRepository as any)
-    this.sendAddEmailIdentifierConfirmationUseCase = new SendAddEmailIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository as any)
-    this.addUserIdentifierEmailUseCase = new AddUserIdentifierEmailUseCase(this.selfManagementIdentifierRepository as any)
-    this.sendAddPhoneIdentifierConfirmationUseCase = new SendAddPhoneIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository as any)
-    this.addUserIdentifierPhoneUseCase = new AddUserIdentifierPhoneUseCase(this.selfManagementIdentifierRepository as any)
+    this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.sendAddEmailIdentifierConfirmationUseCase = new SendAddEmailIdentifierConfirmationUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.addUserIdentifierEmailUseCase = new AddUserIdentifierEmailUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.sendAddPhoneIdentifierConfirmationUseCase = new SendAddPhoneIdentifierConfirmationUseCase(selfManagementIdentifierRepositoryAdapter)
+    this.addUserIdentifierPhoneUseCase = new AddUserIdentifierPhoneUseCase(selfManagementIdentifierRepositoryAdapter)
     this.addUserIdentifierGoogleUseCase = new AddUserIdentifierGoogleUseCase(
       this.authServices.googleAuth ?? new DisabledGoogleAuthService(),
-      this.selfManagementIdentifierRepository as any
+      selfManagementIdentifierRepositoryAdapter
     )
-    this.emailChangePasswordUseCase = new EmailChangePasswordUseCase(this.selfManagementIdentifierRepository as any)
+    this.emailChangePasswordUseCase = new EmailChangePasswordUseCase(selfManagementIdentifierRepositoryAdapter)
     this.getUsersUseCase = new GetUsersUseCase(this.managementUserRepository)
     this.getUserUseCase = new GetUserUseCase(this.managementUserRepository)
     this.createUserUseCase = new CreateUserUseCase(this.managementUserRepository)
@@ -511,7 +555,7 @@ export class ManagementUserComponent {
 
     this.userWebSocketMessageHandler = new UserWebSocketMessageHandler(
       this.userStorage,
-      this.selfManagementUserRepository as any,
+      selfManagementUserRepositoryAdapter,
       this.authStorage,
       this.refreshTokenUseCase
     )

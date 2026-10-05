@@ -6,6 +6,7 @@ import type {
   UserAuthProvider,
   UserId,
   UserIdentifier,
+  UserIdentifierId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
@@ -47,16 +48,16 @@ export class ManagementIdentifierRepositoryImpl implements ManagementIdentifierR
     }))
   }
 
-  public async getIdentifier(identifierId: string): Promise<AppResult<UserIdentifier, AppError>> {
+  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>> {
     const result = await this.managementIdentifierApi.getIdentifier(identifierId)
     return mapSuccess(result, (payload) => toUserIdentifier(payload))
   }
 
-  public async deleteIdentifier(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>> {
+  public async deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     return this.managementIdentifierApi.deleteIdentifier(userId, identifierId)
   }
 
-  public async deleteIdentifierPassword(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>> {
+  public async deleteIdentifierPassword(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     return this.managementIdentifierApi.deleteIdentifierPassword(userId, identifierId)
   }
 }

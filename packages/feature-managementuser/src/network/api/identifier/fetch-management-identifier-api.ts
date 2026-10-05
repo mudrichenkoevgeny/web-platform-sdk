@@ -5,6 +5,7 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserId,
+  UserIdentifierId,
   UserIdentifierPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -61,13 +62,13 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
     return callResult(() => this.client.request<PagedResult<UserIdentifierPayload>>(path))
   }
 
-  public async getIdentifier(identifierId: string): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_IDENTIFIER_ID]: identifierId })
     const path = `${ManagementIdentifierRoutes.GET_IDENTIFIER}?${query.toString()}`
     return callResult(() => this.client.request<UserIdentifierPayload>(path))
   }
 
-  public async deleteIdentifier(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>> {
+  public async deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({
       [UserApiPaths.USER_ID]: userId,
       [UserApiPaths.USER_IDENTIFIER_ID]: identifierId
@@ -76,7 +77,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
-  public async deleteIdentifierPassword(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>> {
+  public async deleteIdentifierPassword(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({
       [UserApiPaths.USER_ID]: userId,
       [UserApiPaths.USER_IDENTIFIER_ID]: identifierId

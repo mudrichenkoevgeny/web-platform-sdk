@@ -14,10 +14,10 @@ export const globalIdentifierListDependenciesMock = (
         totalItems: 1,
         totalPages: 1
       })
-  } as any,
+  } as unknown as GlobalIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
   managementDeleteIdentifierUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  } as unknown as GlobalIdentifierListStoreDependencies['managementDeleteIdentifierUseCase'],
   onNavigateToIdentifierDetail: () => {},
   onBack: () => {},
   ...overrides

@@ -14,10 +14,10 @@ export const globalSessionListDependenciesMock = (
         totalItems: 1,
         totalPages: 1
       })
-  } as any,
+  } as unknown as GlobalSessionListStoreDependencies['managementGetSessionsUseCase'],
   managementDeleteSessionUseCase: {
     execute: async () => appResultSuccess({})
-  } as any,
+  } as unknown as GlobalSessionListStoreDependencies['managementDeleteSessionUseCase'],
   onNavigateToSessionDetail: () => {},
   onNavigateToUserDetail: () => {},
   onBack: () => {},

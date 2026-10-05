@@ -34,7 +34,7 @@ export type GlobalIdentifierListScreenState =
 export interface GlobalIdentifierListStoreDependencies {
   managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
   managementDeleteIdentifierUseCase: ManagementDeleteIdentifierUseCase
-  onNavigateToIdentifierDetail: (identifierId: string) => void
+  onNavigateToIdentifierDetail: (identifierId: UserIdentifierId) => void
   onBack: () => void
 }
 
@@ -47,7 +47,7 @@ export interface GlobalIdentifierListStoreState {
   onSortChanged: (sortState: ListingSortState | null) => void
   onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => void
   onApplyFilters: () => void
-  onIdentifierClick: (identifierId: string) => void
+  onIdentifierClick: (identifierId: UserIdentifierId) => void
   onDeleteIdentifierClick: (userId: UserId, identifierId: UserIdentifierId) => Promise<void>
   onBackClick: () => void
 }
@@ -245,7 +245,7 @@ export const createGlobalIdentifierListStore = (
       await fetchPage(set, get, 1, current.sortState, current.filterStates)
     },
 
-    onIdentifierClick: (identifierId: string) => {
+    onIdentifierClick: (identifierId: UserIdentifierId) => {
       deps.onNavigateToIdentifierDetail(identifierId)
     },
 
@@ -263,7 +263,7 @@ export const createGlobalIdentifierListStore = (
         }
       })
 
-      const result = await deps.managementDeleteIdentifierUseCase.execute(userId, String(identifierId))
+      const result = await deps.managementDeleteIdentifierUseCase.execute(userId, identifierId)
 
       if (isSuccess(result)) {
         const updated = get().screenState
