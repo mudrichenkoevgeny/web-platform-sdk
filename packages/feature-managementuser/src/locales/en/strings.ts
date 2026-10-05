@@ -1,11 +1,7 @@
-/** Localized string dictionary contract for feature-managementuser. */
-export interface FeatureManagementUserStrings {
-  readonly back: string
-  readonly save: string
-  readonly saving: string
-  readonly reset_to_defaults: string
-  readonly retry: string
+import type { FeatureUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
+export interface FeatureManagementUserStrings extends FeatureUserStrings {
   readonly management_settings_title: string
   readonly audit_logs: string
 
@@ -60,16 +56,12 @@ export interface FeatureManagementUserStrings {
   readonly update_user: string
   readonly delete_user: string
   readonly delete_user_confirmation_desc: string
-  readonly user_id: string
+  readonly user_id: (id: string) => string
   readonly user_role: string
   readonly user_account_status: string
-  readonly email: string
-  readonly password: string
   readonly authority_level: string
   readonly user_sessions: string
-  readonly sessions: string
   readonly user_identifiers: string
-  readonly identifiers: string
   readonly disable_totp: string
   readonly disabling_totp: string
   readonly revoke_all_sessions: string
@@ -127,15 +119,10 @@ export interface FeatureManagementUserStrings {
   readonly last_login_at_label: (date: string) => string
   readonly last_active_at_label: (date: string) => string
   readonly scheduled_deletion_at_label: (date: string) => string
-  readonly not_available: string
 }
 
 export const enManagementUserStrings: FeatureManagementUserStrings = {
-  back: 'Back',
-  save: 'Save',
-  saving: 'Saving...',
-  reset_to_defaults: 'Reset to defaults',
-  retry: 'Retry',
+  ...enUserStrings,
 
   management_settings_title: 'Management Settings',
   audit_logs: 'Audit Logs',
@@ -191,16 +178,12 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
   update_user: 'Update User',
   delete_user: 'Delete User',
   delete_user_confirmation_desc: 'Are you sure you want to delete this user?',
-  user_id: 'User ID',
+  user_id: (id: string) => `User ID: ${id}`,
   user_role: 'Role',
   user_account_status: 'Status',
-  email: 'Email',
-  password: 'Password',
   authority_level: 'Authority Level',
   user_sessions: 'User Sessions',
-  sessions: 'Sessions',
   user_identifiers: 'User Identifiers',
-  identifiers: 'Identifiers',
   disable_totp: 'Disable TOTP',
   disabling_totp: 'Disabling TOTP...',
   revoke_all_sessions: 'Revoke All Sessions',
@@ -257,6 +240,5 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
   created_at_label: (date: string) => `Created At: ${date}`,
   last_login_at_label: (date: string) => `Last Login At: ${date}`,
   last_active_at_label: (date: string) => `Last Active At: ${date}`,
-  scheduled_deletion_at_label: (date: string) => `Scheduled Deletion At: ${date}`,
-  not_available: 'N/A'
+  scheduled_deletion_at_label: (date: string) => `Scheduled Deletion At: ${date}`
 }

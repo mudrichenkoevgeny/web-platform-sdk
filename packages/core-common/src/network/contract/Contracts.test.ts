@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { CommonHttpHeaders } from '@/network/contract/CommonHttpHeaders'
-import { CommonWebSocketEventTypes } from '@/network/contract/CommonWebSocketEventTypes'
+import { CommonHttpHeaders } from '@/network/contract/common-http-headers'
+import { CommonWebSocketEventTypes } from '@/network/contract/common-web-socket-event-types'
 
 describe('Contract Constants', () => {
   it('validates header names', () => {

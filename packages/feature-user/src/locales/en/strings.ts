@@ -1,5 +1,8 @@
+import type { CoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { enCoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+
 /** Localized string dictionary contract for feature-user. */
-export interface FeatureUserStrings {
+export interface FeatureUserStrings extends CoreCommonStrings {
   readonly error_user_invalid_access_token: string
   readonly error_user_access_token_expired: string
   readonly error_user_invalid_refresh_token: string
@@ -179,6 +182,7 @@ export interface FeatureUserStrings {
   readonly identifier_detail_id: string
   readonly identifier_detail_value: string
   readonly identifier_detail_auth_provider: string
+  readonly identifier_detail_external_email: string
   readonly identifier_detail_created_at: string
   readonly identifier_detail_updated_at: string
   readonly identifier_delete_button: string
@@ -188,6 +192,8 @@ export interface FeatureUserStrings {
 }
 
 export const enUserStrings: FeatureUserStrings = {
+  ...enCoreCommonStrings,
+
   error_user_invalid_access_token: 'The access token is invalid.',
   error_user_access_token_expired: 'The access token has expired.',
   error_user_invalid_refresh_token: 'The refresh token is invalid.',
@@ -367,6 +373,7 @@ export const enUserStrings: FeatureUserStrings = {
   identifier_detail_id: 'Identifier ID',
   identifier_detail_value: 'Identifier Value',
   identifier_detail_auth_provider: 'Auth Provider',
+  identifier_detail_external_email: 'External Email',
   identifier_detail_created_at: 'Created At',
   identifier_detail_updated_at: 'Updated At',
   identifier_delete_button: 'Delete Identifier',

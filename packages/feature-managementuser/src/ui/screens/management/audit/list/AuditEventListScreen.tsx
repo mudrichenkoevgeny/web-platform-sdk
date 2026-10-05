@@ -1,0 +1,171 @@
+import React, { forwardRef, useEffect } from 'react'
+import type { AuditEventId } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  cn,
+  CoreBackButton,
+  CoreIcon,
+  CoreScreenTitleText,
+  FullscreenError,
+  FullscreenLoading,
+  icons,
+  ListingEmptyState,
+  ListingHeaderBar,
+  ListingOptionsPanel,
+  PagingFooter,
+  useInfiniteScroll
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { enManagementUserStrings } from '@/locales/index'
+import type { FeatureManagementUserStrings } from '@/locales/index'
+import { AuditItem } from '@/ui/components/audit/item/AuditItem'
+import { getAuditEventListingOptionsConfig } from '@/ui/screens/management/audit/list/AuditEventListOptionsConfig'
+import {
+  AuditEventListProvider,
+  useAuditEventListStore
+} from '@/ui/screens/management/audit/list/AuditEventListStore'
+import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
+
+const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+  strings = enManagementUserStrings
+}) => {
+  const screenState = useAuditEventListStore((s) => s.screenState)
+  const onRefresh = useAuditEventListStore((s) => s.onRefresh)
+  const onLoadNextPage = useAuditEventListStore((s) => s.onLoadNextPage)
+  const onEventClick = useAuditEventListStore((s) => s.onEventClick)
+  const onBackClick = useAuditEventListStore((s) => s.onBackClick)
+  const onToggleFilterPanel = useAuditEventListStore((s) => s.onToggleFilterPanel)
+  const onSortChanged = useAuditEventListStore((s) => s.onSortChanged)
+  const onFilterChanged = useAuditEventListStore((s) => s.onFilterChanged)
+  const onApplyFilters = useAuditEventListStore((s) => s.onApplyFilters)
+
+  if (screenState.status === 'loading') {
+    return <FullscreenLoading />
+  }
+
+  if (screenState.status === 'error') {
+    return (
+      <FullscreenError
+        error={screenState.error}
+        onRetry={onRefresh}
+      />
+    )
+  }
+
+  const {
+    paging,
+    sortState,
+    filterStates,
+    isFilterPanelExpanded
+  } = screenState
+
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
+    onLoadMore: onLoadNextPage,
+    hasMore: paging.canLoadMore,
+    isLoading: paging.isNextPageLoading
+  })
+
+  const optionsConfig = getAuditEventListingOptionsConfig(strings)
+
+  return (
+    <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
+      <div className="w-full flex items-center justify-between relative mb-4">
+        <CoreBackButton onClick={onBackClick} />
+        <CoreScreenTitleText
+          text={strings.audit_logs_title}
+          className="absolute left-1/2 -translate-x-1/2"
+        />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label={strings.edit_auth_settings}
+            onClick={onToggleFilterPanel}
+            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+          >
+            <CoreIcon src={icons.filter} size={20} className="text-surface-foreground" />
+          </button>
+          <button
+            type="button"
+            aria-label={strings.retry}
+            onClick={onRefresh}
+            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+          >
+            <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1">
+        {isFilterPanelExpanded && (
+          <div className="w-full mb-2">
+            <ListingOptionsPanel
+              config={optionsConfig}
+              sortState={sortState}
+              filterStates={filterStates}
+              onSortChanged={onSortChanged}
+              onFilterChanged={onFilterChanged}
+              onApplyClick={onApplyFilters}
+            />
+          </div>
+        )}
+
+        {paging.items.length === 0 && !paging.isInitialLoading ? (
+          <div className="flex-1 flex items-center justify-center">
+            <ListingEmptyState />
+          </div>
+        ) : (
+          <div className="w-full flex flex-col gap-3">
+            <ListingHeaderBar state={paging} />
+
+            {paging.items.map((event) => (
+              <AuditItem
+                key={event.id}
+                event={event}
+                onClick={() => onEventClick(event.id)}
+                strings={strings}
+              />
+            ))}
+
+            {paging.canLoadMore && (
+              <div ref={sentinelRef} className="h-4 w-full" />
+            )}
+
+            <PagingFooter
+              state={paging}
+              onRetry={onLoadNextPage}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const AuditEventListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+  strings
+}) => {
+  const initScreen = useAuditEventListStore((s) => s.initScreen)
+
+  useEffect(() => {
+    initScreen()
+  }, [initScreen])
+
+  return <AuditEventListContent strings={strings} />
+}
+
+export interface AuditEventListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  dependencies: AuditEventListStoreDependencies
+  strings?: FeatureManagementUserStrings
+}
+
+export const AuditEventListScreen = forwardRef<HTMLDivElement, AuditEventListScreenProps>(
+  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+    return (
+      <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
+        <AuditEventListProvider dependencies={dependencies}>
+          <AuditEventListController strings={strings} />
+        </AuditEventListProvider>
+      </div>
+    )
+  }
+)
+
+AuditEventListScreen.displayName = 'AuditEventListScreen'

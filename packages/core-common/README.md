@@ -94,27 +94,29 @@ export const App = ({ children }: { children: React.ReactNode }) => {
 
 ### 3. Using UI Components
 ```typescript
+import React from 'react'
 import {
   CoreButton,
   CoreOutlinedTextField,
-  CorePasswordTextField
+  CorePasswordTextField,
+  enStrings
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
-export const LoginForm = () => {
+export const LoginForm = ({ strings = enStrings }) => {
   const [password, setPassword] = React.useState('')
   const [isVisible, setIsVisible] = React.useState(false)
 
   return (
     <form className="flex flex-col gap-4">
-      <CoreOutlinedTextField label="Email" placeholder="user@example.com" />
+      <CoreOutlinedTextField label={strings.ui_common_email} placeholder="user@example.com" />
       <CorePasswordTextField
-        label="Password"
+        label={strings.error_common_invalid_field}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         isPasswordVisible={isVisible}
         onTogglePasswordVisibility={() => setIsVisible(!isVisible)}
       />
-      <CoreButton label="Sign In" type="submit" />
+      <CoreButton label={strings.retry} type="submit" />
     </form>
   )
 }

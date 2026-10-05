@@ -180,7 +180,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           />
 
           <DetailRow
-            label="External Email"
+            label={strings.identifier_detail_external_email}
             value={identifier.externalProviderEmail ?? notAvailableText}
           />
 

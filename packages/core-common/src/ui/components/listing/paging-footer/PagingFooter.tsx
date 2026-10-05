@@ -38,12 +38,12 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
           <CoreBackButton
             onClick={() => onPageChange(currentPage - 1)}
             disabled={!hasPrevious}
-            ariaLabel="Previous page"
+            ariaLabel={enStrings.ui_common_previous_page}
           />
           <CoreBackButton
             onClick={() => onPageChange(currentPage + 1)}
             disabled={!hasNext}
-            ariaLabel="Next page"
+            ariaLabel={enStrings.ui_common_next_page}
             className="rotate-180"
           />
         </div>

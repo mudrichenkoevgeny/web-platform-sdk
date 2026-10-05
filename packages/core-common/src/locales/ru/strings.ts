@@ -25,6 +25,7 @@ export const ruStrings: CoreCommonStrings = {
   error_common_network: 'Ошибка сети.',
 
   retry: 'Повторить',
+  back: 'Назад',
   ui_common_yes: 'Да',
   ui_common_no: 'Нет',
   ui_common_sort_asc: 'Возр.',
@@ -94,5 +95,9 @@ export const ruStrings: CoreCommonStrings = {
   ui_common_last_active_at: 'Дата последней активности',
   ui_common_scheduled_permanent_deletion_at: 'Дата запланированного удаления',
   ui_common_actor_id: 'ID актора',
-  ui_common_resource_id: 'ID ресурса'
+  ui_common_resource_id: 'ID ресурса',
+  ui_common_previous_page: 'Предыдущая страница',
+  ui_common_next_page: 'Следующая страница',
+  ui_common_loading: 'Загрузка...',
+  ui_common_refresh: 'Обновить'
 }

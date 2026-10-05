@@ -2,10 +2,10 @@ import type React from 'react'
 import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { SdkProvider, useCommonComponent, useAppErrorParser } from '@/context/SdkProvider'
-import { CommonComponent } from '@/di/CommonComponent'
-import { createInMemoryEncryptedSettings } from '@/mock/storage/EncryptedSettingsMock'
-import { AccessTokenProviderMock } from '@/mock/network/AccessTokenProviderMock'
-import { CommonError } from '@/error/model/CommonError'
+import { CommonComponent } from '@/di/common-component'
+import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
+import { AccessTokenProviderMock } from '@/mock/network/access-token-provider-mock'
+import { CommonError } from '@/error/model/common-error'
 
 describe('SdkProvider', () => {
   const createTestComponent = () => {

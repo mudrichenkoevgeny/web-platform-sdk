@@ -1,5 +1,5 @@
 ---
-description: Naming conventions, brace requirements, FQN/Comments ban, Trailing Commas ban, Branded Types
+description: Naming conventions, brace requirements, FQN/Comments ban, Trailing Commas ban, Branded Types, as any ban
 globs: "**/*.ts, **/*.tsx"
 alwaysApply: true
 ---
@@ -9,6 +9,7 @@ alwaysApply: true
 ## 1. Core Syntax Constraints
 - **Strict Ban (Comments):** Do not write or preserve comments in the code.
 - **Strict Ban (Trailing Commas):** Do not write trailing commas in arguments, parameters, objects, or arrays.
+- **Strict Ban (as any):** Do not write `as any` type casts under any circumstances. Always use strict type narrowing, type guards, or explicit interface inheritance. Type safety must be strictly preserved across all modules.
 - **No Implicit Any:** Code must strictly pass TS `strict` mode.
 - **Strict Ban (FQN in code):** Do not write fully qualified names (FQN) or deep relative paths (`../../`). Always use absolute path aliases (e.g. `@/domain/User`).
 - **Type-only Imports:** Use `import type` when an imported entity is used exclusively as a type (in generics, annotations, etc.) and does not participate in runtime logic. Mixes (e.g. `import { value, type Type }`) are allowed or split them into separate import statements.

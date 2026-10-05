@@ -3,7 +3,7 @@ import type {
   ListingOptionsConfig,
   ListingSortState,
   ListingFilterState
-} from '@/listing/ListingModels'
+} from '@/listing/listing-models'
 import { CoreButton } from '@/ui/components/button/button/CoreButton'
 import { ListingChoiceDropdown } from '@/ui/components/listing/option/dropdown/ListingChoiceDropdown'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'

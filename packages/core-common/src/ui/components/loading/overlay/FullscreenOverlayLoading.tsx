@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@/utils/cn'
+import { enStrings } from '@/locales/en/strings'
 
 export interface FullscreenOverlayLoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   isFixed?: boolean
@@ -19,7 +20,7 @@ export const FullscreenOverlayLoading = forwardRef<HTMLDivElement, FullscreenOve
       >
         <div
           role="status"
-          aria-label="Loading"
+          aria-label={enStrings.ui_common_loading}
           className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
         />
       </div>

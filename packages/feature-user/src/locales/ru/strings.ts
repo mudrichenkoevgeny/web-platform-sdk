@@ -181,6 +181,7 @@ export const ruUserStrings: FeatureUserStrings = {
   identifier_detail_id: 'ID идентификатора',
   identifier_detail_value: 'Значение идентификатора',
   identifier_detail_auth_provider: 'Провайдер аутентификации',
+  identifier_detail_external_email: 'Внешний Email',
   identifier_detail_created_at: 'Дата создания',
   identifier_detail_updated_at: 'Дата обновления',
   identifier_delete_button: 'Удалить идентификатор',

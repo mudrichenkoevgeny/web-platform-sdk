@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react'
 import { cn } from '@/utils/cn'
+import { enStrings } from '@/locales/en/strings'
 
 export const FULLSCREEN_LOADING_DELAY_MILLIS = 250
 
@@ -38,7 +39,7 @@ export const FullscreenLoading = forwardRef<HTMLDivElement, FullscreenLoadingPro
       >
         <div
           role="status"
-          aria-label="Loading"
+          aria-label={enStrings.ui_common_loading}
           className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
         />
       </div>

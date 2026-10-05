@@ -1,0 +1,27 @@
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/login-by-phone-store'
+
+export const loginByPhoneDependenciesMock = (
+  overrides?: Partial<LoginByPhoneStoreDependencies>
+): LoginByPhoneStoreDependencies => ({
+  loginRepository: {
+    getRemainingLoginConfirmationDelayInSeconds: () => 0
+  } as any,
+  sendLoginConfirmationToPhoneUseCase: {
+    execute: async () => appResultSuccess({ retryAfterSeconds: 60 })
+  } as any,
+  loginByPhoneUseCase: {
+    execute: async () => appResultSuccess({
+      userDetails: {
+        id: 'usr_123',
+        accountStatus: 'ACTIVE'
+      }
+    })
+  } as any,
+  onNavigateToTotp: () => {},
+  onNavigateToPendingDeletion: () => {},
+  onNavigateToAccountUnlock: () => {},
+  onBack: () => {},
+  onFinished: () => {},
+  ...overrides
+})

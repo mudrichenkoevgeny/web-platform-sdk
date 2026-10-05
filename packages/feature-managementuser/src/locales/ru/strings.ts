@@ -1,12 +1,9 @@
+import { ruUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { FeatureManagementUserStrings } from '@/locales/en/strings'
 
 /** Russian localized string dictionary for feature-managementuser. */
 export const ruManagementUserStrings: FeatureManagementUserStrings = {
-  back: 'Назад',
-  save: 'Сохранить',
-  saving: 'Сохранение...',
-  reset_to_defaults: 'Сбросить по умолчанию',
-  retry: 'Повторить',
+  ...ruUserStrings,
 
   management_settings_title: 'Настройки управления',
   audit_logs: 'Аудит логи',
@@ -62,16 +59,12 @@ export const ruManagementUserStrings: FeatureManagementUserStrings = {
   update_user: 'Обновить пользователя',
   delete_user: 'Удалить пользователя',
   delete_user_confirmation_desc: 'Вы уверены, что хотите удалить этого пользователя?',
-  user_id: 'ID пользователя',
+  user_id: (id: string) => `ID пользователя: ${id}`,
   user_role: 'Роль',
   user_account_status: 'Статус',
-  email: 'Email',
-  password: 'Пароль',
   authority_level: 'Уровень привилегий',
   user_sessions: 'Сессии пользователя',
-  sessions: 'Сессии',
   user_identifiers: 'Идентификаторы пользователя',
-  identifiers: 'Идентификаторы',
   disable_totp: 'Отключить TOTP',
   disabling_totp: 'Отключение TOTP...',
   revoke_all_sessions: 'Отозвать все сессии',
@@ -128,6 +121,5 @@ export const ruManagementUserStrings: FeatureManagementUserStrings = {
   created_at_label: (date: string) => `Дата создания: ${date}`,
   last_login_at_label: (date: string) => `Последний вход: ${date}`,
   last_active_at_label: (date: string) => `Последняя активность: ${date}`,
-  scheduled_deletion_at_label: (date: string) => `Запланировано удаление: ${date}`,
-  not_available: 'Н/Д'
+  scheduled_deletion_at_label: (date: string) => `Запланировано удаление: ${date}`
 }

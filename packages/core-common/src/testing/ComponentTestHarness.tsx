@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import { SdkProvider } from '@/context/SdkProvider'
 import { ThemeProvider } from '@/theme/ThemeContext'
-import { CommonComponent } from '@/di/CommonComponent'
-import { createMockCommonComponent } from '@/mock/di/CommonComponentMock'
+import { CommonComponent } from '@/di/common-component'
+import { createMockCommonComponent } from '@/mock/di/common-component-mock'
 
 /**
  * Props for the {@link ComponentTestHarness} React wrapper.

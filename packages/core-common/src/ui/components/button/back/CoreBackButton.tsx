@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { cn } from '@/utils/cn'
 import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
+import { enStrings } from '@/locales/en/strings'
 
 export interface CoreBackButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick: () => void
@@ -10,7 +11,7 @@ export interface CoreBackButtonProps extends React.ButtonHTMLAttributes<HTMLButt
 }
 
 export const CoreBackButton = forwardRef<HTMLButtonElement, CoreBackButtonProps>(
-  ({ onClick, disabled = false, icon, className, ariaLabel = 'Back', ...rest }, ref) => {
+  ({ onClick, disabled = false, icon, className, ariaLabel = enStrings.back, ...rest }, ref) => {
     return (
       <button
         ref={ref}

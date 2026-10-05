@@ -23,6 +23,7 @@ export interface CoreCommonStrings {
   error_common_network: string
 
   retry: string
+  back: string
   ui_common_yes: string
   ui_common_no: string
   ui_common_sort_asc: string
@@ -93,6 +94,10 @@ export interface CoreCommonStrings {
   ui_common_scheduled_permanent_deletion_at: string
   ui_common_actor_id: string
   ui_common_resource_id: string
+  ui_common_previous_page: string
+  ui_common_next_page: string
+  ui_common_loading: string
+  ui_common_refresh: string
 }
 
 export const enStrings: CoreCommonStrings = {
@@ -119,6 +124,7 @@ export const enStrings: CoreCommonStrings = {
   error_common_network: 'Network error.',
 
   retry: 'Retry',
+  back: 'Back',
   ui_common_yes: 'Yes',
   ui_common_no: 'No',
   ui_common_sort_asc: 'Asc',
@@ -188,5 +194,9 @@ export const enStrings: CoreCommonStrings = {
   ui_common_last_active_at: 'Last Active Date',
   ui_common_scheduled_permanent_deletion_at: 'Scheduled Deletion Date',
   ui_common_actor_id: 'Actor ID',
-  ui_common_resource_id: 'Resource ID'
+  ui_common_resource_id: 'Resource ID',
+  ui_common_previous_page: 'Previous page',
+  ui_common_next_page: 'Next page',
+  ui_common_loading: 'Loading...',
+  ui_common_refresh: 'Refresh'
 }

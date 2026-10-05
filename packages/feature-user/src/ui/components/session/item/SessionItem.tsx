@@ -96,7 +96,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
         {isClickable && (
           <button
             type="button"
-            aria-label="View session details"
+            aria-label={strings.session_detail_title_session}
             onClick={onSessionClick}
             className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-primary z-0 cursor-pointer"
           />

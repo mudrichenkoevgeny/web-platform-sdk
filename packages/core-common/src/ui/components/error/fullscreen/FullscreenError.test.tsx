@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FullscreenError } from '@/ui/components/error/fullscreen/FullscreenError'
-import { CommonError } from '@/error/model/CommonError'
+import { CommonError } from '@/error/model/common-error'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('FullscreenError', () => {
