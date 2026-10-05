@@ -13,26 +13,30 @@ describe('TotpMainScreen', () => {
   }): TotpMainStoreDependencies => ({
     userRepository: {
       getCurrentUser: () => user as any,
+      observeCurrentUser: vi.fn((listener) => {
+        listener(user as any)
+        return () => {}
+      }),
       refreshCurrentUser: vi.fn().mockResolvedValue(appResultSuccess(user))
     } as any,
     setupTotpUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
-          totpSecretKey: 'JBSWY3DPEHPK3PXP',
-          totpOtpAuthUrl: 'otpauth://totp/Test?secret=JBSWY3DPEHPK3PXP',
+          secretKey: 'JBSWY3DPEHPK3PXP',
+          otpAuthUrl: 'otpauth://totp/Test?secret=JBSWY3DPEHPK3PXP',
           mfaToken: 'mfa_123'
         })
       )
     } as any,
     enableTotpUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           totpRecoveryCodes: ['1111-2222', '3333-4444']
         })
       )
     } as any,
     disableTotpUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onNavigateToRecoveryCodes: vi.fn(),
     onBack: vi.fn()

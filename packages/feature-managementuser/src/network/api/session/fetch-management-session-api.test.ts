@@ -23,7 +23,7 @@ describe('FetchManagementSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementSessionRoutes.GET_SESSIONS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getSession request', async () => {
@@ -35,7 +35,7 @@ describe('FetchManagementSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('session_id=sess_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches deleteSession request', async () => {
@@ -48,7 +48,7 @@ describe('FetchManagementSessionApi', () => {
       expect.stringContaining('usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllUserSessions request', async () => {
@@ -61,6 +61,6 @@ describe('FetchManagementSessionApi', () => {
       expect.stringContaining('usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

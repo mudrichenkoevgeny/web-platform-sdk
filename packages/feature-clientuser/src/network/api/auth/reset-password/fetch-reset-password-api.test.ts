@@ -28,7 +28,7 @@ describe('FetchResetPasswordApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches sendResetPasswordConfirmationToEmail request', async () => {
@@ -45,6 +45,6 @@ describe('FetchResetPasswordApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

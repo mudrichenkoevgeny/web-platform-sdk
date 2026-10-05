@@ -23,7 +23,7 @@ describe('FetchOpenUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserRoutes.GET_USER
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches scheduleUserDeletion request', async () => {
@@ -36,7 +36,7 @@ describe('FetchOpenUserApi', () => {
       OpenUserRoutes.SCHEDULE_DELETION,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches restoreUser request', async () => {
@@ -49,6 +49,6 @@ describe('FetchOpenUserApi', () => {
       OpenUserRoutes.RESTORE_USER,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

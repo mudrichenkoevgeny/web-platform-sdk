@@ -23,7 +23,7 @@ describe('IdentifierItem', () => {
     )
 
     expect(screen.getByText('test@example.com')).toBeDefined()
-    expect(screen.getByText('EMAIL')).toBeDefined()
+    expect(screen.getByText('email')).toBeDefined()
 
     await user.click(screen.getByText('test@example.com'))
     expect(onClick).toHaveBeenCalledTimes(1)

@@ -14,12 +14,16 @@ describe('WebExternalLauncher', () => {
 
   it('openMail constructs mailto link with %20 for spaces', () => {
     const launcher = new WebExternalLauncher()
-    const originalHref = window.location.href
+    const assignMock = vi.fn()
+    const originalLocation = window.location
+    delete (window as unknown as Record<string, unknown>).location
+    ;(window as unknown as Record<string, unknown>).location = { ...originalLocation, assign: assignMock }
 
     launcher.openMail('test@example.com', 'Hello', 'World Body')
 
-    expect(window.location.href).toBe('mailto:test@example.com?subject=Hello&body=World%20Body')
-    window.location.href = originalHref
+    expect(assignMock).toHaveBeenCalledWith('mailto:test@example.com?subject=Hello&body=World%20Body')
+
+    ;(window as unknown as Record<string, unknown>).location = originalLocation
   })
 
   it('openFile calls window.open', () => {

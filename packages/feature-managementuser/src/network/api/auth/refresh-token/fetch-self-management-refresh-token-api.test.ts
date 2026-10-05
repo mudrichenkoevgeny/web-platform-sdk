@@ -28,6 +28,6 @@ describe('FetchSelfManagementRefreshTokenApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

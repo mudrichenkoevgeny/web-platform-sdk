@@ -23,6 +23,6 @@ describe('FetchSelfManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUserRoutes.GET_USER
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

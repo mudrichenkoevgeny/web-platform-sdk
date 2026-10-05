@@ -42,9 +42,9 @@ describe('SessionItem', () => {
       </ComponentTestHarness>
     )
 
-    const card = screen.getByTestId(`SessionItem_${session.id}`)
-    card.focus()
-    expect(card).toBe(document.activeElement)
+    const button = screen.getByRole('button', { name: enUserStrings.session_detail_title_session })
+    button.focus()
+    expect(button).toBe(document.activeElement)
 
     await user.keyboard('{Enter}')
     expect(onSessionClick).toHaveBeenCalledTimes(1)

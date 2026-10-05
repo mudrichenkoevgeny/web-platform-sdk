@@ -1,3 +1,8 @@
+import {
+  CompositeAuditActionTypeParser,
+  CompositeAuditMetadataKeyParser,
+  CompositeAuditResourceTypeParser
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
@@ -262,6 +267,12 @@ export interface ManagementUserComponentConfig {
   managementUserApi?: ManagementUserApi
   /** Optional mock override for management audit API. */
   managementAuditApi?: ManagementAuditApi
+  /** Optional override for audit action type parser. */
+  compositeActionTypeParser?: CompositeAuditActionTypeParser
+  /** Optional override for audit resource type parser. */
+  compositeResourceTypeParser?: CompositeAuditResourceTypeParser
+  /** Optional override for audit metadata key parser. */
+  compositeMetadataKeyParser?: CompositeAuditMetadataKeyParser
 }
 
 /**
@@ -296,6 +307,10 @@ export class ManagementUserComponent {
   public readonly managementGlobalSettingsApi: ManagementGlobalSettingsApi
   public readonly managementSecuritySettingsApi: ManagementSecuritySettingsApi
   public readonly managementAuditApi: ManagementAuditApi
+
+  public readonly compositeActionTypeParser: CompositeAuditActionTypeParser
+  public readonly compositeResourceTypeParser: CompositeAuditResourceTypeParser
+  public readonly compositeMetadataKeyParser: CompositeAuditMetadataKeyParser
 
   public readonly confirmationRepository: ConfirmationRepository
   public readonly selfManagementLoginRepository: LoginRepository
@@ -474,7 +489,19 @@ export class ManagementUserComponent {
       this.commonComponent.webSocketService
     )
 
-    this.managementAuditRepository = new ManagementAuditRepositoryImpl(this.managementAuditApi)
+    this.compositeActionTypeParser =
+      config.compositeActionTypeParser ?? new CompositeAuditActionTypeParser([])
+    this.compositeResourceTypeParser =
+      config.compositeResourceTypeParser ?? new CompositeAuditResourceTypeParser([])
+    this.compositeMetadataKeyParser =
+      config.compositeMetadataKeyParser ?? new CompositeAuditMetadataKeyParser([])
+
+    this.managementAuditRepository = new ManagementAuditRepositoryImpl(
+      this.managementAuditApi,
+      this.compositeActionTypeParser,
+      this.compositeResourceTypeParser,
+      this.compositeMetadataKeyParser
+    )
 
     const selfManagementUserRepositoryAdapter = new SelfManagementUserRepositoryAdapter(this.selfManagementUserRepository)
     const selfManagementIdentifierRepositoryAdapter = new SelfManagementIdentifierRepositoryAdapter(this.selfManagementIdentifierRepository)

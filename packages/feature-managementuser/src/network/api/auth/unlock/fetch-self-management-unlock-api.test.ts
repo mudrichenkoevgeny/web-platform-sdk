@@ -25,7 +25,7 @@ describe('FetchSelfManagementUnlockApi', () => {
       SelfManagementUnlockRoutes.SEND_UNLOCK_EMAIL_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches unlockByEmail request', async () => {
@@ -38,7 +38,7 @@ describe('FetchSelfManagementUnlockApi', () => {
       SelfManagementUnlockRoutes.UNLOCK_BY_EMAIL,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches sendUnlockPhoneConfirmation request', async () => {
@@ -52,7 +52,7 @@ describe('FetchSelfManagementUnlockApi', () => {
       SelfManagementUnlockRoutes.SEND_UNLOCK_PHONE_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches unlockByPhone request', async () => {
@@ -65,7 +65,7 @@ describe('FetchSelfManagementUnlockApi', () => {
       SelfManagementUnlockRoutes.UNLOCK_BY_PHONE,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches unlockByExternalAuthProvider request', async () => {
@@ -78,6 +78,6 @@ describe('FetchSelfManagementUnlockApi', () => {
       SelfManagementUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

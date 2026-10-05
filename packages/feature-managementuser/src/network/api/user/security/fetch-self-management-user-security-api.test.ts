@@ -24,7 +24,7 @@ describe('FetchSelfManagementUserSecurityApi', () => {
       SelfManagementUserSecurityRoutes.SETUP_TOTP,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches enableTotp request', async () => {
@@ -38,7 +38,7 @@ describe('FetchSelfManagementUserSecurityApi', () => {
       SelfManagementUserSecurityRoutes.ENABLE_TOTP,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches disableTotp request', async () => {
@@ -50,7 +50,7 @@ describe('FetchSelfManagementUserSecurityApi', () => {
       SelfManagementUserSecurityRoutes.DISABLE_TOTP,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches getRecoveryCodes request', async () => {
@@ -62,7 +62,7 @@ describe('FetchSelfManagementUserSecurityApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUserSecurityRoutes.GET_RECOVERY_CODES
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches regenerateRecoveryCodes request', async () => {
@@ -75,6 +75,6 @@ describe('FetchSelfManagementUserSecurityApi', () => {
       SelfManagementUserSecurityRoutes.REGENERATE_RECOVERY_CODES,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

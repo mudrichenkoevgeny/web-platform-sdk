@@ -23,7 +23,7 @@ describe('FetchOpenSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(OpenSessionRoutes.GET_SESSIONS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getSession request', async () => {
@@ -36,7 +36,7 @@ describe('FetchOpenSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenSessionRoutes.GET_SESSION.replace('{session_id}', 'sess_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches logout request', async () => {
@@ -48,7 +48,7 @@ describe('FetchOpenSessionApi', () => {
       OpenSessionRoutes.LOGOUT,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteSession request', async () => {
@@ -61,7 +61,7 @@ describe('FetchOpenSessionApi', () => {
       OpenSessionRoutes.DELETE_SESSION.replace('{session_id}', 'sess_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
@@ -74,7 +74,7 @@ describe('FetchOpenSessionApi', () => {
       OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches reauthenticateSession request', async () => {
@@ -87,6 +87,6 @@ describe('FetchOpenSessionApi', () => {
       OpenSessionRoutes.REAUTHENTICATE_SESSION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

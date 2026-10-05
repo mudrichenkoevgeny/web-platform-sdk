@@ -16,7 +16,7 @@ describe('Client User Use Cases', () => {
         passwordPolicy: { minLength: 8, requireDigit: false, requireLowercase: false, requireUppercase: false, requireSpecialChar: false },
         allowedAuthProviders: []
       }
-      repo.emit(mockSettings as any)
+      repo.emit(mockSettings as unknown as Parameters<typeof repo.emit>[0])
       const useCase = new RefreshOpenAuthSettingsUseCase(repo)
 
       const result = await useCase.execute()
@@ -31,20 +31,38 @@ describe('Client User Use Cases', () => {
     it('fetches user configuration and updates repositories on success', async () => {
       const mockPayload: OpenUserConfigurationPayload = {
         open_global_settings: {
-          default_language: 'en',
-          supported_languages: ['en', 'ru'],
+          privacy_policy_url: null,
           terms_of_service_url: null,
-          privacy_policy_url: null
+          contact_support_email: null,
+          min_supported_app_versions: {}
         },
         open_security_settings: {
-          is_mfa_enabled: false,
-          password_policy: { min_length: 8, is_digit_required: false, is_lowercase_required: false, is_uppercase_required: false, is_special_char_required: false }
+          open_password_policy: {
+            min_length: 8,
+            require_letter: false,
+            require_upper_case: false,
+            require_lower_case: false,
+            require_digit: false,
+            require_special_char: false
+          },
+          otp_confirmation: {
+            retry_after_seconds: 60,
+            number_of_symbols: 6,
+            expiration_seconds: 300
+          }
         },
         open_auth_settings: {
-          password_policy: { min_length: 8, is_digit_required: false, is_lowercase_required: false, is_uppercase_required: false, is_special_char_required: false },
-          allowed_auth_providers: []
+          available_auth_providers: {
+            primary: ['email'],
+            secondary: []
+          },
+          max_total_identifiers: 5,
+          max_email_identifiers: 3,
+          max_phone_identifiers: 2,
+          max_identifiers_per_external_provider: 1,
+          is_registration_enabled: true
         }
-      } as any
+      }
 
       const mockApi: OpenUserConfigurationApi = {
         getOpenUserConfiguration: vi.fn().mockResolvedValue(appResultSuccess(mockPayload))

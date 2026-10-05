@@ -9,10 +9,10 @@ import { enUserStrings } from '@/locales/index'
 describe('PendingDeletionScreen', () => {
   const createMockDeps = (): PendingDeletionStoreDependencies => ({
     restoreUserUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     logoutUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onRestoreSuccess: vi.fn(),
     onSignOut: vi.fn()

@@ -23,7 +23,7 @@ describe('FetchManagementAuditApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementAuditRoutes.GET_AUDIT_EVENTS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getAuditEvent request', async () => {
@@ -35,6 +35,6 @@ describe('FetchManagementAuditApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementAuditRoutes.GET_AUDIT_EVENT.replace('{event_id}', 'evt_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

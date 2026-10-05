@@ -21,10 +21,10 @@ const createMockDeps = (isCurrent = false): IdentifierDetailStoreDependencies =>
   identifier: mockIdentifier,
   isCurrentIdentifier: isCurrent,
   deleteUserIdentifierUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   emailChangePasswordUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onIdentifierDeleted: () => {},
   onNavigateToUserDetail: () => {},

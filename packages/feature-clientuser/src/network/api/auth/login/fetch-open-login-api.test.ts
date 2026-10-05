@@ -28,7 +28,7 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByPhone request', async () => {
@@ -45,7 +45,7 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByExternalAuthProvider request', async () => {
@@ -62,7 +62,7 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByTotp request', async () => {
@@ -79,7 +79,7 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByTotpRecoveryCode request', async () => {
@@ -96,7 +96,7 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches sendLoginConfirmationToPhone request', async () => {
@@ -113,6 +113,6 @@ describe('FetchOpenLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

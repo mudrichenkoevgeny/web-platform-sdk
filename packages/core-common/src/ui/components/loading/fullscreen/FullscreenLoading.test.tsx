@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { FullscreenLoading } from '@/ui/components/loading/fullscreen/FullscreenLoading'
 
 describe('FullscreenLoading', () => {
@@ -20,7 +20,9 @@ describe('FullscreenLoading', () => {
     const { container } = render(<FullscreenLoading delayMillis={250} />)
     expect(container.firstChild).toBeNull()
 
-    vi.advanceTimersByTime(250)
+    act(() => {
+      vi.advanceTimersByTime(250)
+    })
     expect(screen.getByRole('status')).toBeDefined()
   })
 })

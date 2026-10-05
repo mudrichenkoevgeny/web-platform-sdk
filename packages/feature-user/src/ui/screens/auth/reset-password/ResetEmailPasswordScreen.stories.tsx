@@ -17,7 +17,7 @@ const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
     execute: async () => appResultSuccess(undefined)
   } as any,
   validatePasswordUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onBack: () => {},
   onFinished: () => {}

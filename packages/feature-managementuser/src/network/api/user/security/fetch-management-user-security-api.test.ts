@@ -24,6 +24,6 @@ describe('FetchManagementUserSecurityApi', () => {
       expect.stringContaining('user_id=usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

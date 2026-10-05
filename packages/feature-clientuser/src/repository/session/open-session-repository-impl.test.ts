@@ -13,13 +13,13 @@ describe('OpenSessionRepositoryImpl', () => {
   const dummySessionPayload = {
     id: 'sess_1',
     user_id: 'usr_1',
-    user_role: 'CLIENT_USER',
+    user_role: 'user',
     identifier: 'user@example.com',
     identifier_id: 'ident_1',
     identifier_display_name: 'User',
-    identifier_auth_provider: 'EMAIL',
-    device_info: {
-      client_type: 'WEB',
+    identifier_auth_provider: 'email',
+    client_device_info: {
+      client_type: 'web',
       language: 'en',
       device_id: 'dev_1',
       device_name: 'Chrome',
@@ -42,7 +42,7 @@ describe('OpenSessionRepositoryImpl', () => {
       getSession: vi.fn().mockResolvedValue(appResultSuccess(dummySessionPayload)),
       logout: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
       deleteSession: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      deleteAllOtherSessions: vi.fn().mockResolvedValue(appResultSuccess({ deletedSessionIds: ['sess_2'] })),
+      deleteAllOtherSessions: vi.fn().mockResolvedValue(appResultSuccess({ deleted_session_ids: ['sess_2'] })),
       reauthenticateSession: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as unknown as SessionApi
 

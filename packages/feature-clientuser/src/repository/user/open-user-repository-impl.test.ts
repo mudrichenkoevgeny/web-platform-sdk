@@ -14,8 +14,8 @@ describe('OpenUserRepositoryImpl', () => {
 
   const dummyUserPayload = {
     id: 'usr_1',
-    role: 'CLIENT_USER',
-    account_status: 'ACTIVE',
+    role: 'user',
+    account_status: 'active',
     account_status_on_restore: null,
     authority_level: 1,
     permission_codes: [],
@@ -25,7 +25,7 @@ describe('OpenUserRepositoryImpl', () => {
     created_at: 500,
     updated_at: null,
     scheduled_permanent_deletion_at: null,
-    account_lockout_type: 'NONE',
+    account_lockout_type: 'none',
     temporary_lockout_until: null
   } as any
 

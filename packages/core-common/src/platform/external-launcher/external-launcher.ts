@@ -5,23 +5,23 @@ export interface ExternalLauncher {
   /**
    * Opens an external HTTP/HTTPS web URL.
    *
-   * @param url - Destination web URL
+   * @param url Destination web URL
    */
   openUrl(url: string): void
 
   /**
    * Launches the mail client with pre-filled parameters.
    *
-   * @param email - Target email address
-   * @param subject - Optional subject line
-   * @param body - Optional body text
+   * @param email Target email address
+   * @param subject Optional subject line
+   * @param body Optional body text
    */
   openMail(email: string, subject?: string | null, body?: string | null): void
 
   /**
    * Opens an external file in browser or default viewer.
    *
-   * @param url - Destination file URL
+   * @param url Destination file URL
    */
   openFile(url: string): void
 }
@@ -33,7 +33,7 @@ export class WebExternalLauncher implements ExternalLauncher {
   /**
    * Opens a URL in a new window/tab.
    *
-   * @param url - Destination URL
+   * @param url Destination web URL
    */
   public openUrl(url: string): void {
     if (typeof window !== 'undefined') {
@@ -44,9 +44,9 @@ export class WebExternalLauncher implements ExternalLauncher {
   /**
    * Opens mailto link in window.
    *
-   * @param email - Target email
-   * @param subject - Subject
-   * @param body - Body
+   * @param email Target email address
+   * @param subject Optional subject line
+   * @param body Optional body text
    */
   public openMail(email: string, subject?: string | null, body?: string | null): void {
     if (typeof window !== 'undefined') {
@@ -64,14 +64,14 @@ export class WebExternalLauncher implements ExternalLauncher {
         mailtoUrl += `?${params.join('&')}`
       }
 
-      window.location.href = mailtoUrl
+      window.location.assign(mailtoUrl)
     }
   }
 
   /**
    * Opens a file URL in a new window/tab.
    *
-   * @param url - Target file URL
+   * @param url Destination file URL
    */
   public openFile(url: string): void {
     if (typeof window !== 'undefined') {

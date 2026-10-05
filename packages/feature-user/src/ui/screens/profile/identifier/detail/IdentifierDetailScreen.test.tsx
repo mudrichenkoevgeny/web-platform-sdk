@@ -25,10 +25,10 @@ describe('IdentifierDetailScreen', () => {
     identifier: mockIdentifier,
     isCurrentIdentifier: isCurrent,
     deleteUserIdentifierUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     emailChangePasswordUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     deletePassword: vi.fn().mockResolvedValue(undefined),
     onIdentifierDeleted: vi.fn(),

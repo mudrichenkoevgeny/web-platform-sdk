@@ -23,7 +23,7 @@ describe('FetchManagementSecuritySettingsApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementSecuritySettingsRoutes.GET_MANAGEMENT_SECURITY_SETTINGS
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches updateManagementSecuritySettings request', async () => {
@@ -36,7 +36,7 @@ describe('FetchManagementSecuritySettingsApi', () => {
       ManagementSecuritySettingsRoutes.UPDATE_MANAGEMENT_SECURITY_SETTINGS,
       expect.objectContaining({ method: 'PUT', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches resetManagementSecuritySettings request', async () => {
@@ -49,6 +49,6 @@ describe('FetchManagementSecuritySettingsApi', () => {
       ManagementSecuritySettingsRoutes.RESET_MANAGEMENT_SECURITY_SETTINGS,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

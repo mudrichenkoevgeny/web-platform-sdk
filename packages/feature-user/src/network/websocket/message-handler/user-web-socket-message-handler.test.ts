@@ -34,7 +34,7 @@ describe('UserWebSocketMessageHandler', () => {
     } as unknown as AuthStorage
 
     refreshTokenUseCase = {
-      invoke: vi.fn().mockResolvedValue(undefined)
+      execute: vi.fn().mockResolvedValue(undefined)
     } as unknown as RefreshTokenUseCase
 
     handler = new UserWebSocketMessageHandler(

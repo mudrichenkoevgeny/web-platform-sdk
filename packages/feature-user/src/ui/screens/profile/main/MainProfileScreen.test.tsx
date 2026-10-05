@@ -17,14 +17,18 @@ describe('MainProfileScreen', () => {
     appType: AppType.CLIENT,
     userRepository: {
       getCurrentUser: () => user as any,
+      observeCurrentUser: vi.fn((listener) => {
+        listener(user as any)
+        return () => {}
+      }),
       refreshCurrentUser: vi.fn().mockResolvedValue(appResultSuccess(user)),
       clearSession: vi.fn().mockResolvedValue(undefined)
     } as any,
     logoutUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     scheduleUserDeletionUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onNavigateToLogin: vi.fn(),
     onNavigateToTotp: vi.fn(),

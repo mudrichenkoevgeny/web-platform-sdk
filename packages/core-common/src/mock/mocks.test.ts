@@ -73,7 +73,7 @@ describe('Domain Mocks', () => {
     const provider = new DeviceInfoProviderMock({ app_version: '3.0.0' })
     const info = await provider.getDeviceInfo()
 
-    expect(info.client_type).toBe('WEB')
+    expect(info.client_type).toBe('web')
     expect(info.app_version).toBe('3.0.0')
   })
 
@@ -91,7 +91,7 @@ describe('Domain Mocks', () => {
   it('PlatformRepositoryMock delegates to inner mocks', async () => {
     const repo = new PlatformRepositoryMock()
     const info = await repo.getDeviceInfo()
-    expect(info.client_type).toBe('WEB')
+    expect(info.client_type).toBe('web')
 
     repo.openUrl('https://example.com')
     expect(repo.externalLauncherMock.openedUrls).toContain('https://example.com')

@@ -10,12 +10,12 @@ describe('LoginByPhoneScreen', () => {
   const createMockDeps = (): LoginByPhoneStoreDependencies => ({
     loginRepository: {
       getRemainingLoginConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    } as any,
+    } as unknown as LoginByPhoneStoreDependencies['loginRepository'],
     sendLoginConfirmationToPhoneUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({ retryAfterSeconds: 60 })
       )
-    } as any,
+    } as unknown as LoginByPhoneStoreDependencies['sendLoginConfirmationToPhoneUseCase'],
     loginByPhoneUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
@@ -25,7 +25,7 @@ describe('LoginByPhoneScreen', () => {
           }
         })
       )
-    } as any,
+    } as unknown as LoginByPhoneStoreDependencies['loginByPhoneUseCase'],
     onNavigateToTotp: vi.fn(),
     onNavigateToPendingDeletion: vi.fn(),
     onNavigateToAccountUnlock: vi.fn(),
@@ -66,7 +66,7 @@ describe('LoginByPhoneScreen', () => {
       </ComponentTestHarness>
     )
 
-    const backButton = screen.getByRole('button', { name: 'Go back' })
+    const backButton = screen.getByRole('button', { name: enUserStrings.back })
     await user.click(backButton)
 
     expect(deps.onBack).toHaveBeenCalledTimes(1)

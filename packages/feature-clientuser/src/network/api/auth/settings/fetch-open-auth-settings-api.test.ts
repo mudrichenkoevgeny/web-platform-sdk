@@ -23,6 +23,6 @@ describe('FetchOpenAuthSettingsApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenAuthSettingsRoutes.GET_OPEN_AUTH_SETTINGS
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

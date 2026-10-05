@@ -18,7 +18,7 @@ export class ObserveAuthSettingsUseCase {
    * @param listener - Callback function triggered on settings change
    * @returns Unsubscribe cleanup function
    */
-  public invoke(listener: (settings: OpenAuthSettings | null) => void): () => void {
+  public execute(listener: (settings: OpenAuthSettings | null) => void): () => void {
     return this.openAuthSettingsRepository.observeOpenAuthSettings(listener)
   }
 }

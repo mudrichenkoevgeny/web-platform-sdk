@@ -9,10 +9,11 @@ const createMockDeps = (user = {
 }): TotpMainStoreDependencies => ({
   userRepository: {
     getCurrentUser: () => user as any,
+    observeCurrentUser: () => () => {},
     refreshCurrentUser: async () => appResultSuccess(user)
   } as any,
   setupTotpUseCase: {
-    invoke: async () =>
+    execute: async () =>
       appResultSuccess({
         totpSecretKey: 'JBSWY3DPEHPK3PXP',
         totpOtpAuthUrl: 'otpauth://totp/Test?secret=JBSWY3DPEHPK3PXP',
@@ -20,13 +21,13 @@ const createMockDeps = (user = {
       })
   } as any,
   enableTotpUseCase: {
-    invoke: async () =>
+    execute: async () =>
       appResultSuccess({
         totpRecoveryCodes: ['1111-2222', '3333-4444']
       })
   } as any,
   disableTotpUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onNavigateToRecoveryCodes: () => {},
   onBack: () => {}

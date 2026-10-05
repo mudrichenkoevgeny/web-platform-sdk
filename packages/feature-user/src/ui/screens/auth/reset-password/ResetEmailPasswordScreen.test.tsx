@@ -10,20 +10,20 @@ describe('ResetEmailPasswordScreen', () => {
   const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
     resetPasswordRepository: {
       getRemainingResetPasswordConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    } as any,
+    } as unknown as ResetEmailPasswordStoreDependencies['resetPasswordRepository'],
     sendResetPasswordConfirmationToEmailUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           retryAfterSeconds: 30
         })
       )
-    } as any,
+    } as unknown as ResetEmailPasswordStoreDependencies['sendResetPasswordConfirmationToEmailUseCase'],
     resetEmailPasswordUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+    } as unknown as ResetEmailPasswordStoreDependencies['resetEmailPasswordUseCase'],
     validatePasswordUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+    } as unknown as ResetEmailPasswordStoreDependencies['validatePasswordUseCase'],
     onBack: vi.fn(),
     onFinished: vi.fn()
   })

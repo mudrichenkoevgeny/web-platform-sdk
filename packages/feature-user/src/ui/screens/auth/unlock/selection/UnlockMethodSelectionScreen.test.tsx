@@ -12,7 +12,7 @@ describe('UnlockMethodSelectionScreen', () => {
     lockoutType: AccountLockoutType.TEMPORARY,
     lockoutUntil: Date.now() + 300000,
     getUserIdentifiersUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: []
         })

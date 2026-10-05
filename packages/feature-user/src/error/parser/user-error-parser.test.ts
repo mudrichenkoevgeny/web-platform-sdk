@@ -11,7 +11,7 @@ describe('UserErrorParser', () => {
 
   it('parses client user feature errors', () => {
     expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The refresh token is invalid.')
-    expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled.')
+    expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled')
   })
 
   it('parses shared foundation user error codes', () => {

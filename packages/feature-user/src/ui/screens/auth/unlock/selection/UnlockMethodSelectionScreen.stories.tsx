@@ -8,7 +8,7 @@ const createMockDeps = (): UnlockMethodSelectionStoreDependencies => ({
   lockoutType: AccountLockoutType.TEMPORARY,
   lockoutUntil: Date.now() + 300000,
   getUserIdentifiersUseCase: {
-    invoke: async () => appResultSuccess({ items: [] })
+    execute: async () => appResultSuccess({ items: [] })
   } as any,
   unlockByGoogleUseCase: {
     execute: async () => appResultSuccess(undefined)

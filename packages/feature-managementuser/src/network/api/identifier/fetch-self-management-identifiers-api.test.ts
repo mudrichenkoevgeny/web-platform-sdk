@@ -24,7 +24,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementIdentifierRoutes.GET_IDENTIFIER.replace('{user_identifier_id}', 'ident_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
@@ -36,7 +36,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementIdentifierRoutes.GET_IDENTIFIERS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches emailChangePassword request', async () => {
@@ -49,6 +49,6 @@ describe('FetchSelfManagementIdentifiersApi', () => {
       SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

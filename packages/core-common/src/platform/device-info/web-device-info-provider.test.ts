@@ -12,7 +12,7 @@ describe('WebDeviceInfoProvider', () => {
     const provider = new WebDeviceInfoProvider(storage, '2.1.0')
     const info = await provider.getDeviceInfo()
 
-    expect(info.client_type).toBe('WEB')
+    expect(info.client_type).toBe('web')
     expect(info.device_id).toBe('device-999')
     expect(info.app_version).toBe('2.1.0')
     expect(info.device_name).toBeDefined()
@@ -26,7 +26,7 @@ describe('WebDeviceInfoProvider', () => {
     const provider = new WebDeviceInfoProvider(storage)
     const info = await provider.getDeviceInfo()
 
-    expect(info.client_type).toBe('WEB')
+    expect(info.client_type).toBe('web')
     expect(info.device_id).toBeNull()
     expect(info.app_version).toBe('1.0.0')
   })

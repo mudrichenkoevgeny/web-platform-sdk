@@ -23,6 +23,6 @@ describe('FetchManagementUserConfigurationApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUserConfigurationRoutes.GET_CONFIGURATION
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

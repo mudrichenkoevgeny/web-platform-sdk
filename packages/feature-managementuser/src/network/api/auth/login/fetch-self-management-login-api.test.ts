@@ -28,7 +28,7 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByTotp request', async () => {
@@ -45,7 +45,7 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches loginByTotpRecoveryCode request', async () => {
@@ -62,6 +62,6 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

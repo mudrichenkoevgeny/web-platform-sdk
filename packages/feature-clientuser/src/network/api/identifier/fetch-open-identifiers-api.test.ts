@@ -24,7 +24,7 @@ describe('FetchOpenIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.GET_IDENTIFIER.replace('{user_identifier_id}', 'ident_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
@@ -36,7 +36,7 @@ describe('FetchOpenIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(OpenIdentifierRoutes.GET_IDENTIFIERS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches deleteUserIdentifier request', async () => {
@@ -49,7 +49,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.DELETE_IDENTIFIER.replace('{user_identifier_id}', 'ident_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches addUserIdentifierEmail request', async () => {
@@ -63,7 +63,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.ADD_IDENTIFIER_EMAIL,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches addUserIdentifierPhone request', async () => {
@@ -77,7 +77,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.ADD_IDENTIFIER_PHONE,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches addUserIdentifierExternalAuthProvider request', async () => {
@@ -91,7 +91,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.ADD_IDENTIFIER_EXTERNAL_AUTH_PROVIDER,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches sendAddEmailIdentifierConfirmation request', async () => {
@@ -105,7 +105,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.SEND_ADD_EMAIL_IDENTIFIER_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches sendAddPhoneIdentifierConfirmation request', async () => {
@@ -119,7 +119,7 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.SEND_ADD_PHONE_IDENTIFIER_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches emailChangePassword request', async () => {
@@ -132,6 +132,6 @@ describe('FetchOpenIdentifiersApi', () => {
       OpenIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

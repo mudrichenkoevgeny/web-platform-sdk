@@ -64,6 +64,7 @@ describe('WebWebSocketService', () => {
 
     service.connect()
     mockWs.triggerOpen()
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(mockWs.sentMessages.length).toBeGreaterThan(0)
     const initFrame = JSON.parse(mockWs.sentMessages[0]!) as SocketFrame
@@ -77,9 +78,11 @@ describe('WebWebSocketService', () => {
 
     service.connect()
     mockWs.triggerOpen()
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     const pingFrame: SocketFrame = { id: 'frame-ping', type: CommonWebSocketEventTypes.PING, timestamp: Date.now() }
     mockWs.triggerMessage(pingFrame)
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     const pongMessage = mockWs.sentMessages.find(msg => msg.includes(CommonWebSocketEventTypes.PONG))
     expect(pongMessage).toBeDefined()
@@ -95,9 +98,11 @@ describe('WebWebSocketService', () => {
 
     service.connect()
     mockWs.triggerOpen()
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     const customFrame: SocketFrame = { id: 'frame-custom', type: 'CUSTOM_EVENT', timestamp: Date.now() }
     mockWs.triggerMessage(customFrame)
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(eventListener).toHaveBeenCalledWith(customFrame)
   })

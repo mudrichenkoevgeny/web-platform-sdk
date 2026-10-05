@@ -23,7 +23,7 @@ describe('FetchManagementGlobalSettingsApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementGlobalSettingsRoutes.GET_MANAGEMENT_GLOBAL_SETTINGS
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches updateManagementGlobalSettings request', async () => {
@@ -36,7 +36,7 @@ describe('FetchManagementGlobalSettingsApi', () => {
       ManagementGlobalSettingsRoutes.UPDATE_MANAGEMENT_GLOBAL_SETTINGS,
       expect.objectContaining({ method: 'PUT', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches resetManagementGlobalSettings request', async () => {
@@ -49,6 +49,6 @@ describe('FetchManagementGlobalSettingsApi', () => {
       ManagementGlobalSettingsRoutes.RESET_MANAGEMENT_GLOBAL_SETTINGS,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

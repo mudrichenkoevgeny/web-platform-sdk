@@ -41,6 +41,16 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const onBackClick = useSelfSessionListStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
+  const isContent = screenState.status === 'content'
+  const hasMorePages = isContent ? screenState.hasMorePages : false
+  const isNextPageLoading = isContent ? screenState.isNextPageLoading : false
+
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
+    onLoadMore: onLoadNextPage,
+    hasMore: hasMorePages,
+    isLoading: isNextPageLoading
+  })
+
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
   }
@@ -61,13 +71,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     )
   }
 
-  const { items, currentSessionId, hasMorePages, isNextPageLoading, actionLoading, actionError } = screenState
-
-  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
-    onLoadMore: onLoadNextPage,
-    hasMore: hasMorePages,
-    isLoading: isNextPageLoading
-  })
+  const { items, currentSessionId, actionLoading, actionError } = screenState
 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-hidden">

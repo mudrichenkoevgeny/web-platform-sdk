@@ -17,10 +17,10 @@ const createMockDeps = (user = {
     clearSession: async () => undefined
   } as any,
   logoutUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   scheduleUserDeletionUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onNavigateToLogin: () => {},
   onNavigateToTotp: () => {},

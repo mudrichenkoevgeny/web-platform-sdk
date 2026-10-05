@@ -25,7 +25,7 @@ describe('FetchManagementUserApi', () => {
       ManagementUserRoutes.CREATE_USER,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getUsers request with query params', async () => {
@@ -37,7 +37,7 @@ describe('FetchManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementUserRoutes.GET_USERS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getUser request', async () => {
@@ -50,7 +50,7 @@ describe('FetchManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('user_id=usr_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches updateUser request', async () => {
@@ -64,7 +64,7 @@ describe('FetchManagementUserApi', () => {
       expect.stringContaining('user_id=usr_1'),
       expect.objectContaining({ method: 'PATCH', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteUser request', async () => {
@@ -77,6 +77,6 @@ describe('FetchManagementUserApi', () => {
       expect.stringContaining('user_id=usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

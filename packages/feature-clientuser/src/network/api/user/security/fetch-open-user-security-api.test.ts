@@ -24,7 +24,7 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.SETUP_TOTP,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches enableTotp request', async () => {
@@ -38,7 +38,7 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.ENABLE_TOTP,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches disableTotp request', async () => {
@@ -50,7 +50,7 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.DISABLE_TOTP,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches getRecoveryCodes request', async () => {
@@ -62,7 +62,7 @@ describe('FetchOpenUserSecurityApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserSecurityRoutes.GET_RECOVERY_CODES
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches regenerateRecoveryCodes request', async () => {
@@ -75,6 +75,6 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.REGENERATE_RECOVERY_CODES,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 })

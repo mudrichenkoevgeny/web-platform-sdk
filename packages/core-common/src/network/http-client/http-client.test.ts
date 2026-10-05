@@ -33,7 +33,7 @@ describe('HttpClient', () => {
     const options = fetchSpy.mock.calls[0]![1] as RequestInit
     const headers = options.headers as Headers
     expect(headers.has(CommonHttpHeaders.TRACE_HEADER_NAME)).toBe(true)
-    expect(headers.get(CommonHttpHeaders.CLIENT_TYPE_HEADER_NAME)).toBe('WEB')
+    expect(headers.get(CommonHttpHeaders.CLIENT_TYPE_HEADER_NAME)).toBe('web')
     expect(headers.get('Accept')).toBe('application/json')
   })
 

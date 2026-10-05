@@ -11,12 +11,16 @@ describe('useInfiniteScroll', () => {
     mockObserve = vi.fn()
     mockDisconnect = vi.fn()
 
-    globalThis.IntersectionObserver = vi.fn().mockImplementation((callback) => {
+    globalThis.IntersectionObserver = vi.fn().mockImplementation(function (this: unknown, callback: IntersectionObserverCallback) {
       observerCallback = callback
       return {
         observe: mockObserve,
         disconnect: mockDisconnect,
-        unobserve: vi.fn()
+        unobserve: vi.fn(),
+        root: null,
+        rootMargin: '',
+        thresholds: [],
+        takeRecords: () => []
       }
     }) as unknown as typeof IntersectionObserver
   })

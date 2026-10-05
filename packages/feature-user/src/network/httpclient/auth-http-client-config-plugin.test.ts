@@ -10,8 +10,8 @@ describe('AuthHttpClientConfigPlugin', () => {
 
   beforeEach(() => {
     mockAuthStorage = {
-      getAccessTokenModel: vi.fn().mockResolvedValue({ value: 'bearer-token-123' }),
-      getRefreshToken: vi.fn().mockResolvedValue({ value: 'refresh-token-123' }),
+      getAccessTokenModel: vi.fn().mockResolvedValue('bearer-token-123'),
+      getRefreshToken: vi.fn().mockResolvedValue('refresh-token-123'),
       updateTokens: vi.fn().mockResolvedValue(undefined),
       clearTokens: vi.fn().mockResolvedValue(undefined)
     } as unknown as AuthStorage

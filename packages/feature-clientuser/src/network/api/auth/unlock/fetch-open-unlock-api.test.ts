@@ -28,7 +28,7 @@ describe('FetchOpenUnlockApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches unlockByEmail request', async () => {
@@ -44,7 +44,7 @@ describe('FetchOpenUnlockApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches sendUnlockPhoneConfirmation request', async () => {
@@ -61,7 +61,7 @@ describe('FetchOpenUnlockApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches unlockByPhone request', async () => {
@@ -77,7 +77,7 @@ describe('FetchOpenUnlockApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches unlockByExternalAuthProvider request', async () => {
@@ -93,6 +93,6 @@ describe('FetchOpenUnlockApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

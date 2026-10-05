@@ -26,7 +26,7 @@ export const FieldValidator = {
     if (!phone) {
       return false
     }
-    const phoneRegex = /^\+?[1-9]\d{1,14}$/
+    const phoneRegex = /^\+?[1-9]\d{6,14}$/
     return phoneRegex.test(phone.replace(/[\s()-]/g, ''))
   },
 

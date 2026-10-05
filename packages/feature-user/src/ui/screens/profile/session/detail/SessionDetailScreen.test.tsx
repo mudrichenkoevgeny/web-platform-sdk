@@ -39,7 +39,7 @@ describe('SessionDetailScreen', () => {
     session: mockSession,
     isCurrentSession: isCurrent,
     deleteSessionUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onSessionRevoked: vi.fn(),
     onNavigateToIdentifierDetail: vi.fn(),

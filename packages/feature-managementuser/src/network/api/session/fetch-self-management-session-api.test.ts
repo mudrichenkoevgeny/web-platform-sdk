@@ -23,7 +23,7 @@ describe('FetchSelfManagementSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementSessionRoutes.GET_SESSIONS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getSession request', async () => {
@@ -36,7 +36,7 @@ describe('FetchSelfManagementSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.GET_SESSION.replace('{session_id}', 'sess_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches logout request', async () => {
@@ -48,7 +48,7 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.LOGOUT,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteSession request', async () => {
@@ -61,7 +61,7 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.DELETE_SESSION.replace('{session_id}', 'sess_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
@@ -74,7 +74,7 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches reauthenticateSession request', async () => {
@@ -87,6 +87,6 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.REAUTHENTICATE_SESSION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

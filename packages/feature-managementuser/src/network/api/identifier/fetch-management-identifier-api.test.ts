@@ -24,7 +24,7 @@ describe('FetchManagementIdentifierApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementIdentifierRoutes.GET_IDENTIFIERS)
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches getIdentifier request', async () => {
@@ -36,7 +36,7 @@ describe('FetchManagementIdentifierApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('user_identifier_id=ident_1')
     )
-    expect(result).toEqual({ data: dummyPayload, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: dummyPayload })
   })
 
   it('dispatches deleteIdentifier request', async () => {
@@ -49,7 +49,7 @@ describe('FetchManagementIdentifierApi', () => {
       expect.stringContaining('usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteIdentifierPassword request', async () => {
@@ -62,6 +62,6 @@ describe('FetchManagementIdentifierApi', () => {
       expect.stringContaining('usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ data: undefined, kind: 'Success' })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 })

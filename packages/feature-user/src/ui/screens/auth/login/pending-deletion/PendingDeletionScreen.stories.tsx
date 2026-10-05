@@ -5,10 +5,10 @@ import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/p
 
 const createMockDeps = (): PendingDeletionStoreDependencies => ({
   restoreUserUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   logoutUseCase: {
-    invoke: async () => appResultSuccess(undefined)
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onRestoreSuccess: () => {},
   onSignOut: () => {}

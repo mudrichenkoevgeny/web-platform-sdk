@@ -12,7 +12,12 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
   let repository: OpenAuthSettingsRepositoryImpl
 
   const dummyPayload = {
-    available_auth_providers: { primary: [], secondary: [] }
+    available_auth_providers: { primary: ['email'], secondary: [] },
+    max_total_identifiers: 5,
+    max_email_identifiers: 3,
+    max_phone_identifiers: 2,
+    max_identifiers_per_external_provider: 1,
+    is_registration_enabled: true
   } as any
 
   const dummySettings = {
