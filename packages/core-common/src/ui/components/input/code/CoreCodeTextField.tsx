@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 
-export interface CoreCodeTextFieldProps extends CoreOutlinedTextFieldProps {}
+export type CoreCodeTextFieldProps = CoreOutlinedTextFieldProps
 
 export const CoreCodeTextField = forwardRef<HTMLInputElement, CoreCodeTextFieldProps>(
   (props, ref) => {

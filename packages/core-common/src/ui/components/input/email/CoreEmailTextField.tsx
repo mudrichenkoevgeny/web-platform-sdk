@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 import { CoreOutlinedTextField, CoreOutlinedTextFieldProps } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { enStrings } from '@/locales/en/strings'
 
-export interface CoreEmailTextFieldProps extends CoreOutlinedTextFieldProps {}
+export type CoreEmailTextFieldProps = CoreOutlinedTextFieldProps
 
 export const CoreEmailTextField = forwardRef<HTMLInputElement, CoreEmailTextFieldProps>(
   ({ label = enStrings.ui_common_email, placeholder = enStrings.ui_common_email, ...rest }, ref) => {

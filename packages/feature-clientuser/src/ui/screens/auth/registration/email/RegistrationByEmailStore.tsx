@@ -68,39 +68,6 @@ export const createRegistrationByEmailStore = (
     }
   }
 
-  const startTimer = (set: any, get: any, seconds: number) => {
-    stopTimer()
-    if (seconds <= 0) {
-      return
-    }
-
-    timerInterval = setInterval(() => {
-      const current = get().screenState
-      if (current.step !== 'registration_input') {
-        stopTimer()
-        return
-      }
-
-      const nextSeconds = current.resendTimerSeconds - 1
-      if (nextSeconds <= 0) {
-        stopTimer()
-        set({
-          screenState: {
-            ...current,
-            resendTimerSeconds: 0
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            ...current,
-            resendTimerSeconds: nextSeconds
-          }
-        })
-      }
-    }, 1000)
-  }
-
   const defaultState: RegistrationByEmailScreenState = {
     step: 'email_input',
     email: '',
@@ -109,51 +76,120 @@ export const createRegistrationByEmailStore = (
     actionError: null
   }
 
-  return createStore<RegistrationByEmailStoreState>()((set, get) => ({
-    screenState: initialState ?? defaultState,
-
-    onEmailChanged: (email: string) => {
-      const current = get().screenState
-      if (current.step !== 'email_input') {
+  return createStore<RegistrationByEmailStoreState>()((set, get) => {
+    const startTimer = (seconds: number) => {
+      stopTimer()
+      if (seconds <= 0) {
         return
       }
 
-      const isValid = FieldValidator.isValidEmail(email)
-      set({
-        screenState: {
-          ...current,
-          email,
-          isEmailValid: isValid,
-          actionError: null
+      timerInterval = setInterval(() => {
+        const current = get().screenState
+        if (current.step !== 'registration_input') {
+          stopTimer()
+          return
         }
-      })
 
-      if (isValid) {
-        const remaining = deps.registrationRepository.getRemainingRegistrationConfirmationDelayInSeconds(email)
-        if (remaining > 0) {
+        const nextSeconds = current.resendTimerSeconds - 1
+        if (nextSeconds <= 0) {
+          stopTimer()
           set({
             screenState: {
-              step: 'registration_input',
-              email,
-              code: '',
-              codeLength: DEFAULT_OTP_LENGTH,
-              password: '',
-              isPasswordValid: true,
-              isPasswordVisible: false,
-              resendTimerSeconds: remaining,
-              actionLoading: false,
+              ...current,
+              resendTimerSeconds: 0
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              ...current,
+              resendTimerSeconds: nextSeconds
+            }
+          })
+        }
+      }, 1000)
+    }
+
+    return {
+      screenState: initialState ?? defaultState,
+
+      onEmailChanged: (email: string) => {
+        const current = get().screenState
+        if (current.step !== 'email_input') {
+          return
+        }
+
+        const isValid = FieldValidator.isValidEmail(email)
+        set({
+          screenState: {
+            ...current,
+            email,
+            isEmailValid: isValid,
+            actionError: null
+          }
+        })
+
+        if (isValid) {
+          const remaining = deps.registrationRepository.getRemainingRegistrationConfirmationDelayInSeconds(email)
+          if (remaining > 0) {
+            set({
+              screenState: {
+                step: 'registration_input',
+                email,
+                code: '',
+                codeLength: DEFAULT_OTP_LENGTH,
+                password: '',
+                isPasswordValid: true,
+                isPasswordVisible: false,
+                resendTimerSeconds: remaining,
+                actionLoading: false,
+                actionError: null
+              }
+            })
+            startTimer(remaining)
+          }
+        }
+      },
+
+      onSendCodeClick: async () => {
+        const current = get().screenState
+        if (current.step === 'registration_input') {
+          if (current.actionLoading || current.resendTimerSeconds > 0) {
+            return
+          }
+
+          set({
+            screenState: {
+              ...current,
+              actionLoading: true,
               actionError: null
             }
           })
-          startTimer(set, get, remaining)
-        }
-      }
-    },
 
-    onSendCodeClick: async () => {
-      const current = get().screenState
-      if (current.step === 'registration_input') {
-        if (current.actionLoading || current.resendTimerSeconds > 0) {
+          const result = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
+          if (isSuccess(result)) {
+            const retrySeconds = result.data.retryAfterSeconds
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                resendTimerSeconds: retrySeconds
+              }
+            })
+            startTimer(retrySeconds)
+          } else {
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                actionError: result.error
+              }
+            })
+          }
+          return
+        }
+
+        if (current.step !== 'email_input' || !current.isEmailValid || current.actionLoading) {
           return
         }
 
@@ -170,62 +206,6 @@ export const createRegistrationByEmailStore = (
           const retrySeconds = result.data.retryAfterSeconds
           set({
             screenState: {
-              ...current,
-              actionLoading: false,
-              resendTimerSeconds: retrySeconds
-            }
-          })
-          startTimer(set, get, retrySeconds)
-        } else {
-          set({
-            screenState: {
-              ...current,
-              actionLoading: false,
-              actionError: result.error
-            }
-          })
-        }
-        return
-      }
-
-      if (current.step !== 'email_input' || !current.isEmailValid || current.actionLoading) {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          actionLoading: true,
-          actionError: null
-        }
-      })
-
-      const result = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
-      if (isSuccess(result)) {
-        const retrySeconds = result.data.retryAfterSeconds
-        set({
-          screenState: {
-            step: 'registration_input',
-            email: current.email,
-            code: '',
-            codeLength: DEFAULT_OTP_LENGTH,
-            password: '',
-            isPasswordValid: true,
-            isPasswordVisible: false,
-            resendTimerSeconds: retrySeconds,
-            actionLoading: false,
-            actionError: null
-          }
-        })
-        startTimer(set, get, retrySeconds)
-      } else {
-        const error = result.error
-        const retryAfterSecondsArg = error.args?.retryAfterSeconds ?? error.args?.['retry_after_seconds']
-        const retryAfterSeconds = retryAfterSecondsArg ? Number(retryAfterSecondsArg) : 0
-
-        if (retryAfterSeconds > 0) {
-          set({
-            screenState: {
               step: 'registration_input',
               email: current.email,
               code: '',
@@ -233,155 +213,177 @@ export const createRegistrationByEmailStore = (
               password: '',
               isPasswordValid: true,
               isPasswordVisible: false,
-              resendTimerSeconds: retryAfterSeconds,
+              resendTimerSeconds: retrySeconds,
               actionLoading: false,
               actionError: null
             }
           })
-          startTimer(set, get, retryAfterSeconds)
+          startTimer(retrySeconds)
         } else {
+          const error = result.error
+          const retryAfterSecondsArg = error.args?.retryAfterSeconds ?? error.args?.['retry_after_seconds']
+          const retryAfterSeconds = retryAfterSecondsArg ? Number(retryAfterSecondsArg) : 0
+
+          if (retryAfterSeconds > 0) {
+            set({
+              screenState: {
+                step: 'registration_input',
+                email: current.email,
+                code: '',
+                codeLength: DEFAULT_OTP_LENGTH,
+                password: '',
+                isPasswordValid: true,
+                isPasswordVisible: false,
+                resendTimerSeconds: retryAfterSeconds,
+                actionLoading: false,
+                actionError: null
+              }
+            })
+            startTimer(retryAfterSeconds)
+          } else {
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                actionError: error
+              }
+            })
+          }
+        }
+      },
+
+      onCodeChanged: (code: string) => {
+        const current = get().screenState
+        if (current.step !== 'registration_input') {
+          return
+        }
+
+        if (code.length <= current.codeLength) {
+          set({
+            screenState: {
+              ...current,
+              code,
+              actionError: null
+            }
+          })
+        }
+      },
+
+      onPasswordChanged: async (password: string) => {
+        const current = get().screenState
+        if (current.step !== 'registration_input') {
+          return
+        }
+
+        const passResult = await deps.validatePasswordUseCase.execute(password)
+        const isPasswordValid =
+          isSuccess(passResult) ||
+          (!isSuccess(passResult) &&
+            (passResult.error.code === ClientSecurityErrorCodes.PASSWORD_TOO_SHORT ||
+              passResult.error.code === ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE))
+
+        set({
+          screenState: {
+            ...current,
+            password,
+            isPasswordValid,
+            actionError: null
+          }
+        })
+      },
+
+      onTogglePasswordVisibility: () => {
+        const current = get().screenState
+        if (current.step !== 'registration_input') {
+          return
+        }
+
+        set({
+          screenState: {
+            ...current,
+            isPasswordVisible: !current.isPasswordVisible
+          }
+        })
+      },
+
+      onRegisterClick: async () => {
+        const current = get().screenState
+        if (
+          current.step !== 'registration_input' ||
+          current.code.length !== current.codeLength ||
+          !current.isPasswordValid ||
+          current.password.length === 0 ||
+          current.actionLoading
+        ) {
+          return
+        }
+
+        set({
+          screenState: {
+            ...current,
+            actionLoading: true,
+            actionError: null
+          }
+        })
+
+        const passResult = await deps.validatePasswordUseCase.execute(current.password)
+        if (!isSuccess(passResult)) {
           set({
             screenState: {
               ...current,
               actionLoading: false,
-              actionError: error
+              isPasswordValid: false
             }
           })
+          return
         }
-      }
-    },
 
-    onCodeChanged: (code: string) => {
-      const current = get().screenState
-      if (current.step !== 'registration_input') {
-        return
-      }
+        const result = await deps.registrationByEmailUseCase.execute(
+          current.email,
+          current.password,
+          current.code
+        )
 
-      if (code.length <= current.codeLength) {
-        set({
-          screenState: {
-            ...current,
-            code,
-            actionError: null
+        if (isSuccess(result)) {
+          stopTimer()
+          deps.onFinished()
+        } else {
+          const updated = get().screenState
+          if (updated.step === 'registration_input') {
+            set({
+              screenState: {
+                ...updated,
+                actionLoading: false,
+                actionError: result.error
+              }
+            })
           }
-        })
-      }
-    },
-
-    onPasswordChanged: async (password: string) => {
-      const current = get().screenState
-      if (current.step !== 'registration_input') {
-        return
-      }
-
-      const passResult = await deps.validatePasswordUseCase.execute(password)
-      const isPasswordValid =
-        isSuccess(passResult) ||
-        (!isSuccess(passResult) &&
-          (passResult.error.code === ClientSecurityErrorCodes.PASSWORD_TOO_SHORT ||
-            passResult.error.code === ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE))
-
-      set({
-        screenState: {
-          ...current,
-          password,
-          isPasswordValid,
-          actionError: null
         }
-      })
-    },
+      },
 
-    onTogglePasswordVisibility: () => {
-      const current = get().screenState
-      if (current.step !== 'registration_input') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          isPasswordVisible: !current.isPasswordVisible
-        }
-      })
-    },
-
-    onRegisterClick: async () => {
-      const current = get().screenState
-      if (
-        current.step !== 'registration_input' ||
-        current.code.length !== current.codeLength ||
-        !current.isPasswordValid ||
-        current.password.length === 0 ||
-        current.actionLoading
-      ) {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          actionLoading: true,
-          actionError: null
-        }
-      })
-
-      const passResult = await deps.validatePasswordUseCase.execute(current.password)
-      if (!isSuccess(passResult)) {
-        set({
-          screenState: {
-            ...current,
-            actionLoading: false,
-            isPasswordValid: false
-          }
-        })
-        return
-      }
-
-      const result = await deps.registrationByEmailUseCase.execute(
-        current.email,
-        current.password,
-        current.code
-      )
-
-      if (isSuccess(result)) {
-        stopTimer()
-        deps.onFinished()
-      } else {
-        const updated = get().screenState
-        if (updated.step === 'registration_input') {
+      onBackClick: () => {
+        const current = get().screenState
+        if (current.step === 'registration_input') {
+          stopTimer()
           set({
             screenState: {
-              ...updated,
+              step: 'email_input',
+              email: current.email,
+              isEmailValid: FieldValidator.isValidEmail(current.email),
               actionLoading: false,
-              actionError: result.error
+              actionError: null
             }
           })
+        } else {
+          deps.onBack()
         }
-      }
-    },
+      },
 
-    onBackClick: () => {
-      const current = get().screenState
-      if (current.step === 'registration_input') {
+      destroy: () => {
         stopTimer()
-        set({
-          screenState: {
-            step: 'email_input',
-            email: current.email,
-            isEmailValid: FieldValidator.isValidEmail(current.email),
-            actionLoading: false,
-            actionError: null
-          }
-        })
-      } else {
-        deps.onBack()
       }
-    },
-
-    destroy: () => {
-      stopTimer()
     }
-  }))
+  })
 }
 
 const RegistrationByEmailContext = createContext<RegistrationByEmailStore | null>(null)

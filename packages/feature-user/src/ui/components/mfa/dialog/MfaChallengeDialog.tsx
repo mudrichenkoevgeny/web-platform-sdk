@@ -18,7 +18,7 @@ export interface MfaChallengeDialogProps extends Omit<React.HTMLAttributes<HTMLD
 export const MfaChallengeDialog = forwardRef<HTMLDivElement, MfaChallengeDialogProps>(
   (
     {
-      request,
+      request: _request,
       onConfirm,
       onCancel,
       strings = enUserStrings,

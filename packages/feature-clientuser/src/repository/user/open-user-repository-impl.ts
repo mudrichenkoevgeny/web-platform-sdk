@@ -14,25 +14,12 @@ import {
 import { AuthStorage, UserRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserApi } from '@/network/api/user/open-user-api'
 
-class AsyncMutex {
-  private queue: Promise<unknown> = Promise.resolve()
-
-  public async runExclusive<T>(task: () => Promise<T>): Promise<T> {
-    const res = this.queue.then(
-      () => task(),
-      () => task()
-    )
-    this.queue = res.catch(() => {})
-    return res
-  }
-}
-
 /**
  * Implements {@link UserRepository} by observing {@link UserStorage}, coordinating network updates via {@link OpenUserApi},
  * and listening for live WebSocket events via {@link WebSocketService}.
  */
 export class OpenUserRepositoryImpl implements UserRepository {
-  private readonly mutex = new AsyncMutex()
+  private inFlightRefreshPromise: Promise<AppResult<UserDetails, AppError>> | null = null
 
   /**
    * Constructs a new {@link OpenUserRepositoryImpl}.
@@ -58,29 +45,33 @@ export class OpenUserRepositoryImpl implements UserRepository {
   }
 
   public async refreshCurrentUser(): Promise<AppResult<UserDetails, AppError>> {
-    return this.mutex.runExclusive(() => this.refreshCurrentUserInternal())
+    if (this.inFlightRefreshPromise) {
+      return this.inFlightRefreshPromise
+    }
+
+    this.inFlightRefreshPromise = this.refreshCurrentUserInternal().finally(() => {
+      this.inFlightRefreshPromise = null
+    })
+
+    return this.inFlightRefreshPromise
   }
 
   public async scheduleUserDeletion(): Promise<AppResult<UserDetails, AppError>> {
-    return this.mutex.runExclusive(async () => {
-      const result = await this.openUserApi.scheduleUserDeletion()
-      const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
-      if (isSuccess(mapped)) {
-        await this.userStorage.updateCurrentUser(mapped.data)
-      }
-      return mapped
-    })
+    const result = await this.openUserApi.scheduleUserDeletion()
+    const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+    if (isSuccess(mapped)) {
+      await this.userStorage.updateCurrentUser(mapped.data)
+    }
+    return mapped
   }
 
   public async restoreUser(): Promise<AppResult<UserDetails, AppError>> {
-    return this.mutex.runExclusive(async () => {
-      const result = await this.openUserApi.restoreUser()
-      const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
-      if (isSuccess(mapped)) {
-        await this.userStorage.updateCurrentUser(mapped.data)
-      }
-      return mapped
-    })
+    const result = await this.openUserApi.restoreUser()
+    const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+    if (isSuccess(mapped)) {
+      await this.userStorage.updateCurrentUser(mapped.data)
+    }
+    return mapped
   }
 
   public async clearSession(): Promise<void> {

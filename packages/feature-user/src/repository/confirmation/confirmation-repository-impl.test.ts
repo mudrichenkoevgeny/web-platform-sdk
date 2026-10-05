@@ -6,7 +6,7 @@ import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ConfirmationRepositoryImpl', () => {
   it('executes action when no cooldown is active', async () => {
-    let now = 1000
+    const now = 1000
     const repo = new ConfirmationRepositoryImpl(() => now)
 
     const action = vi.fn().mockResolvedValue(
