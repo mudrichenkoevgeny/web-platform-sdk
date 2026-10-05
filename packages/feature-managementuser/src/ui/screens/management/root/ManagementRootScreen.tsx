@@ -11,6 +11,12 @@ import {
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { IdentifierDetailScreen, SessionDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type {
+  GetSessionUseCase,
+  DeleteSessionUseCase,
+  GetUserIdentifierUseCase,
+  DeleteUserIdentifierUseCase
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { AuditEventDetailScreen } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
@@ -222,7 +228,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
                 }
                 return appResultFailure(CommonError.unknown())
               }
-            } as any,
+            } as unknown as GetSessionUseCase,
             deleteSessionUseCase: {
               execute: async (sessionId: UserSessionId) => {
                 if (!deps.managementGetSessionUseCase) {
@@ -234,9 +240,9 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
                   return sessionRes
                 }
 
-                return deps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, String(sessionId))
+                return deps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, sessionId)
               }
-            } as any,
+            } as unknown as DeleteSessionUseCase,
             onNavigateToIdentifierDetail: (identifierId) => push({ type: 'identifier_detail', identifierId }),
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),
             onNavigateToProfile: () => push({ type: 'main' }),
@@ -271,7 +277,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
                 }
                 return appResultFailure(CommonError.unknown())
               }
-            } as any,
+            } as unknown as GetUserIdentifierUseCase,
             deleteUserIdentifierUseCase: {
               execute: async (id: UserIdentifierId) => {
                 if (!deps.managementGetIdentifierUseCase) {
@@ -283,9 +289,9 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
                   return idRes
                 }
 
-                return deps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, String(id))
+                return deps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
               }
-            } as any,
+            } as unknown as DeleteUserIdentifierUseCase,
             deletePasswordUseCase: {
               execute: async (id: UserIdentifierId) => {
                 if (!deps.managementGetIdentifierUseCase) {
@@ -297,7 +303,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
                   return idRes
                 }
 
-                return deps.managementDeleteIdentifierPasswordUseCase.execute(idRes.data.userId, String(id))
+                return deps.managementDeleteIdentifierPasswordUseCase.execute(idRes.data.userId, id)
               }
             },
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),

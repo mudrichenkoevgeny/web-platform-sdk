@@ -162,7 +162,6 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
             <PagingFooter
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
-              onPageChange={() => {}}
               totalCount={paging.totalCount}
             />
           </div>

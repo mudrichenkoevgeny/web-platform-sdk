@@ -6,7 +6,7 @@ import { enStrings } from '@/locales/en/strings'
 export interface PagingFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage: number
   totalPages: number
-  onPageChange: (page: number) => void
+  onPageChange?: (page: number) => void
   totalCount?: number
 }
 
@@ -34,19 +34,21 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
         )}
         {...rest}
       >
-        <div className="flex items-center gap-1">
-          <CoreBackButton
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={!hasPrevious}
-            ariaLabel={enStrings.ui_common_previous_page}
-          />
-          <CoreBackButton
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={!hasNext}
-            ariaLabel={enStrings.ui_common_next_page}
-            className="rotate-180"
-          />
-        </div>
+        {onPageChange && (
+          <div className="flex items-center gap-1">
+            <CoreBackButton
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={!hasPrevious}
+              ariaLabel={enStrings.ui_common_previous_page}
+            />
+            <CoreBackButton
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={!hasNext}
+              ariaLabel={enStrings.ui_common_next_page}
+              className="rotate-180"
+            />
+          </div>
+        )}
 
         <div className="flex items-center gap-4 text-xs font-medium">
           <span>{enStrings.ui_common_page_info(currentPage, totalPages)}</span>

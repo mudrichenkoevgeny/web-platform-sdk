@@ -158,7 +158,6 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
             <PagingFooter
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
-              onPageChange={() => {}}
               totalCount={paging.totalCount}
             />
           </div>

@@ -4,6 +4,7 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserId,
+  UserIdentifierId,
   UserIdentifierPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -38,7 +39,7 @@ export interface ManagementIdentifierApi {
    * @param identifierId - Unique identifier record ID
    * @returns Detailed information of the target identifier, or a mapped failure
    */
-  getIdentifier(identifierId: string): Promise<AppResult<UserIdentifierPayload, AppError>>
+  getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>>
 
   /**
    * Removes the identifier record for the given user.
@@ -47,7 +48,7 @@ export interface ManagementIdentifierApi {
    * @param identifierId - Unique identifier record ID to delete
    * @returns Void result or a mapped failure
    */
-  deleteIdentifier(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>>
+  deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 
   /**
    * Removes the password credential for the given user's identifier record.
@@ -56,5 +57,5 @@ export interface ManagementIdentifierApi {
    * @param identifierId - Unique identifier record ID to remove password for
    * @returns Void result or a mapped failure
    */
-  deleteIdentifierPassword(userId: UserId, identifierId: string): Promise<AppResult<void, AppError>>
+  deleteIdentifierPassword(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 }

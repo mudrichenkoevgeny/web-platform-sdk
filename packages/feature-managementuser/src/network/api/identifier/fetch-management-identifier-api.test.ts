@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
-import { ManagementIdentifierRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import type { PagedResult, UserIdentifierPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementIdentifierRoutes, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementIdentifierApi', () => {
   let mockHttpClient: HttpClient
@@ -15,7 +16,7 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifiers request with query params', async () => {
-    const dummyPayload = { items: [] } as any
+    const dummyPayload = { items: [], pageNumber: 1, pageSize: 10, totalCount: 0, totalPages: 0 } as unknown as PagedResult<UserIdentifierPayload>
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getIdentifiers(1, 10)
@@ -27,10 +28,10 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifier request', async () => {
-    const dummyPayload = { id: 'ident_1' } as any
+    const dummyPayload = { id: 'ident_1' } as unknown as UserIdentifierPayload
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getIdentifier('ident_1')
+    const result = await api.getIdentifier(toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('user_identifier_id=ident_1')
@@ -42,7 +43,7 @@ describe('FetchManagementIdentifierApi', () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
-    const result = await api.deleteIdentifier(userId, 'ident_1')
+    const result = await api.deleteIdentifier(userId, toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('usr_1'),
@@ -55,7 +56,7 @@ describe('FetchManagementIdentifierApi', () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
-    const result = await api.deleteIdentifierPassword(userId, 'ident_1')
+    const result = await api.deleteIdentifierPassword(userId, toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('usr_1'),
