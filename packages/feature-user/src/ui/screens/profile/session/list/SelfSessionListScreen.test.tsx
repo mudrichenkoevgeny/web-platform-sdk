@@ -42,7 +42,7 @@ describe('SelfSessionListScreen', () => {
 
   const createMockDeps = (): SelfSessionListStoreDependencies => ({
     getSessionsUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [session1, session2],
           totalCount: 2,
@@ -51,13 +51,13 @@ describe('SelfSessionListScreen', () => {
           totalPages: 1
         })
       )
-    } as any,
+    } as unknown as SelfSessionListStoreDependencies['getSessionsUseCase'],
     deleteSessionUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+    } as unknown as SelfSessionListStoreDependencies['deleteSessionUseCase'],
     deleteAllOtherSessionsUseCase: {
-      invoke: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
+    } as unknown as SelfSessionListStoreDependencies['deleteAllOtherSessionsUseCase'],
     onNavigateToSessionDetail: vi.fn(),
     onBack: vi.fn()
   })

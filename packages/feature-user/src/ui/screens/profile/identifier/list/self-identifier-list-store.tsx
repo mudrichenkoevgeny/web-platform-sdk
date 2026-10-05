@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifierId } from "@mudrichenkoevgeny/shared-foundation";
+import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/field-validator'
@@ -16,6 +16,7 @@ import type { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/add-use
 import type { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
+
 /**
  * State machine steps for the add-identifier modal dialog.
  */
@@ -777,10 +778,6 @@ export const createSelfIdentifierListStore = (
     }
   }))
 
-  if (!initialState) {
-    store.getState().loadIdentifiers()
-  }
-
   return store
 }
 
@@ -802,19 +799,17 @@ export const SelfIdentifierListProvider: React.FC<SelfIdentifierListProviderProp
   dependencies,
   initialState,
   children
-}) => {  const storeRef = useRef<SelfIdentifierListStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createSelfIdentifierListStore(dependencies, initialState)
-  }
+}) => {
+  const [store] = useState(() => createSelfIdentifierListStore(dependencies, initialState))
 
   useEffect(() => {
     return () => {
-      storeRef.current?.getState().dispose()
+      store.getState().dispose()
     }
-  }, [])
+  }, [store])
 
   return (
-    <SelfIdentifierListContext.Provider value={storeRef.current}>
+    <SelfIdentifierListContext.Provider value={store}>
       {children}
     </SelfIdentifierListContext.Provider>
   )

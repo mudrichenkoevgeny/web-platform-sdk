@@ -11,9 +11,14 @@ This document is the entry point for architectural and coding standards. These r
 - **No Trailing Commas:** Do not use trailing commas at the end of argument, parameter, array, or object entry lists.
 - **Strict Ban (as any):** Do not write `as any` type casts. Always use strict type narrowing, type guards, or explicit interfaces. Type safety must be strictly preserved across all modules.
 - **Mandatory UI Testing, Stories & Dedicated Folder Grouping:** Every created React component or screen (`*.tsx`) must be grouped into its own dedicated subfolder alongside its Unit/UI Test (`*.test.tsx`) and Storybook Preview (`*.stories.tsx`). Flat UI component lists are strictly forbidden.
-- **Mandatory UI Localization:** Production UI code must strictly use localized string dictionaries. Hardcoded string literals are strictly forbidden in production UI code (permitted only in tests and stories).
+- **Mandatory UI Localization & Semantic Accuracy:** Production UI code must strictly use localized string dictionaries. Hardcoded string literals are strictly forbidden in production UI code (permitted only in tests and stories). Never reuse unrelated localization keys just to avoid hardcoding (e.g. do not use `strings.resend_code` for a Refresh or Retry button). Use semantically accurate keys or hardcoded English fallbacks (e.g., `'Refresh'`).
 - **Design Tokens & Theme:** All design tokens and font assets originate from [platform-design-system](https://github.com/mudrichenkoevgeny/platform-design-system) (`assets/fonts/woff2/*.woff2` -> `packages/core-common/src/assets/fonts/`). `tokens.css` and `tokens.ts` are read-only generated artifacts (**never edit manually**). `ThemeProvider` and `sdkTailwindPreset` map colors, dimensions, radii, and typography directly from `GeneratedDesignTokens` and CSS variables.
 - **Domain ID Conversions:** Always use `string.toXxxIdOrThrow()` / `string.toXxxIdOrNull()` for converting strings to Branded Types (e.g. `UserId`, `UserSessionId`). Do not cast strings directly (`as UserId`).
+- **Lazy Store Initialization:** Never use `useRef` for lazy initialization of Zustand stores in Context Providers. Always use `useState(() => createMyStore(deps, initialState))`.
+- **Side-Effects Isolation:** Never trigger API calls or data fetching directly inside store factory functions. Always initiate data loading from inside a `useEffect` within a React component or Controller.
+- **Mandatory Test IDs:** Always map KMP `TestTags` directly to TypeScript `TestTags` objects (e.g. `export const MyTestTags = { ... }`) and apply them to DOM elements using `data-testid`.
+- **Strict Enum State Types:** Never use generic `string` types in `ScreenState` for fields representing fixed value sets (statuses, roles, lockout types, etc.). Always use imported TypeScript enums (`UserRole`, `UserAccountStatus`, `AccountLockoutType`).
+- **Accessibility (a11y):** Always use `useId()` to generate unique IDs for form fields and link labels via `htmlFor`.
 - **Manual Test Execution:** AI agents must not run tests or suggest running them. Execution is always triggered explicitly by the developer.
 - **No Redundant Builds:** Do not run Vite build tasks or attempt compilation after modifying documentation (TSDoc), markdown, or other non-executable changes.
 
@@ -26,7 +31,7 @@ This document is the entry point for architectural and coding standards. These r
 
 ### Feature Packages (`packages/feature-*`)
 - **`feature-user`:** Base Identity & Auth logic. Core models (Zod schemas), Zustand stores, use cases, and encrypted token storage.
-- **`feature-clientuser`コーディ:** Identity solution for standard users. Multi-method auth (Email, Phone, Google), state-machine navigation flows, and React components (shadcn/ui + Tailwind).
+- **`feature-clientuser`:** Identity solution for standard users. Multi-method auth (Email, Phone, Google), state-machine navigation flows, and React components (shadcn/ui + Tailwind).
 - **`feature-managementuser`:** Administrative identity solution. Management auth, session control, resource oversight, and administrative UI components.
 
 ## Detailed Standards ([.agent/](.agent/))

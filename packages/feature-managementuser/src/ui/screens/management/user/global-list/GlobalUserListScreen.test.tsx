@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { GlobalUserListScreen } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
+import { GlobalUserListScreen, GlobalUserListTestTags } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
@@ -17,7 +17,7 @@ describe('GlobalUserListScreen', () => {
           totalCount: 1
         })
       )
-    } as any,
+    } as unknown as GlobalUserListStoreDependencies['getUsersUseCase'],
     onNavigateToUserDetail: vi.fn(),
     onNavigateToCreateUser: vi.fn(),
     onBack: vi.fn()
@@ -32,6 +32,11 @@ describe('GlobalUserListScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.users_management_title)).toBeDefined()
+    expect(await screen.findByTestId(GlobalUserListTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(enManagementUserStrings.users_management_title)).toBeDefined()
+    expect(screen.getByTestId(GlobalUserListTestTags.BACK_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(GlobalUserListTestTags.CREATE_USER_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(GlobalUserListTestTags.FILTER_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(GlobalUserListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
 })

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ClientType, UserAuthProvider, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSession, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -71,22 +71,22 @@ export const createGlobalSessionListStore = (
   ) => {
     const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
     const sortBy = sortState?.optionId
-      ? (Object.values(UserSortValues.UserSessionSortBy).find((v) => v === sortState.optionId) ?? null)
+      ? (Object.values(UserSortValues.UserSessionSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserSessionSortBy | undefined ?? null)
       : null
 
-    const roleFilter = filterStates['userRole']
-    const providerFilter = filterStates['userAuthProvider']
-    const clientTypeFilter = filterStates['clientType']
-    const userIdFilter = filterStates['userId']
-    const identifierFilter = filterStates['identifier']
-    const identifierIdFilter = filterStates['identifierId']
-    const ipAddressFilter = filterStates['ipAddress']
-    const userAgentFilter = filterStates['userAgent']
-    const languageFilter = filterStates['language']
-    const deviceIdFilter = filterStates['deviceId']
-    const deviceNameFilter = filterStates['deviceName']
-    const appVersionFilter = filterStates['appVersion']
-    const osVersionFilter = filterStates['operationSystemVersion']
+    const roleFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ROLE]
+    const providerFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER]
+    const clientTypeFilter = filterStates[UserFilterValues.UserSessionFilterValues.CLIENT_TYPE]
+    const userIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ID]
+    const identifierFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER]
+    const identifierIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER_ID]
+    const ipAddressFilter = filterStates[UserFilterValues.UserSessionFilterValues.IP_ADDRESS]
+    const userAgentFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AGENT]
+    const languageFilter = filterStates[UserFilterValues.UserSessionFilterValues.LANGUAGE]
+    const deviceIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_ID]
+    const deviceNameFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_NAME]
+    const appVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.APP_VERSION]
+    const osVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.OPERATION_SYSTEM_VERSION]
 
     const userRoles = roleFilter?.type === 'choice'
       ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
@@ -118,7 +118,7 @@ export const createGlobalSessionListStore = (
     const result = await deps.managementGetSessionsUseCase.execute({
       pageNumber,
       pageSize: 20,
-      sortBy: sortBy as any,
+      sortBy,
       sortOrder,
       userIds,
       userRoles,
@@ -295,7 +295,7 @@ export const createGlobalSessionListStore = (
         }
       })
 
-      const result = await deps.managementDeleteSessionUseCase.execute(userId as any, String(sessionId))
+      const result = await deps.managementDeleteSessionUseCase.execute(toUserIdOrThrow(userId), String(sessionId))
 
       if (isSuccess(result)) {
         const updated = get().screenState

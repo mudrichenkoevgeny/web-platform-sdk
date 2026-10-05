@@ -30,7 +30,7 @@ describe('SelfIdentifierListScreen', () => {
   const createMockDeps = (): SelfIdentifierListStoreDependencies => ({
     appType: AppType.CLIENT,
     getUserIdentifiersUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [mockIdentifier1, mockIdentifier2],
           totalCount: 2,
@@ -39,15 +39,15 @@ describe('SelfIdentifierListScreen', () => {
           totalPages: 1
         })
       )
-    } as any,
+    } as unknown as SelfIdentifierListStoreDependencies['getUserIdentifiersUseCase'],
     getAvailableUserAuthProvidersUseCase: {
-      invoke: vi.fn().mockResolvedValue(
+      execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           primary: [UserAuthProvider.EMAIL],
           secondary: [UserAuthProvider.GOOGLE]
         })
       )
-    } as any,
+    } as unknown as SelfIdentifierListStoreDependencies['getAvailableUserAuthProvidersUseCase'],
     onIdentifierSelect: vi.fn(),
     onBack: vi.fn()
   })

@@ -27,7 +27,7 @@ const mockIdentifier2: UserIdentifier = {
 const createMockDeps = (): SelfIdentifierListStoreDependencies => ({
   appType: AppType.CLIENT,
   getUserIdentifiersUseCase: {
-    invoke: async () =>
+    execute: async () =>
       appResultSuccess({
         items: [mockIdentifier1, mockIdentifier2],
         totalCount: 2,
@@ -35,14 +35,14 @@ const createMockDeps = (): SelfIdentifierListStoreDependencies => ({
         pageSize: 20,
         totalPages: 1
       })
-  } as any,
+  } as unknown as SelfIdentifierListStoreDependencies['getUserIdentifiersUseCase'],
   getAvailableUserAuthProvidersUseCase: {
-    invoke: async () =>
+    execute: async () =>
       appResultSuccess({
         primary: [UserAuthProvider.EMAIL],
         secondary: [UserAuthProvider.GOOGLE]
       })
-  } as any,
+  } as unknown as SelfIdentifierListStoreDependencies['getAvailableUserAuthProvidersUseCase'],
   onIdentifierSelect: () => {},
   onBack: () => {}
 })

@@ -6,10 +6,10 @@ import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/reg
 const createMockDeps = (): RegistrationByEmailStoreDependencies => ({
   registrationRepository: {
     getRemainingRegistrationConfirmationDelayInSeconds: () => 0
-  } as any,
+  } as unknown as RegistrationByEmailStoreDependencies['registrationRepository'],
   sendRegistrationConfirmationToEmailUseCase: {
     execute: async () => appResultSuccess({ retryAfterSeconds: 60 })
-  } as any,
+  } as unknown as RegistrationByEmailStoreDependencies['sendRegistrationConfirmationToEmailUseCase'],
   registrationByEmailUseCase: {
     execute: async () =>
       appResultSuccess({
@@ -18,10 +18,10 @@ const createMockDeps = (): RegistrationByEmailStoreDependencies => ({
           accountStatus: 'ACTIVE'
         }
       })
-  } as any,
+  } as unknown as RegistrationByEmailStoreDependencies['registrationByEmailUseCase'],
   validatePasswordUseCase: {
-    execute: () => ({ isValid: true, errors: [] })
-  } as any,
+    execute: async () => appResultSuccess(undefined)
+  } as unknown as RegistrationByEmailStoreDependencies['validatePasswordUseCase'],
   onBack: () => {},
   onFinished: () => {}
 })

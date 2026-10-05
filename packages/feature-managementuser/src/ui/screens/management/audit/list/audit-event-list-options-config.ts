@@ -1,4 +1,4 @@
-import { AuditActorType, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditActorType, AuditFilterValues, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementUserStrings } from '@/locales/index'
@@ -16,13 +16,13 @@ export const getAuditEventListingOptionsConfig = (
   filters: [
     {
       type: 'text',
-      id: 'actorId',
+      id: AuditFilterValues.AuditEventFilterValues.ACTOR_ID,
       title: strings.ui_common_actor_id,
       placeholder: strings.ui_common_search_placeholder
     },
     {
       type: 'choice',
-      id: 'actorType',
+      id: AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE,
       title: strings.ui_common_actor_type,
       options: [
         { id: AuditActorType.USER, title: strings.ui_common_user },
@@ -34,7 +34,7 @@ export const getAuditEventListingOptionsConfig = (
     },
     {
       type: 'choice',
-      id: 'actorUserRole',
+      id: AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE,
       title: strings.ui_common_role,
       options: [
         { id: UserRole.STAFF, title: strings.ui_common_staff },
@@ -45,25 +45,25 @@ export const getAuditEventListingOptionsConfig = (
     },
     {
       type: 'text',
-      id: 'action',
+      id: AuditFilterValues.AuditEventFilterValues.ACTION,
       title: strings.ui_common_action,
       placeholder: strings.ui_common_search_placeholder
     },
     {
       type: 'text',
-      id: 'resource',
+      id: AuditFilterValues.AuditEventFilterValues.RESOURCE,
       title: strings.ui_common_resource,
       placeholder: strings.ui_common_search_placeholder
     },
     {
       type: 'text',
-      id: 'resourceId',
+      id: AuditFilterValues.AuditEventFilterValues.RESOURCE_ID,
       title: strings.ui_common_resource_id,
       placeholder: strings.ui_common_search_placeholder
     },
     {
       type: 'choice',
-      id: 'status',
+      id: AuditFilterValues.AuditEventFilterValues.STATUS,
       title: strings.ui_common_status,
       options: [
         { id: AuditStatus.SUCCESS, title: strings.ui_common_success },
@@ -75,7 +75,7 @@ export const getAuditEventListingOptionsConfig = (
     },
     {
       type: 'text',
-      id: 'message',
+      id: AuditFilterValues.AuditEventFilterValues.MESSAGE,
       title: strings.ui_common_message,
       placeholder: strings.ui_common_search_placeholder
     }

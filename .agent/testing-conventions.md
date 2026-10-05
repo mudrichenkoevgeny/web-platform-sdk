@@ -1,5 +1,5 @@
 ---
-description: Vitest standards, RTL requirements, mocking, and manual execution rule
+description: Vitest standards, RTL requirements, mocking, test IDs, and manual execution rule
 globs: "**/*.test.ts, **/*.test.tsx"
 alwaysApply: true
 ---
@@ -23,5 +23,8 @@ alwaysApply: true
 - **Domain Mock Subfolders:** Mocks inside `src/mock/` must be organized strictly into domain subfolders matching contract areas (`di/`, `error/`, `network/`, `platform/`, `storage/`). Flat file lists in the root of `src/mock/` are forbidden.
 - **Mock Naming & Re-exports:** Mock classes and functions must use explicit `Mock` naming (e.g., `EncryptedSettingsMock.ts`, `AccessTokenProviderMock.ts`) and be re-exported via package entry points (`src/index.ts`) to enable reuse in tests, Storybook previews, and dependent modules.
 
-## 4. UI Testing Mandate
-- Every React component must have a `*.test.tsx` file verifying rendering, user events, and error states.
+## 4. UI Testing & Mandatory Test IDs
+- **Test File Requirement:** Every React component must have a `*.test.tsx` file verifying rendering, user events, and error states.
+- **KMP TestTags Mapping:** NEVER drop or ignore Test Tags from the original KMP code when migrating to TypeScript/React.
+- **TestTags Constants:** ALWAYS map KMP `TestTags` objects directly to a `TestTags` constant object exported in TypeScript (e.g., `export const MyScreenTestTags = { ... }`).
+- **data-testid Application:** ALWAYS apply these tags to DOM elements using the `data-testid` attribute (e.g., `data-testid={MyScreenTestTags.SUBMIT_BUTTON}`). This is mandatory for E2E and UI testing.

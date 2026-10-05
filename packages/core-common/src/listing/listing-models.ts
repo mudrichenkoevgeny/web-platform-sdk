@@ -18,11 +18,49 @@ export interface PaginationState<T> {
   readonly totalPages: number
   /** Total count of items matching the query across all pages. */
   readonly totalCount: number
+  /** Indicates whether initial page loading is in progress. */
+  readonly isInitialLoading?: boolean
   /** Indicates whether the next page is currently loading. */
   readonly isNextPageLoading?: boolean
   /** Error encountered during page fetch, if any. */
   readonly error?: AppError | null
 }
+
+/** Creates an initial empty pagination state before initial page fetch. */
+export const createInitialPaginationState = <T>(): PaginationState<T> => ({
+  items: [],
+  pageNumber: 1,
+  totalPages: 1,
+  totalCount: 0,
+  isInitialLoading: true,
+  isNextPageLoading: false,
+  error: null
+})
+
+/** Creates a pagination state with next page loading indicator enabled. */
+export const createNextPageLoadingPaginationState = <T>(
+  current: PaginationState<T>
+): PaginationState<T> => ({
+  ...current,
+  isNextPageLoading: true
+})
+
+/** Appends or replaces page result items into pagination state. */
+export const appendResultToPaginationState = <T>(
+  currentPaging: PaginationState<T>,
+  newItems: T[],
+  pageNumber: number,
+  totalPages: number,
+  totalCount: number
+): PaginationState<T> => ({
+  items: pageNumber === 1 ? newItems : [...currentPaging.items, ...newItems],
+  pageNumber,
+  totalPages,
+  totalCount,
+  isInitialLoading: false,
+  isNextPageLoading: false,
+  error: null
+})
 
 /** Base contract for filter definitions. */
 export interface BaseListingFilterDefinition {

@@ -2,13 +2,14 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserSessionListScreen } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { UserSessionListScreen, UserSessionListTestTags } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
 describe('UserSessionListScreen', () => {
   const createMockDeps = (): UserSessionListStoreDependencies => ({
-    userId: 'usr_123' as any,
+    userId: 'usr_123' as unknown as UserId,
     managementGetSessionsUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
@@ -19,13 +20,13 @@ describe('UserSessionListScreen', () => {
           totalPages: 1
         })
       )
-    } as any,
+    } as unknown as UserSessionListStoreDependencies['managementGetSessionsUseCase'],
     managementDeleteSessionUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as any,
+    } as unknown as UserSessionListStoreDependencies['managementDeleteSessionUseCase'],
     managementDeleteAllUserSessionsUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as any,
+    } as unknown as UserSessionListStoreDependencies['managementDeleteAllUserSessionsUseCase'],
     onNavigateToSessionDetail: vi.fn(),
     onBack: vi.fn()
   })
@@ -39,6 +40,9 @@ describe('UserSessionListScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.user_sessions)).toBeDefined()
+    expect(await screen.findByTestId(UserSessionListTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(enManagementUserStrings.user_sessions)).toBeDefined()
+    expect(screen.getByTestId(UserSessionListTestTags.BACK_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(UserSessionListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
 })

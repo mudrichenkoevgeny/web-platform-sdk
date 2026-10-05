@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useId } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -13,12 +13,23 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import type { FeatureUserStrings } from '@/locales/index'
 import {
   LoginByEmailProvider,
   useLoginByEmailStore
 } from '@/ui/screens/auth/login/email/login-by-email-store'
-import type { LoginByEmailStoreDependencies } from "@/ui/screens/auth/login/email/login-by-email-store";
+import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
+
+export const LoginByEmailTestTags = {
+  BACK_BUTTON: 'LoginByEmail_BackButton',
+  TITLE: 'LoginByEmail_Title',
+  EMAIL_INPUT: 'LoginByEmail_EmailInput',
+  PASSWORD_INPUT: 'LoginByEmail_PasswordInput',
+  ACTION_ERROR_TEXT: 'LoginByEmail_ActionErrorText',
+  FORGOT_PASSWORD_BUTTON: 'LoginByEmail_ForgotPasswordButton',
+  LOGIN_BUTTON: 'LoginByEmail_LoginButton',
+  REGISTER_BUTTON: 'LoginByEmail_RegisterButton'
+}
 
 const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
@@ -32,6 +43,9 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const onRegistrationClick = useLoginByEmailStore((s) => s.onRegistrationClick)
   const onBackClick = useLoginByEmailStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
+
+  const emailId = useId()
+  const passwordId = useId()
 
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
@@ -62,10 +76,12 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     >
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton
+          data-testid={LoginByEmailTestTags.BACK_BUTTON}
           onClick={onBackClick}
           disabled={actionLoading}
         />
         <CoreScreenTitleText
+          data-testid={LoginByEmailTestTags.TITLE}
           text={strings.login_by_email}
           className="absolute left-1/2 -translate-x-1/2"
         />
@@ -74,6 +90,8 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
       <div className="w-full flex-1 flex flex-col justify-center gap-4 my-auto">
         <CoreEmailTextField
+          id={emailId}
+          data-testid={LoginByEmailTestTags.EMAIL_INPUT}
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.email}
@@ -83,6 +101,8 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         />
 
         <CorePasswordTextField
+          id={passwordId}
+          data-testid={LoginByEmailTestTags.PASSWORD_INPUT}
           value={password}
           onChange={(e) => onPasswordChanged(e.target.value)}
           isPasswordVisible={isPasswordVisible}
@@ -100,13 +120,14 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           )}
         >
           {actionError && (
-            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
+            <CoreErrorText data-testid={LoginByEmailTestTags.ACTION_ERROR_TEXT} text={errorParser.parse(actionError) ?? ''} />
           )}
         </div>
 
         <div className="flex justify-end">
           <CoreTextButton
             type="button"
+            data-testid={LoginByEmailTestTags.FORGOT_PASSWORD_BUTTON}
             label={strings.forgot_password}
             onClick={onForgotPasswordClick}
             disabled={actionLoading}
@@ -117,6 +138,7 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
           type="submit"
+          data-testid={LoginByEmailTestTags.LOGIN_BUTTON}
           label={strings.login}
           disabled={!canLogin}
           onClick={onLoginClick}
@@ -125,6 +147,7 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         {isRegistrationAvailable && (
           <CoreTextButton
             type="button"
+            data-testid={LoginByEmailTestTags.REGISTER_BUTTON}
             label={strings.no_account_register}
             onClick={onRegistrationClick}
             disabled={actionLoading}
@@ -137,23 +160,11 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-/**
- * Props for the {@link LoginByEmailScreen} component.
- */
 export interface LoginByEmailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Screen dependencies for state management and navigation.
-   */
   dependencies: LoginByEmailStoreDependencies
-  /**
-   * Localized strings dictionary override.
-   */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component for email and password authentication.
- */
 export const LoginByEmailScreen = forwardRef<HTMLDivElement, LoginByEmailScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (

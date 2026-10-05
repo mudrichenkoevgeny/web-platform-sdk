@@ -4,8 +4,8 @@ export const createUserDependenciesMock = (
   overrides?: Partial<CreateUserStoreDependencies>
 ): CreateUserStoreDependencies => ({
   createUserUseCase: {
-    execute: async () => ({ isSuccess: true, data: {} } as any)
-  } as any,
+    execute: async () => ({ isSuccess: true, data: undefined })
+  } as unknown as CreateUserStoreDependencies['createUserUseCase'],
   onSuccess: () => {},
   onBack: () => {},
   ...overrides

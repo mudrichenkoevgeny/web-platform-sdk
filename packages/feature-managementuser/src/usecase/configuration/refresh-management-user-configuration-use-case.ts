@@ -14,9 +14,9 @@ export class RefreshManagementUserConfigurationUseCase {
   /**
    * Constructs a new {@link RefreshManagementUserConfigurationUseCase}.
    *
-   * @param openUserConfigurationApi - Remote source for the bundled configuration DTO
-   * @param openGlobalSettingsRepository - Persists open global settings from the bundle
-   * @param openSecuritySettingsRepository - Persists open security settings from the bundle
+   * @param openUserConfigurationApi Remote source for the bundled configuration DTO
+   * @param openGlobalSettingsRepository Persists open global settings from the bundle
+   * @param openSecuritySettingsRepository Persists open security settings from the bundle
    */
   public constructor(
     private readonly openUserConfigurationApi: OpenUserConfigurationApi,

@@ -3,9 +3,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByEmailScreen } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
+import { LoginByEmailScreen, LoginByEmailTestTags } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
 import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
-import { enUserStrings } from '@/locales/index'
 
 describe('LoginByEmailScreen', () => {
   const createMockDeps = (): LoginByEmailStoreDependencies => ({
@@ -19,7 +18,7 @@ describe('LoginByEmailScreen', () => {
           }
         })
       )
-    } as any,
+    } as unknown as LoginByEmailStoreDependencies['loginByEmailUseCase'],
     onNavigateToRegistrationByEmail: vi.fn(),
     onNavigateToForgotPassword: vi.fn(),
     onNavigateToTotp: vi.fn(),
@@ -39,11 +38,11 @@ describe('LoginByEmailScreen', () => {
       </ComponentTestHarness>
     )
 
-    const loginButton = screen.getByRole('button', { name: enUserStrings.login })
+    const loginButton = screen.getByTestId(LoginByEmailTestTags.LOGIN_BUTTON)
     expect(loginButton.getAttribute('disabled')).not.toBeNull()
 
-    const emailInput = screen.getByPlaceholderText(enUserStrings.email)
-    const passwordInput = screen.getByPlaceholderText(enUserStrings.password)
+    const emailInput = screen.getByTestId(LoginByEmailTestTags.EMAIL_INPUT)
+    const passwordInput = screen.getByTestId(LoginByEmailTestTags.PASSWORD_INPUT)
 
     await user.type(emailInput, 'user@example.com')
     await user.type(passwordInput, 'secret123')
@@ -66,7 +65,7 @@ describe('LoginByEmailScreen', () => {
       </ComponentTestHarness>
     )
 
-    const backButton = screen.getByRole('button', { name: 'Go back' })
+    const backButton = screen.getByTestId(LoginByEmailTestTags.BACK_BUTTON)
     await user.click(backButton)
 
     expect(deps.onBack).toHaveBeenCalledTimes(1)
@@ -82,7 +81,7 @@ describe('LoginByEmailScreen', () => {
       </ComponentTestHarness>
     )
 
-    const forgotBtn = screen.getByRole('button', { name: enUserStrings.forgot_password })
+    const forgotBtn = screen.getByTestId(LoginByEmailTestTags.FORGOT_PASSWORD_BUTTON)
     await user.click(forgotBtn)
 
     expect(deps.onNavigateToForgotPassword).toHaveBeenCalledTimes(1)

@@ -5,8 +5,8 @@ import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/c
 
 const createMockDeps = (): CreateUserStoreDependencies => ({
   createUserUseCase: {
-    execute: async () => ({ isSuccess: true, data: {} } as any)
-  } as any,
+    execute: async () => ({ isSuccess: true, data: undefined })
+  } as unknown as CreateUserStoreDependencies['createUserUseCase'],
   onSuccess: () => {},
   onBack: () => {}
 })

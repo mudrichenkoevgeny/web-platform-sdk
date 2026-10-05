@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
   AccountLockoutType,
@@ -225,13 +225,10 @@ export const LoginByEmailProvider: React.FC<LoginByEmailProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<LoginByEmailStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createLoginByEmailStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createLoginByEmailStore(dependencies, initialState))
 
   return (
-    <LoginByEmailContext.Provider value={storeRef.current}>
+    <LoginByEmailContext.Provider value={store}>
       {children}
     </LoginByEmailContext.Provider>
   )

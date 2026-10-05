@@ -4,6 +4,9 @@ import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 export interface FeatureManagementUserStrings extends FeatureUserStrings {
   readonly management_settings_title: string
   readonly audit_logs: string
+  readonly filter: string
+  readonly refresh: string
+  readonly retry: string
 
   readonly audit_logs_title: string
   readonly audit_event_details_title: string
@@ -129,6 +132,9 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
 
   management_settings_title: 'Management Settings',
   audit_logs: 'Audit Logs',
+  filter: 'Filter',
+  refresh: 'Refresh',
+  retry: 'Retry',
 
   audit_logs_title: 'Audit Logs',
   audit_event_details_title: 'Audit Event Details',

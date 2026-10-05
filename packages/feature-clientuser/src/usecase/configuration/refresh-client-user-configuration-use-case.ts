@@ -17,10 +17,10 @@ export class RefreshClientUserConfigurationUseCase {
   /**
    * Constructs a new {@link RefreshClientUserConfigurationUseCase}.
    *
-   * @param openUserConfigurationApi - Remote source for the bundled configuration DTO
-   * @param openGlobalSettingsRepository - Persists global settings from the bundle
-   * @param openSecuritySettingsRepository - Persists security settings from the bundle
-   * @param openAuthSettingsRepository - Persists auth settings from the bundle
+   * @param openUserConfigurationApi Remote source for the bundled configuration DTO
+   * @param openGlobalSettingsRepository Persists global settings from the bundle
+   * @param openSecuritySettingsRepository Persists security settings from the bundle
+   * @param openAuthSettingsRepository Persists auth settings from the bundle
    */
   public constructor(
     private readonly openUserConfigurationApi: OpenUserConfigurationApi,

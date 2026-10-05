@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -11,17 +11,14 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import type { FeatureUserStrings } from '@/locales/index'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import {
   SelfSessionListProvider,
   useSelfSessionListStore
 } from '@/ui/screens/profile/session/list/self-session-list-store'
-import type { SelfSessionListStoreDependencies } from "@/ui/screens/profile/session/list/self-session-list-store";
+import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/self-session-list-store'
 
-/**
- * Automation test tags for {@link SelfSessionListScreen}.
- */
 export const SelfSessionListTestTags = {
   TITLE: 'SelfSessionList_Title',
   BACK_BUTTON: 'SelfSessionList_BackButton',
@@ -57,7 +54,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         />
         <CoreTextButton
           type="button"
-          label={strings.resend_code ? strings.resend_code : 'Retry'}
+          label="Retry"
           onClick={onRefresh}
         />
       </div>
@@ -86,7 +83,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         />
         <CoreTextButton
           type="button"
-          label={strings.resend_code ? strings.resend_code : 'Refresh'}
+          label="Refresh"
           onClick={onRefresh}
           disabled={actionLoading}
           data-testid={SelfSessionListTestTags.REFRESH_BUTTON}
@@ -141,23 +138,29 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-/**
- * Props for {@link SelfSessionListScreen}.
- */
+const SelfSessionListController: React.FC<{ strings?: FeatureUserStrings }> = ({
+  strings
+}) => {
+  const loadSessions = useSelfSessionListStore((s) => s.loadSessions)
+
+  useEffect(() => {
+    loadSessions()
+  }, [loadSessions])
+
+  return <SelfSessionListContent strings={strings} />
+}
+
 export interface SelfSessionListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: SelfSessionListStoreDependencies
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component displaying active sessions for the current account with infinite scroll and session revoking.
- */
 export const SelfSessionListScreen = forwardRef<HTMLDivElement, SelfSessionListScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SelfSessionListProvider dependencies={dependencies}>
-          <SelfSessionListContent strings={strings} />
+          <SelfSessionListController strings={strings} />
         </SelfSessionListProvider>
       </div>
     )

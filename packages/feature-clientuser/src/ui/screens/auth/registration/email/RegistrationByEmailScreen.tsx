@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useId } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -20,6 +20,19 @@ import {
 } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 
+export const RegistrationByEmailTestTags = {
+  BACK_BUTTON: 'RegistrationByEmail_BackButton',
+  TITLE: 'RegistrationByEmail_Title',
+  EMAIL_INPUT: 'RegistrationByEmail_EmailInput',
+  SEND_CODE_BUTTON: 'RegistrationByEmail_SendCodeButton',
+  CODE_INPUT: 'RegistrationByEmail_CodeInput',
+  PASSWORD_INPUT: 'RegistrationByEmail_PasswordInput',
+  RESEND_CODE_BUTTON: 'RegistrationByEmail_ResendCodeButton',
+  RESEND_TIMER_TEXT: 'RegistrationByEmail_ResendTimerText',
+  REGISTER_BUTTON: 'RegistrationByEmail_RegisterButton',
+  ACTION_ERROR_TEXT: 'RegistrationByEmail_ActionErrorText'
+}
+
 const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
@@ -32,6 +45,10 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
   const onRegisterClick = useRegistrationByEmailStore((s) => s.onRegisterClick)
   const onBackClick = useRegistrationByEmailStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
+
+  const emailId = useId()
+  const codeId = useId()
+  const passwordId = useId()
 
   const { actionLoading, actionError } = screenState
 
@@ -51,10 +68,12 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
     >
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton
+          data-testid={RegistrationByEmailTestTags.BACK_BUTTON}
           onClick={onBackClick}
           disabled={actionLoading}
         />
         <CoreScreenTitleText
+          data-testid={RegistrationByEmailTestTags.TITLE}
           text={strings.registration_by_email}
           className="absolute left-1/2 -translate-x-1/2"
         />
@@ -63,16 +82,16 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
 
       <div className="w-full flex-1 flex flex-col justify-center items-center gap-4 my-auto">
         {screenState.step === 'email_input' ? (
-          <>
-            <CoreEmailTextField
-              value={screenState.email}
-              onChange={(e) => onEmailChanged(e.target.value)}
-              label={strings.email}
-              placeholder={strings.email}
-              isError={Boolean(actionError)}
-              disabled={actionLoading}
-            />
-          </>
+          <CoreEmailTextField
+            id={emailId}
+            data-testid={RegistrationByEmailTestTags.EMAIL_INPUT}
+            value={screenState.email}
+            onChange={(e) => onEmailChanged(e.target.value)}
+            label={strings.email}
+            placeholder={strings.email}
+            isError={Boolean(actionError)}
+            disabled={actionLoading}
+          />
         ) : (
           <>
             <div className="text-xl font-bold text-center">
@@ -84,6 +103,8 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
             </div>
 
             <CoreCodeTextField
+              id={codeId}
+              data-testid={RegistrationByEmailTestTags.CODE_INPUT}
               value={screenState.code}
               onChange={(e) => onCodeChanged(e.target.value)}
               label={strings.confirmation_code}
@@ -93,6 +114,8 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
             />
 
             <CorePasswordTextField
+              id={passwordId}
+              data-testid={RegistrationByEmailTestTags.PASSWORD_INPUT}
               value={screenState.password}
               onChange={(e) => onPasswordChanged(e.target.value)}
               isPasswordVisible={screenState.isPasswordVisible}
@@ -104,12 +127,16 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
             />
 
             {screenState.resendTimerSeconds > 0 ? (
-              <span className="text-xs text-muted-foreground">
+              <span
+                data-testid={RegistrationByEmailTestTags.RESEND_TIMER_TEXT}
+                className="text-xs text-muted-foreground"
+              >
                 {strings.resend_code_timer(screenState.resendTimerSeconds)}
               </span>
             ) : (
               <CoreTextButton
                 type="button"
+                data-testid={RegistrationByEmailTestTags.RESEND_CODE_BUTTON}
                 label={strings.resend_code}
                 onClick={onSendCodeClick}
                 disabled={actionLoading}
@@ -125,7 +152,10 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
           )}
         >
           {actionError && (
-            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
+            <CoreErrorText
+              data-testid={RegistrationByEmailTestTags.ACTION_ERROR_TEXT}
+              text={errorParser.parse(actionError) ?? ''}
+            />
           )}
         </div>
       </div>
@@ -134,6 +164,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
         {screenState.step === 'email_input' ? (
           <CoreButton
             type="submit"
+            data-testid={RegistrationByEmailTestTags.SEND_CODE_BUTTON}
             label={strings.send_code}
             disabled={!screenState.isEmailValid || actionLoading}
             onClick={onSendCodeClick}
@@ -141,6 +172,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
         ) : (
           <CoreButton
             type="submit"
+            data-testid={RegistrationByEmailTestTags.REGISTER_BUTTON}
             label={strings.register}
             disabled={
               screenState.code.length !== screenState.codeLength ||

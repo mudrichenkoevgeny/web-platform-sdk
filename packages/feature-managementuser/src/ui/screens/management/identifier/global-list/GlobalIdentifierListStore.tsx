@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { UserAuthProvider, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier, UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -48,7 +48,7 @@ export interface GlobalIdentifierListStoreState {
   onFilterChanged: (filterId: string, filterState: ListingFilterState) => void
   onApplyFilters: () => void
   onIdentifierClick: (identifierId: string) => void
-  onDeleteIdentifierClick: (identifierId: UserIdentifierId) => Promise<void>
+  onDeleteIdentifierClick: (userId: UserId, identifierId: UserIdentifierId) => Promise<void>
   onBackClick: () => void
 }
 
@@ -70,12 +70,12 @@ export const createGlobalIdentifierListStore = (
   ) => {
     const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
     const sortBy = sortState?.optionId
-      ? (Object.values(UserSortValues.UserIdentifierSortBy).find((v) => v === sortState.optionId) ?? null)
+      ? (Object.values(UserSortValues.UserIdentifierSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserIdentifierSortBy | undefined ?? null)
       : null
 
-    const providerFilter = filterStates['userAuthProvider']
-    const userIdFilter = filterStates['userId']
-    const identifierFilter = filterStates['identifier']
+    const providerFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER]
+    const userIdFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_ID]
+    const identifierFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER]
 
     const userAuthProviders = providerFilter?.type === 'choice'
       ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
@@ -88,7 +88,7 @@ export const createGlobalIdentifierListStore = (
     const result = await deps.managementGetIdentifiersUseCase.execute({
       pageNumber,
       pageSize: 20,
-      sortBy: sortBy as any,
+      sortBy,
       sortOrder,
       userAuthProviders,
       userIds,

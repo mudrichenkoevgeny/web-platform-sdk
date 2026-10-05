@@ -25,6 +25,17 @@ import {
 } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
+export const GlobalUserListTestTags = {
+  BACK_BUTTON: 'GlobalUserList_BackButton',
+  CREATE_USER_BUTTON: 'GlobalUserList_CreateUserButton',
+  TITLE: 'GlobalUserList_Title',
+  FILTER_BUTTON: 'GlobalUserList_FilterButton',
+  REFRESH_BUTTON: 'GlobalUserList_RefreshButton',
+  USER_LIST: 'GlobalUserList_List',
+  GLOBAL_ERROR_TEXT: 'GlobalUserList_GlobalErrorText',
+  ACTION_ERROR_TEXT: 'GlobalUserList_ActionErrorText'
+}
+
 const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
@@ -47,6 +58,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   if (screenState.status === 'error') {
     return (
       <FullscreenError
+        data-testid={GlobalUserListTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRefresh}
       />
@@ -72,14 +84,16 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
       <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton onClick={onBackClick} />
+        <CoreBackButton data-testid={GlobalUserListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
+          data-testid={GlobalUserListTestTags.TITLE}
           text={strings.users_management_title}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
           <button
             type="button"
+            data-testid={GlobalUserListTestTags.CREATE_USER_BUTTON}
             aria-label={strings.create_user}
             onClick={onCreateUserClick}
             className="p-2 rounded-lg border border-border bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center cursor-pointer"
@@ -88,7 +102,8 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           </button>
           <button
             type="button"
-            aria-label={strings.edit_auth_settings}
+            data-testid={GlobalUserListTestTags.FILTER_BUTTON}
+            aria-label={strings.filter}
             onClick={onToggleFilterPanel}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -96,7 +111,8 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           </button>
           <button
             type="button"
-            aria-label={strings.retry}
+            data-testid={GlobalUserListTestTags.REFRESH_BUTTON}
+            aria-label={strings.refresh}
             onClick={onRefresh}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -105,7 +121,14 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         </div>
       </div>
 
-      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1">
+      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalUserListTestTags.USER_LIST}>
+        {actionError && (
+          <CoreErrorText
+            data-testid={GlobalUserListTestTags.ACTION_ERROR_TEXT}
+            text={errorParser.parse(actionError) ?? ''}
+          />
+        )}
+
         {isFilterPanelExpanded && (
           <div className="w-full mb-2">
             <ListingOptionsPanel
@@ -119,11 +142,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           </div>
         )}
 
-        {actionError && (
-          <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
-        )}
-
-        {paging.items.length === 0 && !paging.isNextPageLoading ? (
+        {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>

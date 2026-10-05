@@ -3,18 +3,18 @@ import { createStore, useStore } from 'zustand'
 import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { CreateUserUseCase } from '@/usecase/user/create-user-use-case'
 
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value, 10)
   return isNaN(parsed) ? defaultValue : parsed
 }
-import type { CreateUserUseCase } from '@/usecase/user/create-user-use-case'
 
 export interface CreateUserScreenState {
   email: string
   password: string
-  role: string
-  status: string
+  role: UserRole
+  status: UserAccountStatus
   authorityLevel: string
   isLoading: boolean
   error: AppError | null
@@ -30,8 +30,8 @@ export interface CreateUserStoreState {
   screenState: CreateUserScreenState
   onEmailChanged: (value: string) => void
   onPasswordChanged: (value: string) => void
-  onRoleChanged: (value: string) => void
-  onStatusChanged: (value: string) => void
+  onRoleChanged: (value: UserRole) => void
+  onStatusChanged: (value: UserAccountStatus) => void
   onAuthorityLevelChanged: (value: string) => void
   onCreateClick: () => Promise<void>
   onBackClick: () => void
@@ -46,8 +46,8 @@ export const createCreateUserStore = (
   const defaultState: CreateUserScreenState = {
     email: '',
     password: '',
-    role: 'USER',
-    status: 'ACTIVE',
+    role: UserRole.USER,
+    status: UserAccountStatus.ACTIVE,
     authorityLevel: '0',
     isLoading: false,
     error: null,
@@ -65,11 +65,11 @@ export const createCreateUserStore = (
       set({ screenState: { ...get().screenState, password: value, error: null } })
     },
 
-    onRoleChanged: (value: string) => {
+    onRoleChanged: (value: UserRole) => {
       set({ screenState: { ...get().screenState, role: value, error: null } })
     },
 
-    onStatusChanged: (value: string) => {
+    onStatusChanged: (value: UserAccountStatus) => {
       set({ screenState: { ...get().screenState, status: value, error: null } })
     },
 
@@ -86,18 +86,12 @@ export const createCreateUserStore = (
       set({ screenState: { ...current, isLoading: true, error: null } })
 
       const authLevel = parseIntegerOrDefault(current.authorityLevel, 0)
-      const resolvedRole = Object.values(UserRole).find(
-        (r) => r.toLowerCase() === current.role.toLowerCase()
-      ) ?? UserRole.USER
-      const resolvedStatus = Object.values(UserAccountStatus).find(
-        (s) => s.toLowerCase() === current.status.toLowerCase()
-      ) ?? UserAccountStatus.ACTIVE
 
       const result = await deps.createUserUseCase.execute({
         email: current.email.trim(),
-        password: current.password ? current.password.trim() : null,
-        role: resolvedRole,
-        status: resolvedStatus,
+        password: current.password.trim() || null,
+        role: current.role,
+        status: current.status,
         authorityLevel: authLevel,
         permissionCodes: []
       })

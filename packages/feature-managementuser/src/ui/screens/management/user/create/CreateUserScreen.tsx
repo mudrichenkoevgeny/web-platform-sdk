@@ -19,6 +19,18 @@ import {
 } from '@/ui/screens/management/user/create/CreateUserStore'
 import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
 
+export const CreateUserTestTags = {
+  BACK_BUTTON: 'CreateUser_BackButton',
+  TITLE: 'CreateUser_Title',
+  EMAIL_INPUT: 'CreateUser_EmailInput',
+  PASSWORD_INPUT: 'CreateUser_PasswordInput',
+  ROLE_SELECT: 'CreateUser_RoleSelect',
+  STATUS_SELECT: 'CreateUser_StatusSelect',
+  AUTHORITY_LEVEL_INPUT: 'CreateUser_AuthorityLevelInput',
+  CREATE_BUTTON: 'CreateUser_CreateButton',
+  ERROR_TEXT: 'CreateUser_ErrorText'
+}
+
 const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureManagementUserStrings): string => {
   switch (status) {
     case UserAccountStatus.ACTIVE:
@@ -79,8 +91,9 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
       <div className="w-full flex items-center justify-between relative mb-6">
-        <CoreBackButton onClick={onBackClick} />
+        <CoreBackButton data-testid={CreateUserTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
+          data-testid={CreateUserTestTags.TITLE}
           text={strings.create_user_title}
           className="absolute left-1/2 -translate-x-1/2"
         />
@@ -90,6 +103,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
         <CoreEmailTextField
           id={emailId}
+          data-testid={CreateUserTestTags.EMAIL_INPUT}
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.email}
@@ -99,6 +113,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <CorePasswordTextField
           id={passwordId}
+          data-testid={CreateUserTestTags.PASSWORD_INPUT}
           value={password}
           onChange={(e) => onPasswordChanged(e.target.value)}
           label={strings.password}
@@ -111,8 +126,9 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           </label>
           <select
             id={roleId}
+            data-testid={CreateUserTestTags.ROLE_SELECT}
             value={role}
-            onChange={(e) => onRoleChanged(e.target.value)}
+            onChange={(e) => onRoleChanged(e.target.value as UserRole)}
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -130,8 +146,9 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           </label>
           <select
             id={statusId}
+            data-testid={CreateUserTestTags.STATUS_SELECT}
             value={status}
-            onChange={(e) => onStatusChanged(e.target.value)}
+            onChange={(e) => onStatusChanged(e.target.value as UserAccountStatus)}
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -145,6 +162,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <CoreOutlinedTextField
           id={authLevelId}
+          data-testid={CreateUserTestTags.AUTHORITY_LEVEL_INPUT}
           value={authorityLevel}
           onChange={(e) => onAuthorityLevelChanged(e.target.value)}
           label={strings.authority_level}
@@ -154,13 +172,14 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <div className="flex flex-col gap-2 pt-2">
           <CoreButton
             type="button"
+            data-testid={CreateUserTestTags.CREATE_BUTTON}
             label={isLoading ? strings.saving : strings.create_user}
             onClick={onCreateClick}
             disabled={isLoading}
           />
 
           {error && (
-            <CoreErrorText text={errorParser.parse(error) ?? ''} />
+            <CoreErrorText data-testid={CreateUserTestTags.ERROR_TEXT} text={errorParser.parse(error) ?? ''} />
           )}
         </div>
       </div>

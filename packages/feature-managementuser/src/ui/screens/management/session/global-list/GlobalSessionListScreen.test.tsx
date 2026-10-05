@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { GlobalSessionListScreen } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
+import { GlobalSessionListScreen, GlobalSessionListTestTags } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
@@ -18,11 +18,12 @@ describe('GlobalSessionListScreen', () => {
           totalPages: 1
         })
       )
-    } as any,
+    } as unknown as GlobalSessionListStoreDependencies['managementGetSessionsUseCase'],
     managementDeleteSessionUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as any,
+    } as unknown as GlobalSessionListStoreDependencies['managementDeleteSessionUseCase'],
     onNavigateToSessionDetail: vi.fn(),
+    onNavigateToUserDetail: vi.fn(),
     onBack: vi.fn()
   })
 
@@ -35,6 +36,10 @@ describe('GlobalSessionListScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.sessions)).toBeDefined()
+    expect(await screen.findByTestId(GlobalSessionListTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(enManagementUserStrings.sessions)).toBeDefined()
+    expect(screen.getByTestId(GlobalSessionListTestTags.BACK_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(GlobalSessionListTestTags.FILTER_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(GlobalSessionListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
 })

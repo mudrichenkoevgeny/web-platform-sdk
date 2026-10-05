@@ -13,7 +13,7 @@ const createMockDeps = (): GlobalUserListStoreDependencies => ({
         totalPages: 1,
         totalCount: 2
       })
-  } as any,
+  } as unknown as GlobalUserListStoreDependencies['getUsersUseCase'],
   onNavigateToUserDetail: () => {},
   onNavigateToCreateUser: () => {},
   onBack: () => {}

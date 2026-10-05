@@ -1,18 +1,18 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
+import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
+import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
+import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
 
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value, 10)
   return isNaN(parsed) ? defaultValue : parsed
 }
-import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
-import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
-import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
-import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
 
 export type UserDetailScreenState =
   | {
@@ -26,8 +26,8 @@ export type UserDetailScreenState =
       status: 'content'
       user: UserDetails
       authorityLevelInput: string
-      accountStatusInput: string
-      lockoutTypeInput: string
+      accountStatusInput: UserAccountStatus
+      lockoutTypeInput: AccountLockoutType
       temporaryLockoutUntilInput: string
       isSaving: boolean
       saveError: AppError | null
@@ -53,8 +53,8 @@ export interface UserDetailStoreState {
   screenState: UserDetailScreenState
   initScreen: () => Promise<void>
   onAuthorityLevelChanged: (value: string) => void
-  onAccountStatusChanged: (value: string) => void
-  onLockoutTypeChanged: (value: string) => void
+  onAccountStatusChanged: (value: UserAccountStatus) => void
+  onLockoutTypeChanged: (value: AccountLockoutType) => void
   onTemporaryLockoutUntilChanged: (value: string) => void
   onUpdateClick: () => Promise<void>
   onDeleteClick: () => void
@@ -72,14 +72,13 @@ export type UserDetailStore = ReturnType<typeof createUserDetailStore>
 export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { status: 'content' }>): boolean => {
   const initialAuthLevel = state.user.authorityLevel.toString()
   const currentAuthLevel = state.authorityLevelInput.trim() || '0'
-  const initialAccountStatus = String(state.user.accountStatus)
-  const initialLockoutType = String(state.user.lockoutType)
   const initialTempLockout = state.user.temporaryLockoutUntil ? String(state.user.temporaryLockoutUntil) : ''
+  const initialLockoutType = state.user.lockoutType ?? AccountLockoutType.NONE
 
   return (
     currentAuthLevel !== initialAuthLevel ||
-    state.accountStatusInput.toLowerCase() !== initialAccountStatus.toLowerCase() ||
-    state.lockoutTypeInput.toLowerCase() !== initialLockoutType.toLowerCase() ||
+    state.accountStatusInput !== state.user.accountStatus ||
+    state.lockoutTypeInput !== initialLockoutType ||
     state.temporaryLockoutUntilInput !== initialTempLockout
   )
 }
@@ -102,8 +101,8 @@ export const createUserDetailStore = (
             status: 'content',
             user,
             authorityLevelInput: String(user.authorityLevel),
-            accountStatusInput: String(user.accountStatus),
-            lockoutTypeInput: String(user.lockoutType ?? 'NONE'),
+            accountStatusInput: user.accountStatus,
+            lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
             temporaryLockoutUntilInput: user.temporaryLockoutUntil ? String(user.temporaryLockoutUntil) : '',
             isSaving: false,
             saveError: null,
@@ -141,14 +140,14 @@ export const createUserDetailStore = (
       }
     },
 
-    onAccountStatusChanged: (value: string) => {
+    onAccountStatusChanged: (value: UserAccountStatus) => {
       const current = get().screenState
       if (current.status === 'content') {
         set({ screenState: { ...current, accountStatusInput: value, saveError: null } })
       }
     },
 
-    onLockoutTypeChanged: (value: string) => {
+    onLockoutTypeChanged: (value: AccountLockoutType) => {
       const current = get().screenState
       if (current.status === 'content') {
         set({ screenState: { ...current, lockoutTypeInput: value, saveError: null } })
@@ -171,18 +170,14 @@ export const createUserDetailStore = (
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
       const authLevel = parseIntegerOrDefault(current.authorityLevelInput, 0)
-      const status = current.accountStatusInput || String(current.user.accountStatus)
-      const resolvedLockout = Object.values(AccountLockoutType).find(
-        (t) => t.toLowerCase() === current.lockoutTypeInput.toLowerCase()
-      ) ?? current.user.lockoutType
       const tempLockout = current.temporaryLockoutUntilInput
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
         : current.user.temporaryLockoutUntil
 
       const result = await deps.updateUserUseCase.execute(deps.userId, {
-        accountStatus: status as any,
+        accountStatus: current.accountStatusInput,
         authorityLevel: authLevel,
-        lockoutType: resolvedLockout,
+        lockoutType: current.lockoutTypeInput,
         temporaryLockoutUntil: tempLockout
       })
 

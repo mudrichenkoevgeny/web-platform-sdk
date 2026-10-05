@@ -1,4 +1,4 @@
-import { UserAuthProvider, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementUserStrings } from '@/locales/index'
@@ -20,7 +20,7 @@ export const getGlobalIdentifierListingOptionsConfig = (
   filters: [
     {
       type: 'choice',
-      id: 'userAuthProvider',
+      id: UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER,
       title: strings.ui_common_auth_provider,
       options: [
         { id: UserAuthProvider.EMAIL, title: strings.ui_common_email },
@@ -33,13 +33,13 @@ export const getGlobalIdentifierListingOptionsConfig = (
     },
     {
       type: 'text',
-      id: 'userId',
+      id: UserFilterValues.UserIdentifierFilterValues.USER_ID,
       title: strings.ui_common_user_id,
       placeholder: strings.ui_common_search_placeholder
     },
     {
       type: 'text',
-      id: 'identifier',
+      id: UserFilterValues.UserIdentifierFilterValues.IDENTIFIER,
       title: strings.ui_common_identifier,
       placeholder: strings.ui_common_search_placeholder
     }

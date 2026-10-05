@@ -8,7 +8,7 @@ import {
   LoginWelcomeScreen,
   PendingDeletionScreen,
   ResetEmailPasswordScreen,
-  UnlockMethodSelectionScreen
+  UnlockRootScreen
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { FeatureUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
@@ -116,14 +116,16 @@ const ManagementLoginRootContent: React.FC<{
 
       case 'accountUnlock':
         return (
-          <UnlockMethodSelectionScreen
+          <UnlockRootScreen
             dependencies={{
               lockoutType: currentDestination.lockoutType ?? null,
               lockoutUntil: currentDestination.lockoutUntil ?? null,
               getUserIdentifiersUseCase: dependencies.getUserIdentifiersUseCase,
               unlockByGoogleUseCase: null,
-              onNavigateToEmailInput: () => {},
-              onNavigateToPhoneInput: () => {},
+              sendUnlockEmailConfirmationUseCase: dependencies.sendUnlockEmailConfirmationUseCase,
+              sendUnlockPhoneConfirmationUseCase: dependencies.sendUnlockPhoneConfirmationUseCase,
+              unlockByEmailUseCase: dependencies.unlockByEmailUseCase,
+              unlockByPhoneUseCase: dependencies.unlockByPhoneUseCase,
               onUnlockSuccess: pop,
               onBack: pop
             }}

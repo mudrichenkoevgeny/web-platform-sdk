@@ -7,6 +7,9 @@ export const ruManagementUserStrings: FeatureManagementUserStrings = {
 
   management_settings_title: 'Настройки управления',
   audit_logs: 'Аудит логи',
+  filter: 'Фильтр',
+  refresh: 'Обновить',
+  retry: 'Повторить',
 
   audit_logs_title: 'Аудит логи',
   audit_event_details_title: 'Детали аудит события',

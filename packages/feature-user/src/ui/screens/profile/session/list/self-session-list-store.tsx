@@ -1,17 +1,15 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
+import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
 import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
 import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/delete-all-other-sessions-use-case'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
-/**
- * Discriminated union representing active screen state for {@link SelfSessionListScreen}.
- */
+
 export type SelfSessionListScreenState =
   | {
       status: 'loading'
@@ -31,9 +29,6 @@ export type SelfSessionListScreenState =
       actionError: AppError | null
     }
 
-/**
- * Dependencies required to construct and run {@link SelfSessionListStore}.
- */
 export interface SelfSessionListStoreDependencies {
   getSessionsUseCase: GetSessionsUseCase
   deleteSessionUseCase: DeleteSessionUseCase
@@ -43,9 +38,6 @@ export interface SelfSessionListStoreDependencies {
   authStorage?: AuthStorage
 }
 
-/**
- * State and actions managed by {@link SelfSessionListStore}.
- */
 export interface SelfSessionListStoreState {
   screenState: SelfSessionListScreenState
   loadSessions: () => Promise<void>
@@ -60,16 +52,13 @@ export interface SelfSessionListStoreState {
 
 export type SelfSessionListStore = ReturnType<typeof createSelfSessionListStore>
 
-/**
- * Factory function creating a Zustand store instance for {@link SelfSessionListScreen}.
- */
 export const createSelfSessionListStore = (
   deps: SelfSessionListStoreDependencies,
   initialState?: SelfSessionListScreenState
 ) => {
   const DEFAULT_PAGE_SIZE = 20
 
-  const store = createStore<SelfSessionListStoreState>()((set, get) => ({
+  return createStore<SelfSessionListStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     loadSessions: async () => {
@@ -238,48 +227,30 @@ export const createSelfSessionListStore = (
       deps.onBack()
     }
   }))
-
-  if (!initialState) {
-    store.getState().loadSessions()
-  }
-
-  return store
 }
 
 const SelfSessionListContext = createContext<SelfSessionListStore | null>(null)
 
-/**
- * Props for {@link SelfSessionListProvider}.
- */
 export interface SelfSessionListProviderProps {
   dependencies: SelfSessionListStoreDependencies
   initialState?: SelfSessionListScreenState
   children: React.ReactNode
 }
 
-/**
- * React Context Provider for {@link SelfSessionListStore}.
- */
 export const SelfSessionListProvider: React.FC<SelfSessionListProviderProps> = ({
   dependencies,
   initialState,
   children
 }) => {
-  const storeRef = useRef<SelfSessionListStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createSelfSessionListStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createSelfSessionListStore(dependencies, initialState))
 
   return (
-    <SelfSessionListContext.Provider value={storeRef.current}>
+    <SelfSessionListContext.Provider value={store}>
       {children}
     </SelfSessionListContext.Provider>
   )
 }
 
-/**
- * Custom hook to select state from {@link SelfSessionListStore}.
- */
 export const useSelfSessionListStore = <T,>(
   selector: (state: SelfSessionListStoreState) => T
 ): T => {

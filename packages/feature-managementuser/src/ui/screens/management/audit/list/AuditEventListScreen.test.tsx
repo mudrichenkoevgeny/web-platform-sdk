@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
-import { AuditEventListScreen } from '@/ui/screens/management/audit/list/AuditEventListScreen'
+import { AuditEventListScreen, AuditEventListTestTags } from '@/ui/screens/management/audit/list/AuditEventListScreen'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
@@ -19,7 +19,7 @@ describe('AuditEventListScreen', () => {
           totalPages: 1
         })
       )
-    } as any,
+    } as unknown as AuditEventListStoreDependencies['getAuditEventsUseCase'],
     onNavigateToEventDetail: vi.fn(),
     onBack: vi.fn()
   })
@@ -34,7 +34,11 @@ describe('AuditEventListScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.audit_logs_title)).toBeDefined()
+    expect(await screen.findByTestId(AuditEventListTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(enManagementUserStrings.audit_logs_title)).toBeDefined()
+    expect(screen.getByTestId(AuditEventListTestTags.BACK_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(AuditEventListTestTags.FILTER_BUTTON)).toBeDefined()
+    expect(screen.getByTestId(AuditEventListTestTags.REFRESH_BUTTON)).toBeDefined()
 
     const item = screen.getByTestId(/^AuditItem_/)
     await user.click(item)

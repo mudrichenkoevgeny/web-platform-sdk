@@ -22,6 +22,30 @@ import {
 } from '@/ui/screens/management/user/detail/UserDetailStore'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
 
+export const UserDetailTestTags = {
+  BACK_BUTTON: 'UserDetail_BackButton',
+  TITLE: 'UserDetail_Title',
+  USER_ID_TEXT: 'UserDetail_UserIdText',
+  USER_ROLE_TEXT: 'UserDetail_UserRoleText',
+  TOTP_ENABLED_TEXT: 'UserDetail_TotpEnabledText',
+  DISABLE_TOTP_BUTTON: 'UserDetail_DisableTotpButton',
+  DISABLE_TOTP_ERROR_TEXT: 'UserDetail_DisableTotpErrorText',
+  SESSIONS_BUTTON: 'UserDetail_SessionsButton',
+  IDENTIFIERS_BUTTON: 'UserDetail_IdentifiersButton',
+  ACCOUNT_STATUS_SELECT: 'UserDetail_AccountStatusSelect',
+  AUTHORITY_LEVEL_INPUT: 'UserDetail_AuthorityLevelInput',
+  LOCKOUT_TYPE_SELECT: 'UserDetail_LockoutTypeSelect',
+  LOCKOUT_UNTIL_INPUT: 'UserDetail_LockoutUntilInput',
+  UPDATE_BUTTON: 'UserDetail_UpdateButton',
+  SAVE_ERROR_TEXT: 'UserDetail_SaveErrorText',
+  DELETE_BUTTON: 'UserDetail_DeleteButton',
+  DELETE_ERROR_TEXT: 'UserDetail_DeleteErrorText',
+  CONFIRM_DELETE_TITLE: 'UserDetail_ConfirmDeleteTitle',
+  CONFIRM_DELETE_DESC: 'UserDetail_ConfirmDeleteDesc',
+  CANCEL_DELETE_BUTTON: 'UserDetail_CancelDeleteButton',
+  CONFIRM_DELETE_BUTTON: 'UserDetail_ConfirmDeleteButton'
+}
+
 const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureManagementUserStrings): string => {
   switch (status) {
     case UserAccountStatus.ACTIVE:
@@ -124,8 +148,9 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
       <div className="w-full flex items-center justify-between relative mb-6">
-        <CoreBackButton onClick={onBackClick} />
+        <CoreBackButton data-testid={UserDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
+          data-testid={UserDetailTestTags.TITLE}
           text={strings.user_details_title}
           className="absolute left-1/2 -translate-x-1/2"
         />
@@ -133,20 +158,21 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
       </div>
 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
-        <CoreTitleText text={`${strings.user_id(user.id)}`} />
-        <p className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role as UserRole, strings)}`}</p>
-        <p className="text-sm text-surface-foreground">{strings.totp_enabled_label(user.isTotpEnabled ? strings.ui_common_yes : strings.ui_common_no)}</p>
+        <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${strings.user_id(user.id)}`} />
+        <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role as UserRole, strings)}`}</p>
+        <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.totp_enabled_label(user.isTotpEnabled ? strings.ui_common_yes : strings.ui_common_no)}</p>
 
         {user.isTotpEnabled && (
           <div className="flex flex-col gap-1">
             <CoreButton
               type="button"
+              data-testid={UserDetailTestTags.DISABLE_TOTP_BUTTON}
               label={isDisablingTotp ? strings.disabling_totp : strings.disable_totp}
               onClick={onDisableTotpClick}
               disabled={isSaving || isDeleting || isDisablingTotp}
             />
             {disableTotpError && (
-              <CoreErrorText text={errorParser.parse(disableTotpError) ?? ''} />
+              <CoreErrorText data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT} text={errorParser.parse(disableTotpError) ?? ''} />
             )}
           </div>
         )}
@@ -166,12 +192,14 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <div className="flex gap-2">
           <CoreButton
             type="button"
+            data-testid={UserDetailTestTags.SESSIONS_BUTTON}
             label={strings.user_sessions}
             onClick={onSessionsClick}
             className="flex-1"
           />
           <CoreButton
             type="button"
+            data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
             label={strings.user_identifiers}
             onClick={onIdentifiersClick}
             className="flex-1"
@@ -184,8 +212,9 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           </label>
           <select
             id={statusSelectId}
+            data-testid={UserDetailTestTags.ACCOUNT_STATUS_SELECT}
             value={accountStatusInput}
-            onChange={(e) => onAccountStatusChanged(e.target.value)}
+            onChange={(e) => onAccountStatusChanged(e.target.value as UserAccountStatus)}
             disabled={isSaving || isDeleting}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -199,6 +228,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <CoreOutlinedTextField
           id={authLevelId}
+          data-testid={UserDetailTestTags.AUTHORITY_LEVEL_INPUT}
           value={authorityLevelInput}
           onChange={(e) => onAuthorityLevelChanged(e.target.value)}
           label={strings.authority_level}
@@ -211,8 +241,9 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           </label>
           <select
             id={lockoutTypeId}
+            data-testid={UserDetailTestTags.LOCKOUT_TYPE_SELECT}
             value={lockoutTypeInput}
-            onChange={(e) => onLockoutTypeChanged(e.target.value)}
+            onChange={(e) => onLockoutTypeChanged(e.target.value as AccountLockoutType)}
             disabled={isSaving || isDeleting}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -226,6 +257,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <CoreOutlinedTextField
           id={tempLockoutId}
+          data-testid={UserDetailTestTags.LOCKOUT_UNTIL_INPUT}
           value={temporaryLockoutUntilInput}
           onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
           label={strings.ui_common_lockout_until}
@@ -235,23 +267,25 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <div className="flex flex-col gap-2 pt-2">
           <CoreButton
             type="button"
+            data-testid={UserDetailTestTags.UPDATE_BUTTON}
             label={isSaving ? strings.saving : strings.update_user}
             onClick={onUpdateClick}
             disabled={!hasChanges || isSaving || isDeleting}
           />
           {saveError && (
-            <CoreErrorText text={errorParser.parse(saveError) ?? ''} />
+            <CoreErrorText data-testid={UserDetailTestTags.SAVE_ERROR_TEXT} text={errorParser.parse(saveError) ?? ''} />
           )}
 
           <CoreButton
             type="button"
+            data-testid={UserDetailTestTags.DELETE_BUTTON}
             label={strings.delete_user}
             onClick={onDeleteClick}
             disabled={isSaving || isDeleting}
             className="bg-error hover:bg-error/90 text-error-foreground"
           />
           {deleteError && (
-            <CoreErrorText text={errorParser.parse(deleteError) ?? ''} />
+            <CoreErrorText data-testid={UserDetailTestTags.DELETE_ERROR_TEXT} text={errorParser.parse(deleteError) ?? ''} />
           )}
         </div>
       </div>
@@ -259,11 +293,12 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
       {isDeleteConfirmationVisible && (
         <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50">
           <div className="bg-card border border-border p-6 rounded-lg max-w-sm w-full flex flex-col gap-4 shadow-lg">
-            <CoreTitleText text={strings.delete_user} />
-            <p className="text-sm text-surface-foreground">{strings.delete_user_confirmation_desc}</p>
+            <CoreTitleText data-testid={UserDetailTestTags.CONFIRM_DELETE_TITLE} text={strings.delete_user} />
+            <p data-testid={UserDetailTestTags.CONFIRM_DELETE_DESC} className="text-sm text-surface-foreground">{strings.delete_user_confirmation_desc}</p>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
+                data-testid={UserDetailTestTags.CANCEL_DELETE_BUTTON}
                 onClick={onDismissDeleteDialog}
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm rounded-md border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors"
@@ -272,6 +307,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
               </button>
               <button
                 type="button"
+                data-testid={UserDetailTestTags.CONFIRM_DELETE_BUTTON}
                 onClick={onConfirmDeleteClick}
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm rounded-md bg-error text-error-foreground hover:bg-error/90 transition-colors"

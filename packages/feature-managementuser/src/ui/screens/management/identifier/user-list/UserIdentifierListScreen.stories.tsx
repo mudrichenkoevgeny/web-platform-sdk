@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 const createMockDeps = (): UserIdentifierListStoreDependencies => ({
-  userId: 'usr_123' as any,
+  userId: 'usr_123' as unknown as UserId,
   managementGetIdentifiersUseCase: {
     execute: async () =>
       appResultSuccess({
@@ -15,7 +16,7 @@ const createMockDeps = (): UserIdentifierListStoreDependencies => ({
         totalItems: 2,
         totalPages: 1
       })
-  } as any,
+  } as unknown as UserIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
   onIdentifierSelect: () => {},
   onBack: () => {}
 })

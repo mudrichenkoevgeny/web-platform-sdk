@@ -39,7 +39,7 @@ const session2: UserSession = {
 
 const createMockDeps = (): SelfSessionListStoreDependencies => ({
   getSessionsUseCase: {
-    invoke: async () =>
+    execute: async () =>
       appResultSuccess({
         items: [session1, session2],
         totalCount: 2,
@@ -47,13 +47,13 @@ const createMockDeps = (): SelfSessionListStoreDependencies => ({
         pageSize: 20,
         totalPages: 1
       })
-  } as any,
+  } as unknown as SelfSessionListStoreDependencies['getSessionsUseCase'],
   deleteSessionUseCase: {
-    invoke: async () => appResultSuccess(undefined)
-  } as any,
+    execute: async () => appResultSuccess(undefined)
+  } as unknown as SelfSessionListStoreDependencies['deleteSessionUseCase'],
   deleteAllOtherSessionsUseCase: {
-    invoke: async () => appResultSuccess(undefined)
-  } as any,
+    execute: async () => appResultSuccess(undefined)
+  } as unknown as SelfSessionListStoreDependencies['deleteAllOtherSessionsUseCase'],
   onNavigateToSessionDetail: () => {},
   onBack: () => {}
 })

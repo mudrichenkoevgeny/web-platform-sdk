@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import type { UserIdentifier, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
@@ -143,7 +143,7 @@ export const createUserIdentifierListStore = (
           paging: {
             ...current.paging,
             items: filteredItems,
-            totalItems: Math.max(0, current.paging.totalItems - 1)
+            totalCount: Math.max(0, current.paging.totalCount - 1)
           }
         }
       })

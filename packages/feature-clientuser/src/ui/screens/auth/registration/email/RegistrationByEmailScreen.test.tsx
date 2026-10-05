@@ -2,20 +2,19 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { RegistrationByEmailScreen } from '@/ui/screens/auth/registration/email/RegistrationByEmailScreen'
+import { RegistrationByEmailScreen, RegistrationByEmailTestTags } from '@/ui/screens/auth/registration/email/RegistrationByEmailScreen'
 import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 
 describe('RegistrationByEmailScreen', () => {
   const createMockDeps = (): RegistrationByEmailStoreDependencies => ({
     registrationRepository: {
       getRemainingRegistrationConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    } as any,
+    } as unknown as RegistrationByEmailStoreDependencies['registrationRepository'],
     sendRegistrationConfirmationToEmailUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({ retryAfterSeconds: 60 })
       )
-    } as any,
+    } as unknown as RegistrationByEmailStoreDependencies['sendRegistrationConfirmationToEmailUseCase'],
     registrationByEmailUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
@@ -25,10 +24,10 @@ describe('RegistrationByEmailScreen', () => {
           }
         })
       )
-    } as any,
+    } as unknown as RegistrationByEmailStoreDependencies['registrationByEmailUseCase'],
     validatePasswordUseCase: {
-      execute: vi.fn().mockReturnValue({ isValid: true, errors: [] })
-    } as any,
+      execute: vi.fn().mockReturnValue({ success: true, data: undefined })
+    } as unknown as RegistrationByEmailStoreDependencies['validatePasswordUseCase'],
     onBack: vi.fn(),
     onFinished: vi.fn()
   })
@@ -43,10 +42,10 @@ describe('RegistrationByEmailScreen', () => {
       </ComponentTestHarness>
     )
 
-    const sendCodeButton = screen.getByRole('button', { name: enUserStrings.send_code })
+    const sendCodeButton = screen.getByTestId(RegistrationByEmailTestTags.SEND_CODE_BUTTON)
     expect(sendCodeButton.getAttribute('disabled')).not.toBeNull()
 
-    const emailInput = screen.getByPlaceholderText(enUserStrings.email)
+    const emailInput = screen.getByTestId(RegistrationByEmailTestTags.EMAIL_INPUT)
     await user.type(emailInput, 'user@example.com')
 
     expect(sendCodeButton.getAttribute('disabled')).toBeNull()
@@ -66,7 +65,7 @@ describe('RegistrationByEmailScreen', () => {
       </ComponentTestHarness>
     )
 
-    const backButton = screen.getByRole('button', { name: 'Go back' })
+    const backButton = screen.getByTestId(RegistrationByEmailTestTags.BACK_BUTTON)
     await user.click(backButton)
 
     expect(deps.onBack).toHaveBeenCalledTimes(1)

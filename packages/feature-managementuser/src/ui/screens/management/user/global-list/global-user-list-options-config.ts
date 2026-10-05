@@ -1,4 +1,4 @@
-import { AccountLockoutType, UserAccountStatus, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementUserStrings } from '@/locales/index'
@@ -40,7 +40,7 @@ export const getGlobalUserListingOptionsConfig = (
   filters: [
     {
       type: 'choice',
-      id: 'role',
+      id: UserFilterValues.UserFilterValues.ROLE,
       title: strings.ui_common_role,
       options: [
         { id: UserRole.STAFF, title: strings.ui_common_staff },
@@ -51,7 +51,7 @@ export const getGlobalUserListingOptionsConfig = (
     },
     {
       type: 'choice',
-      id: 'accountStatus',
+      id: UserFilterValues.UserFilterValues.ACCOUNT_STATUS,
       title: strings.ui_common_status,
       options: [
         { id: UserAccountStatus.ACTIVE, title: strings.ui_common_active },
@@ -65,7 +65,7 @@ export const getGlobalUserListingOptionsConfig = (
     },
     {
       type: 'choice',
-      id: 'accountLockoutType',
+      id: UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE,
       title: strings.ui_common_lockout_type,
       options: [
         { id: AccountLockoutType.NONE, title: strings.ui_common_lockout_none },
@@ -77,18 +77,18 @@ export const getGlobalUserListingOptionsConfig = (
     },
     {
       type: 'boolean',
-      id: 'isTotpEnabled',
+      id: UserFilterValues.UserFilterValues.IS_TOTP_ENABLED,
       title: strings.ui_common_totp_enabled
     },
     {
       type: 'number',
-      id: 'authorityLevelFrom',
+      id: UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM,
       title: strings.ui_common_authority_level_from,
       placeholder: '0'
     },
     {
       type: 'number',
-      id: 'authorityLevelTo',
+      id: UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO,
       title: strings.ui_common_authority_level_to,
       placeholder: '100'
     }

@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { UserSessionListScreen } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 
 const createMockDeps = (): UserSessionListStoreDependencies => ({
-  userId: 'usr_123' as any,
+  userId: 'usr_123' as unknown as UserId,
   managementGetSessionsUseCase: {
     execute: async () =>
       appResultSuccess({
@@ -15,13 +16,13 @@ const createMockDeps = (): UserSessionListStoreDependencies => ({
         totalItems: 2,
         totalPages: 1
       })
-  } as any,
+  } as unknown as UserSessionListStoreDependencies['managementGetSessionsUseCase'],
   managementDeleteSessionUseCase: {
     execute: async () => appResultSuccess({})
-  } as any,
+  } as unknown as UserSessionListStoreDependencies['managementDeleteSessionUseCase'],
   managementDeleteAllUserSessionsUseCase: {
     execute: async () => appResultSuccess({})
-  } as any,
+  } as unknown as UserSessionListStoreDependencies['managementDeleteAllUserSessionsUseCase'],
   onNavigateToSessionDetail: () => {},
   onBack: () => {}
 })

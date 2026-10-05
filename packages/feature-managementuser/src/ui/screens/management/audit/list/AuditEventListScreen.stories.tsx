@@ -14,7 +14,7 @@ const createMockDeps = (): AuditEventListStoreDependencies => ({
         totalItems: 2,
         totalPages: 1
       })
-  } as any,
+  } as unknown as AuditEventListStoreDependencies['getAuditEventsUseCase'],
   onNavigateToEventDetail: () => {},
   onBack: () => {}
 })

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect, useId } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -15,8 +15,8 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
-import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { FeatureUserStrings } from '@/locales/index'
+import type { AvailableAuthProviders, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
@@ -25,7 +25,7 @@ import {
   SelfIdentifierListProvider,
   useSelfIdentifierListStore
 } from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
-import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from "@/ui/screens/profile/identifier/list/self-identifier-list-store";
+import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
 
 /**
  * Automation test tags for {@link SelfIdentifierListScreen}.
@@ -43,7 +43,7 @@ export const IdentifierListTestTags = {
 
 const AddIdentifierDialogContent: React.FC<{
   dialogState: AddIdentifierDialogState
-  availableAuthProviders: any
+  availableAuthProviders: AvailableAuthProviders | null
   strings: FeatureUserStrings
 }> = ({ dialogState, availableAuthProviders, strings }) => {
   const onAddIdentifierSelectProvider = useSelfIdentifierListStore((s) => s.onAddIdentifierSelectProvider)
@@ -56,6 +56,11 @@ const AddIdentifierDialogContent: React.FC<{
   const onAddIdentifierSubmit = useSelfIdentifierListStore((s) => s.onAddIdentifierSubmit)
   const onAddIdentifierDialogBack = useSelfIdentifierListStore((s) => s.onAddIdentifierDialogBack)
   const errorParser = useAppErrorParser()
+
+  const emailId = useId()
+  const passwordId = useId()
+  const phoneId = useId()
+  const codeId = useId()
 
   if (dialogState.type === 'providerSelection') {
     return (
@@ -93,6 +98,7 @@ const AddIdentifierDialogContent: React.FC<{
           className="w-full flex flex-col gap-4 py-2"
         >
           <CoreEmailTextField
+            id={emailId}
             value={dialogState.email}
             onChange={(e) => onAddIdentifierEmailChanged(e.target.value)}
             label={strings.email}
@@ -128,6 +134,7 @@ const AddIdentifierDialogContent: React.FC<{
         </p>
 
         <CoreCodeTextField
+          id={codeId}
           value={dialogState.code}
           onChange={(e) => onAddIdentifierCodeChanged(e.target.value)}
           maxLength={6}
@@ -136,6 +143,7 @@ const AddIdentifierDialogContent: React.FC<{
         />
 
         <CorePasswordTextField
+          id={passwordId}
           value={dialogState.password}
           onChange={(e) => onAddIdentifierPasswordChanged(e.target.value)}
           isPasswordVisible={dialogState.isPasswordVisible}
@@ -193,6 +201,7 @@ const AddIdentifierDialogContent: React.FC<{
           className="w-full flex flex-col gap-4 py-2"
         >
           <CoreOutlinedTextField
+            id={phoneId}
             value={dialogState.phoneNumber}
             onChange={(e) => onAddIdentifierPhoneChanged(e.target.value)}
             label={strings.phone_number}
@@ -228,6 +237,7 @@ const AddIdentifierDialogContent: React.FC<{
         </p>
 
         <CoreCodeTextField
+          id={codeId}
           value={dialogState.code}
           onChange={(e) => onAddIdentifierCodeChanged(e.target.value)}
           maxLength={6}
@@ -298,7 +308,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         />
         <CoreTextButton
           type="button"
-          label={strings.resend_code ? strings.resend_code : 'Retry'}
+          label="Retry"
           onClick={onRefresh}
         />
       </div>
@@ -337,7 +347,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         />
         <CoreTextButton
           type="button"
-          label={strings.resend_code ? strings.resend_code : 'Refresh'}
+          label="Refresh"
           onClick={onRefresh}
           disabled={actionLoading}
           data-testid={IdentifierListTestTags.REFRESH_BUTTON}
@@ -424,6 +434,18 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
+const SelfIdentifierListController: React.FC<{ strings?: FeatureUserStrings }> = ({
+  strings
+}) => {
+  const loadIdentifiers = useSelfIdentifierListStore((s) => s.loadIdentifiers)
+
+  useEffect(() => {
+    loadIdentifiers()
+  }, [loadIdentifiers])
+
+  return <SelfIdentifierListContent strings={strings} />
+}
+
 /**
  * Props for {@link SelfIdentifierListScreen}.
  */
@@ -440,7 +462,7 @@ export const SelfIdentifierListScreen = forwardRef<HTMLDivElement, SelfIdentifie
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SelfIdentifierListProvider dependencies={dependencies}>
-          <SelfIdentifierListContent strings={strings} />
+          <SelfIdentifierListController strings={strings} />
         </SelfIdentifierListProvider>
       </div>
     )

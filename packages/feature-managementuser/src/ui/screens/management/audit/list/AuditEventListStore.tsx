@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { AuditActorType, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditActorType, AuditFilterValues, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuditEvent, AuditEventId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -68,14 +68,14 @@ export const createAuditEventListStore = (
     const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
     const sortBy = sortState?.optionId ? ('created_at' as const) : null
 
-    const actorIdFilter = filterStates['actorId']
-    const actorTypeFilter = filterStates['actorType']
-    const actorRoleFilter = filterStates['actorUserRole']
-    const actionFilter = filterStates['action']
-    const resourceFilter = filterStates['resource']
-    const resourceIdFilter = filterStates['resourceId']
-    const statusFilter = filterStates['status']
-    const messageFilter = filterStates['message']
+    const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
+    const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
+    const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
+    const actionFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTION]
+    const resourceFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE]
+    const resourceIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID]
+    const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
+    const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]
 
     const actorTypes = actorTypeFilter?.type === 'choice'
       ? Array.from(actorTypeFilter.selectedIds).filter((id): id is AuditActorType =>

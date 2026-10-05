@@ -14,8 +14,11 @@ const createMockDeps = (): GlobalIdentifierListStoreDependencies => ({
         totalItems: 2,
         totalPages: 1
       })
-  } as any,
-  onIdentifierSelect: () => {},
+  } as unknown as GlobalIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
+  managementDeleteIdentifierUseCase: {
+    execute: async () => appResultSuccess({})
+  } as unknown as GlobalIdentifierListStoreDependencies['managementDeleteIdentifierUseCase'],
+  onNavigateToIdentifierDetail: () => {},
   onBack: () => {}
 })
 

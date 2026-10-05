@@ -14,7 +14,7 @@ const createMockDeps = (): LoginByEmailStoreDependencies => ({
           accountStatus: 'ACTIVE'
         }
       })
-  } as any,
+  } as unknown as LoginByEmailStoreDependencies['loginByEmailUseCase'],
   onNavigateToRegistrationByEmail: () => {},
   onNavigateToForgotPassword: () => {},
   onNavigateToTotp: () => {},

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, UserAccountStatus, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -69,15 +69,15 @@ export const createGlobalUserListStore = (
   ) => {
     const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
     const sortBy = sortState?.optionId
-      ? (Object.values(UserSortValues.UserSortBy).find((v) => v === sortState.optionId) ?? null)
+      ? (Object.values(UserSortValues.UserSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserSortBy | undefined ?? null)
       : null
 
-    const roleFilter = filterStates['role']
-    const statusFilter = filterStates['accountStatus']
-    const lockoutFilter = filterStates['accountLockoutType']
-    const totpFilter = filterStates['isTotpEnabled']
-    const fromFilter = filterStates['authorityLevelFrom']
-    const toFilter = filterStates['authorityLevelTo']
+    const roleFilter = filterStates[UserFilterValues.UserFilterValues.ROLE]
+    const statusFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_STATUS]
+    const lockoutFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE]
+    const totpFilter = filterStates[UserFilterValues.UserFilterValues.IS_TOTP_ENABLED]
+    const fromFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM]
+    const toFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO]
 
     const roles = roleFilter?.type === 'choice'
       ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
