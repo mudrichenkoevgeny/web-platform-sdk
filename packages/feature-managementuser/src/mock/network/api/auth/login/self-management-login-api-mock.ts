@@ -5,7 +5,7 @@ import type {
   LoginByEmailRequest,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementLoginApi } from '@/network/api/auth/login/SelfManagementLoginApi'
+import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
 
 /** Mock implementation of {@link SelfManagementLoginApi}. */
 export class SelfManagementLoginApiMock implements SelfManagementLoginApi {

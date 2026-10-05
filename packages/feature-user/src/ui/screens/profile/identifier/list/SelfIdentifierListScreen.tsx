@@ -19,13 +19,13 @@ import type { FeatureUserStrings } from "@/locales/index";
 import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
-import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
+import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
 import {
   SelfIdentifierListProvider,
   useSelfIdentifierListStore
-} from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
-import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from "@/ui/screens/profile/identifier/list/SelfIdentifierListStore";
+} from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
+import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from "@/ui/screens/profile/identifier/list/self-identifier-list-store";
 
 /**
  * Automation test tags for {@link SelfIdentifierListScreen}.

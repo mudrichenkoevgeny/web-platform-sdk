@@ -1,5 +1,5 @@
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/ManagementAuthSettingsStorage'
+import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
 
 /** Mock in-memory implementation of {@link ManagementAuthSettingsStorage}. */
 export class ManagementAuthSettingsStorageMock implements ManagementAuthSettingsStorage {

@@ -1,8 +1,8 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import { DeleteUserIdentifierUseCase } from '@/usecase/identifier/DeleteUserIdentifierUseCase'
-import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
+import { DeleteUserIdentifierUseCase } from '@/usecase/identifier/delete-user-identifier-use-case'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/identifier-repository-mock'
 /** Mock implementation of {@link DeleteUserIdentifierUseCase}. */
 export class DeleteUserIdentifierUseCaseMock extends DeleteUserIdentifierUseCase {
   public executeCalls = 0

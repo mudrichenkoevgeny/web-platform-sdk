@@ -6,16 +6,16 @@ import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenk
 import type { UserIdentifierId } from "@mudrichenkoevgeny/shared-foundation";
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
-import { FieldValidator } from '@/validator/FieldValidator'
-import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
-import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
-import type { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddEmailIdentifierConfirmationUseCase'
-import type { AddUserIdentifierEmailUseCase } from '@/usecase/identifier/AddUserIdentifierEmailUseCase'
-import type { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddPhoneIdentifierConfirmationUseCase'
-import type { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/AddUserIdentifierPhoneUseCase'
-import type { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/AddUserIdentifierGoogleUseCase'
-import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import { FieldValidator } from '@/validator/field-validator'
+import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-identifiers-use-case'
+import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/get-available-user-auth-providers-use-case'
+import type { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/send-add-email-identifier-confirmation-use-case'
+import type { AddUserIdentifierEmailUseCase } from '@/usecase/identifier/add-user-identifier-email-use-case'
+import type { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/send-add-phone-identifier-confirmation-use-case'
+import type { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/add-user-identifier-phone-use-case'
+import type { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 /**
  * State machine steps for the add-identifier modal dialog.
  */

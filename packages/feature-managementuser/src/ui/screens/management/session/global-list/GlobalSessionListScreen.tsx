@@ -16,12 +16,12 @@ import {
 import { SessionItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
-import { getGlobalSessionListingOptionsConfig } from '@/ui/screens/management/session/globallist/GlobalSessionListOptionsConfig'
+import { getGlobalSessionListingOptionsConfig } from '@/ui/screens/management/session/global-list/global-session-list-options-config'
 import {
   GlobalSessionListProvider,
   useGlobalSessionListStore
-} from '@/ui/screens/management/session/globallist/GlobalSessionListStore'
-import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/globallist/GlobalSessionListStore'
+} from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
+import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 
 const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
@@ -60,8 +60,8 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: paging.canLoadMore,
-    isLoading: paging.isNextPageLoading
+    hasMore: paging.pageNumber < paging.totalPages,
+    isLoading: paging.isNextPageLoading ?? false
   })
 
   const optionsConfig = getGlobalSessionListingOptionsConfig(strings)
@@ -108,13 +108,16 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
           </div>
         )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading ? (
+        {paging.items.length === 0 && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar state={paging} />
+            <ListingHeaderBar
+              onRefreshClick={onRefresh}
+              onOptionsClick={onToggleFilterPanel}
+            />
 
             {paging.items.map((session) => (
               <SessionItem
@@ -127,13 +130,15 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
               />
             ))}
 
-            {paging.canLoadMore && (
+            {paging.isNextPageLoading && (
               <div ref={sentinelRef} className="h-4 w-full" />
             )}
 
             <PagingFooter
-              state={paging}
-              onRetry={onLoadNextPage}
+              currentPage={paging.pageNumber}
+              totalPages={paging.totalPages}
+              onPageChange={() => {}}
+              totalCount={paging.totalCount}
             />
           </div>
         )}

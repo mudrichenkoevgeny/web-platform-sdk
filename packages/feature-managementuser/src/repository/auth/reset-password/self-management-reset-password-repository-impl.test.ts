@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementResetPasswordRepositoryImpl } from '@/repository/auth/resetpassword/SelfManagementResetPasswordRepositoryImpl'
+import { SelfManagementResetPasswordRepositoryImpl } from '@/repository/auth/reset-password/self-management-reset-password-repository-impl'
 import type { ConfirmationRepository, ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementResetPasswordRepositoryImpl', () => {

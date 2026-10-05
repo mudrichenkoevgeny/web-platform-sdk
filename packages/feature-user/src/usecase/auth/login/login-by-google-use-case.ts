@@ -1,10 +1,10 @@
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
-import type { UserStorage } from '@/storage/user/UserStorage'
+import type { GoogleAuthService } from '@/auth/google/google-auth-service'
+import type { LoginRepository } from '@/repository/auth/login/login-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Google Sign-In flow: obtains provider token, exchanges it for session material via LoginRepository,

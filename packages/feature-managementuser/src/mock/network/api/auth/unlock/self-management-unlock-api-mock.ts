@@ -8,7 +8,7 @@ import type {
   UnlockByExternalAuthProviderRequest,
   UnlockByPhoneConfirmationRequest
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/SelfManagementUnlockApi'
+import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 
 /** Mock implementation of {@link SelfManagementUnlockApi}. */
 export class SelfManagementUnlockApiMock implements SelfManagementUnlockApi {

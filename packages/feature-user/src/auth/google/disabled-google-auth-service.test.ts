@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { isFailure } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { DisabledGoogleAuthService } from '@/auth/google/DisabledGoogleAuthService'
-import { ClientUserErrorCodes } from '@/error/naming/ClientUserErrorCodes'
+import { DisabledGoogleAuthService } from '@/auth/google/disabled-google-auth-service'
+import { ClientUserErrorCodes } from '@/error/naming/client-user-error-codes'
 
 describe('DisabledGoogleAuthService', () => {
   const service = new DisabledGoogleAuthService()

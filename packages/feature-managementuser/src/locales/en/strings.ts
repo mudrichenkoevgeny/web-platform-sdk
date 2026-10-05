@@ -52,6 +52,9 @@ export interface FeatureManagementUserStrings extends FeatureUserStrings {
   readonly users_management_title: string
   readonly create_user: string
   readonly create_user_title: string
+  readonly save: string
+  readonly saving: string
+  readonly reset_to_defaults: string
   readonly user_details_title: string
   readonly update_user: string
   readonly delete_user: string
@@ -174,6 +177,9 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
   users_management_title: 'Users Management',
   create_user: 'Create User',
   create_user_title: 'Create User',
+  save: 'Save',
+  saving: 'Saving...',
+  reset_to_defaults: 'Reset to defaults',
   user_details_title: 'User Details',
   update_user: 'Update User',
   delete_user: 'Delete User',

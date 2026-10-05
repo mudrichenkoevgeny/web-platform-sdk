@@ -10,7 +10,7 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUnlockRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/SelfManagementUnlockApi'
+import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 
 /** {@link SelfManagementUnlockApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ResetEmailPasswordScreen } from '@/ui/screens/auth/resetpassword/ResetEmailPasswordScreen'
-import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/resetpassword/ResetEmailPasswordStore'
+import { ResetEmailPasswordScreen } from '@/ui/screens/auth/reset-password/ResetEmailPasswordScreen'
+import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/reset-password/reset-email-password-store'
 
 const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
   resetPasswordRepository: {

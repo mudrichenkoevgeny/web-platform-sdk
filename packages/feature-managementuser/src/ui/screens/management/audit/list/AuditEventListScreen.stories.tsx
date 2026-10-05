@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { auditEventMock } from '@/mock/audit/domain/model/event/auditEventMock'
+import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventListScreen } from '@/ui/screens/management/audit/list/AuditEventListScreen'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
 

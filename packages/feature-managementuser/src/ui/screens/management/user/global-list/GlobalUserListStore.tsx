@@ -8,10 +8,9 @@ import {
   appendResultToPaginationState,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
-  isSuccess,
-  parseIntegerOrDefault
+  isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetUsersUseCase } from '@/usecase/user/GetUsersUseCase'
+import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
 
 export type GlobalUserListScreenState =
   | {
@@ -68,30 +67,36 @@ export const createGlobalUserListStore = (
     sortState: ListingSortState | null,
     filterStates: Record<string, ListingFilterState>
   ) => {
-    const sortOrder = sortState?.isAscending ? 'ASC' : 'DESC'
+    const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
     const sortBy = sortState?.optionId
       ? (Object.values(UserSortValues.UserSortBy).find((v) => v === sortState.optionId) ?? null)
       : null
 
-    const roleFilter = filterStates['role'] as { selectedIds?: string[] } | undefined
-    const statusFilter = filterStates['accountStatus'] as { selectedIds?: string[] } | undefined
-    const lockoutFilter = filterStates['accountLockoutType'] as { selectedIds?: string[] } | undefined
-    const totpFilter = filterStates['isTotpEnabled'] as { value?: boolean } | undefined
-    const fromFilter = filterStates['authorityLevelFrom'] as { value?: number | string } | undefined
-    const toFilter = filterStates['authorityLevelTo'] as { value?: number | string } | undefined
+    const roleFilter = filterStates['role']
+    const statusFilter = filterStates['accountStatus']
+    const lockoutFilter = filterStates['accountLockoutType']
+    const totpFilter = filterStates['isTotpEnabled']
+    const fromFilter = filterStates['authorityLevelFrom']
+    const toFilter = filterStates['authorityLevelTo']
 
-    const roles = roleFilter?.selectedIds?.filter((id): id is UserRole =>
-      Object.values(UserRole).includes(id as UserRole)
-    )
-    const accountStatuses = statusFilter?.selectedIds?.filter((id): id is UserAccountStatus =>
-      Object.values(UserAccountStatus).includes(id as UserAccountStatus)
-    )
-    const accountLockoutTypes = lockoutFilter?.selectedIds?.filter((id): id is AccountLockoutType =>
-      Object.values(AccountLockoutType).includes(id as AccountLockoutType)
-    )
-    const isTotpEnabled = totpFilter?.value
-    const authorityLevelFrom = fromFilter?.value !== undefined ? parseIntegerOrDefault(String(fromFilter.value), 0) : undefined
-    const authorityLevelTo = toFilter?.value !== undefined ? parseIntegerOrDefault(String(toFilter.value), 100) : undefined
+    const roles = roleFilter?.type === 'choice'
+      ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
+          Object.values(UserRole).includes(id as UserRole)
+        )
+      : undefined
+    const accountStatuses = statusFilter?.type === 'choice'
+      ? Array.from(statusFilter.selectedIds).filter((id): id is UserAccountStatus =>
+          Object.values(UserAccountStatus).includes(id as UserAccountStatus)
+        )
+      : undefined
+    const accountLockoutTypes = lockoutFilter?.type === 'choice'
+      ? Array.from(lockoutFilter.selectedIds).filter((id): id is AccountLockoutType =>
+          Object.values(AccountLockoutType).includes(id as AccountLockoutType)
+        )
+      : undefined
+    const isTotpEnabled = totpFilter?.type === 'boolean' ? totpFilter.value : undefined
+    const authorityLevelFrom = fromFilter?.type === 'number' ? fromFilter.value : (fromFilter?.type === 'text' && fromFilter.value ? parseInt(fromFilter.value, 10) : undefined)
+    const authorityLevelTo = toFilter?.type === 'number' ? toFilter.value : (toFilter?.type === 'text' && toFilter.value ? parseInt(toFilter.value, 10) : undefined)
 
     const result = await deps.getUsersUseCase.execute({
       pageNumber,
@@ -109,7 +114,7 @@ export const createGlobalUserListStore = (
     if (isSuccess(result)) {
       const current = get().screenState
       const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserDetails>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
 
       if (current.status === 'content') {
         set({
@@ -163,7 +168,7 @@ export const createGlobalUserListStore = (
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.paging.canLoadMore) {
+      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
         return
       }
 
@@ -173,7 +178,7 @@ export const createGlobalUserListStore = (
       await fetchPage(
         set,
         get,
-        nextPaging.nextPageNumber,
+        current.paging.pageNumber + 1,
         current.sortState,
         current.filterStates
       )

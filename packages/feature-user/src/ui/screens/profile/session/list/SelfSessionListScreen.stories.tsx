@@ -3,7 +3,7 @@ import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionId
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfSessionListScreen } from '@/ui/screens/profile/session/list/SelfSessionListScreen'
-import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/SelfSessionListStore'
+import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/self-session-list-store'
 
 const session1: UserSession = {
   id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440001'),

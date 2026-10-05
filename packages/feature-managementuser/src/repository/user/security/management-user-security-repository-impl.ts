@@ -1,7 +1,7 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserSecurityApi } from '@/network/api/user/security/ManagementUserSecurityApi'
-import type { ManagementUserSecurityRepository } from '@/repository/user/security/ManagementUserSecurityRepository'
+import type { ManagementUserSecurityApi } from '@/network/api/user/security/management-user-security-api'
+import type { ManagementUserSecurityRepository } from '@/repository/user/security/management-user-security-repository'
 
 /**
  * Implementation of {@link ManagementUserSecurityRepository}.

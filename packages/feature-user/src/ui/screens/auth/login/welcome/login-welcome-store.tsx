@@ -14,10 +14,10 @@ import {
 import type { AppError, ExternalLauncher } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
-import { UserError } from '@/error/model/UserError'
+import { UserError } from '@/error/model/user-error'
 import { UserErrorArgs, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import type { LoginByGoogleUseCase } from '@/usecase/auth/login/LoginByGoogleUseCase'
-import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/GetAvailableUserAuthProvidersUseCase'
+import type { LoginByGoogleUseCase } from '@/usecase/auth/login/login-by-google-use-case'
+import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/get-available-user-auth-providers-use-case'
 /**
  * Union representing the active screen state for {@link LoginWelcomeScreen}.
  */

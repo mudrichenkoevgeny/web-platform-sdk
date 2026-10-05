@@ -4,7 +4,7 @@ import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
-import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
+import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
 /**
  * Props for the {@link AuthProviderButton} component.
  */

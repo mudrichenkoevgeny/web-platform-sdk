@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchManagementSecuritySettingsApi } from '@/network/api/security/settings/FetchManagementSecuritySettingsApi'
+import { FetchManagementSecuritySettingsApi } from '@/network/api/security/settings/fetch-management-security-settings-api'
 import { ManagementSecuritySettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementSecuritySettingsApi', () => {

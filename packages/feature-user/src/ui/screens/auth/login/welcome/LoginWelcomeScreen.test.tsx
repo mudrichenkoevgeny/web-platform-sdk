@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginWelcomeScreen } from '@/ui/screens/auth/login/welcome/LoginWelcomeScreen'
-import type { LoginWelcomeStoreDependencies } from '@/ui/screens/auth/login/welcome/LoginWelcomeStore'
+import type { LoginWelcomeStoreDependencies } from '@/ui/screens/auth/login/welcome/login-welcome-store'
 import { enUserStrings } from '@/locales/index'
 
 describe('LoginWelcomeScreen', () => {

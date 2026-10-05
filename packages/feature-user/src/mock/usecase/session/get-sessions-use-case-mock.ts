@@ -1,9 +1,9 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
-import { GetSessionsUseCase } from '@/usecase/session/GetSessionsUseCase'
+import { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionRepositoryMock } from '@/mock/repository/session/SessionRepositoryMock'
+import { SessionRepositoryMock } from '@/mock/repository/session/session-repository-mock'
 /** Mock implementation of {@link GetSessionsUseCase}. */
 export class GetSessionsUseCaseMock extends GetSessionsUseCase {
   public executeCalls = 0

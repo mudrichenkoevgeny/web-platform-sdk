@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { auditEventMock } from '@/mock/audit/domain/model/event/auditEventMock'
+import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 
 export const auditEventDetailDependenciesMock = (

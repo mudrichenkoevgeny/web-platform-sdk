@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ConfirmationRepository } from '@/repository/confirmation/ConfirmationRepository'
+import { ConfirmationRepository } from '@/repository/confirmation/confirmation-repository'
 import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 
 /**

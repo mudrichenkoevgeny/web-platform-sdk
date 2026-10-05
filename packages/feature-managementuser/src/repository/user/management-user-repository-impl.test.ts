@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ManagementUserRepositoryImpl } from '@/repository/user/ManagementUserRepositoryImpl'
-import type { ManagementUserApi } from '@/network/api/user/ManagementUserApi'
+import { ManagementUserRepositoryImpl } from '@/repository/user/management-user-repository-impl'
+import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementUserRepositoryImpl', () => {

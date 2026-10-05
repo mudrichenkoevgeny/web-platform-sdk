@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { SecurityErrorArgs, SecurityErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { MfaStepUpHttpClientConfigPlugin } from '@/network/httpclient/mfa/MfaStepUpHttpClientConfigPlugin'
-import type { MfaChallengeHandler } from '@/network/httpclient/mfa/MfaChallengeHandler'
+import { MfaStepUpHttpClientConfigPlugin } from '@/network/httpclient/mfa/mfa-step-up-http-client-config-plugin'
+import type { MfaChallengeHandler } from '@/network/httpclient/mfa/mfa-challenge-handler'
 
 describe('MfaStepUpHttpClientConfigPlugin', () => {
   let mockChallengeHandler: MfaChallengeHandler

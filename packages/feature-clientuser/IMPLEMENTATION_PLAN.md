@@ -33,21 +33,21 @@ This document outlines the step-by-step implementation plan for the `feature-cli
 - [x] Write unit tests for Open Repositories.
 
 ### Phase 3: Domain Use Cases
-- [ ] Implement `RefreshOpenAuthSettingsUseCase`.
-- [ ] Implement `RefreshClientUserConfigurationUseCase`.
-- [ ] Write unit tests for Use Cases.
+- [x] Implement `RefreshOpenAuthSettingsUseCase`.
+- [x] Implement `RefreshClientUserConfigurationUseCase`.
+- [x] Write unit tests for Use Cases.
 
 ### Phase 4: Client Login & Registration UI Flow
-- [ ] Implement `ClientLoginDestination` & router flow.
-- [ ] Implement `LoginByPhoneComponent`, `LoginByPhoneComponentImpl`, `LoginByPhoneScreen`, `LoginByPhoneScreenState`.
-- [ ] Implement `ClientLoginRootComponent`, `ClientLoginRootComponentImpl`, `ClientLoginRootScreen`.
-- [ ] Implement `RegistrationByEmailComponent`, `RegistrationByEmailComponentImpl`, `RegistrationByEmailScreen`, `RegistrationByEmailScreenState`.
-- [ ] Write `.test.tsx` and `.stories.tsx` for all Client UI components.
+- [x] Implement `ClientLoginDestination` & router flow.
+- [x] Implement `LoginByPhoneComponent`, `LoginByPhoneComponentImpl`, `LoginByPhoneScreen`, `LoginByPhoneScreenState`.
+- [x] Implement `ClientLoginRootComponent`, `ClientLoginRootComponentImpl`, `ClientLoginRootScreen`.
+- [x] Implement `RegistrationByEmailComponent`, `RegistrationByEmailComponentImpl`, `RegistrationByEmailScreen`, `RegistrationByEmailScreenState`.
+- [x] Write `.test.tsx` and `.stories.tsx` for all Client UI components.
 
 ### Phase 5: Dependency Injection & Mocks
-- [ ] Implement DI modules (`ClientUserComponent`, `ClientUserNetworkModule`, `ClientUserRepositoryModule`, `ClientUserUseCaseModule`, `ClientUserWebSocketModule`).
-- [ ] Implement Client Mocks (`ClientUserComponentMock`, `OpenLoginApiMock`, `OpenRegistrationApiMock`, `OpenAuthSettingsApiMock`, `OpenUnlockApiMock`, `OpenIdentifiersApiMock`, `OpenUserApiMock`, `ClientLoginRootComponentMock`, `LoginByPhoneComponentMock`, `RegistrationByEmailComponentMock`).
-- [ ] Write unit tests for `ClientUserComponent`.
+- [x] Implement DI modules (`ClientUserComponent`, `ClientUserNetworkModule`, `ClientUserRepositoryModule`, `ClientUserUseCaseModule`, `ClientUserWebSocketModule`).
+- [x] Implement Client Mocks (`ClientUserComponentMock`, `OpenLoginApiMock`, `OpenRegistrationApiMock`, `OpenAuthSettingsApiMock`, `OpenUnlockApiMock`, `OpenIdentifiersApiMock`, `OpenUserApiMock`, `ClientLoginRootComponentMock`, `LoginByPhoneComponentMock`, `RegistrationByEmailComponentMock`).
+- [x] Write unit tests for `ClientUserComponent`.
 
 ### Phase 6: File Naming Normalization Refactoring
 - [x] Rename directory `src/mock/network/api/auth/refreshtoken/` to `src/mock/network/api/auth/refresh-token/` and update imports.
@@ -138,5 +138,5 @@ This document outlines the step-by-step implementation plan for the `feature-cli
 - [x] `src/usecase/configuration/RefreshClientUserConfigurationUseCase.ts` is correct (renamed to `refresh-client-user-configuration-use-case.ts`).
 
 ### Phase 7: Final Review & Export
-- [ ] Export all public contracts, components, use cases, and mocks in `src/index.ts`.
-- [ ] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/feature-clientuser`.
+- [x] Export all public contracts, components, use cases, and mocks in `src/index.ts`.
+- [x] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/feature-clientuser`.

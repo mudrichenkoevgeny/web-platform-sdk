@@ -3,7 +3,7 @@ import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionId
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen } from '@/ui/screens/profile/session/detail/SessionDetailScreen'
-import type { SessionDetailStoreDependencies } from '@/ui/screens/profile/session/detail/SessionDetailStore'
+import type { SessionDetailStoreDependencies } from '@/ui/screens/profile/session/detail/session-detail-store'
 
 const mockSession: UserSession = {
   id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440000'),

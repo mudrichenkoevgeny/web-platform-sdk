@@ -7,9 +7,9 @@ import {
   UserErrorCodes
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
-import type { RefreshTokenRepository } from '@/repository/auth/refreshtoken/RefreshTokenRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import { RefreshTokenUseCase } from '@/usecase/auth/refresh-token/refresh-token-use-case'
+import type { RefreshTokenRepository } from '@/repository/auth/refresh-token/refresh-token-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('RefreshTokenUseCase', () => {

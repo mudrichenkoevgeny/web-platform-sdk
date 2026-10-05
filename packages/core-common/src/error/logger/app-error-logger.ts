@@ -4,7 +4,7 @@ import {
   CommonErrorNoInternetConnection,
   CommonErrorNetwork,
   CommonErrorContractViolation
-} from '@/error/model/CommonError'
+} from '@/error/model/common-error'
 
 /**
  * Formats an {@link AppError} into a detailed string suitable for logging.

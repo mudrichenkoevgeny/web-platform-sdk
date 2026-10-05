@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/ManagementSecuritySettingsRepository'
+import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 /** Returns cached security settings or fetches them from the server. */
 export class GetManagementSecuritySettingsUseCase {

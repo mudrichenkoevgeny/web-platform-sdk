@@ -267,18 +267,18 @@ export const createRegistrationByEmailStore = (
       }
     },
 
-    onPasswordChanged: (password: string) => {
+    onPasswordChanged: async (password: string) => {
       const current = get().screenState
       if (current.step !== 'registration_input') {
         return
       }
 
-      const passResult = deps.validatePasswordUseCase.execute(password)
+      const passResult = await deps.validatePasswordUseCase.execute(password)
       set({
         screenState: {
           ...current,
           password,
-          isPasswordValid: passResult.isValid,
+          isPasswordValid: isSuccess(passResult),
           actionError: null
         }
       })
@@ -318,8 +318,8 @@ export const createRegistrationByEmailStore = (
         }
       })
 
-      const passResult = deps.validatePasswordUseCase.execute(current.password)
-      if (!passResult.isValid) {
+      const passResult = await deps.validatePasswordUseCase.execute(current.password)
+      if (!isSuccess(passResult)) {
         set({
           screenState: {
             ...current,

@@ -1,6 +1,6 @@
 import { AuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsPayloadMock } from '@/mock/network/model/user/userDetailsPayloadMock'
-import { sessionTokenPayloadMock } from '@/mock/network/model/token/sessionTokenPayloadMock'
+import { userDetailsPayloadMock } from '@/mock/network/model/user/user-details-payload-mock'
+import { sessionTokenPayloadMock } from '@/mock/network/model/token/session-token-payload-mock'
 
 /**
  * Creates a mock {@link AuthDataPayload} instance.

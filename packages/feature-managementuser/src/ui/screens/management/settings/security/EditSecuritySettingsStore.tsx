@@ -3,9 +3,9 @@ import { createStore, useStore } from 'zustand'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/GetManagementSecuritySettingsUseCase'
-import type { ResetRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/ResetRemoteSecuritySettingsUseCase'
-import type { SaveRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/SaveRemoteSecuritySettingsUseCase'
+import type { GetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/get-management-security-settings-use-case'
+import type { ResetRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/reset-remote-security-settings-use-case'
+import type { SaveRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/save-remote-security-settings-use-case'
 
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value.trim(), 10)

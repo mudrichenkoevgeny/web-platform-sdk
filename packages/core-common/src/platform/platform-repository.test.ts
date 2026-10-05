@@ -2,11 +2,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { PlatformRepositoryImpl } from '@/platform/platform-repository'
 import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
 import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
+import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('PlatformRepository', () => {
   const dummyInfo: ClientDeviceInfoPayload = {
-    client_type: 'WEB',
+    client_type: ClientType.WEB,
     language: 'en',
     device_id: null,
     device_name: 'Chrome on macOS',

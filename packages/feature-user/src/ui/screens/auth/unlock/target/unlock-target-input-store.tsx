@@ -3,9 +3,9 @@ import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
-import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
-import { FieldValidator } from '@/validator/FieldValidator'
+import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-email-confirmation-use-case'
+import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
+import { FieldValidator } from '@/validator/field-validator'
 /**
  * Union representing the active screen state for {@link UnlockTargetInputScreen}.
  */

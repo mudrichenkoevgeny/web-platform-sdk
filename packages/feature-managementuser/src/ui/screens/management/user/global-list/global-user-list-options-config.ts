@@ -43,8 +43,8 @@ export const getGlobalUserListingOptionsConfig = (
       id: 'role',
       title: strings.ui_common_role,
       options: [
-        { id: UserRole.STAFF, label: strings.ui_common_staff },
-        { id: UserRole.ADMIN, label: strings.ui_common_admin }
+        { id: UserRole.STAFF, title: strings.ui_common_staff },
+        { id: UserRole.ADMIN, title: strings.ui_common_admin }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -54,11 +54,11 @@ export const getGlobalUserListingOptionsConfig = (
       id: 'accountStatus',
       title: strings.ui_common_status,
       options: [
-        { id: UserAccountStatus.ACTIVE, label: strings.ui_common_active },
-        { id: UserAccountStatus.READ_ONLY, label: strings.ui_common_read_only },
-        { id: UserAccountStatus.BANNED, label: strings.ui_common_banned },
-        { id: UserAccountStatus.SECURITY_HOLD, label: strings.ui_common_security_hold },
-        { id: UserAccountStatus.PENDING_DELETION, label: strings.ui_common_pending_deletion }
+        { id: UserAccountStatus.ACTIVE, title: strings.ui_common_active },
+        { id: UserAccountStatus.READ_ONLY, title: strings.ui_common_read_only },
+        { id: UserAccountStatus.BANNED, title: strings.ui_common_banned },
+        { id: UserAccountStatus.SECURITY_HOLD, title: strings.ui_common_security_hold },
+        { id: UserAccountStatus.PENDING_DELETION, title: strings.ui_common_pending_deletion }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -68,9 +68,9 @@ export const getGlobalUserListingOptionsConfig = (
       id: 'accountLockoutType',
       title: strings.ui_common_lockout_type,
       options: [
-        { id: AccountLockoutType.NONE, label: strings.ui_common_lockout_none },
-        { id: AccountLockoutType.INDEFINITE, label: strings.ui_common_lockout_indefinite },
-        { id: AccountLockoutType.TEMPORARY, label: strings.ui_common_lockout_temporary }
+        { id: AccountLockoutType.NONE, title: strings.ui_common_lockout_none },
+        { id: AccountLockoutType.INDEFINITE, title: strings.ui_common_lockout_indefinite },
+        { id: AccountLockoutType.TEMPORARY, title: strings.ui_common_lockout_temporary }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN

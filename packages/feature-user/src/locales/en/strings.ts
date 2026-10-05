@@ -1,5 +1,5 @@
 import type { CoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enCoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { enStrings as enCoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
 /** Localized string dictionary contract for feature-user. */
 export interface FeatureUserStrings extends CoreCommonStrings {

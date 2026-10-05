@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/ManagementAuthSettingsRepository'
+import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
 
 /** Returns cached management auth settings when already loaded or stored; otherwise loads from the network. */
 export class GetManagementAuthSettingsUseCase {

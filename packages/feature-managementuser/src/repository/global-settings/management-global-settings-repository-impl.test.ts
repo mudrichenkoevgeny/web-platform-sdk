@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SettingsWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
-import { ManagementGlobalSettingsRepositoryImpl } from '@/repository/globalsettings/ManagementGlobalSettingsRepositoryImpl'
-import type { ManagementGlobalSettingsApi } from '@/network/api/globalsettings/ManagementGlobalSettingsApi'
-import type { ManagementGlobalSettingsStorage } from '@/storage/globalsettings/ManagementGlobalSettingsStorage'
+import { ManagementGlobalSettingsRepositoryImpl } from '@/repository/global-settings/management-global-settings-repository-impl'
+import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
+import type { ManagementGlobalSettingsStorage } from '@/storage/global-settings/management-global-settings-storage'
 
 describe('ManagementGlobalSettingsRepositoryImpl', () => {
   let mockApi: ManagementGlobalSettingsApi

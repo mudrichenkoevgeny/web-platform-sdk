@@ -12,7 +12,7 @@ import {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedUserStorage } from '@/storage/user/EncryptedUserStorage'
+import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 

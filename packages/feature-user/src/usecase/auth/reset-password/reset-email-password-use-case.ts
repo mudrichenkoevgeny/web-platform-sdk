@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
+import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /**

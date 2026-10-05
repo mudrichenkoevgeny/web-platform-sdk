@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/AddUserIdentifierGoogleUseCase'
-import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
+import type { GoogleAuthService } from '@/auth/google/google-auth-service'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('AddUserIdentifierGoogleUseCase', () => {

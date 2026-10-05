@@ -1,7 +1,7 @@
 import { sessionTokenPayloadSchema, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { HttpClientConfigPlugin } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { IS_PUBLIC_API_HEADER } from '@/network/auth/IsPublicApi'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import { IS_PUBLIC_API_HEADER } from '@/network/auth/is-public-api'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 import { toSessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 const SESSION_INVALIDATING_ERROR_CODES = new Set<string>([

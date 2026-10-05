@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/OpenAuthSettingsRepository'
+import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/open-auth-settings-repository'
 import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**

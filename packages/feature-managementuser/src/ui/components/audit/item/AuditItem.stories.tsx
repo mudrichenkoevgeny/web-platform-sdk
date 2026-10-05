@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
-import { auditEventMock } from '@/mock/audit/domain/model/event/auditEventMock'
+import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 
 const meta: Meta<typeof AuditItem> = {
   title: 'Feature/ManagementUser/Audit/AuditItem',

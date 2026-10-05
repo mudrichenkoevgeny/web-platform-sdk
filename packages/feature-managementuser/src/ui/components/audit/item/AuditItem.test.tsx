@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
 import { enManagementUserStrings } from '@/locales/index'
-import { auditEventMock } from '@/mock/audit/domain/model/event/auditEventMock'
+import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 
 describe('AuditItem', () => {
   it('renders event details and handles click', async () => {

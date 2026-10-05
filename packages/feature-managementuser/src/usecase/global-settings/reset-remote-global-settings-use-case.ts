@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsRepository } from '@/repository/globalsettings/ManagementGlobalSettingsRepository'
+import type { ManagementGlobalSettingsRepository } from '@/repository/global-settings/management-global-settings-repository'
 
 /** Resets management global settings to default values remotely and updates local state. */
 export class ResetRemoteGlobalSettingsUseCase {

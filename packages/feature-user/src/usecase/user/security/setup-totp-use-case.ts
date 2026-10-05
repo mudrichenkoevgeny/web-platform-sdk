@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
+import type { UserSecurityRepository } from '@/repository/user/security/user-security-repository'
 import type { TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Initiates TOTP setup process by generating secret key and configuration URI. */

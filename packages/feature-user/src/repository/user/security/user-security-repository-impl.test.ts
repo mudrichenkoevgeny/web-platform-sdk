@@ -6,9 +6,9 @@ import {
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserSecurityRepositoryImpl } from '@/repository/user/security/UserSecurityRepositoryImpl'
-import type { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
-import type { UserStorage } from '@/storage/user/UserStorage'
+import { UserSecurityRepositoryImpl } from '@/repository/user/security/user-security-repository-impl'
+import type { UserSecurityApi } from '@/network/api/user/security/user-security-api'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('UserSecurityRepositoryImpl', () => {

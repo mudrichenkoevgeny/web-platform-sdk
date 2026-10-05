@@ -3,8 +3,8 @@ import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
-import type { GetRecoveryCodesUseCase } from '@/usecase/user/security/GetRecoveryCodesUseCase'
-import type { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/RegenerateRecoveryCodesUseCase'
+import type { GetRecoveryCodesUseCase } from '@/usecase/user/security/get-recovery-codes-use-case'
+import type { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/regenerate-recovery-codes-use-case'
 /**
  * Discriminated union representing active screen state for {@link TotpRecoveryCodesScreen}.
  */

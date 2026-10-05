@@ -15,7 +15,7 @@ import {
   UserApiPaths,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/SelfManagementIdentifiersApi'
+import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
 /** {@link SelfManagementIdentifiersApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifiersApi {

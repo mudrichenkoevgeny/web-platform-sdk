@@ -11,8 +11,8 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionApi } from '@/network/api/session/ManagementSessionApi'
-import type { ManagementSessionRepository } from '@/repository/session/ManagementSessionRepository'
+import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
+import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /**
  * Implementation of {@link ManagementSessionRepository}.

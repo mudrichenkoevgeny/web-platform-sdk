@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Associates a new email identifier with current account. */

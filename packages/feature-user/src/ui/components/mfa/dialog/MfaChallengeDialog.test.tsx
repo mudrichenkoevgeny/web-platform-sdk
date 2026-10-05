@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { MfaChallengeDialog } from '@/ui/components/mfa/dialog/MfaChallengeDialog'
 import { enUserStrings } from '@/locales/index'
-import type { MfaChallengeRequest } from '@/network/httpclient/mfa/MfaChallengeRequest'
+import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
 
 describe('MfaChallengeDialog', () => {
   const mockRequest: MfaChallengeRequest = {

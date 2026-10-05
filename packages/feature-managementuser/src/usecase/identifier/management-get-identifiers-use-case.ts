@@ -6,7 +6,7 @@ import type {
   UserIdentifier,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementIdentifierRepository } from '@/repository/identifier/ManagementIdentifierRepository'
+import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
 /** Options object for filtering administrative user identifiers retrieval. */
 export interface ManagementGetIdentifiersParams {

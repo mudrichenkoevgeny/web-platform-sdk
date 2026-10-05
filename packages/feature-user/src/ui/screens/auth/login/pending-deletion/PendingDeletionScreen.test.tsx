@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { PendingDeletionScreen } from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionScreen'
-import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore'
+import { PendingDeletionScreen } from '@/ui/screens/auth/login/pending-deletion/PendingDeletionScreen'
+import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'
 import { enUserStrings } from '@/locales/index'
 
 describe('PendingDeletionScreen', () => {

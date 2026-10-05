@@ -16,8 +16,8 @@ import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import {
   SelfSessionListProvider,
   useSelfSessionListStore
-} from '@/ui/screens/profile/session/list/SelfSessionListStore'
-import type { SelfSessionListStoreDependencies } from "@/ui/screens/profile/session/list/SelfSessionListStore";
+} from '@/ui/screens/profile/session/list/self-session-list-store'
+import type { SelfSessionListStoreDependencies } from "@/ui/screens/profile/session/list/self-session-list-store";
 
 /**
  * Automation test tags for {@link SelfSessionListScreen}.

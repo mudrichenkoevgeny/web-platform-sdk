@@ -1,8 +1,8 @@
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
-import type { UserStorage } from '@/storage/user/UserStorage'
+import type { LoginRepository } from '@/repository/auth/login/login-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Completes MFA flow using a static backup recovery code and, on success, persists session tokens and user snapshot.

@@ -1,7 +1,7 @@
 import { appResultFailure } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { UserError } from '@/error/model/UserError'
+import type { GoogleAuthService } from '@/auth/google/google-auth-service'
+import { UserError } from '@/error/model/user-error'
 /**
  * No-op Google integration that always fails with {@link UserError.externalAuthFailed}.
  */

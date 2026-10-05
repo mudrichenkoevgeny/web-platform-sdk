@@ -34,7 +34,7 @@ export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
         {...rest}
       >
         <div className="text-sm font-bold text-surface-foreground">
-          {strings.user_id}: {user.id}
+          {strings.user_id(user.id)}
         </div>
         <div className="text-xs text-muted-foreground">
           {strings.user_role}: {user.role}

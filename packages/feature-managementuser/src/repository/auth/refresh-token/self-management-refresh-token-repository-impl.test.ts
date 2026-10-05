@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementRefreshTokenRepositoryImpl } from '@/repository/auth/refreshtoken/SelfManagementRefreshTokenRepositoryImpl'
+import { SelfManagementRefreshTokenRepositoryImpl } from '@/repository/auth/refresh-token/self-management-refresh-token-repository-impl'
 import type { RefreshTokenApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementRefreshTokenRepositoryImpl', () => {

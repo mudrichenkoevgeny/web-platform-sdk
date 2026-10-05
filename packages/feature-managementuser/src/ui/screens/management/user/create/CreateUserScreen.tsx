@@ -91,7 +91,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreEmailTextField
           id={emailId}
           value={email}
-          onValueChange={onEmailChanged}
+          onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.email}
           placeholder="user@example.com"
           disabled={isLoading}
@@ -100,7 +100,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CorePasswordTextField
           id={passwordId}
           value={password}
-          onValueChange={onPasswordChanged}
+          onChange={(e) => onPasswordChanged(e.target.value)}
           label={strings.password}
           disabled={isLoading}
         />
@@ -146,7 +146,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreOutlinedTextField
           id={authLevelId}
           value={authorityLevel}
-          onValueChange={onAuthorityLevelChanged}
+          onChange={(e) => onAuthorityLevelChanged(e.target.value)}
           label={strings.authority_level}
           disabled={isLoading}
         />

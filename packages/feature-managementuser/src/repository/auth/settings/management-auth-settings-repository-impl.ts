@@ -12,9 +12,9 @@ import {
   toManagementAuthSettingsPayload,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/ManagementAuthSettingsApi'
-import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/ManagementAuthSettingsStorage'
-import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/ManagementAuthSettingsRepository'
+import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
+import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
+import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
 
 class AsyncMutex {
   private queue: Promise<unknown> = Promise.resolve()

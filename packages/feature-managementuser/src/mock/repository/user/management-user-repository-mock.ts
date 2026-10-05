@@ -14,7 +14,7 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ManagementUserRepository } from '@/repository/user/ManagementUserRepository'
+import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Mock implementation of {@link ManagementUserRepository}. */
 export class ManagementUserRepositoryMock implements ManagementUserRepository {

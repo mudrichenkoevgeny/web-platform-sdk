@@ -3,7 +3,7 @@ import { AppType, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider }
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfIdentifierListScreen } from '@/ui/screens/profile/identifier/list/SelfIdentifierListScreen'
-import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
+import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
 
 const mockIdentifier1: UserIdentifier = {
   id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),

@@ -1,7 +1,7 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { SessionRepository } from '@/repository/session/SessionRepository'
-import type { UserRepository } from '@/repository/user/UserRepository'
+import type { SessionRepository } from '@/repository/session/session-repository'
+import type { UserRepository } from '@/repository/user/user-repository'
 /**
  * Ends active session on server and clears local user session regardless of network outcome.
  */

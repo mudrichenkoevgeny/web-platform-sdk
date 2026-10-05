@@ -1,10 +1,10 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/LoginByTotpRecoveryCodeUseCase'
+import { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-by-totp-recovery-code-use-case'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginRepositoryMock } from '@/mock/repository/auth/login/LoginRepositoryMock'
-import { AuthStorageMock } from '@/mock/storage/auth/AuthStorageMock'
-import { UserStorageMock } from '@/storage/user/UserStorageMock'
+import { LoginRepositoryMock } from '@/mock/repository/auth/login/login-repository-mock'
+import { AuthStorageMock } from '@/mock/storage/auth/auth-storage-mock'
+import { UserStorageMock } from '@/mock/storage/user/user-storage-mock'
 /**
  * Mock implementation of {@link LoginByTotpRecoveryCodeUseCase}.
  */

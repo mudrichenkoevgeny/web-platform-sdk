@@ -18,8 +18,8 @@ import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   UserIdentifierListProvider,
   useUserIdentifierListStore
-} from '@/ui/screens/management/identifier/userlist/UserIdentifierListStore'
-import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/userlist/UserIdentifierListStore'
+} from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
+import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
@@ -47,8 +47,8 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: paging.canLoadMore,
-    isLoading: paging.isNextPageLoading
+    hasMore: paging.pageNumber < paging.totalPages,
+    isLoading: paging.isNextPageLoading ?? false
   })
 
   return (
@@ -70,13 +70,15 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
       </div>
 
       <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1">
-        {paging.items.length === 0 && !paging.isInitialLoading ? (
+        {paging.items.length === 0 && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar state={paging} />
+            <ListingHeaderBar
+              onRefreshClick={onRefresh}
+            />
 
             {paging.items.map((identifier) => (
               <IdentifierItem
@@ -87,13 +89,15 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
               />
             ))}
 
-            {paging.canLoadMore && (
+            {paging.isNextPageLoading && (
               <div ref={sentinelRef} className="h-4 w-full" />
             )}
 
             <PagingFooter
-              state={paging}
-              onRetry={onLoadNextPage}
+              currentPage={paging.pageNumber}
+              totalPages={paging.totalPages}
+              onPageChange={() => {}}
+              totalCount={paging.totalCount}
             />
           </div>
         )}

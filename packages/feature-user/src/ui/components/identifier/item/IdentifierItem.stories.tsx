@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
-import { userIdentifierMock } from '@/mock/domain/model/identifier/userIdentifierMock'
+import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 const meta: Meta<typeof IdentifierItem> = {
   title: 'Feature/User/Identifier/IdentifierItem',

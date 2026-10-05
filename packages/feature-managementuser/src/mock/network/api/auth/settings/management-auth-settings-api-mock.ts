@@ -1,7 +1,7 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/ManagementAuthSettingsApi'
+import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 
 /** Mock implementation of {@link ManagementAuthSettingsApi}. */
 export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi {

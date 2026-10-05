@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchManagementUserConfigurationApi } from '@/network/api/configuration/FetchManagementUserConfigurationApi'
+import { FetchManagementUserConfigurationApi } from '@/network/api/configuration/fetch-management-user-configuration-api'
 import { ManagementUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementUserConfigurationApi', () => {

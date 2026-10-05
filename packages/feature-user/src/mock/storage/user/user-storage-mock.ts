@@ -7,14 +7,14 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   UserStorage
-} from '@/storage/user/UserStorage'
+} from '@/storage/user/user-storage'
 import type {
   GetUserIdentifiersListParams,
   GetUserSessionsListParams,
   UserChangeListener,
   UserIdentifiersListChangeListener,
   UserSessionsListChangeListener
-} from '@/storage/user/UserStorage'
+} from '@/storage/user/user-storage'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifier } from "@mudrichenkoevgeny/shared-foundation";

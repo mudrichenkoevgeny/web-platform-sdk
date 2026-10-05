@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { GlobalSessionListScreen } from '@/ui/screens/management/session/globallist/GlobalSessionListScreen'
-import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/globallist/GlobalSessionListStore'
+import { GlobalSessionListScreen } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
+import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
 describe('GlobalSessionListScreen', () => {

@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementGlobalSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsApi } from '@/network/api/globalsettings/ManagementGlobalSettingsApi'
+import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
 
 /** {@link ManagementGlobalSettingsApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementGlobalSettingsApi implements ManagementGlobalSettingsApi {

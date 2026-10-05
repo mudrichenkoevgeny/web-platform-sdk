@@ -5,7 +5,7 @@ import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionId
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfSessionListScreen, SelfSessionListTestTags } from '@/ui/screens/profile/session/list/SelfSessionListScreen'
-import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/SelfSessionListStore'
+import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/self-session-list-store'
 
 describe('SelfSessionListScreen', () => {
   const session1: UserSession = {

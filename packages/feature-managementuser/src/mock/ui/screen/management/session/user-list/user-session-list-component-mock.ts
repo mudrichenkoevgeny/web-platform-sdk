@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/userlist/UserSessionListStore'
+import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 
 export const userSessionListDependenciesMock = (
   overrides?: Partial<UserSessionListStoreDependencies>

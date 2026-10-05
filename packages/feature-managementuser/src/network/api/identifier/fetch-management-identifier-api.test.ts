@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchManagementIdentifierApi } from '@/network/api/identifier/FetchManagementIdentifierApi'
+import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
 import { ManagementIdentifierRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementIdentifierApi', () => {

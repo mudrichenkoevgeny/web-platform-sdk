@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchSelfManagementUnlockApi } from '@/network/api/auth/unlock/FetchSelfManagementUnlockApi'
+import { FetchSelfManagementUnlockApi } from '@/network/api/auth/unlock/fetch-self-management-unlock-api'
 import { SelfManagementUnlockRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementUnlockApi', () => {

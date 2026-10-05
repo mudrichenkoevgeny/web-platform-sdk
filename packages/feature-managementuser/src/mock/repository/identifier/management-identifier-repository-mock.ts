@@ -9,7 +9,7 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ManagementIdentifierRepository } from '@/repository/identifier/ManagementIdentifierRepository'
+import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
 /** Mock implementation of {@link ManagementIdentifierRepository}. */
 export class ManagementIdentifierRepositoryMock implements ManagementIdentifierRepository {

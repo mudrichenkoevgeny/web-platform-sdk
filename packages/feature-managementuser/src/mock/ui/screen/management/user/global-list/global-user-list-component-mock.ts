@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/globallist/GlobalUserListStore'
+import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
 export const globalUserListDependenciesMock = (
   overrides?: Partial<GlobalUserListStoreDependencies>

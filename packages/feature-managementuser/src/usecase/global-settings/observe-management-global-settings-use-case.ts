@@ -1,5 +1,5 @@
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsRepository } from '@/repository/globalsettings/ManagementGlobalSettingsRepository'
+import type { ManagementGlobalSettingsRepository } from '@/repository/global-settings/management-global-settings-repository'
 
 /** Observes live global settings updates. */
 export class ObserveManagementGlobalSettingsUseCase {

@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
+import type { UnlockRepository } from '@/repository/auth/unlock/unlock-repository'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Sends an account unlock confirmation code to the target email. */

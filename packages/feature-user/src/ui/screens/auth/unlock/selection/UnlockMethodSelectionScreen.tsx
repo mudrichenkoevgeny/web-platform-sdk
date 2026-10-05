@@ -16,8 +16,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   UnlockMethodSelectionProvider,
   useUnlockMethodSelectionStore
-} from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionStore'
-import type { UnlockMethodSelectionStoreDependencies } from "@/ui/screens/auth/unlock/selection/UnlockMethodSelectionStore";
+} from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
+import type { UnlockMethodSelectionStoreDependencies } from "@/ui/screens/auth/unlock/selection/unlock-method-selection-store";
 
 const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
-import { ManagementAuthSettingsRepositoryImpl } from '@/repository/auth/settings/ManagementAuthSettingsRepositoryImpl'
-import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/ManagementAuthSettingsApi'
-import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/ManagementAuthSettingsStorage'
+import { ManagementAuthSettingsRepositoryImpl } from '@/repository/auth/settings/management-auth-settings-repository-impl'
+import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
+import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
 
 describe('ManagementAuthSettingsRepositoryImpl', () => {
   let mockApi: ManagementAuthSettingsApi

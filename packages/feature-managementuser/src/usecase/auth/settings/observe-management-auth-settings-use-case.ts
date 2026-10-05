@@ -1,5 +1,5 @@
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/ManagementAuthSettingsRepository'
+import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
 
 /** Observes the in-memory management auth settings snapshot. */
 export class ObserveManagementAuthSettingsUseCase {

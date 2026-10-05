@@ -13,22 +13,22 @@ import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { AuditEventDetailScreen } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
 import { AuditEventListScreen } from '@/ui/screens/management/audit/list/AuditEventListScreen'
-import { GlobalIdentifierListScreen } from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListScreen'
-import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/userlist/UserIdentifierListScreen'
+import { GlobalIdentifierListScreen } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
+import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
 import { MainManagementScreen } from '@/ui/screens/management/main/MainManagementScreen'
 import {
   ManagementRootProvider,
   useManagementRootStore
 } from '@/ui/screens/management/root/ManagementRootStore'
 import type { ManagementRootStoreDependencies } from '@/ui/screens/management/root/ManagementRootStore'
-import { GlobalSessionListScreen } from '@/ui/screens/management/session/globallist/GlobalSessionListScreen'
-import { UserSessionListScreen } from '@/ui/screens/management/session/userlist/UserSessionListScreen'
+import { GlobalSessionListScreen } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
+import { UserSessionListScreen } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
 import { EditAuthSettingsScreen } from '@/ui/screens/management/settings/auth/EditAuthSettingsScreen'
 import { EditGlobalSettingsScreen } from '@/ui/screens/management/settings/global/EditGlobalSettingsScreen'
 import { EditSecuritySettingsScreen } from '@/ui/screens/management/settings/security/EditSecuritySettingsScreen'
 import { CreateUserScreen } from '@/ui/screens/management/user/create/CreateUserScreen'
 import { UserDetailScreen } from '@/ui/screens/management/user/detail/UserDetailScreen'
-import { GlobalUserListScreen } from '@/ui/screens/management/user/globallist/GlobalUserListScreen'
+import { GlobalUserListScreen } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
 
 const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings

@@ -14,8 +14,8 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserApi } from '@/network/api/user/ManagementUserApi'
-import type { ManagementUserRepository } from '@/repository/user/ManagementUserRepository'
+import type { ManagementUserApi } from '@/network/api/user/management-user-api'
+import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /**
  * Implementation of {@link ManagementUserRepository}.

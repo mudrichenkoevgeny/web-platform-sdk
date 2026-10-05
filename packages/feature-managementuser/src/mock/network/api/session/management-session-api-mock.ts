@@ -10,7 +10,7 @@ import type {
   UserSessionPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionApi } from '@/network/api/session/ManagementSessionApi'
+import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
 /** Mock implementation of {@link ManagementSessionApi}. */
 export class ManagementSessionApiMock implements ManagementSessionApi {

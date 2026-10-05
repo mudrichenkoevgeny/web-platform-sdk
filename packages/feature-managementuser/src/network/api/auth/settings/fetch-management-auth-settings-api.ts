@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuthSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/ManagementAuthSettingsApi'
+import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 
 /** {@link ManagementAuthSettingsApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementAuthSettingsApi implements ManagementAuthSettingsApi {

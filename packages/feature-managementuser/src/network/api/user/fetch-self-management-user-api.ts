@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementUserApi } from '@/network/api/user/SelfManagementUserApi'
+import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
 
 /** {@link SelfManagementUserApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementUserApi implements SelfManagementUserApi {

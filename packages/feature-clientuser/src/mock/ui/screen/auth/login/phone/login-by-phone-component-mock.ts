@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/login-by-phone-store'
+import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 
 export const loginByPhoneDependenciesMock = (
   overrides?: Partial<LoginByPhoneStoreDependencies>

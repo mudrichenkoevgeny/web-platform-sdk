@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
-import { userIdentifierMock } from '@/mock/domain/model/identifier/userIdentifierMock'
+import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 describe('IdentifierItem', () => {
   it('renders display name and provider and handles click', async () => {

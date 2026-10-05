@@ -1,3 +1,4 @@
+import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
 
@@ -6,7 +7,7 @@ import { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
  */
 export class DeviceInfoProviderMock implements DeviceInfoProvider {
   public mockDeviceInfo: ClientDeviceInfoPayload = {
-    client_type: 'WEB',
+    client_type: ClientType.WEB,
     language: 'en',
     device_id: null,
     device_name: 'Mock Device',

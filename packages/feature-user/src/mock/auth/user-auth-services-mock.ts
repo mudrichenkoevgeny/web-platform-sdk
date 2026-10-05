@@ -1,6 +1,6 @@
-import { UserAuthServices } from '@/auth/UserAuthServices'
-import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { GoogleAuthServiceMock } from '@/mock/auth/google/GoogleAuthServiceMock'
+import { UserAuthServices } from '@/auth/user-auth-services'
+import { GoogleAuthService } from '@/auth/google/google-auth-service'
+import { GoogleAuthServiceMock } from '@/mock/auth/google/google-auth-service-mock'
 
 /**
  * Test/preview {@link UserAuthServices} with a configurable {@link GoogleAuthService}.

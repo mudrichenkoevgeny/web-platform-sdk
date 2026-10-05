@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionRepository } from '@/repository/session/ManagementSessionRepository'
+import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Administratively deletes all active sessions for the specified user. */
 export class ManagementDeleteAllUserSessionsUseCase {

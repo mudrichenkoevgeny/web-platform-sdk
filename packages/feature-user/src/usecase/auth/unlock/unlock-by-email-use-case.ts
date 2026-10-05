@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UnlockRepository } from '@/repository/auth/unlock/UnlockRepository'
+import type { UnlockRepository } from '@/repository/auth/unlock/unlock-repository'
 
 /** Unlocks an account using an email confirmation code. */
 export class UnlockByEmailUseCase {

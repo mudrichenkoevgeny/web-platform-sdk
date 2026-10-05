@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { GlobalIdentifierListScreen } from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListScreen'
-import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListStore'
+import { GlobalIdentifierListScreen } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
+import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
 import { enManagementUserStrings } from '@/locales/index'
 
 describe('GlobalIdentifierListScreen', () => {

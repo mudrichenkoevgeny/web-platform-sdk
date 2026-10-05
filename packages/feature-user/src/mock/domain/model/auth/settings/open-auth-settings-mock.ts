@@ -1,5 +1,5 @@
 import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-import { availableAuthProvidersMock } from '@/mock/domain/model/auth/settings/availableAuthProvidersMock'
+import { availableAuthProvidersMock } from '@/mock/domain/model/auth/settings/available-auth-providers-mock'
 
 /**
  * Creates a mock {@link OpenAuthSettings} instance.

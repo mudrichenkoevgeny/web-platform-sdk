@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { UserErrorCodes, UserErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { UserErrorParser } from '@/error/parser/UserErrorParser'
-import { UserError } from '@/error/model/UserError'
+import { UserErrorParser } from '@/error/parser/user-error-parser'
+import { UserError } from '@/error/model/user-error'
 import { enUserStrings, ruUserStrings } from '@/locales/index'
 describe('UserErrorParser', () => {
   const parserEn = new UserErrorParser(enUserStrings)

@@ -16,8 +16,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   IdentifierDetailProvider,
   useIdentifierDetailStore
-} from '@/ui/screens/profile/identifier/detail/IdentifierDetailStore'
-import type { IdentifierDetailStoreDependencies } from "@/ui/screens/profile/identifier/detail/IdentifierDetailStore";
+} from '@/ui/screens/profile/identifier/detail/identifier-detail-store'
+import type { IdentifierDetailStoreDependencies } from "@/ui/screens/profile/identifier/detail/identifier-detail-store";
 
 /**
  * Automation test tags for {@link IdentifierDetailScreen}.

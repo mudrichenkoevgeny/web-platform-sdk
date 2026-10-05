@@ -6,7 +6,7 @@ import type {
   UserAuthProvider,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SessionRepository } from '@/repository/session/SessionRepository'
+import type { SessionRepository } from '@/repository/session/session-repository'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of active sessions for current account. */

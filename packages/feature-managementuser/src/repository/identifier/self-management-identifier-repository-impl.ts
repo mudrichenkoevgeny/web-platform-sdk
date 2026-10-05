@@ -9,8 +9,8 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/SelfManagementIdentifiersApi'
-import type { SelfManagementIdentifierRepository } from '@/repository/identifier/SelfManagementIdentifierRepository'
+import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
+import type { SelfManagementIdentifierRepository } from '@/repository/identifier/self-management-identifier-repository'
 
 /**
  * Implements {@link SelfManagementIdentifierRepository} using {@link SelfManagementIdentifiersApi}.

@@ -14,7 +14,7 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetAuditEventUseCase } from '@/usecase/audit/GetAuditEventUseCase'
+import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 
 export type AuditEventDetailScreenState =
   | {

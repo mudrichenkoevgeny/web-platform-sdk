@@ -2,8 +2,13 @@ import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { isSuccess, parseIntegerOrDefault } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { CreateUserUseCase } from '@/usecase/user/CreateUserUseCase'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+
+const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
+  const parsed = parseInt(value, 10)
+  return isNaN(parsed) ? defaultValue : parsed
+}
+import type { CreateUserUseCase } from '@/usecase/user/create-user-use-case'
 
 export interface CreateUserScreenState {
   email: string
@@ -90,7 +95,7 @@ export const createCreateUserStore = (
 
       const result = await deps.createUserUseCase.execute({
         email: current.email.trim(),
-        password: current.password ? current.password.trim() : undefined,
+        password: current.password ? current.password.trim() : null,
         role: resolvedRole,
         status: resolvedStatus,
         authorityLevel: authLevel,

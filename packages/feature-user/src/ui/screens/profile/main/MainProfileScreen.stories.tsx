@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { MainProfileScreen } from '@/ui/screens/profile/main/MainProfileScreen'
-import type { MainProfileStoreDependencies } from '@/ui/screens/profile/main/MainProfileStore'
+import type { MainProfileStoreDependencies } from '@/ui/screens/profile/main/main-profile-store'
 
 const createMockDeps = (user = {
   id: 'usr_12345',

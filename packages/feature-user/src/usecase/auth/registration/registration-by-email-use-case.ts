@@ -1,8 +1,8 @@
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
-import type { UserStorage } from '@/storage/user/UserStorage'
+import type { RegistrationRepository } from '@/repository/auth/registration/registration-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Registers a new account by email and, on success, stores session tokens and new user snapshot.

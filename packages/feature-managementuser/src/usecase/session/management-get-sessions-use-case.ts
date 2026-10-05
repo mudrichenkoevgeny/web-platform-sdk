@@ -8,7 +8,7 @@ import type {
   UserSession,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionRepository } from '@/repository/session/ManagementSessionRepository'
+import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Options object for filtering administrative user sessions retrieval. */
 export interface ManagementGetSessionsParams {

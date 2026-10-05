@@ -3,10 +3,10 @@ import { createStore, useStore } from 'zustand'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserRepository } from '@/repository/user/UserRepository'
-import type { SetupTotpUseCase } from '@/usecase/user/security/SetupTotpUseCase'
-import type { EnableTotpUseCase } from '@/usecase/user/security/EnableTotpUseCase'
-import type { DisableTotpUseCase } from '@/usecase/user/security/DisableTotpUseCase'
+import type { UserRepository } from '@/repository/user/user-repository'
+import type { SetupTotpUseCase } from '@/usecase/user/security/setup-totp-use-case'
+import type { EnableTotpUseCase } from '@/usecase/user/security/enable-totp-use-case'
+import type { DisableTotpUseCase } from '@/usecase/user/security/disable-totp-use-case'
 /**
  * Discriminated union representing active screen state for {@link TotpMainScreen}.
  */

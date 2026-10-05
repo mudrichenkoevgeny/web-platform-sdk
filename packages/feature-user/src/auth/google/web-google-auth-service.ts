@@ -1,7 +1,7 @@
 import { appResultFailure, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { GoogleAuthService } from '@/auth/google/GoogleAuthService'
-import { UserError } from '@/error/model/UserError'
+import { GoogleAuthService } from '@/auth/google/google-auth-service'
+import { UserError } from '@/error/model/user-error'
 declare global {
   interface Window {
     google?: {

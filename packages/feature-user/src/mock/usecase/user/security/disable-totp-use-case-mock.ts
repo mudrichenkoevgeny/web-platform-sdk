@@ -1,7 +1,7 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { DisableTotpUseCase } from '@/usecase/user/security/DisableTotpUseCase'
-import { UserSecurityRepositoryMock } from '@/mock/repository/user/security/UserSecurityRepositoryMock'
+import { DisableTotpUseCase } from '@/usecase/user/security/disable-totp-use-case'
+import { UserSecurityRepositoryMock } from '@/mock/repository/user/security/user-security-repository-mock'
 /** Mock implementation of {@link DisableTotpUseCase}. */
 export class DisableTotpUseCaseMock extends DisableTotpUseCase {
   public executeCalls = 0

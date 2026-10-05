@@ -5,10 +5,10 @@ import type { UserIdentifierId, UserId } from "@mudrichenkoevgeny/shared-foundat
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import type { GetUserIdentifierUseCase } from '@/usecase/identifier/GetUserIdentifierUseCase'
-import type { DeleteUserIdentifierUseCase } from '@/usecase/identifier/DeleteUserIdentifierUseCase'
-import type { EmailChangePasswordUseCase } from '@/usecase/identifier/EmailChangePasswordUseCase'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { GetUserIdentifierUseCase } from '@/usecase/identifier/get-user-identifier-use-case'
+import type { DeleteUserIdentifierUseCase } from '@/usecase/identifier/delete-user-identifier-use-case'
+import type { EmailChangePasswordUseCase } from '@/usecase/identifier/email-change-password-use-case'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 /**
  * Discriminated union representing active screen state for {@link IdentifierDetailScreen}.
  */

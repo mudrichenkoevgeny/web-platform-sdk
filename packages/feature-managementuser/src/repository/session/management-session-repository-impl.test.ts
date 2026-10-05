@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ManagementSessionRepositoryImpl } from '@/repository/session/ManagementSessionRepositoryImpl'
-import type { ManagementSessionApi } from '@/network/api/session/ManagementSessionApi'
+import { ManagementSessionRepositoryImpl } from '@/repository/session/management-session-repository-impl'
+import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementSessionRepositoryImpl', () => {

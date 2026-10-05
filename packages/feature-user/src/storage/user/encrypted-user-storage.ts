@@ -1,4 +1,4 @@
-import type { GetUserIdentifiersListParams, GetUserSessionsListParams } from '@/storage/user/UserStorage'
+import type { GetUserIdentifiersListParams, GetUserSessionsListParams } from '@/storage/user/user-storage'
 import {
   pagedResultSchema,
   SortOrder,
@@ -11,8 +11,8 @@ import type { PagedResult, UserIdentifierId, UserIdentifierPayload, UserSessionI
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   UserStorage
-} from '@/storage/user/UserStorage'
-import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/UserStorage";
+} from '@/storage/user/user-storage'
+import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/user-storage";
 import {
   toUserDetails,
   toUserDetailsPayload

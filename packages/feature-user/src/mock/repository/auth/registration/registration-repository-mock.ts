@@ -1,6 +1,6 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
+import { RegistrationRepository } from '@/repository/auth/registration/registration-repository'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 /**

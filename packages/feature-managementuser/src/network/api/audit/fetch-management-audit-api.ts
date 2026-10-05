@@ -15,7 +15,7 @@ import {
   ListingParamNames,
   ManagementAuditRoutes
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuditApi } from '@/network/api/audit/ManagementAuditApi'
+import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 
 /** {@link ManagementAuditApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementAuditApi implements ManagementAuditApi {

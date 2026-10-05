@@ -9,7 +9,7 @@ import type {
   UserIdentifierPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/SelfManagementIdentifiersApi'
+import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
 /** Mock implementation of {@link SelfManagementIdentifiersApi}. */
 export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifiersApi {

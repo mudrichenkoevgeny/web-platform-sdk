@@ -12,8 +12,8 @@ import {
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { SelfManagementUserApi } from '@/network/api/user/SelfManagementUserApi'
-import type { SelfManagementUserRepository } from '@/repository/user/SelfManagementUserRepository'
+import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
+import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 
 class AsyncMutex {
   private queue: Promise<unknown> = Promise.resolve()

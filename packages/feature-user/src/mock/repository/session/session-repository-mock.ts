@@ -8,9 +8,9 @@ import type {
   UserSessionId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionRepository } from '@/repository/session/SessionRepository'
+import { SessionRepository } from '@/repository/session/session-repository'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionMock } from '@/mock/domain/model/session/userSessionMock'
+import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
 /**
  * Mock implementation of {@link SessionRepository}.
  */

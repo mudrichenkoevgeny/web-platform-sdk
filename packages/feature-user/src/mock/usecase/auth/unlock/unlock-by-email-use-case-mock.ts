@@ -1,5 +1,5 @@
-import { UnlockByEmailUseCase } from '@/usecase/auth/unlock/UnlockByEmailUseCase'
-import { UnlockRepositoryMock } from '@/mock/repository/auth/unlock/UnlockRepositoryMock'
+import { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
+import { UnlockRepositoryMock } from '@/mock/repository/auth/unlock/unlock-repository-mock'
 
 /**
  * Mock implementation of {@link UnlockByEmailUseCase}.

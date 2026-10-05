@@ -17,8 +17,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   LoginByEmailProvider,
   useLoginByEmailStore
-} from '@/ui/screens/auth/login/email/LoginByEmailStore'
-import type { LoginByEmailStoreDependencies } from "@/ui/screens/auth/login/email/LoginByEmailStore";
+} from '@/ui/screens/auth/login/email/login-by-email-store'
+import type { LoginByEmailStoreDependencies } from "@/ui/screens/auth/login/email/login-by-email-store";
 
 const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

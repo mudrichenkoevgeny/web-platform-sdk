@@ -5,7 +5,7 @@ import type {
   UserAuthProvider,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of identifiers for current account. */

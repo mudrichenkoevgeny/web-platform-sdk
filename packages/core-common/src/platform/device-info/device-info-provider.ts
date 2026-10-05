@@ -1,3 +1,4 @@
+import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonStorage } from '@/storage/common/common-storage'
 import { UserAgentParser } from '@/platform/parser/user-agent-parser'
@@ -43,7 +44,7 @@ export class WebDeviceInfoProvider implements DeviceInfoProvider {
     const osName = userAgent ? UserAgentParser.getOs(userAgent) : 'Web'
 
     return {
-      client_type: 'WEB',
+      client_type: ClientType.WEB,
       language: language ?? null,
       device_id: (rawDeviceId as ClientDeviceId) ?? null,
       device_name: deviceName,

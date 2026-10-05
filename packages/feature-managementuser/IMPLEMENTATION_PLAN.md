@@ -34,30 +34,30 @@ This document outlines the step-by-step implementation plan for the `feature-man
 - [x] Write unit tests for Management Repositories.
 
 ### Phase 3: Domain Use Cases
-- [ ] Implement Audit Use Cases (`GetAuditEventsUseCase`, `GetAuditEventUseCase`).
-- [ ] Implement Management Auth Settings Use Cases (`GetManagementAuthSettingsUseCase`, `ObserveManagementAuthSettingsUseCase`, `RefreshManagementAuthSettingsUseCase`, `ResetRemoteAuthSettingsUseCase`, `SaveRemoteAuthSettingsUseCase`).
-- [ ] Implement Configuration Use Cases (`RefreshManagementUserConfigurationUseCase`).
-- [ ] Implement Management Global Settings Use Cases (`GetManagementGlobalSettingsUseCase`, `ObserveManagementGlobalSettingsUseCase`, `RefreshManagementGlobalSettingsUseCase`, `ResetRemoteGlobalSettingsUseCase`, `SaveRemoteGlobalSettingsUseCase`).
-- [ ] Implement Management Identifier Use Cases (`ManagementGetIdentifiersUseCase`, `ManagementGetIdentifierUseCase`, `ManagementDeleteIdentifierUseCase`, `ManagementDeleteIdentifierPasswordUseCase`).
-- [ ] Implement Management Security Settings Use Cases (`GetManagementSecuritySettingsUseCase`, `ObserveManagementSecuritySettingsUseCase`, `RefreshManagementSecuritySettingsUseCase`, `ResetRemoteSecuritySettingsUseCase`, `SaveRemoteSecuritySettingsUseCase`).
-- [ ] Implement Management Session Use Cases (`ManagementGetSessionsUseCase`, `ManagementGetSessionUseCase`, `ManagementDeleteSessionUseCase`, `ManagementDeleteAllUserSessionsUseCase`).
-- [ ] Implement Management User Use Cases (`GetUsersUseCase`, `GetUserUseCase`, `CreateUserUseCase`, `UpdateUserUseCase`, `DeleteUserUseCase`, `ManagementDisableTotpUseCase`).
-- [ ] Write unit tests for Use Cases.
+- [x] Implement Audit Use Cases (`GetAuditEventsUseCase`, `GetAuditEventUseCase`).
+- [x] Implement Management Auth Settings Use Cases (`GetManagementAuthSettingsUseCase`, `ObserveManagementAuthSettingsUseCase`, `RefreshManagementAuthSettingsUseCase`, `ResetRemoteAuthSettingsUseCase`, `SaveRemoteAuthSettingsUseCase`).
+- [x] Implement Configuration Use Cases (`RefreshManagementUserConfigurationUseCase`).
+- [x] Implement Management Global Settings Use Cases (`GetManagementGlobalSettingsUseCase`, `ObserveManagementGlobalSettingsUseCase`, `RefreshManagementGlobalSettingsUseCase`, `ResetRemoteGlobalSettingsUseCase`, `SaveRemoteGlobalSettingsUseCase`).
+- [x] Implement Management Identifier Use Cases (`ManagementGetIdentifiersUseCase`, `ManagementGetIdentifierUseCase`, `ManagementDeleteIdentifierUseCase`, `ManagementDeleteIdentifierPasswordUseCase`).
+- [x] Implement Management Security Settings Use Cases (`GetManagementSecuritySettingsUseCase`, `ObserveManagementSecuritySettingsUseCase`, `RefreshManagementSecuritySettingsUseCase`, `ResetRemoteSecuritySettingsUseCase`, `SaveRemoteSecuritySettingsUseCase`).
+- [x] Implement Management Session Use Cases (`ManagementGetSessionsUseCase`, `ManagementGetSessionUseCase`, `ManagementDeleteSessionUseCase`, `ManagementDeleteAllUserSessionsUseCase`).
+- [x] Implement Management User Use Cases (`GetUsersUseCase`, `GetUserUseCase`, `CreateUserUseCase`, `UpdateUserUseCase`, `DeleteUserUseCase`, `ManagementDisableTotpUseCase`).
+- [x] Write unit tests for Use Cases.
 
 ### Phase 4: Management UI Components & Screens
-- [ ] Implement Reusable Items (`AuditItem`, `UserItem`).
-- [ ] Implement Auth Login Screens (`ManagementLoginDestination`, `ManagementLoginRootComponent`, `ManagementLoginRootComponentImpl`, `ManagementLoginRootScreen`).
-- [ ] Implement Management Screen Stack (`ManagementDestination`, `ManagementRootComponent`, `MainManagementComponent`).
-- [ ] Implement Audit Screens (`AuditEventListComponent`, `AuditEventDetailComponent`).
-- [ ] Implement Global Identifier & Session Screens (`GlobalIdentifierListComponent`, `UserIdentifierListComponent`, `GlobalSessionListComponent`, `UserSessionListComponent`).
-- [ ] Implement Settings Editing Screens (`EditAuthSettingsComponent`, `EditGlobalSettingsComponent`, `EditSecuritySettingsComponent`).
-- [ ] Implement User Administration Screens (`GlobalUserListComponent`, `UserDetailComponent`, `CreateUserComponent`).
-- [ ] Write `.test.tsx` and `.stories.tsx` for all Management UI components and screens.
+- [x] Implement Reusable Items (`AuditItem`, `UserItem`).
+- [x] Implement Auth Login Screens (`ManagementLoginDestination`, `ManagementLoginRootComponent`, `ManagementLoginRootComponentImpl`, `ManagementLoginRootScreen`).
+- [x] Implement Management Screen Stack (`ManagementDestination`, `ManagementRootComponent`, `MainManagementComponent`).
+- [x] Implement Audit Screens (`AuditEventListComponent`, `AuditEventDetailComponent`).
+- [x] Implement Global Identifier & Session Screens (`GlobalIdentifierListComponent`, `UserIdentifierListComponent`, `GlobalSessionListComponent`, `UserSessionListComponent`).
+- [x] Implement Settings Editing Screens (`EditAuthSettingsComponent`, `EditGlobalSettingsComponent`, `EditSecuritySettingsComponent`).
+- [x] Implement User Administration Screens (`GlobalUserListComponent`, `UserDetailComponent`, `CreateUserComponent`).
+- [x] Write `.test.tsx` and `.stories.tsx` for all Management UI components and screens.
 
 ### Phase 5: Dependency Injection & Mocks
-- [ ] Implement DI Modules (`ManagementUserComponent`, `AuditApiComponent`, `ManagementUserNetworkModule`, `ManagementUserRepositoryModule`, `ManagementUserUseCaseModule`, `ManagementUserWebSocketModule`).
-- [ ] Implement Management Mocks (`ManagementUserComponentMock`, Audit mocks, API mocks, Repository mocks, Storage mocks, UI Component mocks).
-- [ ] Write unit tests for `ManagementUserComponent`.
+- [x] Implement DI Modules (`ManagementUserComponent`, `AuditApiComponent`, `ManagementUserNetworkModule`, `ManagementUserRepositoryModule`, `ManagementUserUseCaseModule`, `ManagementUserWebSocketModule`).
+- [x] Implement Management Mocks (`ManagementUserComponentMock`, Audit mocks, API mocks, Repository mocks, Storage mocks, UI Component mocks).
+- [x] Write unit tests for `ManagementUserComponent`.
 
 ### Phase 6: File Naming Normalization Refactoring
 - [x] Rename directory `src/mock/network/api/auth/resetpassword/` to `src/mock/network/api/auth/reset-password/` and update imports.
@@ -446,5 +446,5 @@ This document outlines the step-by-step implementation plan for the `feature-man
 - [x] `src/usecase/user/security/ManagementDisableTotpUseCase.ts` is correct (renamed to `management-disable-totp-use-case.ts`).
 
 ### Phase 7: Final Review & Export
-- [ ] Export all public contracts, components, use cases, and mocks in `src/index.ts`.
-- [ ] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/feature-managementuser`.
+- [x] Export all public contracts, components, use cases, and mocks in `src/index.ts`.
+- [x] Validate `tsc --noEmit` and `vite build` complete successfully for `packages/feature-managementuser`.

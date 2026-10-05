@@ -10,10 +10,10 @@ import {
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
-import type { LoginRepository } from '@/repository/auth/login/LoginRepository'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
-import type { UserStorage } from '@/storage/user/UserStorage'
+import { LoginByEmailUseCase } from '@/usecase/auth/login/login-by-email-use-case'
+import type { LoginRepository } from '@/repository/auth/login/login-repository'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('LoginByEmailUseCase', () => {

@@ -1,5 +1,5 @@
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/ManagementSecuritySettingsRepository'
+import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 /** Observes live security settings updates. */
 export class ObserveManagementSecuritySettingsUseCase {

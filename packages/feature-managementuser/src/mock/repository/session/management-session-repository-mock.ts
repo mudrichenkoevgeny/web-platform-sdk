@@ -11,7 +11,7 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ManagementSessionRepository } from '@/repository/session/ManagementSessionRepository'
+import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Mock implementation of {@link ManagementSessionRepository}. */
 export class ManagementSessionRepositoryMock implements ManagementSessionRepository {

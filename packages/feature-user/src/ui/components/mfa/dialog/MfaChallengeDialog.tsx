@@ -7,7 +7,7 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
-import type { MfaChallengeRequest } from '@/network/httpclient/mfa/MfaChallengeRequest'
+import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
 export interface MfaChallengeDialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onConfirm'> {
   request: MfaChallengeRequest
   onConfirm: (code: string) => void

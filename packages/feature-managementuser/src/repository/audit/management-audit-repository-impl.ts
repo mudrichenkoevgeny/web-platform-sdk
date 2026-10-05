@@ -13,8 +13,8 @@ import type {
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toAuditEvent } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuditApi } from '@/network/api/audit/ManagementAuditApi'
-import type { ManagementAuditRepository } from '@/repository/audit/ManagementAuditRepository'
+import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
+import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
 
 /**
  * Implementation of {@link ManagementAuditRepository}.

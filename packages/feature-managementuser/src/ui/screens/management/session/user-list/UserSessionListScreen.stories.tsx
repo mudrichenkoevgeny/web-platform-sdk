@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserSessionListScreen } from '@/ui/screens/management/session/userlist/UserSessionListScreen'
-import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/userlist/UserSessionListStore'
+import { UserSessionListScreen } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
+import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 
 const createMockDeps = (): UserSessionListStoreDependencies => ({
   userId: 'usr_123' as any,

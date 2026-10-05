@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { RegistrationRepository } from '@/repository/auth/registration/RegistrationRepository'
+import type { RegistrationRepository } from '@/repository/auth/registration/registration-repository'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /**

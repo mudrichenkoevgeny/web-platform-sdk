@@ -4,9 +4,9 @@ import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/GetManagementAuthSettingsUseCase'
-import type { ResetRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/ResetRemoteAuthSettingsUseCase'
-import type { SaveRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/SaveRemoteAuthSettingsUseCase'
+import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'
+import type { ResetRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/reset-remote-auth-settings-use-case'
+import type { SaveRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/save-remote-auth-settings-use-case'
 
 export const DEFAULT_OTP_LENGTH = 6
 

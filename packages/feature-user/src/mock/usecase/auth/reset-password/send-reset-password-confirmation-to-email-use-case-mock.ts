@@ -1,8 +1,8 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/resetpassword/SendResetPasswordConfirmationToEmailUseCase'
+import { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/reset-password/send-reset-password-confirmation-to-email-use-case'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { ResetPasswordRepositoryMock } from '@/mock/repository/auth/resetpassword/ResetPasswordRepositoryMock'
+import { ResetPasswordRepositoryMock } from '@/mock/repository/auth/reset-password/reset-password-repository-mock'
 /**
  * Mock implementation of {@link SendResetPasswordConfirmationToEmailUseCase}.
  */

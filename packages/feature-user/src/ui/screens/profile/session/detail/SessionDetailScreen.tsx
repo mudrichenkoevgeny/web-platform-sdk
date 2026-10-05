@@ -18,8 +18,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   SessionDetailProvider,
   useSessionDetailStore
-} from '@/ui/screens/profile/session/detail/SessionDetailStore'
-import type { SessionDetailStoreDependencies } from "@/ui/screens/profile/session/detail/SessionDetailStore";
+} from '@/ui/screens/profile/session/detail/session-detail-store'
+import type { SessionDetailStoreDependencies } from "@/ui/screens/profile/session/detail/session-detail-store";
 
 /**
  * Automation test tags for {@link SessionDetailScreen}.

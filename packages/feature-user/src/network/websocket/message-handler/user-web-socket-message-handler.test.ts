@@ -8,11 +8,11 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserDetailsPayload } from "@mudrichenkoevgeny/shared-foundation";
 import type { ErrorId, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketMessageHandler } from '@/network/websocket/messagehandler/UserWebSocketMessageHandler'
-import type { UserStorage } from '@/storage/user/UserStorage'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
-import type { UserRepository } from '@/repository/user/UserRepository'
-import type { RefreshTokenUseCase } from '@/usecase/auth/refreshtoken/RefreshTokenUseCase'
+import { UserWebSocketMessageHandler } from '@/network/websocket/message-handler/user-web-socket-message-handler'
+import type { UserStorage } from '@/storage/user/user-storage'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { UserRepository } from '@/repository/user/user-repository'
+import type { RefreshTokenUseCase } from '@/usecase/auth/refresh-token/refresh-token-use-case'
 describe('UserWebSocketMessageHandler', () => {
   let userStorage: UserStorage
   let userRepository: UserRepository

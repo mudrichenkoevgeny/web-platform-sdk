@@ -1,5 +1,5 @@
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsStorage } from '@/storage/securitysettings/ManagementSecuritySettingsStorage'
+import type { ManagementSecuritySettingsStorage } from '@/storage/security-settings/management-security-settings-storage'
 
 /** Mock in-memory implementation of {@link ManagementSecuritySettingsStorage}. */
 export class ManagementSecuritySettingsStorageMock implements ManagementSecuritySettingsStorage {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByEmailScreen } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
-import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/LoginByEmailStore'
+import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
 
 const createMockDeps = (): LoginByEmailStoreDependencies => ({
   appType: AppType.CLIENT,

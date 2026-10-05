@@ -9,9 +9,9 @@ import {
   createNextPageLoadingPaginationState,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/ManagementDeleteAllUserSessionsUseCase'
-import type { ManagementDeleteSessionUseCase } from '@/usecase/session/ManagementDeleteSessionUseCase'
-import type { ManagementGetSessionsUseCase } from '@/usecase/session/ManagementGetSessionsUseCase'
+import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/management-delete-all-user-sessions-use-case'
+import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
+import type { ManagementGetSessionsUseCase } from '@/usecase/session/management-get-sessions-use-case'
 
 export type UserSessionListScreenState =
   | {
@@ -64,13 +64,13 @@ export const createUserSessionListStore = (
       pageNumber,
       pageSize: 20,
       userIds,
-      sortOrder: 'DESC'
+      sortOrder: 'desc'
     })
 
     if (isSuccess(result)) {
       const current = get().screenState
       const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
 
       if (current.status === 'content') {
         set({
@@ -121,14 +121,14 @@ export const createUserSessionListStore = (
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.paging.canLoadMore) {
+      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
         return
       }
 
       const nextPaging = createNextPageLoadingPaginationState(current.paging)
       set({ screenState: { ...current, paging: nextPaging } })
 
-      await fetchPage(set, get, nextPaging.nextPageNumber)
+      await fetchPage(set, get, current.paging.pageNumber + 1)
     },
 
     onRefresh: async () => {

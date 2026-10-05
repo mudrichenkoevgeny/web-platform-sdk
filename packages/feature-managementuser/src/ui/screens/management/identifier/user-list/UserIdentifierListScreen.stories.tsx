@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/userlist/UserIdentifierListScreen'
-import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/userlist/UserIdentifierListStore'
+import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
+import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 const createMockDeps = (): UserIdentifierListStoreDependencies => ({
   userId: 'usr_123' as any,

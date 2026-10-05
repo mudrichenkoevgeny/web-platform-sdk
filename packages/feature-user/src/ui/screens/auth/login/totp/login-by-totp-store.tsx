@@ -3,9 +3,9 @@ import { createStore, useStore } from 'zustand'
 import { UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/LoginByTotpRecoveryCodeUseCase'
-import type { LoginByTotpUseCase } from '@/usecase/auth/login/LoginByTotpUseCase'
-import { FieldValidator } from '@/validator/FieldValidator'
+import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-by-totp-recovery-code-use-case'
+import type { LoginByTotpUseCase } from '@/usecase/auth/login/login-by-totp-use-case'
+import { FieldValidator } from '@/validator/field-validator'
 /**
  * Mode determining active MFA verification method.
  */

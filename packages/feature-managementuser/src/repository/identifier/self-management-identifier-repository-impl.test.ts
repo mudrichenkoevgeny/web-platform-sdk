@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementIdentifierRepositoryImpl } from '@/repository/identifier/SelfManagementIdentifierRepositoryImpl'
-import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/SelfManagementIdentifiersApi'
+import { SelfManagementIdentifierRepositoryImpl } from '@/repository/identifier/self-management-identifier-repository-impl'
+import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('SelfManagementIdentifierRepositoryImpl', () => {

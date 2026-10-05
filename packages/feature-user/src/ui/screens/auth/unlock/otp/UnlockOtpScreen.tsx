@@ -16,8 +16,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   UnlockOtpProvider,
   useUnlockOtpStore
-} from '@/ui/screens/auth/unlock/otp/UnlockOtpStore'
-import type { UnlockOtpStoreDependencies } from "@/ui/screens/auth/unlock/otp/UnlockOtpStore";
+} from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
+import type { UnlockOtpStoreDependencies } from "@/ui/screens/auth/unlock/otp/unlock-otp-store";
 
 const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

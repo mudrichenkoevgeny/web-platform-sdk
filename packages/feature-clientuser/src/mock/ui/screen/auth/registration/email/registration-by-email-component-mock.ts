@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/registration-by-email-store'
+import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 
 export const registrationByEmailDependenciesMock = (
   overrides?: Partial<RegistrationByEmailStoreDependencies>

@@ -9,7 +9,7 @@ import type {
   UserRole,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserRepository } from '@/repository/user/ManagementUserRepository'
+import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Options object for filtering administrative user list retrieval. */
 export interface GetUsersParams {

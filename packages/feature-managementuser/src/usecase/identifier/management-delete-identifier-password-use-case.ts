@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementIdentifierRepository } from '@/repository/identifier/ManagementIdentifierRepository'
+import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
 /** Administratively removes the password credential for the given user's identifier record. */
 export class ManagementDeleteIdentifierPasswordUseCase {

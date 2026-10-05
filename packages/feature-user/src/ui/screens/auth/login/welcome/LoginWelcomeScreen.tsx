@@ -12,14 +12,14 @@ import {
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
-import { AuthProviderButtonMode } from '@/ui/components/auth/button/AuthProviderButtonMode'
+import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
 import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
 import {
   LoginWelcomeProvider,
   useLoginWelcomeStore
-} from '@/ui/screens/auth/login/welcome/LoginWelcomeStore'
-import type { LoginWelcomeStoreDependencies } from "@/ui/screens/auth/login/welcome/LoginWelcomeStore";
+} from '@/ui/screens/auth/login/welcome/login-welcome-store'
+import type { LoginWelcomeStoreDependencies } from "@/ui/screens/auth/login/welcome/login-welcome-store";
 
 /**
  * Internal content component rendering login welcome UI states (loading, error, providers list, legal footer).

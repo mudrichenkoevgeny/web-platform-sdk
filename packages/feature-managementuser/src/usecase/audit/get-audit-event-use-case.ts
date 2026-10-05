@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuditEvent } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuditRepository } from '@/repository/audit/ManagementAuditRepository'
+import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
 
 /** Retrieves full details of a specific audit event. */
 export class GetAuditEventUseCase {

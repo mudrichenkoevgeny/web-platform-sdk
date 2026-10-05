@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { AppType } from '@mudrichenkoevgeny/shared-foundation'
-import type {
-  GetGlobalSettingsUseCase,
-  ExternalLauncher
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ExternalLauncher } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type {
   GetAvailableUserAuthProvidersUseCase,
@@ -30,11 +28,11 @@ import type {
   UnlockByGoogleUseCase,
   UnlockByPhoneUseCase
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ClientLoginDestination } from '@/ui/screens/auth/login/ClientLoginDestination'
+import type { ClientLoginDestination } from '@/ui/screens/auth/login/client-login-destination'
 
 export interface ClientLoginRootStoreDependencies {
   appType: AppType
-  getOpenGlobalSettingsUseCase: GetGlobalSettingsUseCase
+  getOpenGlobalSettingsUseCase: GetOpenGlobalSettingsUseCase
   getAvailableUserAuthProvidersUseCase: GetAvailableUserAuthProvidersUseCase
   loginByGoogleUseCase: LoginByGoogleUseCase
   loginByEmailUseCase: LoginByEmailUseCase

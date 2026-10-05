@@ -5,10 +5,10 @@ import type { UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import type { GetSessionsUseCase } from '@/usecase/session/GetSessionsUseCase'
-import type { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
-import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/DeleteAllOtherSessionsUseCase'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
+import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
+import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/delete-all-other-sessions-use-case'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 /**
  * Discriminated union representing active screen state for {@link SelfSessionListScreen}.
  */

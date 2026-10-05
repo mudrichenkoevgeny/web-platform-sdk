@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementUserSecurityRepositoryImpl } from '@/repository/user/security/SelfManagementUserSecurityRepositoryImpl'
+import { SelfManagementUserSecurityRepositoryImpl } from '@/repository/user/security/self-management-user-security-repository-impl'
 import type { UserSecurityApi, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementUserSecurityRepositoryImpl', () => {

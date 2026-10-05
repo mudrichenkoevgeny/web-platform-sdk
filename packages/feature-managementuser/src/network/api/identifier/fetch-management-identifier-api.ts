@@ -14,7 +14,7 @@ import {
   UserApiPaths,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementIdentifierApi } from '@/network/api/identifier/ManagementIdentifierApi'
+import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
 /** {@link ManagementIdentifierApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementIdentifierApi implements ManagementIdentifierApi {

@@ -4,9 +4,9 @@ import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetManagementGlobalSettingsUseCase } from '@/usecase/globalsettings/GetManagementGlobalSettingsUseCase'
-import type { ResetRemoteGlobalSettingsUseCase } from '@/usecase/globalsettings/ResetRemoteGlobalSettingsUseCase'
-import type { SaveRemoteGlobalSettingsUseCase } from '@/usecase/globalsettings/SaveRemoteGlobalSettingsUseCase'
+import type { GetManagementGlobalSettingsUseCase } from '@/usecase/global-settings/get-management-global-settings-use-case'
+import type { ResetRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/reset-remote-global-settings-use-case'
+import type { SaveRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/save-remote-global-settings-use-case'
 
 export type EditGlobalSettingsScreenState =
   | {

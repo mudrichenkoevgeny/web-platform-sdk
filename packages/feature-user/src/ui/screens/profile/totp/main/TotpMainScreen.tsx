@@ -18,8 +18,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpMainProvider,
   useTotpMainStore
-} from '@/ui/screens/profile/totp/main/TotpMainStore'
-import type { TotpMainStoreDependencies } from "@/ui/screens/profile/totp/main/TotpMainStore";
+} from '@/ui/screens/profile/totp/main/totp-main-store'
+import type { TotpMainStoreDependencies } from "@/ui/screens/profile/totp/main/totp-main-store";
 
 const QR_CODE_SIZE_PX = 180
 

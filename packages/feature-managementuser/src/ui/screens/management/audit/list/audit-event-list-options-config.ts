@@ -25,9 +25,9 @@ export const getAuditEventListingOptionsConfig = (
       id: 'actorType',
       title: strings.ui_common_actor_type,
       options: [
-        { id: AuditActorType.USER, label: strings.ui_common_user },
-        { id: AuditActorType.SYSTEM, label: strings.ui_common_system },
-        { id: AuditActorType.SERVICE, label: strings.ui_common_service }
+        { id: AuditActorType.USER, title: strings.ui_common_user },
+        { id: AuditActorType.SYSTEM, title: strings.ui_common_system },
+        { id: AuditActorType.SERVICE, title: strings.ui_common_service }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -37,8 +37,8 @@ export const getAuditEventListingOptionsConfig = (
       id: 'actorUserRole',
       title: strings.ui_common_role,
       options: [
-        { id: UserRole.STAFF, label: strings.ui_common_staff },
-        { id: UserRole.ADMIN, label: strings.ui_common_admin }
+        { id: UserRole.STAFF, title: strings.ui_common_staff },
+        { id: UserRole.ADMIN, title: strings.ui_common_admin }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -66,9 +66,9 @@ export const getAuditEventListingOptionsConfig = (
       id: 'status',
       title: strings.ui_common_status,
       options: [
-        { id: AuditStatus.SUCCESS, label: strings.ui_common_success },
-        { id: AuditStatus.FAILED, label: strings.ui_common_failed },
-        { id: AuditStatus.DENIED, label: strings.ui_common_denied }
+        { id: AuditStatus.SUCCESS, title: strings.ui_common_success },
+        { id: AuditStatus.FAILED, title: strings.ui_common_failed },
+        { id: AuditStatus.DENIED, title: strings.ui_common_denied }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN

@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/ManagementAuthSettingsRepository'
+import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
 
 /** Pushes new auth settings to the remote server. */
 export class SaveRemoteAuthSettingsUseCase {

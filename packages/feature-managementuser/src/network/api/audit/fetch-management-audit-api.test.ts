@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchManagementAuditApi } from '@/network/api/audit/FetchManagementAuditApi'
+import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
 import { ManagementAuditRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementAuditApi', () => {

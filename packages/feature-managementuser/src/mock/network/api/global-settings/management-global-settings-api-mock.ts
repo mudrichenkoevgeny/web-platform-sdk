@@ -1,7 +1,7 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsApi } from '@/network/api/globalsettings/ManagementGlobalSettingsApi'
+import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
 
 /** Mock implementation of {@link ManagementGlobalSettingsApi}. */
 export class ManagementGlobalSettingsApiMock implements ManagementGlobalSettingsApi {

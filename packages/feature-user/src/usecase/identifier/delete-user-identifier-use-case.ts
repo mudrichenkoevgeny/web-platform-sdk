@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import type { IdentifierRepository } from '@/repository/identifier/IdentifierRepository'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 
 /** Removes an existing identifier from current user profile. */
 export class DeleteUserIdentifierUseCase {

@@ -14,8 +14,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpRecoveryCodesProvider,
   useTotpRecoveryCodesStore
-} from '@/ui/screens/profile/totp/recovery/TotpRecoveryCodesStore'
-import type { TotpRecoveryCodesStoreDependencies } from "@/ui/screens/profile/totp/recovery/TotpRecoveryCodesStore";
+} from '@/ui/screens/profile/totp/recovery/totp-recovery-codes-store'
+import type { TotpRecoveryCodesStoreDependencies } from "@/ui/screens/profile/totp/recovery/totp-recovery-codes-store";
 
 /**
  * Automation test tags for {@link TotpRecoveryCodesScreen}.

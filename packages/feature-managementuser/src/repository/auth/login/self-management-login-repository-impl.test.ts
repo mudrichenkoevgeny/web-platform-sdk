@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { SelfManagementLoginRepositoryImpl } from '@/repository/auth/login/SelfManagementLoginRepositoryImpl'
-import type { SelfManagementLoginApi } from '@/network/api/auth/login/SelfManagementLoginApi'
+import { SelfManagementLoginRepositoryImpl } from '@/repository/auth/login/self-management-login-repository-impl'
+import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
 
 describe('SelfManagementLoginRepositoryImpl', () => {
   let mockApi: SelfManagementLoginApi

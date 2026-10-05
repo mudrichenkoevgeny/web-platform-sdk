@@ -1,7 +1,7 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/ManagementSecuritySettingsRepository'
+import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 /** Mock implementation of {@link ManagementSecuritySettingsRepository}. */
 export class ManagementSecuritySettingsRepositoryMock implements ManagementSecuritySettingsRepository {

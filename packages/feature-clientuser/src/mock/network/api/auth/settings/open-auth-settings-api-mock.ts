@@ -8,7 +8,7 @@ import type { OpenAuthSettingsApi } from '@/network/api/auth/settings/open-auth-
  */
 export class OpenAuthSettingsApiMock implements OpenAuthSettingsApi {
   public result: AppResult<OpenAuthSettingsPayload, AppError> = appResultFailure(
-    CommonError.unknown(undefined, false)
+    CommonError.unknown(false)
   )
   public callCount = 0
 

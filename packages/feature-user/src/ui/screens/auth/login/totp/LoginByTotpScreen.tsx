@@ -14,13 +14,13 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
-import { FieldValidator } from '@/validator/FieldValidator'
+import { FieldValidator } from '@/validator/field-validator'
 import {
   LoginByTotpMode,
   LoginByTotpProvider,
   useLoginByTotpStore
-} from '@/ui/screens/auth/login/totp/LoginByTotpStore'
-import type { LoginByTotpStoreDependencies } from "@/ui/screens/auth/login/totp/LoginByTotpStore";
+} from '@/ui/screens/auth/login/totp/login-by-totp-store'
+import type { LoginByTotpStoreDependencies } from "@/ui/screens/auth/login/totp/login-by-totp-store";
 
 const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

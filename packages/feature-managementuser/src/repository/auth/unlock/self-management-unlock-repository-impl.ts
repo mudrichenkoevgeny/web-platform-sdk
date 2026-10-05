@@ -3,7 +3,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationType, toOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationRepository, UnlockRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/SelfManagementUnlockApi'
+import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 
 /**
  * Implements {@link UnlockRepository} using {@link SelfManagementUnlockApi} and {@link ConfirmationRepository} for rate limiting.

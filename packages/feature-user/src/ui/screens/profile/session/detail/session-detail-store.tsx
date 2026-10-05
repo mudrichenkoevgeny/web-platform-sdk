@@ -5,9 +5,9 @@ import type { UserIdentifierId, UserId, UserSessionId } from "@mudrichenkoevgeny
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import type { GetSessionUseCase } from '@/usecase/session/GetSessionUseCase'
-import type { DeleteSessionUseCase } from '@/usecase/session/DeleteSessionUseCase'
-import type { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { GetSessionUseCase } from '@/usecase/session/get-session-use-case'
+import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 /**
  * Discriminated union representing active screen state for {@link SessionDetailScreen}.
  */

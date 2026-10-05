@@ -5,7 +5,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/ManagementAuthSettingsStorage'
+import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
 
 const KEY_MANAGEMENT_AUTH_SETTINGS = 'auth_management_settings'
 

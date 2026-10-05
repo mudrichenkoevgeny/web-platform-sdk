@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethodSelectionScreen } from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionScreen'
-import type { UnlockMethodSelectionStoreDependencies } from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionStore'
+import type { UnlockMethodSelectionStoreDependencies } from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
 
 const createMockDeps = (): UnlockMethodSelectionStoreDependencies => ({
   lockoutType: AccountLockoutType.TEMPORARY,

@@ -23,10 +23,10 @@ export const getGlobalIdentifierListingOptionsConfig = (
       id: 'userAuthProvider',
       title: strings.ui_common_auth_provider,
       options: [
-        { id: UserAuthProvider.EMAIL, label: strings.ui_common_email },
-        { id: UserAuthProvider.PHONE, label: strings.ui_common_phone },
-        { id: UserAuthProvider.GOOGLE, label: strings.ui_common_google },
-        { id: UserAuthProvider.APPLE, label: strings.ui_common_apple }
+        { id: UserAuthProvider.EMAIL, title: strings.ui_common_email },
+        { id: UserAuthProvider.PHONE, title: strings.ui_common_phone },
+        { id: UserAuthProvider.GOOGLE, title: strings.ui_common_google },
+        { id: UserAuthProvider.APPLE, title: strings.ui_common_apple }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN

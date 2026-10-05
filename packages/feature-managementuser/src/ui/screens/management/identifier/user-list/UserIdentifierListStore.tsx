@@ -9,7 +9,7 @@ import {
   createNextPageLoadingPaginationState,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/ManagementGetIdentifiersUseCase'
+import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/management-get-identifiers-use-case'
 
 export type UserIdentifierListScreenState =
   | {
@@ -62,7 +62,7 @@ export const createUserIdentifierListStore = (
     if (isSuccess(result)) {
       const current = get().screenState
       const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
 
       if (current.status === 'content') {
         set({
@@ -111,14 +111,14 @@ export const createUserIdentifierListStore = (
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.paging.canLoadMore) {
+      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
         return
       }
 
       const nextPaging = createNextPageLoadingPaginationState(current.paging)
       set({ screenState: { ...current, paging: nextPaging } })
 
-      await fetchPage(set, get, nextPaging.nextPageNumber)
+      await fetchPage(set, get, current.paging.pageNumber + 1)
     },
 
     onRefresh: async () => {

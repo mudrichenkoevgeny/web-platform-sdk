@@ -18,8 +18,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   ResetEmailPasswordProvider,
   useResetEmailPasswordStore
-} from '@/ui/screens/auth/resetpassword/ResetEmailPasswordStore'
-import type { ResetEmailPasswordStoreDependencies } from "@/ui/screens/auth/resetpassword/ResetEmailPasswordStore";
+} from '@/ui/screens/auth/reset-password/reset-email-password-store'
+import type { ResetEmailPasswordStoreDependencies } from "@/ui/screens/auth/reset-password/reset-email-password-store";
 
 const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)

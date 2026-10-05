@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { TotpRecoveryCodesScreen } from '@/ui/screens/profile/totp/recovery/TotpRecoveryCodesScreen'
-import type { TotpRecoveryCodesStoreDependencies } from '@/ui/screens/profile/totp/recovery/TotpRecoveryCodesStore'
+import type { TotpRecoveryCodesStoreDependencies } from '@/ui/screens/profile/totp/recovery/totp-recovery-codes-store'
 
 const createMockDeps = (): TotpRecoveryCodesStoreDependencies => ({
   getRecoveryCodesUseCase: {

@@ -1,1 +1,1 @@
-export * from '@/mock/storage/user/UserStorageMock'
+export * from '@/mock/storage/user/user-storage-mock'

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ManagementAuditRepositoryImpl } from '@/repository/audit/ManagementAuditRepositoryImpl'
-import type { ManagementAuditApi } from '@/network/api/audit/ManagementAuditApi'
+import { ManagementAuditRepositoryImpl } from '@/repository/audit/management-audit-repository-impl'
+import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 
 describe('ManagementAuditRepositoryImpl', () => {
   let mockApi: ManagementAuditApi

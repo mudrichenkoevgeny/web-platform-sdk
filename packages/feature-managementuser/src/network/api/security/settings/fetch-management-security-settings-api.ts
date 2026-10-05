@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementSecuritySettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/ManagementSecuritySettingsApi'
+import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
 
 /** {@link ManagementSecuritySettingsApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementSecuritySettingsApi implements ManagementSecuritySettingsApi {

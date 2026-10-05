@@ -5,7 +5,7 @@ import { AppType, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider }
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfIdentifierListScreen, IdentifierListTestTags } from '@/ui/screens/profile/identifier/list/SelfIdentifierListScreen'
-import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/SelfIdentifierListStore'
+import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
 
 describe('SelfIdentifierListScreen', () => {
   const mockIdentifier1: UserIdentifier = {

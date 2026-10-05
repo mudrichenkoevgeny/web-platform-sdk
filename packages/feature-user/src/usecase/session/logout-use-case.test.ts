@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LogoutUseCase } from '@/usecase/session/LogoutUseCase'
-import type { SessionRepository } from '@/repository/session/SessionRepository'
-import type { UserRepository } from '@/repository/user/UserRepository'
+import { LogoutUseCase } from '@/usecase/session/logout-use-case'
+import type { SessionRepository } from '@/repository/session/session-repository'
+import type { UserRepository } from '@/repository/user/user-repository'
 
 describe('LogoutUseCase', () => {
   it('clears local session even if remote logout fails', async () => {

@@ -1,5 +1,5 @@
-import { UnlockByExternalAuthProviderUseCase } from '@/usecase/auth/unlock/UnlockByExternalAuthProviderUseCase'
-import { UnlockRepositoryMock } from '@/mock/repository/auth/unlock/UnlockRepositoryMock'
+import { UnlockByExternalAuthProviderUseCase } from '@/usecase/auth/unlock/unlock-by-external-auth-provider-use-case'
+import { UnlockRepositoryMock } from '@/mock/repository/auth/unlock/unlock-repository-mock'
 
 /**
  * Mock implementation of {@link UnlockByExternalAuthProviderUseCase}.

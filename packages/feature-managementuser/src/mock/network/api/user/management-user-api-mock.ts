@@ -13,7 +13,7 @@ import type {
   UserRole,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserApi } from '@/network/api/user/ManagementUserApi'
+import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 
 /** Mock implementation of {@link ManagementUserApi}. */
 export class ManagementUserApiMock implements ManagementUserApi {

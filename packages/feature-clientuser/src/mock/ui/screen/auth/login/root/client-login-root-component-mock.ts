@@ -1,6 +1,6 @@
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ClientLoginRootStoreDependencies } from '@/ui/screens/auth/login/root/client-login-root-store'
+import type { ClientLoginRootStoreDependencies } from '@/ui/screens/auth/login/root/ClientLoginRootStore'
 
 export const clientLoginRootDependenciesMock = (
   overrides?: Partial<ClientLoginRootStoreDependencies>

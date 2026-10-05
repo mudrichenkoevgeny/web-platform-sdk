@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/userlist/UserIdentifierListStore'
+import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 export const userIdentifierListDependenciesMock = (
   overrides?: Partial<UserIdentifierListStoreDependencies>

@@ -8,7 +8,7 @@ import type {
   UserIdentifierPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementIdentifierApi } from '@/network/api/identifier/ManagementIdentifierApi'
+import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
 /** Mock implementation of {@link ManagementIdentifierApi}. */
 export class ManagementIdentifierApiMock implements ManagementIdentifierApi {

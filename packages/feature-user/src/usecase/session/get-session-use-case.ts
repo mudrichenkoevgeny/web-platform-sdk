@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
-import type { SessionRepository } from '@/repository/session/SessionRepository'
+import type { SessionRepository } from '@/repository/session/session-repository'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns details of a specific session owned by current account. */

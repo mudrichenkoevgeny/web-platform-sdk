@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementIdentifierRepository } from '@/repository/identifier/ManagementIdentifierRepository'
+import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
 /** Administratively retrieves specific identifier details. */
 export class ManagementGetIdentifierUseCase {

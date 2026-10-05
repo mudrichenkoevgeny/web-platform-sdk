@@ -200,7 +200,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreOutlinedTextField
           id={authLevelId}
           value={authorityLevelInput}
-          onValueChange={onAuthorityLevelChanged}
+          onChange={(e) => onAuthorityLevelChanged(e.target.value)}
           label={strings.authority_level}
           disabled={isSaving || isDeleting}
         />
@@ -227,7 +227,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreOutlinedTextField
           id={tempLockoutId}
           value={temporaryLockoutUntilInput}
-          onValueChange={onTemporaryLockoutUntilChanged}
+          onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
           label={strings.ui_common_lockout_until}
           disabled={isSaving || isDeleting}
         />

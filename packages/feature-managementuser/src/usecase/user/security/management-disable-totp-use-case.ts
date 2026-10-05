@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserSecurityRepository } from '@/repository/user/security/ManagementUserSecurityRepository'
+import type { ManagementUserSecurityRepository } from '@/repository/user/security/management-user-security-repository'
 
 /** Administratively disables TOTP (2FA) for a specific user. */
 export class ManagementDisableTotpUseCase {

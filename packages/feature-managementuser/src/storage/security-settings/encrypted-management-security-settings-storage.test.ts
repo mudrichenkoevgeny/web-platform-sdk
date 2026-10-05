@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { EncryptedManagementSecuritySettingsStorage } from '@/storage/securitysettings/EncryptedManagementSecuritySettingsStorage'
+import { EncryptedManagementSecuritySettingsStorage } from '@/storage/security-settings/encrypted-management-security-settings-storage'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedManagementSecuritySettingsStorage', () => {

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import { enUserStrings } from '@/locales/index'
-import { userSessionMock } from '@/mock/domain/model/session/userSessionMock'
+import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
 
 describe('SessionItem', () => {
   it('renders session details and handles revoke button click', async () => {

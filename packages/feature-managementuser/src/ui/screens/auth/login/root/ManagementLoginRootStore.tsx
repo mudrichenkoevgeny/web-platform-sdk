@@ -22,7 +22,7 @@ import type {
   UnlockByEmailUseCase,
   UnlockByPhoneUseCase
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ManagementLoginDestination } from '@/ui/screens/auth/login/ManagementLoginDestination'
+import type { ManagementLoginDestination } from '@/ui/screens/auth/login/management-login-destination'
 
 export interface ManagementLoginRootStoreDependencies {
   appType: AppType

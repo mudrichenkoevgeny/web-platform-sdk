@@ -1,5 +1,5 @@
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsStorage } from '@/storage/globalsettings/ManagementGlobalSettingsStorage'
+import type { ManagementGlobalSettingsStorage } from '@/storage/global-settings/management-global-settings-storage'
 
 /** Mock in-memory implementation of {@link ManagementGlobalSettingsStorage}. */
 export class ManagementGlobalSettingsStorageMock implements ManagementGlobalSettingsStorage {

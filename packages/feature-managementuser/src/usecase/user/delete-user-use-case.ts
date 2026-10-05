@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserRepository } from '@/repository/user/ManagementUserRepository'
+import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Completely deletes a specified user account administratively. */
 export class DeleteUserUseCase {

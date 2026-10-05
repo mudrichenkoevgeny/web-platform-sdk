@@ -31,12 +31,13 @@ const ClientLoginRootContent: React.FC<{
   const currentDestination = stack[stack.length - 1]
 
   const renderActiveScreen = () => {
+    if (!currentDestination) return null
+
     switch (currentDestination.type) {
       case 'welcome':
         return (
           <LoginWelcomeScreen
             dependencies={{
-              appType: dependencies.appType,
               externalLauncher: dependencies.externalLauncher,
               getOpenGlobalSettingsUseCase: dependencies.getOpenGlobalSettingsUseCase,
               getAvailableUserAuthProvidersUseCase: dependencies.getAvailableUserAuthProvidersUseCase,
@@ -165,6 +166,9 @@ const ClientLoginRootContent: React.FC<{
             strings={strings}
           />
         )
+
+      default:
+        return null
     }
   }
 

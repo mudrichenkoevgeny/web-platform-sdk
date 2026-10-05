@@ -13,8 +13,8 @@ import type { FeatureUserStrings } from "@/locales/index";
 import {
   PendingDeletionProvider,
   usePendingDeletionStore
-} from '@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore'
-import type { PendingDeletionStoreDependencies } from "@/ui/screens/auth/login/pendingdeletion/PendingDeletionStore";
+} from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'
+import type { PendingDeletionStoreDependencies } from "@/ui/screens/auth/login/pending-deletion/pending-deletion-store";
 
 const PendingDeletionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

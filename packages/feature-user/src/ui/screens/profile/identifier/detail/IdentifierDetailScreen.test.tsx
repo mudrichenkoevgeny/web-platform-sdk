@@ -5,7 +5,7 @@ import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@m
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierDetailScreen, IdentifierDetailTestTags } from '@/ui/screens/profile/identifier/detail/IdentifierDetailScreen'
-import type { IdentifierDetailStoreDependencies } from '@/ui/screens/profile/identifier/detail/IdentifierDetailStore'
+import type { IdentifierDetailStoreDependencies } from '@/ui/screens/profile/identifier/detail/identifier-detail-store'
 import { enUserStrings } from '@/locales/index'
 
 describe('IdentifierDetailScreen', () => {

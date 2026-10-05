@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UpdateUserRequest, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserRepository } from '@/repository/user/ManagementUserRepository'
+import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Updates profile details, status, or permissions for a specific user administratively. */
 export class UpdateUserUseCase {

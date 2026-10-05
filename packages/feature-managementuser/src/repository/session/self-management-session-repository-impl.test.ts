@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultFailure, appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementSessionRepositoryImpl } from '@/repository/session/SelfManagementSessionRepositoryImpl'
+import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 import type { SessionApi, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 

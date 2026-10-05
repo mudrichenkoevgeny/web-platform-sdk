@@ -8,7 +8,7 @@ import type {
   SortOrder,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuditRepository } from '@/repository/audit/ManagementAuditRepository'
+import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
 
 /** Parameters for retrieving administrative audit events. */
 export interface GetAuditEventsParams {

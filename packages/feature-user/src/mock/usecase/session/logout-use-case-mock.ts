@@ -1,8 +1,8 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { LogoutUseCase } from '@/usecase/session/LogoutUseCase'
-import { SessionRepositoryMock } from '@/mock/repository/session/SessionRepositoryMock'
-import { UserRepositoryMock } from '@/mock/repository/user/UserRepositoryMock'
+import { LogoutUseCase } from '@/usecase/session/logout-use-case'
+import { SessionRepositoryMock } from '@/mock/repository/session/session-repository-mock'
+import { UserRepositoryMock } from '@/mock/repository/user/user-repository-mock'
 /** Mock implementation of {@link LogoutUseCase}. */
 export class LogoutUseCaseMock extends LogoutUseCase {
   public executeCalls = 0

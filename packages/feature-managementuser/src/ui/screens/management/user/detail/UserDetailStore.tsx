@@ -2,12 +2,17 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { isSuccess, parseIntegerOrDefault } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+
+const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
+  const parsed = parseInt(value, 10)
+  return isNaN(parsed) ? defaultValue : parsed
+}
 import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { DeleteUserUseCase } from '@/usecase/user/DeleteUserUseCase'
-import type { GetUserUseCase } from '@/usecase/user/GetUserUseCase'
-import type { UpdateUserUseCase } from '@/usecase/user/UpdateUserUseCase'
-import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/ManagementDisableTotpUseCase'
+import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
+import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
+import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
+import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
 
 export type UserDetailScreenState =
   | {
@@ -174,14 +179,11 @@ export const createUserDetailStore = (
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
         : current.user.temporaryLockoutUntil
 
-      const result = await deps.updateUserUseCase.execute({
-        userId: deps.userId,
-        request: {
-          accountStatus: status as any,
-          authorityLevel: authLevel,
-          lockoutType: resolvedLockout,
-          temporaryLockoutUntil: tempLockout
-        }
+      const result = await deps.updateUserUseCase.execute(deps.userId, {
+        accountStatus: status as any,
+        authorityLevel: authLevel,
+        lockoutType: resolvedLockout,
+        temporaryLockoutUntil: tempLockout
       })
 
       if (isSuccess(result)) {

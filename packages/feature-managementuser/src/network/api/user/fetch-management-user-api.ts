@@ -19,7 +19,7 @@ import {
   UserApiPaths,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserApi } from '@/network/api/user/ManagementUserApi'
+import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 
 /** {@link ManagementUserApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementUserApi implements ManagementUserApi {

@@ -1,8 +1,8 @@
 import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { UserSecurityRepository } from '@/repository/user/security/UserSecurityRepository'
-import { UserSecurityApi } from '@/network/api/user/security/UserSecurityApi'
-import { UserStorage } from '@/storage/user/UserStorage'
+import { UserSecurityRepository } from '@/repository/user/security/user-security-repository'
+import { UserSecurityApi } from '@/network/api/user/security/user-security-api'
+import { UserStorage } from '@/storage/user/user-storage'
 import {
   toTotpRecoveryCodes,
   toTotpSetup

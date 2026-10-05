@@ -1,7 +1,9 @@
+import { ruStrings as ruCoreCommonStrings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { FeatureUserStrings } from '@/locales/en/strings'
 
 /** Russian localized string dictionary for feature-user. */
 export const ruUserStrings: FeatureUserStrings = {
+  ...ruCoreCommonStrings,
   error_user_invalid_access_token: 'Токен доступа недействителен.',
   error_user_access_token_expired: 'Срок действия токена доступа истек.',
   error_user_invalid_refresh_token: 'Токен обновления недействителен.',

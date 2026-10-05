@@ -4,10 +4,10 @@ import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { ValidatePasswordUseCase } from "@mudrichenkoevgeny/web-platform-sdk-core-security";
-import type { ResetPasswordRepository } from '@/repository/auth/resetpassword/ResetPasswordRepository'
-import type { ResetEmailPasswordUseCase } from '@/usecase/auth/resetpassword/ResetEmailPasswordUseCase'
-import type { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/resetpassword/SendResetPasswordConfirmationToEmailUseCase'
-import { FieldValidator } from '@/validator/FieldValidator'
+import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
+import type { ResetEmailPasswordUseCase } from '@/usecase/auth/reset-password/reset-email-password-use-case'
+import type { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/reset-password/send-reset-password-confirmation-to-email-use-case'
+import { FieldValidator } from '@/validator/field-validator'
 /**
  * Union representing the active screen state for {@link ResetEmailPasswordScreen}.
  */

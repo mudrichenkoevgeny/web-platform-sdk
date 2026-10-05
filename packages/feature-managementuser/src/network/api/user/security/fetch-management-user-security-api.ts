@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementUserSecurityRoutes, UserApiPaths } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserSecurityApi } from '@/network/api/user/security/ManagementUserSecurityApi'
+import type { ManagementUserSecurityApi } from '@/network/api/user/security/management-user-security-api'
 
 /** {@link ManagementUserSecurityApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementUserSecurityApi implements ManagementUserSecurityApi {

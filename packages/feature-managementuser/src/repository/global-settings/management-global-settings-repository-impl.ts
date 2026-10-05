@@ -12,9 +12,9 @@ import {
   toManagementGlobalSettings,
   toManagementGlobalSettingsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementGlobalSettingsApi } from '@/network/api/globalsettings/ManagementGlobalSettingsApi'
-import type { ManagementGlobalSettingsStorage } from '@/storage/globalsettings/ManagementGlobalSettingsStorage'
-import type { ManagementGlobalSettingsRepository } from '@/repository/globalsettings/ManagementGlobalSettingsRepository'
+import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
+import type { ManagementGlobalSettingsStorage } from '@/storage/global-settings/management-global-settings-storage'
+import type { ManagementGlobalSettingsRepository } from '@/repository/global-settings/management-global-settings-repository'
 
 class AsyncMutex {
   private queue: Promise<unknown> = Promise.resolve()

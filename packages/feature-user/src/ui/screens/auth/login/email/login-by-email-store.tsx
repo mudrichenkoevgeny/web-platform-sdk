@@ -1,22 +1,19 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
-  SecurityErrorArgs,
-  SecurityErrorCodes
-} from '@mudrichenkoevgeny/shared-foundation'
-import {
   AccountLockoutType,
-  UserAccountStatus
+  AppType,
+  SecurityErrorArgs,
+  SecurityErrorCodes,
+  UserAccountStatus,
+  UserErrorArgs,
+  UserErrorCodes
 } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { AppType } from '@mudrichenkoevgeny/shared-foundation'
-import { UserErrorArgs, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import type { LoginByEmailUseCase } from '@/usecase/auth/login/LoginByEmailUseCase'
-import { FieldValidator } from '@/validator/FieldValidator'
-/**
- * Union representing the active screen state for {@link LoginByEmailScreen}.
- */
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { LoginByEmailUseCase } from '@/usecase/auth/login/login-by-email-use-case'
+import { FieldValidator } from '@/validator/field-validator'
+
 export type LoginByEmailScreenState =
   | {
       status: 'loading'
@@ -33,101 +30,34 @@ export type LoginByEmailScreenState =
       actionError: AppError | null
     }
 
-/**
- * Dependencies required for initializing {@link LoginByEmailStore}.
- */
 export interface LoginByEmailStoreDependencies {
-  /**
-   * Operational application type (Client or Management).
-   */
   appType: AppType
-  /**
-   * Use case for performing sign-in with email and password.
-   */
   loginByEmailUseCase: LoginByEmailUseCase
-  /**
-   * Navigation callback for email registration screen.
-   */
   onNavigateToRegistrationByEmail: () => void
-  /**
-   * Navigation callback for forgot password screen.
-   */
   onNavigateToForgotPassword: () => void
-  /**
-   * Navigation callback for TOTP MFA verification screen.
-   */
   onNavigateToTotp: (mfaToken: string) => void
-  /**
-   * Navigation callback for account pending deletion restoration screen.
-   */
   onNavigateToPendingDeletion: () => void
-  /**
-   * Navigation callback for account unlock screen.
-   */
   onNavigateToAccountUnlock?: (
     lockoutType?: AccountLockoutType | null,
     lockoutUntil?: number | null
   ) => void
-  /**
-   * Navigation callback for popping current screen step.
-   */
   onBack: () => void
-  /**
-   * Flow completion callback.
-   */
   onFinished: () => void
 }
 
-/**
- * State and action contract for {@link LoginByEmailStore}.
- */
 export interface LoginByEmailStoreState {
-  /**
-   * Active reactive screen state.
-   */
   screenState: LoginByEmailScreenState
-  /**
-   * Updates email field and recomputes validity.
-   */
   onEmailChanged: (email: string) => void
-  /**
-   * Updates password field and recomputes validity.
-   */
   onPasswordChanged: (password: string) => void
-  /**
-   * Toggles password field text visibility.
-   */
   onTogglePasswordVisibility: () => void
-  /**
-   * Validates credentials and executes login request.
-   */
   onLoginClick: () => Promise<void>
-  /**
-   * Navigates to forgot password flow.
-   */
   onForgotPasswordClick: () => void
-  /**
-   * Navigates to registration flow.
-   */
   onRegistrationClick: () => void
-  /**
-   * Pops screen step.
-   */
   onBackClick: () => void
 }
 
-/**
- * Type alias for the per-instance Zustand store.
- */
 export type LoginByEmailStore = ReturnType<typeof createLoginByEmailStore>
 
-/**
- * Instantiates a new isolated {@link LoginByEmailStore} for a screen instance.
- *
- * @param deps - Screen dependencies
- * @param initialState - Optional initial state override
- * @returns Vanilla Zustand store instance
- */
 export const createLoginByEmailStore = (
   deps: LoginByEmailStoreDependencies,
   initialState?: LoginByEmailScreenState
@@ -284,21 +214,12 @@ export const createLoginByEmailStore = (
 
 const LoginByEmailContext = createContext<LoginByEmailStore | null>(null)
 
-/**
- * Props for {@link LoginByEmailProvider}.
- */
 export interface LoginByEmailProviderProps {
-  /** Dependencies for initializing the store. */
   dependencies: LoginByEmailStoreDependencies
-  /** Optional initial state override. */
   initialState?: LoginByEmailScreenState
-  /** React children. */
   children: React.ReactNode
 }
 
-/**
- * Context provider isolating {@link LoginByEmailStore} per component mount.
- */
 export const LoginByEmailProvider: React.FC<LoginByEmailProviderProps> = ({
   dependencies,
   initialState,
@@ -316,12 +237,6 @@ export const LoginByEmailProvider: React.FC<LoginByEmailProviderProps> = ({
   )
 }
 
-/**
- * Custom hook to consume isolated {@link LoginByEmailStore} state.
- *
- * @param selector - State selector function
- * @returns Selected state slice
- */
 export const useLoginByEmailStore = <T,>(selector: (state: LoginByEmailStoreState) => T): T => {
   const store = useContext(LoginByEmailContext)
   if (!store) {

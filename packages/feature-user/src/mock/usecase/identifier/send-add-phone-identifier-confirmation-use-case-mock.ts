@@ -1,8 +1,8 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/SendAddPhoneIdentifierConfirmationUseCase'
+import { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/send-add-phone-identifier-confirmation-use-case'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepositoryMock } from '@/mock/repository/identifier/IdentifierRepositoryMock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/identifier-repository-mock'
 /** Mock implementation of {@link SendAddPhoneIdentifierConfirmationUseCase}. */
 export class SendAddPhoneIdentifierConfirmationUseCaseMock extends SendAddPhoneIdentifierConfirmationUseCase {
   public executeCalls = 0

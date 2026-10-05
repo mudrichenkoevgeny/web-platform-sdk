@@ -16,12 +16,12 @@ import {
 import { IdentifierItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
-import { getGlobalIdentifierListingOptionsConfig } from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListOptionsConfig'
+import { getGlobalIdentifierListingOptionsConfig } from '@/ui/screens/management/identifier/global-list/global-identifier-list-options-config'
 import {
   GlobalIdentifierListProvider,
   useGlobalIdentifierListStore
-} from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListStore'
-import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/globallist/GlobalIdentifierListStore'
+} from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
+import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
 
 const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
@@ -58,8 +58,8 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: paging.canLoadMore,
-    isLoading: paging.isNextPageLoading
+    hasMore: paging.pageNumber < paging.totalPages,
+    isLoading: paging.isNextPageLoading ?? false
   })
 
   const optionsConfig = getGlobalIdentifierListingOptionsConfig(strings)
@@ -106,13 +106,16 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
           </div>
         )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading ? (
+        {paging.items.length === 0 && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar state={paging} />
+            <ListingHeaderBar
+              onRefreshClick={onRefresh}
+              onOptionsClick={onToggleFilterPanel}
+            />
 
             {paging.items.map((identifier) => (
               <IdentifierItem
@@ -123,13 +126,15 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
               />
             ))}
 
-            {paging.canLoadMore && (
+            {paging.isNextPageLoading && (
               <div ref={sentinelRef} className="h-4 w-full" />
             )}
 
             <PagingFooter
-              state={paging}
-              onRetry={onLoadNextPage}
+              currentPage={paging.pageNumber}
+              totalPages={paging.totalPages}
+              onPageChange={() => {}}
+              totalCount={paging.totalCount}
             />
           </div>
         )}

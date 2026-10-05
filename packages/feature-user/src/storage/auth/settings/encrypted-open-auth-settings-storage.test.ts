@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedOpenAuthSettingsStorage } from '@/storage/auth/settings/EncryptedOpenAuthSettingsStorage'
+import { EncryptedOpenAuthSettingsStorage } from '@/storage/auth/settings/encrypted-open-auth-settings-storage'
 import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedOpenAuthSettingsStorage', () => {

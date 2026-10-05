@@ -14,8 +14,8 @@ import { AppType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation
 import {
   MainProfileProvider,
   useMainProfileStore
-} from '@/ui/screens/profile/main/MainProfileStore'
-import type { MainProfileStoreDependencies } from "@/ui/screens/profile/main/MainProfileStore";
+} from '@/ui/screens/profile/main/main-profile-store'
+import type { MainProfileStoreDependencies } from "@/ui/screens/profile/main/main-profile-store";
 
 /**
  * Automation test tags for {@link MainProfileScreen}.

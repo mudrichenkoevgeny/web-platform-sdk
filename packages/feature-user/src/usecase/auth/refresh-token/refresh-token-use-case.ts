@@ -1,9 +1,9 @@
 import { appResultFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { RefreshTokenRepository } from '@/repository/auth/refreshtoken/RefreshTokenRepository'
-import { AuthStorage } from '@/storage/auth/AuthStorage'
+import type { RefreshTokenRepository } from '@/repository/auth/refresh-token/refresh-token-repository'
+import { AuthStorage } from '@/storage/auth/auth-storage'
 import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
-import { UserError } from '@/error/model/UserError'
+import { UserError } from '@/error/model/user-error'
 /**
  * Refreshes the session using the stored refresh token; updates {@link AuthStorage} when new tokens are issued.
  */

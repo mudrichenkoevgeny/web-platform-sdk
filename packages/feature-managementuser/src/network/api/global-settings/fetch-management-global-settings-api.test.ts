@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchManagementGlobalSettingsApi } from '@/network/api/globalsettings/FetchManagementGlobalSettingsApi'
+import { FetchManagementGlobalSettingsApi } from '@/network/api/global-settings/fetch-management-global-settings-api'
 import { ManagementGlobalSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementGlobalSettingsApi', () => {

@@ -14,12 +14,12 @@ import {
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import { FieldValidator } from '@/validator/FieldValidator'
+import { FieldValidator } from '@/validator/field-validator'
 import {
   UnlockTargetInputProvider,
   useUnlockTargetInputStore
-} from '@/ui/screens/auth/unlock/target/UnlockTargetInputStore'
-import type { UnlockTargetInputStoreDependencies } from "@/ui/screens/auth/unlock/target/UnlockTargetInputStore";
+} from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
+import type { UnlockTargetInputStoreDependencies } from "@/ui/screens/auth/unlock/target/unlock-target-input-store";
 
 const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings

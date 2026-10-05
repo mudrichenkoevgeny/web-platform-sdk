@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfManagementUnlockRepositoryImpl } from '@/repository/auth/unlock/SelfManagementUnlockRepositoryImpl'
-import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/SelfManagementUnlockApi'
+import { SelfManagementUnlockRepositoryImpl } from '@/repository/auth/unlock/self-management-unlock-repository-impl'
+import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 import type { ConfirmationRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementUnlockRepositoryImpl', () => {

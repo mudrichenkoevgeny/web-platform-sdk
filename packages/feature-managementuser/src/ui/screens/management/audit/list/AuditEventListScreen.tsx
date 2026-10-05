@@ -17,7 +17,7 @@ import {
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
-import { getAuditEventListingOptionsConfig } from '@/ui/screens/management/audit/list/AuditEventListOptionsConfig'
+import { getAuditEventListingOptionsConfig } from '@/ui/screens/management/audit/list/audit-event-list-options-config'
 import {
   AuditEventListProvider,
   useAuditEventListStore
@@ -59,8 +59,8 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: paging.canLoadMore,
-    isLoading: paging.isNextPageLoading
+    hasMore: paging.pageNumber < paging.totalPages,
+    isLoading: paging.isNextPageLoading ?? false
   })
 
   const optionsConfig = getAuditEventListingOptionsConfig(strings)
@@ -107,13 +107,16 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           </div>
         )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading ? (
+        {paging.items.length === 0 && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar state={paging} />
+            <ListingHeaderBar
+              onRefreshClick={onRefresh}
+              onOptionsClick={onToggleFilterPanel}
+            />
 
             {paging.items.map((event) => (
               <AuditItem
@@ -124,13 +127,15 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               />
             ))}
 
-            {paging.canLoadMore && (
+            {paging.isNextPageLoading && (
               <div ref={sentinelRef} className="h-4 w-full" />
             )}
 
             <PagingFooter
-              state={paging}
-              onRetry={onLoadNextPage}
+              currentPage={paging.pageNumber}
+              totalPages={paging.totalPages}
+              onPageChange={() => {}}
+              totalCount={paging.totalCount}
             />
           </div>
         )}

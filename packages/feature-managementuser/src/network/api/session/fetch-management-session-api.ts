@@ -16,7 +16,7 @@ import {
   UserApiPaths,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionApi } from '@/network/api/session/ManagementSessionApi'
+import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
 /** {@link ManagementSessionApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementSessionApi implements ManagementSessionApi {

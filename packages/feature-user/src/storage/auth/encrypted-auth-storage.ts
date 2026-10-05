@@ -9,7 +9,7 @@ import {
   AccessTokenProvider
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AccessTokenChangeListener, EncryptedSettings } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { AuthStorage } from '@/storage/auth/AuthStorage'
+import { AuthStorage } from '@/storage/auth/auth-storage'
 import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 const KEY_ACCESS_TOKEN = 'auth_access_token'
 const KEY_REFRESH_TOKEN = 'auth_refresh_token'

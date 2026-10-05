@@ -2,7 +2,7 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserConfigurationApi } from '@/network/api/configuration/ManagementUserConfigurationApi'
+import type { ManagementUserConfigurationApi } from '@/network/api/configuration/management-user-configuration-api'
 
 /** {@link ManagementUserConfigurationApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementUserConfigurationApi implements ManagementUserConfigurationApi {

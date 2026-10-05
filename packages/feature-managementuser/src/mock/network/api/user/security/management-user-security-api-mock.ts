@@ -1,7 +1,7 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserSecurityApi } from '@/network/api/user/security/ManagementUserSecurityApi'
+import type { ManagementUserSecurityApi } from '@/network/api/user/security/management-user-security-api'
 
 /** Mock implementation of {@link ManagementUserSecurityApi}. */
 export class ManagementUserSecurityApiMock implements ManagementUserSecurityApi {

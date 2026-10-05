@@ -5,7 +5,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementGlobalSettingsStorage } from '@/storage/globalsettings/ManagementGlobalSettingsStorage'
+import type { ManagementGlobalSettingsStorage } from '@/storage/global-settings/management-global-settings-storage'
 
 const KEY_MANAGEMENT_GLOBAL_SETTINGS = 'global_management_settings'
 

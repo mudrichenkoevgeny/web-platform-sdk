@@ -1,7 +1,7 @@
 import { HttpClientConfigPlugin, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SecurityErrorArgs, SecurityErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
-import { MfaChallengeHandler } from '@/network/httpclient/mfa/MfaChallengeHandler'
+import { MfaChallengeHandler } from '@/network/httpclient/mfa/mfa-challenge-handler'
 /**
  * Options for configuring {@link MfaStepUpHttpClientConfigPlugin}.
  */

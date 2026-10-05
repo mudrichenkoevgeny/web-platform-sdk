@@ -3,8 +3,8 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { OpenUserConfiguration } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
-import { toOpenUserConfiguration } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { toOpenUserConfiguration } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenUserConfiguration } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Fetches the combined open user configuration bundle and, when the network call succeeds, writes each

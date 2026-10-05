@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { GlobalUserListScreen } from '@/ui/screens/management/user/globallist/GlobalUserListScreen'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/globallist/GlobalUserListStore'
+import { GlobalUserListScreen } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
+import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
 const createMockDeps = (): GlobalUserListStoreDependencies => ({
   getUsersUseCase: {
@@ -10,9 +10,8 @@ const createMockDeps = (): GlobalUserListStoreDependencies => ({
       appResultSuccess({
         items: [userDetailsMock(), userDetailsMock()],
         pageNumber: 1,
-        pageSize: 20,
-        totalItems: 2,
-        totalPages: 1
+        totalPages: 1,
+        totalCount: 2
       })
   } as any,
   onNavigateToUserDetail: () => {},

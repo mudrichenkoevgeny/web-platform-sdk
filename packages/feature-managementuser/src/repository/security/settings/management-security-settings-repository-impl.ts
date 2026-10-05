@@ -12,9 +12,9 @@ import {
   toManagementSecuritySettings,
   toManagementSecuritySettingsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/ManagementSecuritySettingsApi'
-import type { ManagementSecuritySettingsStorage } from '@/storage/securitysettings/ManagementSecuritySettingsStorage'
-import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/ManagementSecuritySettingsRepository'
+import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
+import type { ManagementSecuritySettingsStorage } from '@/storage/security-settings/management-security-settings-storage'
+import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 class AsyncMutex {
   private queue: Promise<unknown> = Promise.resolve()

@@ -3,10 +3,10 @@ import { createStore, useStore } from 'zustand'
 import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
-import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockEmailConfirmationUseCase'
-import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/SendUnlockPhoneConfirmationUseCase'
-import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/UnlockByEmailUseCase'
-import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/UnlockByPhoneUseCase'
+import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-email-confirmation-use-case'
+import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
+import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
+import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/unlock-by-phone-use-case'
 /**
  * Union representing the active screen state for {@link UnlockOtpScreen}.
  */

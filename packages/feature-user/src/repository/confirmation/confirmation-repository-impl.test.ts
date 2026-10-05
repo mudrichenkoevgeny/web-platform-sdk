@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ConfirmationRepositoryImpl } from '@/repository/confirmation/ConfirmationRepositoryImpl'
+import { ConfirmationRepositoryImpl } from '@/repository/confirmation/confirmation-repository-impl'
 import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 

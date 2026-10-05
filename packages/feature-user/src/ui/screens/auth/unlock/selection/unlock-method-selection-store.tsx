@@ -5,9 +5,9 @@ import type { AccountLockoutType } from "@mudrichenkoevgeny/shared-foundation";
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { UserError } from '@/error/model/UserError'
-import type { UnlockByGoogleUseCase } from '@/usecase/auth/unlock/UnlockByGoogleUseCase'
-import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/GetUserIdentifiersUseCase'
+import { UserError } from '@/error/model/user-error'
+import type { UnlockByGoogleUseCase } from '@/usecase/auth/unlock/unlock-by-google-use-case'
+import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-identifiers-use-case'
 /**
  * State contract for {@link UnlockMethodSelectionScreen}.
  */

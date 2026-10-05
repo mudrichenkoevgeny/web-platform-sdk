@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { WebGoogleAuthService } from '@/auth/google/WebGoogleAuthService'
+import { WebGoogleAuthService } from '@/auth/google/web-google-auth-service'
 
 describe('WebGoogleAuthService', () => {
   let service: WebGoogleAuthService

@@ -35,8 +35,8 @@ export const getGlobalSessionListingOptionsConfig = (
       id: 'userRole',
       title: strings.ui_common_role,
       options: [
-        { id: UserRole.STAFF, label: strings.ui_common_staff },
-        { id: UserRole.ADMIN, label: strings.ui_common_admin }
+        { id: UserRole.STAFF, title: strings.ui_common_staff },
+        { id: UserRole.ADMIN, title: strings.ui_common_admin }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -46,10 +46,10 @@ export const getGlobalSessionListingOptionsConfig = (
       id: 'userAuthProvider',
       title: strings.ui_common_auth_provider,
       options: [
-        { id: UserAuthProvider.EMAIL, label: strings.ui_common_email },
-        { id: UserAuthProvider.PHONE, label: strings.ui_common_phone },
-        { id: UserAuthProvider.GOOGLE, label: strings.ui_common_google },
-        { id: UserAuthProvider.APPLE, label: strings.ui_common_apple }
+        { id: UserAuthProvider.EMAIL, title: strings.ui_common_email },
+        { id: UserAuthProvider.PHONE, title: strings.ui_common_phone },
+        { id: UserAuthProvider.GOOGLE, title: strings.ui_common_google },
+        { id: UserAuthProvider.APPLE, title: strings.ui_common_apple }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -59,10 +59,10 @@ export const getGlobalSessionListingOptionsConfig = (
       id: 'clientType',
       title: strings.ui_common_client_type,
       options: [
-        { id: ClientType.ANDROID, label: strings.ui_common_android },
-        { id: ClientType.IOS, label: strings.ui_common_ios },
-        { id: ClientType.WEB, label: strings.ui_common_web },
-        { id: ClientType.DESKTOP, label: strings.ui_common_desktop }
+        { id: ClientType.ANDROID, title: strings.ui_common_android },
+        { id: ClientType.IOS, title: strings.ui_common_ios },
+        { id: ClientType.WEB, title: strings.ui_common_web },
+        { id: ClientType.DESKTOP, title: strings.ui_common_desktop }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN

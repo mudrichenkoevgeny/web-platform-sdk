@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSessionRepository } from '@/repository/session/ManagementSessionRepository'
+import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Administratively retrieves specific session details. */
 export class ManagementGetSessionUseCase {

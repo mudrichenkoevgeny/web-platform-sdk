@@ -18,12 +18,12 @@ import {
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { UserItem } from '@/ui/components/user/item/UserItem'
-import { getGlobalUserListingOptionsConfig } from '@/ui/screens/management/user/globallist/GlobalUserListOptionsConfig'
+import { getGlobalUserListingOptionsConfig } from '@/ui/screens/management/user/global-list/global-user-list-options-config'
 import {
   GlobalUserListProvider,
   useGlobalUserListStore
-} from '@/ui/screens/management/user/globallist/GlobalUserListStore'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/globallist/GlobalUserListStore'
+} from '@/ui/screens/management/user/global-list/GlobalUserListStore'
+import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
 const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
@@ -63,8 +63,8 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: paging.canLoadMore,
-    isLoading: paging.isNextPageLoading
+    hasMore: paging.pageNumber < paging.totalPages,
+    isLoading: paging.isNextPageLoading ?? false
   })
 
   const optionsConfig = getGlobalUserListingOptionsConfig(strings)
@@ -123,13 +123,16 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
         )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading ? (
+        {paging.items.length === 0 && !paging.isNextPageLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <ListingEmptyState />
           </div>
         ) : (
           <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar state={paging} />
+            <ListingHeaderBar
+              onRefreshClick={onRefresh}
+              onOptionsClick={onToggleFilterPanel}
+            />
 
             {paging.items.map((user) => (
               <UserItem
@@ -140,13 +143,15 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               />
             ))}
 
-            {paging.canLoadMore && (
+            {paging.isNextPageLoading && (
               <div ref={sentinelRef} className="h-4 w-full" />
             )}
 
             <PagingFooter
-              state={paging}
-              onRetry={onLoadNextPage}
+              currentPage={paging.pageNumber}
+              totalPages={paging.totalPages}
+              onPageChange={() => {}}
+              totalCount={paging.totalCount}
             />
           </div>
         )}

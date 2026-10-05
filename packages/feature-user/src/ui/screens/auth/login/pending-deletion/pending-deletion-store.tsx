@@ -2,8 +2,8 @@ import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { LogoutUseCase } from '@/usecase/session/LogoutUseCase'
-import type { RestoreUserUseCase } from '@/usecase/user/RestoreUserUseCase'
+import type { LogoutUseCase } from '@/usecase/session/logout-use-case'
+import type { RestoreUserUseCase } from '@/usecase/user/restore-user-use-case'
 /**
  * State contract for {@link PendingDeletionScreen}.
  */

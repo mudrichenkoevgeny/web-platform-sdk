@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserRepository } from '@/repository/user/UserRepository'
+import type { UserRepository } from '@/repository/user/user-repository'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Refreshes and returns current user profile details. */

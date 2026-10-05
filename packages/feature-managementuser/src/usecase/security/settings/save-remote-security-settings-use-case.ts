@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/ManagementSecuritySettingsRepository'
+import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 /** Pushes updated security settings to the remote server. */
 export class SaveRemoteSecuritySettingsUseCase {
