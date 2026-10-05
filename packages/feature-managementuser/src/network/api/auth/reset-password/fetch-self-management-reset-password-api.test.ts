@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchSelfManagementResetPasswordApi } from '@/network/api/auth/resetpassword/FetchSelfManagementResetPasswordApi'
+import { FetchSelfManagementResetPasswordApi } from '@/network/api/auth/reset-password/fetch-self-management-reset-password-api'
 import { SelfManagementResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementResetPasswordApi', () => {

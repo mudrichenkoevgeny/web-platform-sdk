@@ -23,11 +23,6 @@ describe('SelfManagementUserRepositoryImpl', () => {
     updated_at: 1000
   } as any
 
-  const dummyUserDomain = {
-    id: 'usr_1',
-    email: 'user@example.com'
-  } as any
-
   beforeEach(() => {
     vi.clearAllMocks()
     wsCallback = undefined
@@ -82,8 +77,10 @@ describe('SelfManagementUserRepositoryImpl', () => {
   it('handles USER_UPDATED WebSocket frame', () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
+      id: 'frame_1',
       type: UserWebSocketEventTypes.USER_UPDATED,
-      payload: dummyUserPayload
+      payload: dummyUserPayload,
+      timestamp: 1000
     })
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalled()
   })
@@ -91,8 +88,10 @@ describe('SelfManagementUserRepositoryImpl', () => {
   it('handles SESSION_DELETED WebSocket frame', () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
+      id: 'frame_2',
       type: UserWebSocketEventTypes.SESSION_DELETED,
-      payload: null
+      payload: null,
+      timestamp: 1000
     })
     expect(mockUserStorage.clear).toHaveBeenCalled()
     expect(mockAuthStorage.clearTokens).toHaveBeenCalled()

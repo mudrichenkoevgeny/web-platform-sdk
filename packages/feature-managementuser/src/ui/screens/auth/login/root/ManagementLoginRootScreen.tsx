@@ -28,13 +28,16 @@ const ManagementLoginRootContent: React.FC<{
 
   const currentDestination = stack[stack.length - 1]
 
+  if (!currentDestination) {
+    return null
+  }
+
   const renderActiveScreen = () => {
     switch (currentDestination.type) {
       case 'welcome':
         return (
           <LoginWelcomeScreen
             dependencies={{
-              appType: AppType.MANAGEMENT,
               externalLauncher: dependencies.externalLauncher,
               getOpenGlobalSettingsUseCase: dependencies.getOpenGlobalSettingsUseCase,
               getAvailableUserAuthProvidersUseCase: dependencies.getAvailableUserAuthProvidersUseCase,

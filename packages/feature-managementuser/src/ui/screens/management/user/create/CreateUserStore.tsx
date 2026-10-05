@@ -13,6 +13,7 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
 export interface CreateUserScreenState {
   email: string
   password: string
+  isPasswordVisible: boolean
   role: UserRole
   status: UserAccountStatus
   authorityLevel: string
@@ -30,6 +31,7 @@ export interface CreateUserStoreState {
   screenState: CreateUserScreenState
   onEmailChanged: (value: string) => void
   onPasswordChanged: (value: string) => void
+  onTogglePasswordVisibility: () => void
   onRoleChanged: (value: UserRole) => void
   onStatusChanged: (value: UserAccountStatus) => void
   onAuthorityLevelChanged: (value: string) => void
@@ -46,6 +48,7 @@ export const createCreateUserStore = (
   const defaultState: CreateUserScreenState = {
     email: '',
     password: '',
+    isPasswordVisible: false,
     role: UserRole.USER,
     status: UserAccountStatus.ACTIVE,
     authorityLevel: '0',
@@ -63,6 +66,10 @@ export const createCreateUserStore = (
 
     onPasswordChanged: (value: string) => {
       set({ screenState: { ...get().screenState, password: value, error: null } })
+    },
+
+    onTogglePasswordVisibility: () => {
+      set({ screenState: { ...get().screenState, isPasswordVisible: !get().screenState.isPasswordVisible } })
     },
 
     onRoleChanged: (value: UserRole) => {
@@ -91,9 +98,9 @@ export const createCreateUserStore = (
         email: current.email.trim(),
         password: current.password.trim() || null,
         role: current.role,
-        status: current.status,
-        authorityLevel: authLevel,
-        permissionCodes: []
+        account_status: current.status,
+        authority_level: authLevel,
+        permission_codes: []
       })
 
       if (isSuccess(result)) {

@@ -4,15 +4,12 @@ import type { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type {
   AuthStorage,
   ConfirmationRepository,
-  IdentifierRepository,
   LoginRepository,
-  OpenAuthSettingsStorage,
   RefreshTokenRepository,
   ResetPasswordRepository,
   SessionRepository,
   UnlockRepository,
   UserAuthServices,
-  UserRepository,
   UserSecurityRepository,
   UserStorage
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -31,7 +28,6 @@ import {
   EnableTotpUseCase,
   EncryptedUserStorage,
   FetchOpenUserConfigurationApi,
-  GetAuthSettingsUseCase,
   GetAvailableUserAuthProvidersUseCase,
   GetRecoveryCodesUseCase,
   GetSessionUseCase,
@@ -42,7 +38,6 @@ import {
   LoginByTotpRecoveryCodeUseCase,
   LoginByTotpUseCase,
   LogoutUseCase,
-  ObserveAuthSettingsUseCase,
   ReauthenticateSessionUseCase,
   RefreshTokenUseCase,
   RegenerateRecoveryCodesUseCase,
@@ -62,19 +57,17 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
-  AuditActionType,
-  AuditResourceType,
-  CommonAuditMetadataKey,
+  commonAuditMetadataKeySchema,
   CompositeAuditActionTypeParser,
   CompositeAuditMetadataKeyParser,
   CompositeAuditResourceTypeParser,
-  SecurityAuditActionType,
-  SecurityAuditResourceType,
-  SettingsAuditActionType,
-  SettingsAuditResourceType,
-  UserAuditActionType,
-  UserAuditMetadataKey,
-  UserAuditResourceType
+  securityAuditActionTypeSchema,
+  securityAuditResourceTypeSchema,
+  settingsAuditActionTypeSchema,
+  settingsAuditResourceTypeSchema,
+  userAuditActionTypeSchema,
+  userAuditMetadataKeySchema,
+  userAuditResourceTypeSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
@@ -97,7 +90,6 @@ import { FetchManagementSecuritySettingsApi } from '@/network/api/security/setti
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 import { FetchManagementSessionApi } from '@/network/api/session/fetch-management-session-api'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
-import type { ManagementUserSecurityApi } from '@/network/api/user/security/management-user-security-api'
 import { FetchManagementUserSecurityApi } from '@/network/api/user/security/fetch-management-user-security-api'
 import { FetchSelfManagementUserSecurityApi } from '@/network/api/user/security/fetch-self-management-user-security-api'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
@@ -116,6 +108,7 @@ import type { ManagementGlobalSettingsRepository } from '@/repository/global-set
 import { ManagementGlobalSettingsRepositoryImpl } from '@/repository/global-settings/management-global-settings-repository-impl'
 import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 import { ManagementIdentifierRepositoryImpl } from '@/repository/identifier/management-identifier-repository-impl'
+import type { SelfManagementIdentifierRepository } from '@/repository/identifier/self-management-identifier-repository'
 import { SelfManagementIdentifierRepositoryImpl } from '@/repository/identifier/self-management-identifier-repository-impl'
 import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 import { ManagementSecuritySettingsRepositoryImpl } from '@/repository/security/settings/management-security-settings-repository-impl'
@@ -124,6 +117,7 @@ import { ManagementSessionRepositoryImpl } from '@/repository/session/management
 import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 import { ManagementUserRepositoryImpl } from '@/repository/user/management-user-repository-impl'
+import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
 import type { ManagementUserSecurityRepository } from '@/repository/user/security/management-user-security-repository'
 import { ManagementUserSecurityRepositoryImpl } from '@/repository/user/security/management-user-security-repository-impl'
@@ -248,11 +242,11 @@ export class ManagementUserComponent {
   public readonly selfManagementResetPasswordRepository: ResetPasswordRepository
   public readonly selfManagementUnlockRepository: UnlockRepository
   public readonly managementAuthSettingsRepository: ManagementAuthSettingsRepository
-  public readonly selfManagementIdentifierRepository: IdentifierRepository
+  public readonly selfManagementIdentifierRepository: SelfManagementIdentifierRepository
   public readonly managementIdentifierRepository: ManagementIdentifierRepository
   public readonly selfManagementSessionRepository: SessionRepository
   public readonly managementSessionRepository: ManagementSessionRepository
-  public readonly selfManagementUserRepository: UserRepository
+  public readonly selfManagementUserRepository: SelfManagementUserRepository
   public readonly managementUserRepository: ManagementUserRepository
   public readonly selfManagementUserSecurityRepository: UserSecurityRepository
   public readonly managementUserSecurityRepository: ManagementUserSecurityRepository
@@ -419,26 +413,20 @@ export class ManagementUserComponent {
       this.commonComponent.webSocketService
     )
 
-    const compositeActionTypeParser = new CompositeAuditActionTypeParser(
-      new Set([
-        ...Object.values(UserAuditActionType),
-        ...Object.values(SecurityAuditActionType),
-        ...Object.values(SettingsAuditActionType)
-      ] as unknown as AuditActionType[])
-    )
-    const compositeResourceTypeParser = new CompositeAuditResourceTypeParser(
-      new Set([
-        ...Object.values(UserAuditResourceType),
-        ...Object.values(SecurityAuditResourceType),
-        ...Object.values(SettingsAuditResourceType)
-      ] as unknown as AuditResourceType[])
-    )
-    const compositeMetadataKeyParser = new CompositeAuditMetadataKeyParser(
-      new Set([
-        ...Object.values(CommonAuditMetadataKey),
-        ...Object.values(UserAuditMetadataKey)
-      ])
-    )
+    const compositeActionTypeParser = new CompositeAuditActionTypeParser([
+      (value: string) => userAuditActionTypeSchema.safeParse(value).data ?? null,
+      (value: string) => securityAuditActionTypeSchema.safeParse(value).data ?? null,
+      (value: string) => settingsAuditActionTypeSchema.safeParse(value).data ?? null
+    ])
+    const compositeResourceTypeParser = new CompositeAuditResourceTypeParser([
+      (value: string) => userAuditResourceTypeSchema.safeParse(value).data ?? null,
+      (value: string) => securityAuditResourceTypeSchema.safeParse(value).data ?? null,
+      (value: string) => settingsAuditResourceTypeSchema.safeParse(value).data ?? null
+    ])
+    const compositeMetadataKeyParser = new CompositeAuditMetadataKeyParser([
+      (value: string) => commonAuditMetadataKeySchema.safeParse(value).data ?? null,
+      (value: string) => userAuditMetadataKeySchema.safeParse(value).data ?? null
+    ])
 
     this.managementAuditRepository = new ManagementAuditRepositoryImpl(
       this.managementAuditApi,
@@ -467,9 +455,9 @@ export class ManagementUserComponent {
       this.settingsComponent.globalSettingsRepository,
       this.securityComponent.securitySettingsRepository
     )
-    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, this.selfManagementUserRepository)
-    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(this.selfManagementUserRepository)
-    this.restoreUserUseCase = new RestoreUserUseCase(this.selfManagementUserRepository)
+    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, this.selfManagementUserRepository as any)
+    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(this.selfManagementUserRepository as any)
+    this.restoreUserUseCase = new RestoreUserUseCase(this.selfManagementUserRepository as any)
     this.setupTotpUseCase = new SetupTotpUseCase(this.selfManagementUserSecurityRepository)
     this.enableTotpUseCase = new EnableTotpUseCase(this.selfManagementUserSecurityRepository)
     this.disableTotpUseCase = new DisableTotpUseCase(this.selfManagementUserSecurityRepository)
@@ -480,18 +468,18 @@ export class ManagementUserComponent {
     this.deleteSessionUseCase = new DeleteSessionUseCase(this.selfManagementSessionRepository)
     this.deleteAllOtherSessionsUseCase = new DeleteAllOtherSessionsUseCase(this.selfManagementSessionRepository)
     this.reauthenticateSessionUseCase = new ReauthenticateSessionUseCase(this.selfManagementSessionRepository)
-    this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(this.selfManagementIdentifierRepository)
-    this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(this.selfManagementIdentifierRepository)
-    this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(this.selfManagementIdentifierRepository)
-    this.sendAddEmailIdentifierConfirmationUseCase = new SendAddEmailIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository)
-    this.addUserIdentifierEmailUseCase = new AddUserIdentifierEmailUseCase(this.selfManagementIdentifierRepository)
-    this.sendAddPhoneIdentifierConfirmationUseCase = new SendAddPhoneIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository)
-    this.addUserIdentifierPhoneUseCase = new AddUserIdentifierPhoneUseCase(this.selfManagementIdentifierRepository)
+    this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(this.selfManagementIdentifierRepository as any)
+    this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(this.selfManagementIdentifierRepository as any)
+    this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(this.selfManagementIdentifierRepository as any)
+    this.sendAddEmailIdentifierConfirmationUseCase = new SendAddEmailIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository as any)
+    this.addUserIdentifierEmailUseCase = new AddUserIdentifierEmailUseCase(this.selfManagementIdentifierRepository as any)
+    this.sendAddPhoneIdentifierConfirmationUseCase = new SendAddPhoneIdentifierConfirmationUseCase(this.selfManagementIdentifierRepository as any)
+    this.addUserIdentifierPhoneUseCase = new AddUserIdentifierPhoneUseCase(this.selfManagementIdentifierRepository as any)
     this.addUserIdentifierGoogleUseCase = new AddUserIdentifierGoogleUseCase(
       this.authServices.googleAuth ?? new DisabledGoogleAuthService(),
-      this.selfManagementIdentifierRepository
+      this.selfManagementIdentifierRepository as any
     )
-    this.emailChangePasswordUseCase = new EmailChangePasswordUseCase(this.selfManagementIdentifierRepository)
+    this.emailChangePasswordUseCase = new EmailChangePasswordUseCase(this.selfManagementIdentifierRepository as any)
     this.getUsersUseCase = new GetUsersUseCase(this.managementUserRepository)
     this.getUserUseCase = new GetUserUseCase(this.managementUserRepository)
     this.createUserUseCase = new CreateUserUseCase(this.managementUserRepository)
@@ -523,7 +511,7 @@ export class ManagementUserComponent {
 
     this.userWebSocketMessageHandler = new UserWebSocketMessageHandler(
       this.userStorage,
-      this.selfManagementUserRepository,
+      this.selfManagementUserRepository as any,
       this.authStorage,
       this.refreshTokenUseCase
     )

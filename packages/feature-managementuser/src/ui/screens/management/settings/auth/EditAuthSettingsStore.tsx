@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'

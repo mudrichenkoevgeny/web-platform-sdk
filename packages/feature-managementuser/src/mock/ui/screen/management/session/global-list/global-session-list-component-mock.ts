@@ -19,6 +19,7 @@ export const globalSessionListDependenciesMock = (
     execute: async () => appResultSuccess({})
   } as any,
   onNavigateToSessionDetail: () => {},
+  onNavigateToUserDetail: () => {},
   onBack: () => {},
   ...overrides
 })

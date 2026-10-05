@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchSelfManagementRefreshTokenApi } from '@/network/api/auth/refreshtoken/FetchSelfManagementRefreshTokenApi'
+import { FetchSelfManagementRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-self-management-refresh-token-api'
 import { SelfManagementRefreshTokenRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementRefreshTokenApi', () => {

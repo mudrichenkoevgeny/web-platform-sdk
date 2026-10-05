@@ -149,7 +149,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
                 key={session.id}
                 session={session}
                 enabled={!actionLoading}
-                onRevokeClick={() => onDeleteSessionClick(session.userId, String(session.id))}
+                onRevokeClick={() => onDeleteSessionClick(session.userId, session.id)}
                 onSessionClick={() => onSessionClick(session)}
                 strings={strings}
               />

@@ -1,5 +1,7 @@
 import React, { forwardRef } from 'react'
+import type { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import {
+  toUserIdOrThrow,
   toUserIdentifierIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
@@ -201,6 +203,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
             managementGetSessionsUseCase: deps.managementGetSessionsUseCase,
             managementDeleteSessionUseCase: deps.managementDeleteSessionUseCase,
             onNavigateToSessionDetail: (session) => push({ type: 'session_detail', sessionId: session.id }),
+            onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId: toUserIdOrThrow(userId) }),
             onBack: pop
           }}
           strings={strings}
@@ -213,17 +216,17 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
           dependencies={{
             sessionId: activeDestination.sessionId,
             getSessionUseCase: {
-              execute: async (id) => {
+              execute: async (id: UserSessionId) => {
                 if (deps.managementGetSessionUseCase) {
                   return deps.managementGetSessionUseCase.execute(id)
                 }
-                return appResultFailure(CommonError.Unknown())
+                return appResultFailure(CommonError.unknown())
               }
-            },
-            revokeSessionUseCase: {
-              execute: async (sessionId) => {
+            } as any,
+            deleteSessionUseCase: {
+              execute: async (sessionId: UserSessionId) => {
                 if (!deps.managementGetSessionUseCase) {
-                  return appResultFailure(CommonError.Unknown())
+                  return appResultFailure(CommonError.unknown())
                 }
 
                 const sessionRes = await deps.managementGetSessionUseCase.execute(sessionId)
@@ -233,7 +236,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
                 return deps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, String(sessionId))
               }
-            },
+            } as any,
             onNavigateToIdentifierDetail: (identifierId) => push({ type: 'identifier_detail', identifierId }),
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),
             onNavigateToProfile: () => push({ type: 'main' }),
@@ -248,7 +251,8 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <GlobalIdentifierListScreen
           dependencies={{
             managementGetIdentifiersUseCase: deps.managementGetIdentifiersUseCase,
-            onIdentifierSelect: (identifierId) => push({ type: 'identifier_detail', identifierId: toUserIdentifierIdOrThrow(identifierId) }),
+            managementDeleteIdentifierUseCase: deps.managementDeleteIdentifierUseCase,
+            onNavigateToIdentifierDetail: (identifierId) => push({ type: 'identifier_detail', identifierId: toUserIdentifierIdOrThrow(identifierId) }),
             onBack: pop
           }}
           strings={strings}
@@ -260,18 +264,18 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <IdentifierDetailScreen
           dependencies={{
             identifierId: activeDestination.identifierId,
-            getIdentifierUseCase: {
-              execute: async (id) => {
+            getUserIdentifierUseCase: {
+              execute: async (id: UserIdentifierId) => {
                 if (deps.managementGetIdentifierUseCase) {
                   return deps.managementGetIdentifierUseCase.execute(id)
                 }
-                return appResultFailure(CommonError.Unknown())
+                return appResultFailure(CommonError.unknown())
               }
-            },
-            deleteIdentifierUseCase: {
-              execute: async (id) => {
+            } as any,
+            deleteUserIdentifierUseCase: {
+              execute: async (id: UserIdentifierId) => {
                 if (!deps.managementGetIdentifierUseCase) {
-                  return appResultFailure(CommonError.Unknown())
+                  return appResultFailure(CommonError.unknown())
                 }
 
                 const idRes = await deps.managementGetIdentifierUseCase.execute(id)
@@ -281,11 +285,11 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
                 return deps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, String(id))
               }
-            },
-            deleteIdentifierPasswordUseCase: {
-              execute: async (id) => {
+            } as any,
+            deletePasswordUseCase: {
+              execute: async (id: UserIdentifierId) => {
                 if (!deps.managementGetIdentifierUseCase) {
-                  return appResultFailure(CommonError.Unknown())
+                  return appResultFailure(CommonError.unknown())
                 }
 
                 const idRes = await deps.managementGetIdentifierUseCase.execute(id)

@@ -15,7 +15,10 @@ export const globalIdentifierListDependenciesMock = (
         totalPages: 1
       })
   } as any,
-  onIdentifierSelect: () => {},
+  managementDeleteIdentifierUseCase: {
+    execute: async () => appResultSuccess(undefined)
+  } as any,
+  onNavigateToIdentifierDetail: () => {},
   onBack: () => {},
   ...overrides
 })

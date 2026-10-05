@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'

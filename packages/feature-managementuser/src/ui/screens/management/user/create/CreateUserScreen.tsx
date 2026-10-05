@@ -62,9 +62,10 @@ const getUserRoleLabel = (role: UserRole, strings: FeatureManagementUserStrings)
 const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
-  const screenState = useCreateUserStore((s) => s.screenState)
+  const { email, password, isPasswordVisible, role, status, authorityLevel, isLoading, error } = useCreateUserStore((s) => s.screenState)
   const onEmailChanged = useCreateUserStore((s) => s.onEmailChanged)
   const onPasswordChanged = useCreateUserStore((s) => s.onPasswordChanged)
+  const onTogglePasswordVisibility = useCreateUserStore((s) => s.onTogglePasswordVisibility)
   const onRoleChanged = useCreateUserStore((s) => s.onRoleChanged)
   const onStatusChanged = useCreateUserStore((s) => s.onStatusChanged)
   const onAuthorityLevelChanged = useCreateUserStore((s) => s.onAuthorityLevelChanged)
@@ -77,16 +78,6 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   const roleId = useId()
   const statusId = useId()
   const authLevelId = useId()
-
-  const {
-    email,
-    password,
-    role,
-    status,
-    authorityLevel,
-    isLoading,
-    error
-  } = screenState
 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
@@ -117,6 +108,8 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           value={password}
           onChange={(e) => onPasswordChanged(e.target.value)}
           label={strings.password}
+          isPasswordVisible={isPasswordVisible}
+          onTogglePasswordVisibility={onTogglePasswordVisibility}
           disabled={isLoading}
         />
 

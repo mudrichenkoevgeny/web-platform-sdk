@@ -21,7 +21,7 @@ export const auditEventMock = (overrides?: Partial<AuditEvent>): AuditEvent => (
   resourceId: null,
   resourceValueSensitivity: AuditValueSensitivity.NON_SENSITIVE,
   status: AuditStatus.SUCCESS,
-  metadata: new Set(),
+  metadata: [],
   message: null,
   createdAt: 0,
   ...overrides

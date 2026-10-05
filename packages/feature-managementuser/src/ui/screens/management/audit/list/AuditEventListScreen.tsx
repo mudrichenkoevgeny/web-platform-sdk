@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect } from 'react'
-import type { AuditEventId } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,

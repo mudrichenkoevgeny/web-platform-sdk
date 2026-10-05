@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { appResultSuccess, appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -22,8 +22,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementAuditRepositoryMock()
       const useCase = new GetAuditEventsUseCase(repo)
 
-      const result = await useCase.execute({ page: 0, pageSize: 10 })
-      expect(result.success).toBe(true)
+      const result = await useCase.execute({ pageNumber: 1, pageSize: 10 })
+      expect(isSuccess(result)).toBe(true)
     })
   })
 
@@ -32,8 +32,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementUserRepositoryMock()
       const useCase = new GetUsersUseCase(repo)
 
-      const result = await useCase.execute({ page: 0, pageSize: 10 })
-      expect(result.success).toBe(true)
+      const result = await useCase.execute({ pageNumber: 1, pageSize: 10 })
+      expect(isSuccess(result)).toBe(true)
     })
   })
 
@@ -43,7 +43,7 @@ describe('Management User Use Cases', () => {
       const useCase = new GetManagementAuthSettingsUseCase(repo)
 
       const result = await useCase.execute()
-      expect(result.success).toBe(true)
+      expect(isSuccess(result)).toBe(true)
     })
   })
 
@@ -53,7 +53,7 @@ describe('Management User Use Cases', () => {
       const useCase = new GetManagementGlobalSettingsUseCase(repo)
 
       const result = await useCase.execute()
-      expect(result.success).toBe(true)
+      expect(isSuccess(result)).toBe(true)
     })
   })
 
@@ -63,7 +63,7 @@ describe('Management User Use Cases', () => {
       const useCase = new GetManagementSecuritySettingsUseCase(repo)
 
       const result = await useCase.execute()
-      expect(result.success).toBe(true)
+      expect(isSuccess(result)).toBe(true)
     })
   })
 
@@ -71,18 +71,36 @@ describe('Management User Use Cases', () => {
     it('fetches user configuration and updates core repositories on success', async () => {
       const mockPayload: OpenUserConfigurationPayload = {
         open_global_settings: {
-          default_language: 'en',
-          supported_languages: ['en', 'ru'],
+          privacy_policy_url: null,
           terms_of_service_url: null,
-          privacy_policy_url: null
+          contact_support_email: null,
+          min_supported_app_versions: {}
         },
         open_security_settings: {
-          is_mfa_enabled: false,
-          password_policy: { min_length: 8, is_digit_required: false, is_lowercase_required: false, is_uppercase_required: false, is_special_char_required: false }
+          open_password_policy: {
+            min_length: 8,
+            require_letter: false,
+            require_upper_case: false,
+            require_lower_case: false,
+            require_digit: false,
+            require_special_char: false
+          },
+          otp_confirmation: {
+            retry_after_seconds: 60,
+            number_of_symbols: 6,
+            expiration_seconds: 300
+          }
         },
         open_auth_settings: {
-          password_policy: { min_length: 8, is_digit_required: false, is_lowercase_required: false, is_uppercase_required: false, is_special_char_required: false },
-          allowed_auth_providers: []
+          available_auth_providers: {
+            primary: [],
+            secondary: []
+          },
+          max_total_identifiers: 5,
+          max_email_identifiers: 2,
+          max_phone_identifiers: 2,
+          max_identifiers_per_external_provider: 1,
+          is_registration_enabled: true
         }
       }
 
@@ -104,7 +122,7 @@ describe('Management User Use Cases', () => {
 
       const result = await useCase.execute()
 
-      expect(result.success).toBe(true)
+      expect(isSuccess(result)).toBe(true)
       expect(updateGlobalSpy).toHaveBeenCalledTimes(1)
       expect(updateSecuritySpy).toHaveBeenCalledTimes(1)
     })
@@ -128,7 +146,7 @@ describe('Management User Use Cases', () => {
 
       const result = await useCase.execute()
 
-      expect(result.success).toBe(false)
+      expect(isSuccess(result)).toBe(false)
       expect(updateGlobalSpy).not.toHaveBeenCalled()
       expect(updateSecuritySpy).not.toHaveBeenCalled()
     })

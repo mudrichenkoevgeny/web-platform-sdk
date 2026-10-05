@@ -46,7 +46,7 @@ export interface GlobalSessionListStoreState {
   onRefresh: () => Promise<void>
   onToggleFilterPanel: () => void
   onSortChanged: (sortState: ListingSortState | null) => void
-  onFilterChanged: (filterId: string, filterState: ListingFilterState) => void
+  onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => void
   onApplyFilters: () => void
   onSessionClick: (session: UserSession) => void
   onDeleteSessionClick: (userId: string, sessionId: UserSessionId) => Promise<void>
@@ -244,21 +244,31 @@ export const createGlobalSessionListStore = (
       })
     },
 
-    onFilterChanged: (filterId: string, filterState: ListingFilterState) => {
+    onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => {
       const current = get().screenState
       if (current.status !== 'content') {
         return
       }
 
-      set({
-        screenState: {
-          ...current,
-          filterStates: {
-            ...current.filterStates,
-            [filterId]: filterState
+      if (filterState === null) {
+        const { [filterId]: _, ...restFilters } = current.filterStates
+        set({
+          screenState: {
+            ...current,
+            filterStates: restFilters
           }
-        }
-      })
+        })
+      } else {
+        set({
+          screenState: {
+            ...current,
+            filterStates: {
+              ...current.filterStates,
+              [filterId]: filterState
+            }
+          }
+        })
+      }
     },
 
     onApplyFilters: async () => {

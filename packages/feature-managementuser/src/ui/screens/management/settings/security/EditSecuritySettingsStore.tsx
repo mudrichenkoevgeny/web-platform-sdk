@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -431,7 +431,7 @@ export const createEditSecuritySettingsStore = (
           requireLowerCase: current.passwordRequireLowerCase,
           requireDigit: current.passwordRequireDigit,
           requireSpecialChar: current.passwordRequireSpecialChar,
-          commonPasswords: commonPasses
+          commonPasswords: Array.from(commonPasses)
         },
         otpConfirmation: {
           retryAfterSeconds: parseIntegerOrDefault(current.otpRetryAfterSeconds, 60),

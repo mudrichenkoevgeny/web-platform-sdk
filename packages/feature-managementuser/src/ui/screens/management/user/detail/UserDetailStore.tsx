@@ -175,10 +175,11 @@ export const createUserDetailStore = (
         : current.user.temporaryLockoutUntil
 
       const result = await deps.updateUserUseCase.execute(deps.userId, {
-        accountStatus: current.accountStatusInput,
-        authorityLevel: authLevel,
-        lockoutType: current.lockoutTypeInput,
-        temporaryLockoutUntil: tempLockout
+        account_status: current.accountStatusInput,
+        authority_level: authLevel,
+        permission_codes: null,
+        account_lockout_type: current.lockoutTypeInput,
+        temporary_lockout_until: tempLockout
       })
 
       if (isSuccess(result)) {

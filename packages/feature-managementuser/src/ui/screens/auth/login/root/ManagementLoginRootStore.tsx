@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { AppType } from '@mudrichenkoevgeny/shared-foundation'
-import type {
-  ExternalLauncher,
-  GetGlobalSettingsUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ExternalLauncher } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type {
   GetAvailableUserAuthProvidersUseCase,
@@ -26,7 +24,7 @@ import type { ManagementLoginDestination } from '@/ui/screens/auth/login/managem
 
 export interface ManagementLoginRootStoreDependencies {
   appType: AppType
-  getOpenGlobalSettingsUseCase: GetGlobalSettingsUseCase
+  getOpenGlobalSettingsUseCase: GetOpenGlobalSettingsUseCase
   getAvailableUserAuthProvidersUseCase: GetAvailableUserAuthProvidersUseCase
   loginByEmailUseCase: LoginByEmailUseCase
   resetPasswordRepository: ResetPasswordRepository

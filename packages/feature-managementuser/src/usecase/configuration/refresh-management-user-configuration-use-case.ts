@@ -1,6 +1,8 @@
 import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { toOpenGlobalSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { toOpenSecuritySettings } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { toOpenUserConfiguration } from '@mudrichenkoevgeny/shared-foundation'
@@ -31,14 +33,12 @@ export class RefreshManagementUserConfigurationUseCase {
    */
   public async execute(): Promise<AppResult<OpenUserConfiguration, AppError>> {
     const apiResult = await this.openUserConfigurationApi.getOpenUserConfiguration()
-    const userConfigurationResult = mapSuccess(apiResult, (payload) => toOpenUserConfiguration(payload))
 
-    if (isSuccess(userConfigurationResult)) {
-      const userConfiguration = userConfigurationResult.data
-      await this.openGlobalSettingsRepository.updateOpenGlobalSettings(userConfiguration.openGlobalSettings)
-      await this.openSecuritySettingsRepository.updateOpenSecuritySettings(userConfiguration.openSecuritySettings)
+    if (isSuccess(apiResult)) {
+      await this.openGlobalSettingsRepository.updateOpenGlobalSettings(toOpenGlobalSettings(apiResult.data.open_global_settings))
+      await this.openSecuritySettingsRepository.updateOpenSecuritySettings(toOpenSecuritySettings(apiResult.data.open_security_settings))
     }
 
-    return userConfigurationResult
+    return mapSuccess(apiResult, (payload) => toOpenUserConfiguration(payload))
   }
 }

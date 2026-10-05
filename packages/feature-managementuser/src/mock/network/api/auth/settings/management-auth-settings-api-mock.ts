@@ -11,7 +11,7 @@ export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi 
   public resetCallCount = 0
 
   public getResultProvider: () => Promise<AppResult<ManagementAuthSettingsPayload, AppError>> = async () =>
-    appResultFailure(CommonError.unknown(undefined, false))
+    appResultFailure(CommonError.unknown(false))
 
   public updateResultProvider: () => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)
