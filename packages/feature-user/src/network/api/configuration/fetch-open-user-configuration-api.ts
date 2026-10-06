@@ -1,7 +1,9 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenUserConfigurationApi } from '@/network/api/configuration/open-user-configuration-api'
+import { OpenUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenUserConfigurationApi } from '@/network/api/configuration/open-user-configuration-api'
+
 /** {@link OpenUserConfigurationApi} implementation backed by {@link HttpClient}. */
 export class FetchOpenUserConfigurationApi implements OpenUserConfigurationApi {
   /**
@@ -12,11 +14,14 @@ export class FetchOpenUserConfigurationApi implements OpenUserConfigurationApi {
   public constructor(private readonly client: HttpClient) {}
 
   /**
-   * Loads open user configuration via GET /global-settings or configuration route.
+   * Loads open user configuration via open user configuration route.
    *
    * @returns AppResult containing OpenUserConfigurationPayload or AppError
    */
   public async getOpenUserConfiguration(): Promise<AppResult<OpenUserConfigurationPayload, AppError>> {
-    return callResult(() => this.client.request<OpenUserConfigurationPayload>('/configuration'))
+    const route = OpenUserConfigurationRoutes.GET_CONFIGURATION.startsWith('/')
+      ? OpenUserConfigurationRoutes.GET_CONFIGURATION
+      : `/${OpenUserConfigurationRoutes.GET_CONFIGURATION}`
+    return callResult(() => this.client.request<OpenUserConfigurationPayload>(route))
   }
 }

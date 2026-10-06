@@ -180,6 +180,12 @@ export class AuthHttpClientConfigPlugin implements HttpClientConfigPlugin {
   }
 
   private async handleSessionInvalidated(): Promise<void> {
+    const accessToken = await this.authStorage.getAccessTokenModel()
+    const refreshToken = await this.authStorage.getRefreshToken()
+    if (!accessToken && !refreshToken) {
+      return
+    }
+
     if (this.onSessionCleared) {
       await this.onSessionCleared()
     } else {

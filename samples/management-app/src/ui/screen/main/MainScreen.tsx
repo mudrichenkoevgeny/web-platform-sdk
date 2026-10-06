@@ -8,10 +8,17 @@ import {
   type ManagementRootStoreDependencies
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import {
+  IdentifierDetailScreen,
   MainProfileScreen,
   type MainProfileStoreDependencies,
   MfaChallengeDialog,
-  type MfaChallengeRequest
+  type MfaChallengeRequest,
+  type ProfileDestination,
+  SelfIdentifierListScreen,
+  SelfSessionListScreen,
+  SessionDetailScreen,
+  TotpMainScreen,
+  TotpRecoveryCodesScreen
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useManagementAppComponent } from '@/di/management-app-context'
 import { HomeScreen } from '@/ui/screen/home/HomeScreen'
@@ -28,6 +35,7 @@ export function MainScreen(): React.JSX.Element {
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
+  const [profileStack, setProfileStack] = useState<ProfileDestination[]>([{ type: 'main' }])
 
   useHashRouter(activeTab, setActiveTab)
 
@@ -46,6 +54,11 @@ export function MainScreen(): React.JSX.Element {
       setMfaRequest(req)
     })
   }, [appComponent])
+
+  const popProfile = () => setProfileStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev))
+  const pushProfile = (dest: ProfileDestination) => setProfileStack((prev) => [...prev, dest])
+
+  const currentProfileDest = profileStack[profileStack.length - 1] ?? { type: 'main' }
 
   const destinations = useMemo(() => getDestinations(isAuthorized), [isAuthorized])
 
@@ -84,9 +97,9 @@ export function MainScreen(): React.JSX.Element {
       getAuthSettingsUseCase: appComponent.managementUserComponent.getManagementAuthSettingsUseCase as any,
       observeAuthSettingsUseCase: appComponent.managementUserComponent.refreshManagementAuthSettingsUseCase as any,
       onNavigateToLogin: () => setIsLoginOpen(true),
-      onNavigateToTotp: () => {},
-      onNavigateToSessions: () => {},
-      onNavigateToIdentifiers: () => {}
+      onNavigateToTotp: () => pushProfile({ type: 'totpMain' }),
+      onNavigateToSessions: () => pushProfile({ type: 'sessions' }),
+      onNavigateToIdentifiers: () => pushProfile({ type: 'identifiers' })
     }),
     [appComponent]
   )
@@ -129,6 +142,111 @@ export function MainScreen(): React.JSX.Element {
     setActiveTab(tabKey)
   }
 
+  const renderProfileScreen = () => {
+    switch (currentProfileDest.type) {
+      case 'main':
+        return <MainProfileScreen dependencies={profileDependencies} />
+      case 'totpMain':
+        return (
+          <TotpMainScreen
+            dependencies={{
+              userRepository: appComponent.managementUserComponent.selfManagementUserRepository as any,
+              setupTotpUseCase: appComponent.managementUserComponent.setupTotpUseCase,
+              enableTotpUseCase: appComponent.managementUserComponent.enableTotpUseCase,
+              disableTotpUseCase: appComponent.managementUserComponent.disableTotpUseCase,
+              onNavigateToRecoveryCodes: () => pushProfile({ type: 'totpRecoveryCodes' }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'totpRecoveryCodes':
+        return (
+          <TotpRecoveryCodesScreen
+            dependencies={{
+              getRecoveryCodesUseCase: appComponent.managementUserComponent.getRecoveryCodesUseCase,
+              regenerateRecoveryCodesUseCase: appComponent.managementUserComponent.regenerateRecoveryCodesUseCase,
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'sessions':
+        return (
+          <SelfSessionListScreen
+            dependencies={{
+              getSessionsUseCase: appComponent.managementUserComponent.getSessionsUseCase,
+              deleteSessionUseCase: appComponent.managementUserComponent.deleteSessionUseCase,
+              deleteAllOtherSessionsUseCase: appComponent.managementUserComponent.deleteAllOtherSessionsUseCase,
+              authStorage: appComponent.managementUserComponent.authStorage,
+              onNavigateToSessionDetail: (session) =>
+                pushProfile({ type: 'sessionDetail', sessionId: session.id }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'sessionDetail':
+        return (
+          <SessionDetailScreen
+            dependencies={{
+              sessionId: currentProfileDest.sessionId,
+              getSessionUseCase: appComponent.managementUserComponent.getSessionUseCase,
+              deleteSessionUseCase: appComponent.managementUserComponent.deleteSessionUseCase,
+              authStorage: appComponent.managementUserComponent.authStorage,
+              onNavigateToIdentifierDetail: (identifierId) =>
+                pushProfile({ type: 'identifierDetail', identifierId }),
+              onNavigateToProfile: () => setProfileStack([{ type: 'main' }]),
+              onNavigateToUserDetail: () => setProfileStack([{ type: 'main' }]),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'identifiers':
+        return (
+          <SelfIdentifierListScreen
+            dependencies={{
+              appType: AppType.MANAGEMENT,
+              getUserIdentifiersUseCase: appComponent.managementUserComponent.getUserIdentifiersUseCase,
+              getAvailableUserAuthProvidersUseCase:
+                appComponent.managementUserComponent.getAvailableUserAuthProvidersUseCase,
+              sendAddEmailIdentifierConfirmationUseCase:
+                appComponent.managementUserComponent.sendAddEmailIdentifierConfirmationUseCase,
+              addUserIdentifierEmailUseCase:
+                appComponent.managementUserComponent.addUserIdentifierEmailUseCase,
+              sendAddPhoneIdentifierConfirmationUseCase:
+                appComponent.managementUserComponent.sendAddPhoneIdentifierConfirmationUseCase,
+              addUserIdentifierPhoneUseCase:
+                appComponent.managementUserComponent.addUserIdentifierPhoneUseCase,
+              addUserIdentifierGoogleUseCase:
+                appComponent.managementUserComponent.addUserIdentifierGoogleUseCase,
+              identifierRepository: appComponent.managementUserComponent.identifierRepository,
+              authStorage: appComponent.managementUserComponent.authStorage,
+              onIdentifierSelect: (identifierId) =>
+                pushProfile({ type: 'identifierDetail', identifierId }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'identifierDetail':
+        return (
+          <IdentifierDetailScreen
+            dependencies={{
+              identifierId: currentProfileDest.identifierId,
+              getUserIdentifierUseCase: appComponent.managementUserComponent.getUserIdentifierUseCase,
+              deleteUserIdentifierUseCase:
+                appComponent.managementUserComponent.deleteUserIdentifierUseCase,
+              emailChangePasswordUseCase:
+                appComponent.managementUserComponent.emailChangePasswordUseCase,
+              authStorage: appComponent.managementUserComponent.authStorage,
+              onNavigateToProfile: () => setProfileStack([{ type: 'main' }]),
+              onNavigateToUserDetail: () => setProfileStack([{ type: 'main' }]),
+              onBack: popProfile
+            }}
+          />
+        )
+      default:
+        return <MainProfileScreen dependencies={profileDependencies} />
+    }
+  }
+
   return (
     <div className="w-full h-screen flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
       {/* Navigation Bar / Rail */}
@@ -159,7 +277,7 @@ export function MainScreen(): React.JSX.Element {
       {/* Screen Content Area */}
       <main className="flex-1 h-full overflow-auto relative">
         {activeTab === 'home' && <HomeScreen />}
-        {activeTab === 'profile' && <MainProfileScreen dependencies={profileDependencies} />}
+        {activeTab === 'profile' && renderProfileScreen()}
         {activeTab === 'settings' && isAuthorized && (
           <ManagementRootScreen dependencies={managementDependencies} />
         )}

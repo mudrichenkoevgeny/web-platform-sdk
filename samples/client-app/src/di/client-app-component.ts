@@ -134,9 +134,7 @@ export class ClientAppComponent {
     }
 
     this.clientAppUseCaseModule = new ClientAppUseCaseModule(
-      this.settingsComponent.refreshOpenGlobalSettingsUseCase,
-      this.securityComponent.refreshSecuritySettingsUseCase,
-      this.clientUserComponent.refreshOpenAuthSettingsUseCase
+      this.clientUserComponent.refreshUserConfigurationUseCase
     )
   }
 

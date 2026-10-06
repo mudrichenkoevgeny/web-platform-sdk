@@ -16,10 +16,10 @@ describe('WebDeviceInfoProvider', () => {
     expect(info.device_id).toBe('device-999')
     expect(info.app_version).toBe('2.1.0')
     expect(info.device_name).toBeDefined()
-    expect(info.operation_system_version).toBeDefined()
+    expect(info.operation_system_version).toBe('web')
   })
 
-  it('handles null device_id when storage is empty', async () => {
+  it('generates and persists device_id when storage is empty', async () => {
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
 
@@ -27,7 +27,10 @@ describe('WebDeviceInfoProvider', () => {
     const info = await provider.getDeviceInfo()
 
     expect(info.client_type).toBe('web')
-    expect(info.device_id).toBeNull()
-    expect(info.app_version).toBe('1.0.0')
+    expect(info.device_id).not.toBeNull()
+    expect(info.app_version).toBe('"unspecified"')
+
+    const storedId = await storage.getDeviceId()
+    expect(storedId).toBe(info.device_id)
   })
 })

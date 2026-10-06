@@ -10,8 +10,8 @@ export interface RootContentProps {
 }
 
 /**
- * Top-level sample UI: shows {@link InitialLoader} until {@link ManagementAppComponent.isInitialized},
- * then provides providers and displays {@link MainScreen}.
+ * Top-level sample UI: initializes SDK services, fetches user configuration, connects WebSockets,
+ * then displays {@link MainScreen}.
  */
 export function RootContent({ managementAppComponent }: RootContentProps): React.JSX.Element {
   const [isInitialized, setIsInitialized] = useState(managementAppComponent.isInitialized)
@@ -21,7 +21,8 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
 
     const initialize = async () => {
       managementAppComponent.init()
-      await managementAppComponent.syncManagementDataUseCase.invoke()
+      await managementAppComponent.refreshUserConfigurationUseCase.execute()
+      managementAppComponent.commonComponent.webSocketService.connect()
       if (isMounted) {
         setIsInitialized(true)
       }

@@ -3,9 +3,11 @@ import {
   cn,
   CoreButton,
   CoreErrorText,
+  CoreIcon,
   CoreTextButton,
   FullscreenLoading,
   FullscreenOverlayLoading,
+  icons,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
@@ -123,13 +125,16 @@ const MainProfileContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         <h2 className="text-xl font-bold text-surface-foreground">
           {strings.profile}
         </h2>
-        <CoreTextButton
+        <button
           type="button"
-          label={strings.resend_code ? strings.resend_code : 'Refresh'}
           onClick={onRefresh}
           disabled={actionLoading}
+          aria-label={strings.retry}
+          className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-50"
           data-testid={MainProfileTestTags.REFRESH_BUTTON}
-        />
+        >
+          <CoreIcon src={icons.refresh} size={20} />
+        </button>
       </div>
 
       <div className="w-full flex-1 flex flex-col items-center justify-center gap-3 my-auto text-center">

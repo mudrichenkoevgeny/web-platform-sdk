@@ -1,8 +1,10 @@
 import { describe, it, expect, vi } from 'vitest'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { HttpClient } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenUserConfigurationApi } from '@/network/api/configuration/fetch-open-user-configuration-api'
+
 describe('FetchOpenUserConfigurationApi', () => {
   it('dispatches GET request for open user configuration', async () => {
     const mockPayload: OpenUserConfigurationPayload = {
@@ -51,6 +53,10 @@ describe('FetchOpenUserConfigurationApi', () => {
     if (isSuccess(result)) {
       expect(result.data).toEqual(mockPayload)
     }
-    expect(mockHttpClient.request).toHaveBeenCalledWith('/configuration')
+
+    const expectedRoute = OpenUserConfigurationRoutes.GET_CONFIGURATION.startsWith('/')
+      ? OpenUserConfigurationRoutes.GET_CONFIGURATION
+      : `/${OpenUserConfigurationRoutes.GET_CONFIGURATION}`
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedRoute)
   })
 })

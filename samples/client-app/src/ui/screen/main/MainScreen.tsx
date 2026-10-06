@@ -6,10 +6,17 @@ import {
   type ClientLoginRootStoreDependencies
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
 import {
+  IdentifierDetailScreen,
   MainProfileScreen,
   type MainProfileStoreDependencies,
   MfaChallengeDialog,
-  type MfaChallengeRequest
+  type MfaChallengeRequest,
+  type ProfileDestination,
+  SelfIdentifierListScreen,
+  SelfSessionListScreen,
+  SessionDetailScreen,
+  TotpMainScreen,
+  TotpRecoveryCodesScreen
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useClientAppComponent } from '@/di/client-app-context'
 import { HomeScreen } from '@/ui/screen/home/HomeScreen'
@@ -24,6 +31,7 @@ export function MainScreen(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<MainTabKey>('home')
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
+  const [profileStack, setProfileStack] = useState<ProfileDestination[]>([{ type: 'main' }])
 
   useHashRouter(activeTab, setActiveTab)
 
@@ -32,6 +40,11 @@ export function MainScreen(): React.JSX.Element {
       setMfaRequest(req)
     })
   }, [appComponent])
+
+  const popProfile = () => setProfileStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev))
+  const pushProfile = (dest: ProfileDestination) => setProfileStack((prev) => [...prev, dest])
+
+  const currentProfileDest = profileStack[profileStack.length - 1] ?? { type: 'main' }
 
   const loginDependencies: ClientLoginRootStoreDependencies = useMemo(
     () => ({
@@ -76,12 +89,117 @@ export function MainScreen(): React.JSX.Element {
       getAuthSettingsUseCase: appComponent.clientUserComponent.getAuthSettingsUseCase,
       observeAuthSettingsUseCase: appComponent.clientUserComponent.observeAuthSettingsUseCase,
       onNavigateToLogin: () => setIsLoginOpen(true),
-      onNavigateToTotp: () => {},
-      onNavigateToSessions: () => {},
-      onNavigateToIdentifiers: () => {}
+      onNavigateToTotp: () => pushProfile({ type: 'totpMain' }),
+      onNavigateToSessions: () => pushProfile({ type: 'sessions' }),
+      onNavigateToIdentifiers: () => pushProfile({ type: 'identifiers' })
     }),
     [appComponent]
   )
+
+  const renderProfileScreen = () => {
+    switch (currentProfileDest.type) {
+      case 'main':
+        return <MainProfileScreen dependencies={profileDependencies} />
+      case 'totpMain':
+        return (
+          <TotpMainScreen
+            dependencies={{
+              userRepository: appComponent.clientUserComponent.userRepository,
+              setupTotpUseCase: appComponent.clientUserComponent.setupTotpUseCase,
+              enableTotpUseCase: appComponent.clientUserComponent.enableTotpUseCase,
+              disableTotpUseCase: appComponent.clientUserComponent.disableTotpUseCase,
+              onNavigateToRecoveryCodes: () => pushProfile({ type: 'totpRecoveryCodes' }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'totpRecoveryCodes':
+        return (
+          <TotpRecoveryCodesScreen
+            dependencies={{
+              getRecoveryCodesUseCase: appComponent.clientUserComponent.getRecoveryCodesUseCase,
+              regenerateRecoveryCodesUseCase: appComponent.clientUserComponent.regenerateRecoveryCodesUseCase,
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'sessions':
+        return (
+          <SelfSessionListScreen
+            dependencies={{
+              getSessionsUseCase: appComponent.clientUserComponent.getSessionsUseCase,
+              deleteSessionUseCase: appComponent.clientUserComponent.deleteSessionUseCase,
+              deleteAllOtherSessionsUseCase: appComponent.clientUserComponent.deleteAllOtherSessionsUseCase,
+              authStorage: appComponent.clientUserComponent.authStorage,
+              onNavigateToSessionDetail: (session) =>
+                pushProfile({ type: 'sessionDetail', sessionId: session.id }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'sessionDetail':
+        return (
+          <SessionDetailScreen
+            dependencies={{
+              sessionId: currentProfileDest.sessionId,
+              getSessionUseCase: appComponent.clientUserComponent.getSessionUseCase,
+              deleteSessionUseCase: appComponent.clientUserComponent.deleteSessionUseCase,
+              authStorage: appComponent.clientUserComponent.authStorage,
+              onNavigateToIdentifierDetail: (identifierId) =>
+                pushProfile({ type: 'identifierDetail', identifierId }),
+              onNavigateToProfile: () => setProfileStack([{ type: 'main' }]),
+              onNavigateToUserDetail: () => setProfileStack([{ type: 'main' }]),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'identifiers':
+        return (
+          <SelfIdentifierListScreen
+            dependencies={{
+              appType: AppType.CLIENT,
+              getUserIdentifiersUseCase: appComponent.clientUserComponent.getUserIdentifiersUseCase,
+              getAvailableUserAuthProvidersUseCase:
+                appComponent.clientUserComponent.getAvailableUserAuthProvidersUseCase,
+              sendAddEmailIdentifierConfirmationUseCase:
+                appComponent.clientUserComponent.sendAddEmailIdentifierConfirmationUseCase,
+              addUserIdentifierEmailUseCase:
+                appComponent.clientUserComponent.addUserIdentifierEmailUseCase,
+              sendAddPhoneIdentifierConfirmationUseCase:
+                appComponent.clientUserComponent.sendAddPhoneIdentifierConfirmationUseCase,
+              addUserIdentifierPhoneUseCase:
+                appComponent.clientUserComponent.addUserIdentifierPhoneUseCase,
+              addUserIdentifierGoogleUseCase:
+                appComponent.clientUserComponent.addUserIdentifierGoogleUseCase,
+              identifierRepository: appComponent.clientUserComponent.identifierRepository,
+              authStorage: appComponent.clientUserComponent.authStorage,
+              onIdentifierSelect: (identifierId) =>
+                pushProfile({ type: 'identifierDetail', identifierId }),
+              onBack: popProfile
+            }}
+          />
+        )
+      case 'identifierDetail':
+        return (
+          <IdentifierDetailScreen
+            dependencies={{
+              identifierId: currentProfileDest.identifierId,
+              getUserIdentifierUseCase: appComponent.clientUserComponent.getUserIdentifierUseCase,
+              deleteUserIdentifierUseCase:
+                appComponent.clientUserComponent.deleteUserIdentifierUseCase,
+              emailChangePasswordUseCase:
+                appComponent.clientUserComponent.emailChangePasswordUseCase,
+              authStorage: appComponent.clientUserComponent.authStorage,
+              onNavigateToProfile: () => setProfileStack([{ type: 'main' }]),
+              onNavigateToUserDetail: () => setProfileStack([{ type: 'main' }]),
+              onBack: popProfile
+            }}
+          />
+        )
+      default:
+        return <MainProfileScreen dependencies={profileDependencies} />
+    }
+  }
 
   return (
     <div className="w-full h-screen flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
@@ -113,7 +231,7 @@ export function MainScreen(): React.JSX.Element {
       {/* Screen Content Area */}
       <main className="flex-1 h-full overflow-auto relative">
         {activeTab === 'home' && <HomeScreen />}
-        {activeTab === 'profile' && <MainProfileScreen dependencies={profileDependencies} />}
+        {activeTab === 'profile' && renderProfileScreen()}
       </main>
 
       {/* Login Dialog Overlay */}

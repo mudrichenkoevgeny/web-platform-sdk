@@ -27,21 +27,27 @@ export class WebDeviceInfoProvider implements DeviceInfoProvider {
    */
   public constructor(
     private readonly commonStorage: CommonStorage,
-    private readonly appVersion: string = '1.0.0'
+    private readonly appVersion: string = '"unspecified"'
   ) {}
 
   /**
    * Resolves browser and device metadata from navigator userAgent and storage.
+   * Generates and persists a device ID if one does not already exist.
    *
    * @returns Device info payload
    */
   public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
-    const rawDeviceId = await this.commonStorage.getDeviceId()
+    let rawDeviceId = await this.commonStorage.getDeviceId()
+    if (!rawDeviceId) {
+      rawDeviceId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : this.generateUUID()
+      await this.commonStorage.updateDeviceId(rawDeviceId)
+    }
+
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : ''
     const language = typeof navigator !== 'undefined' ? navigator.language : null
 
     const deviceName = userAgent ? UserAgentParser.getDeviceName(userAgent) : 'Web'
-    const osName = userAgent ? UserAgentParser.getOs(userAgent) : 'Web'
+    const osName = 'web'
 
     return {
       client_type: ClientType.WEB,
@@ -51,5 +57,13 @@ export class WebDeviceInfoProvider implements DeviceInfoProvider {
       app_version: this.appVersion,
       operation_system_version: osName
     }
+  }
+
+  private generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
   }
 }
