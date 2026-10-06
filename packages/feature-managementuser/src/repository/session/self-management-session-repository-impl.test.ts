@@ -1,8 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultFailure, appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, appResultSuccess, isSuccess, toErrorIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  ClientType,
+  UserAuthProvider,
+  toUserIdentifierIdOrThrow,
+  toUserIdOrThrow,
+  toUserSession,
+  toUserSessionIdOrThrow
+} from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 import type { SessionApi, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -13,24 +20,29 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   let repository: SelfManagementSessionRepositoryImpl
 
   const dummySessionPayload: UserSessionPayload = {
-    id: 'sess_1',
-    user_id: 'usr_1',
+    id: toUserSessionIdOrThrow('sess_1'),
+    user_id: toUserIdOrThrow('usr_1'),
+    user_role: 'staff',
     created_at: 1000,
     updated_at: 1000,
     expires_at: 2000,
     last_accessed_at: 1000,
-    last_reauthenticated_at: null,
-    identifier_id: 'id_1',
+    last_reauthenticated_at: 1000,
+    identifier_id: toUserIdentifierIdOrThrow('id_1'),
     identifier: 'user@example.com',
-    auth_provider: 'EMAIL',
-    client_type: 'WEB',
+    identifier_display_name: 'user@example.com',
+    identifier_auth_provider: UserAuthProvider.EMAIL,
+    client_device_info: {
+      client_type: ClientType.WEB,
+      language: 'en',
+      device_id: null,
+      device_name: 'Chrome',
+      app_version: '1.0.0',
+      operation_system_version: 'macOS'
+    },
     user_agent: 'Mozilla',
     ip_address: '127.0.0.1',
-    language: 'en',
-    device_id: 'dev_1',
-    device_name: 'Chrome',
-    app_version: '1.0.0',
-    os_version: 'macOS'
+    is_sensitive_values_masked: false
   }
 
   const dummySessionDomain = toUserSession(dummySessionPayload)
@@ -38,9 +50,9 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   const dummySessionId2 = toUserSessionIdOrThrow('sess_2')
 
   const dummyError: AppError = {
-    domain: 'SESSION',
+    id: toErrorIdOrThrow('123e4567-e89b-12d3-a456-426614174000'),
     code: 'NETWORK_ERROR',
-    message: 'Network error'
+    isRetryable: true
   }
 
   beforeEach(() => {

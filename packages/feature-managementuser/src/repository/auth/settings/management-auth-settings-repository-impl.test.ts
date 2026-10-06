@@ -3,7 +3,6 @@ import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoe
 import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import {
   toManagementAuthSettings,
-  toWebSocketEventIdOrThrow,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuthSettingsRepositoryImpl } from '@/repository/auth/settings/management-auth-settings-repository-impl'
@@ -22,10 +21,10 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     max_email_identifiers: 5,
     max_phone_identifiers: 5,
     max_identifiers_per_external_provider: 3,
-    max_active_sessions_open_user: 5,
-    max_active_sessions_management_user: 5,
-    access_token_expiration_seconds: 3600,
-    refresh_token_expiration_seconds: 86400,
+    max_active_sessions_for_open_user: 5,
+    max_active_sessions_for_management_user: 5,
+    access_token_validity_seconds: 3600,
+    refresh_token_validity_seconds: 86400,
     account_deletion_grace_period_seconds: 2592000,
     account_deletion_check_interval_seconds: 3600,
     is_registration_enabled: true,
@@ -79,7 +78,7 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     repository.observeManagementAuthSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: toWebSocketEventIdOrThrow('evt_1'),
+      id: 'evt_1',
       type: UserWebSocketEventTypes.MANAGEMENT_AUTH_SETTINGS_UPDATED,
       payload: dummyPayload,
       metadata: {},

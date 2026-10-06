@@ -49,8 +49,8 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   const onApplyFilters = useAuditEventListStore((s) => s.onApplyFilters)
   const errorParser = useAppErrorParser()
 
-  const isSuccess = screenState.status === 'success'
-  const pagingState = isSuccess ? screenState.paging : undefined
+  const isContent = screenState.status === 'content'
+  const pagingState = isContent ? screenState.paging : undefined
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,

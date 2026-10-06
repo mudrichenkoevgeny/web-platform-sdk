@@ -27,7 +27,7 @@ describe('AuditEventDetailScreen', () => {
     )
 
     expect(await screen.findByTestId(AuditEventDetailTestTags.TITLE)).toBeDefined()
-    expect(screen.getByTestId(AuditEventDetailTestTags.TITLE)).toHaveTextContent(enManagementUserStrings.audit_event_details_title)
+    expect(screen.getByTestId(AuditEventDetailTestTags.TITLE).textContent).toContain(enManagementUserStrings.audit_event_details_title)
     expect(screen.getByTestId(AuditEventDetailTestTags.BACK_BUTTON)).toBeDefined()
 
     const backButton = screen.getByTestId(AuditEventDetailTestTags.BACK_BUTTON)

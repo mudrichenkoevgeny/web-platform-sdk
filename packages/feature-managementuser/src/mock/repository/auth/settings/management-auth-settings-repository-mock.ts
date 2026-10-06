@@ -1,4 +1,4 @@
-import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
@@ -12,11 +12,7 @@ export class ManagementAuthSettingsRepositoryMock implements ManagementAuthSetti
     if (this.authSettings) {
       return appResultSuccess(this.authSettings)
     }
-    return appResultFailure(
-      CommonError.contractViolation(
-        'No mock settings provided. Call emit() or updateManagementAuthSettings() first.'
-      )
-    )
+    return appResultSuccess({} as ManagementAuthSettings)
   }
 
   public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)

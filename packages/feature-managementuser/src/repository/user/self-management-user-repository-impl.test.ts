@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SocketFrame, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { toWebSocketEventIdOrThrow, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdOrThrow, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
 import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
 import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -16,14 +16,20 @@ describe('SelfManagementUserRepositoryImpl', () => {
   let repository: SelfManagementUserRepositoryImpl
 
   const dummyUserPayload: UserDetailsPayload = {
-    id: 'usr_1',
-    email: 'user@example.com',
+    id: toUserIdOrThrow('usr_1'),
     role: 'staff',
     account_status: 'active',
+    account_status_on_restore: null,
     authority_level: 0,
     permission_codes: [],
+    is_totp_enabled: false,
+    last_login_at: null,
+    last_active_at: null,
     created_at: 1000,
-    updated_at: 1000
+    updated_at: 1000,
+    scheduled_permanent_deletion_at: null,
+    account_lockout_type: 'none',
+    temporary_lockout_until: null
   }
 
   beforeEach(() => {
@@ -77,25 +83,27 @@ describe('SelfManagementUserRepositoryImpl', () => {
     expect(mockAuthStorage.clearTokens).toHaveBeenCalled()
   })
 
-  it('handles USER_UPDATED WebSocket frame', () => {
+  it('handles USER_UPDATED WebSocket frame', async () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
-      id: toWebSocketEventIdOrThrow('frame_1'),
+      id: 'frame_1',
       type: UserWebSocketEventTypes.USER_UPDATED,
       payload: dummyUserPayload,
       timestamp: 1000
     })
+    await new Promise((resolve) => setTimeout(resolve, 10))
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalled()
   })
 
-  it('handles SESSION_DELETED WebSocket frame', () => {
+  it('handles SESSION_DELETED WebSocket frame', async () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
-      id: toWebSocketEventIdOrThrow('frame_2'),
+      id: 'frame_2',
       type: UserWebSocketEventTypes.SESSION_DELETED,
       payload: null,
       timestamp: 1000
     })
+    await new Promise((resolve) => setTimeout(resolve, 10))
     expect(mockUserStorage.clear).toHaveBeenCalled()
     expect(mockAuthStorage.clearTokens).toHaveBeenCalled()
   })

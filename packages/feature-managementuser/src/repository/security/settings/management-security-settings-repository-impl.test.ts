@@ -3,8 +3,7 @@ import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoe
 import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import {
   SecurityWebSocketEventTypes,
-  toManagementSecuritySettings,
-  toWebSocketEventIdOrThrow
+  toManagementSecuritySettings
 } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementSecuritySettingsRepositoryImpl } from '@/repository/security/settings/management-security-settings-repository-impl'
 import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
@@ -19,7 +18,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
   const dummyPayload: ManagementSecuritySettingsPayload = {
     recent_authentication_validity_seconds_for_open_user: 300,
     recent_authentication_validity_seconds_for_management_user: 300,
-    password_policy: {
+    management_password_policy: {
       min_length: 8,
       require_letter: true,
       require_upper_case: true,
@@ -55,7 +54,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
       is_whitelist_enabled: false,
       whitelist: []
     },
-    mfa_token_expiration_seconds: 300,
+    expiration_seconds: 300,
     max_requests_per_period: 100,
     rate_limit_period_seconds: 60,
     refresh_token_rotation_grace_period_seconds: 10
@@ -107,7 +106,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     repository.observeManagementSecuritySettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: toWebSocketEventIdOrThrow('evt_1'),
+      id: 'evt_1',
       type: SecurityWebSocketEventTypes.MANAGEMENT_SECURITY_SETTINGS_UPDATED,
       payload: dummyPayload,
       metadata: {},
