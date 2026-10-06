@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SocketFrame, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { toWebSocketEventIdOrThrow, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
 import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
 import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -14,14 +15,16 @@ describe('SelfManagementUserRepositoryImpl', () => {
   let wsCallback: ((frame: SocketFrame) => void) | undefined
   let repository: SelfManagementUserRepositoryImpl
 
-  const dummyUserPayload = {
+  const dummyUserPayload: UserDetailsPayload = {
     id: 'usr_1',
     email: 'user@example.com',
-    role: 'SUPER_ADMIN',
-    account_status: 'ACTIVE',
+    role: 'staff',
+    account_status: 'active',
+    authority_level: 0,
+    permission_codes: [],
     created_at: 1000,
     updated_at: 1000
-  } as any
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -77,7 +80,7 @@ describe('SelfManagementUserRepositoryImpl', () => {
   it('handles USER_UPDATED WebSocket frame', () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
-      id: 'frame_1',
+      id: toWebSocketEventIdOrThrow('frame_1'),
       type: UserWebSocketEventTypes.USER_UPDATED,
       payload: dummyUserPayload,
       timestamp: 1000
@@ -88,7 +91,7 @@ describe('SelfManagementUserRepositoryImpl', () => {
   it('handles SESSION_DELETED WebSocket frame', () => {
     expect(wsCallback).toBeDefined()
     wsCallback?.({
-      id: 'frame_2',
+      id: toWebSocketEventIdOrThrow('frame_2'),
       type: UserWebSocketEventTypes.SESSION_DELETED,
       payload: null,
       timestamp: 1000

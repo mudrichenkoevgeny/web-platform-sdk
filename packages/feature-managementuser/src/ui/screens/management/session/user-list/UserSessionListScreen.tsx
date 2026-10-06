@@ -46,6 +46,15 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
   const onBackClick = useUserSessionListStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
+  const isSuccess = screenState.status === 'success'
+  const pagingState = isSuccess ? screenState.paging : undefined
+
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
+    onLoadMore: onLoadNextPage,
+    hasMore: pagingState ? pagingState.pageNumber < pagingState.totalPages : false,
+    isLoading: pagingState?.isNextPageLoading ?? false
+  })
+
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
   }
@@ -61,12 +70,6 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
   }
 
   const { paging, actionLoading, actionError } = screenState
-
-  const sentinelRef = useInfiniteScroll<HTMLDivElement>({
-    onLoadMore: onLoadNextPage,
-    hasMore: paging.pageNumber < paging.totalPages,
-    isLoading: paging.isNextPageLoading ?? false
-  })
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
@@ -130,8 +133,12 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
               />
             ))}
 
-            {paging.isNextPageLoading && (
-              <div ref={sentinelRef} className="h-4 w-full" />
+            {paging.pageNumber < paging.totalPages && (
+              <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
+                {paging.isNextPageLoading && (
+                  <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
             )}
 
             <PagingFooter

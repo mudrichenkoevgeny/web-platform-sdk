@@ -18,7 +18,7 @@ describe('UserItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(`${enManagementUserStrings.user_id}: ${userDetails.id}`)).toBeDefined()
+    expect(screen.getByText(enManagementUserStrings.user_id(userDetails.id))).toBeDefined()
     expect(screen.getByText(`${enManagementUserStrings.user_role}: ${userDetails.role}`)).toBeDefined()
     expect(screen.getByText(`${enManagementUserStrings.user_account_status}: ${userDetails.accountStatus}`)).toBeDefined()
 

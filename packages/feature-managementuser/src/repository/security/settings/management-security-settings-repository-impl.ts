@@ -169,7 +169,7 @@ export class ManagementSecuritySettingsRepositoryImpl implements ManagementSecur
             const validationResult = managementSecuritySettingsPayloadSchema.safeParse(frame.payload)
             if (validationResult.success) {
               const settings = toManagementSecuritySettings(validationResult.data)
-              void this.updateManagementSecuritySettings(settings)
+              void this.applySettingsUpdate(settings)
             } else {
               this.logger?.('ManagementSecuritySettingsRepositoryImpl: Invalid WS payload schema')
             }

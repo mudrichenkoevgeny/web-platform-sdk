@@ -24,7 +24,7 @@ describe('CreateUserScreen', () => {
     )
 
     expect(await screen.findByTestId(CreateUserTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.create_user_title)).toBeDefined()
+    expect(screen.getByTestId(CreateUserTestTags.TITLE)).toHaveTextContent(enManagementUserStrings.create_user_title)
     expect(screen.getByTestId(CreateUserTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(CreateUserTestTags.EMAIL_INPUT)).toBeDefined()
     expect(screen.getByTestId(CreateUserTestTags.PASSWORD_INPUT)).toBeDefined()

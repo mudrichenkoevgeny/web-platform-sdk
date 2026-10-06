@@ -9,7 +9,7 @@ import type {
   UserSessionId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSession, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -156,12 +156,14 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.deleteAllOtherSessions()
       if (networkResult.success) {
-        const deletedSessionIdsSet = new Set(networkResult.data.deleted_session_ids)
+        const deletedSessionIdsSet = new Set(
+          networkResult.data.deleted_session_ids.map((id) => toUserSessionIdOrThrow(id))
+        )
         if (deletedSessionIdsSet.size > 0) {
           const cachedList = await this.userStorage.getUserSessionsList()
           const idsToRemove = cachedList.items
             .map((item) => item.id)
-            .filter((id) => deletedSessionIdsSet.has(id as string))
+            .filter((id) => deletedSessionIdsSet.has(id))
 
           if (idsToRemove.length > 0) {
             await this.userStorage.removeUserSessions(idsToRemove)

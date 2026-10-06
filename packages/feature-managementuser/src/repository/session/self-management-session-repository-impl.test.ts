@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultFailure, appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { UserSessionPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSession, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 import type { SessionApi, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('SelfManagementSessionRepositoryImpl', () => {
   let mockApi: SessionApi
@@ -10,7 +12,7 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   let mockAuthStorage: AuthStorage
   let repository: SelfManagementSessionRepositoryImpl
 
-  const dummySessionPayload = {
+  const dummySessionPayload: UserSessionPayload = {
     id: 'sess_1',
     user_id: 'usr_1',
     created_at: 1000,
@@ -29,11 +31,17 @@ describe('SelfManagementSessionRepositoryImpl', () => {
     device_name: 'Chrome',
     app_version: '1.0.0',
     os_version: 'macOS'
-  } as any
+  }
 
-  const dummySessionDomain = {
-    id: 'sess_1'
-  } as any
+  const dummySessionDomain = toUserSession(dummySessionPayload)
+  const dummySessionId = toUserSessionIdOrThrow('sess_1')
+  const dummySessionId2 = toUserSessionIdOrThrow('sess_2')
+
+  const dummyError: AppError = {
+    domain: 'SESSION',
+    code: 'NETWORK_ERROR',
+    message: 'Network error'
+  }
 
   beforeEach(() => {
     mockApi = {
@@ -83,22 +91,22 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   })
 
   it('falls back to cache in getSessions on network error', async () => {
-    vi.mocked(mockApi.getSessions).mockResolvedValueOnce(appResultFailure({} as any))
+    vi.mocked(mockApi.getSessions).mockResolvedValueOnce(appResultFailure(dummyError))
     const result = await repository.getSessions(1, 10)
     expect(mockUserStorage.getUserSessionsList).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates getSession and caches model on success', async () => {
-    const result = await repository.getSession('sess_1' as UserSessionId)
-    expect(mockApi.getSession).toHaveBeenCalledWith('sess_1')
+    const result = await repository.getSession(dummySessionId)
+    expect(mockApi.getSession).toHaveBeenCalledWith(dummySessionId)
     expect(mockUserStorage.addUserSession).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('falls back to cache in getSession on network error', async () => {
-    vi.mocked(mockApi.getSession).mockResolvedValueOnce(appResultFailure({} as any))
-    const result = await repository.getSession('sess_1' as UserSessionId)
+    vi.mocked(mockApi.getSession).mockResolvedValueOnce(appResultFailure(dummyError))
+    const result = await repository.getSession(dummySessionId)
     expect(mockUserStorage.getUserSessionsList).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
@@ -112,15 +120,15 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   })
 
   it('delegates deleteSession and removes from cache', async () => {
-    const result = await repository.deleteSession('sess_1' as UserSessionId)
-    expect(mockApi.deleteSession).toHaveBeenCalledWith('sess_1')
-    expect(mockUserStorage.removeUserSession).toHaveBeenCalledWith('sess_1')
+    const result = await repository.deleteSession(dummySessionId)
+    expect(mockApi.deleteSession).toHaveBeenCalledWith(dummySessionId)
+    expect(mockUserStorage.removeUserSession).toHaveBeenCalledWith(dummySessionId)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates deleteAllOtherSessions and removes deleted sessions from cache', async () => {
     vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValueOnce({
-      items: [{ id: 'sess_2' }] as any,
+      items: [{ id: dummySessionId2 } as typeof dummySessionDomain],
       totalCount: 1,
       pageNumber: 1,
       pageSize: 10,
@@ -129,7 +137,7 @@ describe('SelfManagementSessionRepositoryImpl', () => {
 
     const result = await repository.deleteAllOtherSessions()
     expect(mockApi.deleteAllOtherSessions).toHaveBeenCalled()
-    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith(['sess_2'])
+    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith([dummySessionId2])
     expect(isSuccess(result)).toBe(true)
   })
 

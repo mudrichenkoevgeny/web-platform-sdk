@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  toManagementAuthSettings,
+  toWebSocketEventIdOrThrow,
+  UserWebSocketEventTypes
+} from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuthSettingsRepositoryImpl } from '@/repository/auth/settings/management-auth-settings-repository-impl'
 import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
@@ -11,7 +16,7 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
   let mockWsService: WebSocketServiceMock
   let repository: ManagementAuthSettingsRepositoryImpl
 
-  const dummyPayload = {
+  const dummyPayload: ManagementAuthSettingsPayload = {
     available_auth_providers: { primary: [], secondary: [] },
     max_total_identifiers: 10,
     max_email_identifiers: 5,
@@ -26,24 +31,9 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     is_registration_enabled: true,
     open_email_restriction_policy: { is_blacklist_enabled: false, blacklist: [], is_whitelist_enabled: false, whitelist: [] },
     management_email_restriction_policy: { is_blacklist_enabled: false, blacklist: [], is_whitelist_enabled: false, whitelist: [] }
-  } as any
+  }
 
-  const dummySettings = {
-    availableAuthProviders: { primary: [], secondary: [] },
-    maxTotalIdentifiers: 10,
-    maxEmailIdentifiers: 5,
-    maxPhoneIdentifiers: 5,
-    maxIdentifiersPerExternalProvider: 3,
-    maxActiveSessionsForOpenUser: 5,
-    maxActiveSessionsForManagementUser: 5,
-    accessTokenExpirationSeconds: 3600,
-    refreshTokenExpirationSeconds: 86400,
-    accountDeletionGracePeriodSeconds: 2592000,
-    accountDeletionCheckIntervalSeconds: 3600,
-    isRegistrationEnabled: true,
-    openEmailRestrictionPolicy: { isBlacklistEnabled: false, blacklist: [], isWhitelistEnabled: false, whitelist: [] },
-    managementEmailRestrictionPolicy: { isBlacklistEnabled: false, blacklist: [], isWhitelistEnabled: false, whitelist: [] }
-  } as any
+  const dummySettings = toManagementAuthSettings(dummyPayload)
 
   beforeEach(() => {
     mockApi = {
@@ -89,7 +79,7 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     repository.observeManagementAuthSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1' as any,
+      id: toWebSocketEventIdOrThrow('evt_1'),
       type: UserWebSocketEventTypes.MANAGEMENT_AUTH_SETTINGS_UPDATED,
       payload: dummyPayload,
       metadata: {},

@@ -96,9 +96,7 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
     try {
       const validationResult = userDetailsPayloadSchema.safeParse(payload)
       if (validationResult.success) {
-        void this.mutex.runExclusive(() =>
-          this.userStorage.updateCurrentUser(toUserDetails(validationResult.data))
-        )
+        void this.userStorage.updateCurrentUser(toUserDetails(validationResult.data))
       } else {
         this.logger?.('SelfManagementUserRepositoryImpl: Invalid user updated WS payload schema')
       }

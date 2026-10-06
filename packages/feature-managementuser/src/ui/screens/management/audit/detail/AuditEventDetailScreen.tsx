@@ -16,6 +16,15 @@ import {
 } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 
+export const AuditEventDetailTestTags = {
+  BACK_BUTTON: 'AuditEventDetail_BackButton',
+  TITLE: 'AuditEventDetail_Title',
+  GLOBAL_ERROR_TEXT: 'AuditEventDetail_GlobalErrorText',
+  EVENT_ID_TEXT: 'AuditEventDetail_EventIdText',
+  RESOURCE_ROW: 'AuditEventDetail_ResourceRow',
+  SUBJECT_ROW: 'AuditEventDetail_SubjectRow'
+}
+
 const DetailRow: React.FC<{
   label: string
   value: string
@@ -60,6 +69,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
   if (screenState.status === 'error') {
     return (
       <FullscreenError
+        data-testid={AuditEventDetailTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRetry}
       />
@@ -83,8 +93,9 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
       <div className="w-full flex items-center justify-between relative mb-6">
-        <CoreBackButton onClick={onBackClick} />
+        <CoreBackButton data-testid={AuditEventDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
+          data-testid={AuditEventDetailTestTags.TITLE}
           text={strings.audit_event_details_title}
           className="absolute left-1/2 -translate-x-1/2"
         />
@@ -92,7 +103,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
       </div>
 
       <div className="w-full flex-1 flex flex-col gap-6 mb-6">
-        <CoreTitleText text={`${strings.audit_event_id}: ${event.id}`} />
+        <CoreTitleText data-testid={AuditEventDetailTestTags.EVENT_ID_TEXT} text={`${strings.audit_event_id}: ${event.id}`} />
 
         <div className="w-full p-4 rounded-lg border border-border bg-card flex flex-col gap-2 shadow-sm">
           <DetailRow
@@ -107,7 +118,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
             label={strings.audit_event_resource}
             value={resourceValue}
             onClick={isResourceClickable ? onResourceClick : null}
-            testTag="AuditEventDetail_ResourceRow"
+            testTag={AuditEventDetailTestTags.RESOURCE_ROW}
           />
           <DetailRow
             label={strings.audit_event_resource_sensitivity}
@@ -117,7 +128,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
             label={strings.audit_event_actor}
             value={subjectValue}
             onClick={isSubjectClickable ? onSubjectClick : null}
-            testTag="AuditEventDetail_SubjectRow"
+            testTag={AuditEventDetailTestTags.SUBJECT_ROW}
           />
           {event.message && (
             <DetailRow

@@ -50,6 +50,8 @@ const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureMa
 
 const getUserRoleLabel = (role: UserRole, strings: FeatureManagementUserStrings): string => {
   switch (role) {
+    case UserRole.USER:
+      return strings.ui_common_user
     case UserRole.STAFF:
       return strings.ui_common_staff
     case UserRole.ADMIN:
@@ -126,7 +128,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {Object.values(UserRole).map((r) => (
-              <option key={r} value={r}>
+              <option key={`role_${r}`} value={r}>
                 {getUserRoleLabel(r, strings)}
               </option>
             ))}
@@ -146,7 +148,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {Object.values(UserAccountStatus).map((st) => (
-              <option key={st} value={st}>
+              <option key={`status_${st}`} value={st}>
                 {getUserAccountStatusLabel(st, strings)}
               </option>
             ))}

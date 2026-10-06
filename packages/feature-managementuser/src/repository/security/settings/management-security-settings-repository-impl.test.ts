@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SecurityWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  SecurityWebSocketEventTypes,
+  toManagementSecuritySettings,
+  toWebSocketEventIdOrThrow
+} from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementSecuritySettingsRepositoryImpl } from '@/repository/security/settings/management-security-settings-repository-impl'
 import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
 import type { ManagementSecuritySettingsStorage } from '@/storage/security-settings/management-security-settings-storage'
@@ -11,7 +16,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
   let mockWsService: WebSocketServiceMock
   let repository: ManagementSecuritySettingsRepositoryImpl
 
-  const dummyPayload = {
+  const dummyPayload: ManagementSecuritySettingsPayload = {
     recent_authentication_validity_seconds_for_open_user: 300,
     recent_authentication_validity_seconds_for_management_user: 300,
     password_policy: {
@@ -54,52 +59,9 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     max_requests_per_period: 100,
     rate_limit_period_seconds: 60,
     refresh_token_rotation_grace_period_seconds: 10
-  } as any
+  }
 
-  const dummySettings = {
-    recentAuthenticationValiditySecondsForOpenUser: 300,
-    recentAuthenticationValiditySecondsForManagementUser: 300,
-    passwordPolicy: {
-      minLength: 8,
-      requireLetter: true,
-      requireUpperCase: true,
-      requireLowerCase: true,
-      requireDigit: true,
-      requireSpecialChar: true,
-      commonPasswords: []
-    },
-    otpConfirmation: {
-      retryAfterSeconds: 60,
-      numberOfSymbols: 6,
-      expirationSeconds: 300
-    },
-    accountLockoutPolicy: {
-      maxFailedPasswordAttempts: 5,
-      maxFailedOtpAttempts: 5,
-      maxFailedTotpAttempts: 5,
-      failedAttemptsWindowSeconds: 600,
-      lockoutDurationSeconds: 1800,
-      indefiniteLockoutThreshold: 10,
-      isSelfServiceUnlockEnabled: true
-    },
-    accountLockoutCheckIntervalSeconds: 60,
-    openIpRestrictionPolicy: {
-      isBlacklistEnabled: false,
-      blacklist: [],
-      isWhitelistEnabled: false,
-      whitelist: []
-    },
-    managementIpRestrictionPolicy: {
-      isBlacklistEnabled: false,
-      blacklist: [],
-      isWhitelistEnabled: false,
-      whitelist: []
-    },
-    mfaTokenExpirationSeconds: 300,
-    maxRequestsPerPeriod: 100,
-    rateLimitPeriodSeconds: 60,
-    refreshTokenRotationGracePeriodSeconds: 10
-  } as any
+  const dummySettings = toManagementSecuritySettings(dummyPayload)
 
   beforeEach(() => {
     mockApi = {
@@ -145,7 +107,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     repository.observeManagementSecuritySettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1' as any,
+      id: toWebSocketEventIdOrThrow('evt_1'),
       type: SecurityWebSocketEventTypes.MANAGEMENT_SECURITY_SETTINGS_UPDATED,
       payload: dummyPayload,
       metadata: {},

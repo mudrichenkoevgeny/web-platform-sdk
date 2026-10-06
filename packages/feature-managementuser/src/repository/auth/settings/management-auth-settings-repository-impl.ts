@@ -167,7 +167,7 @@ export class ManagementAuthSettingsRepositoryImpl implements ManagementAuthSetti
             const validationResult = managementAuthSettingsPayloadSchema.safeParse(frame.payload)
             if (validationResult.success) {
               const settings = toManagementAuthSettings(validationResult.data)
-              void this.updateManagementAuthSettings(settings)
+              void this.applySettingsUpdate(settings)
             } else {
               this.logger?.('ManagementAuthSettingsRepositoryImpl: Invalid WS payload schema')
             }
