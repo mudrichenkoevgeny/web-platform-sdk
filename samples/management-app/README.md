@@ -4,7 +4,7 @@ Administrative host application demonstrating how to wire **`web-platform-sdk`**
 
 ## Port & Execution
 
-* **Dev Server Port:** `3001` (`http://localhost:3001`)
+* **Dev Server Port:** `3003` (`http://localhost:3003`)
 * **Run Command:** `pnpm --filter @web-platform-sdk/sample-management-app dev`
 
 ## Architecture & What It Provides
@@ -18,6 +18,6 @@ Administrative host application demonstrating how to wire **`web-platform-sdk`**
   - Installs management WebSocket event handlers.
   - Refreshes management user configuration upon startup.
 - **UI Architecture (`RootContent`):**
-  - Displays `SplashScreen` during initialization.
+  - Displays `InitialLoader` during initialization.
   - Hosts `ManagementLoginRootScreen` when unauthenticated or `ManagementRootScreen` (Admin Panel) when authenticated.
   - Wraps UI in `SdkProvider` and `ThemeProvider`.

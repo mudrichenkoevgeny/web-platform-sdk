@@ -38,6 +38,7 @@ export * from './di/client-user-component.js'
 export * from './ui/screens/auth/login/client-login-destination.js'
 export * from './ui/screens/auth/login/phone/LoginByPhoneScreen.js'
 export * from './ui/screens/auth/registration/email/RegistrationByEmailScreen.js'
+export * from './ui/screens/auth/login/root/ClientLoginRootStore.js'
 export * from './ui/screens/auth/login/root/ClientLoginRootScreen.js'
 
 export * from './mock/index.js'

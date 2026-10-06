@@ -16,11 +16,5 @@
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vitest": "catalog:"
-  },
-  "pnpm": {
-    "overrides": {
-      "typescript-eslint>typescript": "npm:@typescript/typescript6@^6.0.2",
-      "@typescript-eslint/typescript-estree>typescript": "npm:@typescript/typescript6@^6.0.2"
-    }
   }
 }

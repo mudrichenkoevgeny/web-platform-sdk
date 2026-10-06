@@ -1,0 +1,5 @@
+@import '@mudrichenkoevgeny/web-platform-sdk-core-common/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -88,6 +88,10 @@ export const createMainProfileStore = (
 
     onRefresh: async () => {
       const current = get().screenState
+      if (current.status === 'unauthorized') {
+        return
+      }
+
       if (current.status === 'content') {
         set({
           screenState: {
@@ -139,8 +143,8 @@ export const createMainProfileStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
-              error: result.error
+              status: 'unauthorized',
+              actionError: null
             }
           })
         }
@@ -324,7 +328,10 @@ export const MainProfileProvider: React.FC<MainProfileProviderProps> = ({
   }
 
   useEffect(() => {
+    let isMounted = true
+
     const unsubscribe = dependencies.userRepository.observeCurrentUser((user) => {
+      if (!isMounted) return
       if (user) {
         storeRef.current?.setState({
           screenState: {
@@ -347,7 +354,11 @@ export const MainProfileProvider: React.FC<MainProfileProviderProps> = ({
         })
       }
     })
-    return () => unsubscribe()
+
+    return () => {
+      isMounted = false
+      unsubscribe()
+    }
   }, [dependencies])
 
   return (

@@ -1,0 +1,35 @@
+{
+  "name": "@web-platform-sdk/sample-client-app",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mudrichenkoevgeny/shared-foundation": "catalog:",
+    "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-feature-clientuser": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-feature-user": "workspace:*",
+    "clsx": "^2.1.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "^3.7.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

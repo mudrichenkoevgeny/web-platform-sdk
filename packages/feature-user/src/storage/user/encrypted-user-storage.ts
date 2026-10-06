@@ -76,6 +76,7 @@ export class EncryptedUserStorage implements UserStorage {
    * @returns Unsubscribe function
    */
   public observeCurrentUser(listener: UserChangeListener): () => void {
+    void this.getCurrentUser().then((user) => listener(user))
     return this.encryptedSettings.observe(KEY_CURRENT_USER, async () => {
       const user = await this.getCurrentUser()
       listener(user)
@@ -171,6 +172,7 @@ export class EncryptedUserStorage implements UserStorage {
     listener: UserIdentifiersListChangeListener,
     params?: GetUserIdentifiersListParams
   ): () => void {
+    void this.getUserIdentifiersList(params).then((list) => listener(list))
     return this.encryptedSettings.observe(KEY_USER_IDENTIFIERS, async () => {
       const list = await this.getUserIdentifiersList(params)
       listener(list)
@@ -366,6 +368,7 @@ export class EncryptedUserStorage implements UserStorage {
     listener: UserSessionsListChangeListener,
     params?: GetUserSessionsListParams
   ): () => void {
+    void this.getUserSessionsList(params).then((list) => listener(list))
     return this.encryptedSettings.observe(KEY_USER_SESSIONS, async () => {
       const list = await this.getUserSessionsList(params)
       listener(list)

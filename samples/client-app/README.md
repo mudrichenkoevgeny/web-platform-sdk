@@ -4,7 +4,7 @@ Reference host application demonstrating how to wire **`web-platform-sdk`** modu
 
 ## Port & Execution
 
-* **Dev Server Port:** `3000` (`http://localhost:3000`)
+* **Dev Server Port:** `3002` (`http://localhost:3002`)
 * **Run Command:** `pnpm --filter @web-platform-sdk/sample-client-app dev`
 
 ## Architecture & What It Provides
@@ -18,6 +18,6 @@ Reference host application demonstrating how to wire **`web-platform-sdk`** modu
   - Installs WebSocket event handlers.
   - Refreshes user configuration upon startup.
 - **UI Architecture (`RootContent`):**
-  - Displays `SplashScreen` during initialization.
-  - Hosts `ClientLoginRootContainer` when unauthenticated or `MainProfileScreen` when authenticated.
+  - Displays `InitialLoader` during initialization.
+  - Hosts `ClientLoginRootScreen` when unauthenticated or `MainProfileScreen` when authenticated.
   - Wraps UI in `SdkProvider` and `ThemeProvider`.
