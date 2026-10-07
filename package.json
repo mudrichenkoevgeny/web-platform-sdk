@@ -7,7 +7,10 @@
     "dev:management": "pnpm --filter @web-platform-sdk/sample-management-app dev",
     "build": "pnpm -r --filter \"./packages/*\" run build",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "pnpm -r run typecheck"
+    "typecheck": "pnpm -r run typecheck",
+    "version:patch": "pnpm -r --filter \"./packages/*\" exec npm version patch --no-git-tag-version",
+    "version:minor": "pnpm -r --filter \"./packages/*\" exec npm version minor --no-git-tag-version",
+    "version:set": "pnpm -r --filter \"./packages/*\" exec npm version --no-git-tag-version"
   },
   "devDependencies": {
     "@types/node": "catalog:",
