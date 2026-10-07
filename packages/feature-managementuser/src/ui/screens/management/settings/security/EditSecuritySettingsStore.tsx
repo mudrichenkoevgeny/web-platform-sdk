@@ -112,63 +112,75 @@ export const createEditSecuritySettingsStore = (
   deps: EditSecuritySettingsStoreDependencies,
   initialState?: EditSecuritySettingsScreenState
 ) => {
+  let isFetching = false
+
   return createStore<EditSecuritySettingsStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
-      const result = await deps.getManagementSecuritySettingsUseCase.execute()
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
+      isFetching = true
 
-      if (isSuccess(result)) {
-        const settings = result.data
-        const commonPasses = Array.from(settings.passwordPolicy.commonPasswords ?? [])
+      try {
+        set({ screenState: { status: 'loading' } })
+        const result = await deps.getManagementSecuritySettingsUseCase.execute()
 
-        set({
-          screenState: {
-            status: 'content',
-            recentAuthenticationValiditySecondsForOpenUser: String(settings.recentAuthenticationValiditySecondsForOpenUser),
-            recentAuthenticationValiditySecondsForManagementUser: String(settings.recentAuthenticationValiditySecondsForManagementUser),
-            mfaTokenExpirationSeconds: String(settings.mfaTokenExpirationSeconds),
-            passwordMinLength: String(settings.passwordPolicy.minLength),
-            passwordRequireLetter: settings.passwordPolicy.requireLetter,
-            passwordRequireUpperCase: settings.passwordPolicy.requireUpperCase,
-            passwordRequireLowerCase: settings.passwordPolicy.requireLowerCase,
-            passwordRequireDigit: settings.passwordPolicy.requireDigit,
-            passwordRequireSpecialChar: settings.passwordPolicy.requireSpecialChar,
-            commonPasswords: commonPasses.join(','),
-            accountLockoutMaxFailedPasswordAttempts: String(settings.accountLockoutPolicy.maxFailedPasswordAttempts),
-            accountLockoutMaxFailedOtpAttempts: String(settings.accountLockoutPolicy.maxFailedOtpAttempts),
-            accountLockoutMaxFailedTotpAttempts: String(settings.accountLockoutPolicy.maxFailedTotpAttempts),
-            accountLockoutFailedAttemptsWindowSeconds: String(settings.accountLockoutPolicy.failedAttemptsWindowSeconds),
-            accountLockoutDurationSeconds: String(settings.accountLockoutPolicy.lockoutDurationSeconds),
-            accountLockoutIndefiniteLockoutThreshold: String(settings.accountLockoutPolicy.indefiniteLockoutThreshold),
-            accountLockoutIsSelfServiceUnlockEnabled: settings.accountLockoutPolicy.isSelfServiceUnlockEnabled,
-            accountLockoutCheckIntervalSeconds: String(settings.accountLockoutCheckIntervalSeconds),
-            refreshTokenRotationGracePeriodSeconds: String(settings.refreshTokenRotationGracePeriodSeconds),
-            openIpBlacklistEnabled: settings.openIpRestrictionPolicy.isBlacklistEnabled,
-            openIpBlacklist: settings.openIpRestrictionPolicy.blacklist.join(','),
-            openIpWhitelistEnabled: settings.openIpRestrictionPolicy.isWhitelistEnabled,
-            openIpWhitelist: settings.openIpRestrictionPolicy.whitelist.join(','),
-            managementIpBlacklistEnabled: settings.managementIpRestrictionPolicy.isBlacklistEnabled,
-            managementIpBlacklist: settings.managementIpRestrictionPolicy.blacklist.join(','),
-            managementIpWhitelistEnabled: settings.managementIpRestrictionPolicy.isWhitelistEnabled,
-            managementIpWhitelist: settings.managementIpRestrictionPolicy.whitelist.join(','),
-            otpRetryAfterSeconds: String(settings.otpConfirmation.retryAfterSeconds),
-            otpNumberOfSymbols: String(settings.otpConfirmation.numberOfSymbols),
-            otpExpirationSeconds: String(settings.otpConfirmation.expirationSeconds),
-            maxRequestsPerPeriod: String(settings.maxRequestsPerPeriod),
-            rateLimitPeriodSeconds: String(settings.rateLimitPeriodSeconds),
-            isSaving: false,
-            saveError: null
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
+        if (isSuccess(result)) {
+          const settings = result.data
+          const commonPasses = Array.from(settings.passwordPolicy.commonPasswords ?? [])
+
+          set({
+            screenState: {
+              status: 'content',
+              recentAuthenticationValiditySecondsForOpenUser: String(settings.recentAuthenticationValiditySecondsForOpenUser),
+              recentAuthenticationValiditySecondsForManagementUser: String(settings.recentAuthenticationValiditySecondsForManagementUser),
+              mfaTokenExpirationSeconds: String(settings.mfaTokenExpirationSeconds),
+              passwordMinLength: String(settings.passwordPolicy.minLength),
+              passwordRequireLetter: settings.passwordPolicy.requireLetter,
+              passwordRequireUpperCase: settings.passwordPolicy.requireUpperCase,
+              passwordRequireLowerCase: settings.passwordPolicy.requireLowerCase,
+              passwordRequireDigit: settings.passwordPolicy.requireDigit,
+              passwordRequireSpecialChar: settings.passwordPolicy.requireSpecialChar,
+              commonPasswords: commonPasses.join(','),
+              accountLockoutMaxFailedPasswordAttempts: String(settings.accountLockoutPolicy.maxFailedPasswordAttempts),
+              accountLockoutMaxFailedOtpAttempts: String(settings.accountLockoutPolicy.maxFailedOtpAttempts),
+              accountLockoutMaxFailedTotpAttempts: String(settings.accountLockoutPolicy.maxFailedTotpAttempts),
+              accountLockoutFailedAttemptsWindowSeconds: String(settings.accountLockoutPolicy.failedAttemptsWindowSeconds),
+              accountLockoutDurationSeconds: String(settings.accountLockoutPolicy.lockoutDurationSeconds),
+              accountLockoutIndefiniteLockoutThreshold: String(settings.accountLockoutPolicy.indefiniteLockoutThreshold),
+              accountLockoutIsSelfServiceUnlockEnabled: settings.accountLockoutPolicy.isSelfServiceUnlockEnabled,
+              accountLockoutCheckIntervalSeconds: String(settings.accountLockoutCheckIntervalSeconds),
+              refreshTokenRotationGracePeriodSeconds: String(settings.refreshTokenRotationGracePeriodSeconds),
+              openIpBlacklistEnabled: settings.openIpRestrictionPolicy.isBlacklistEnabled,
+              openIpBlacklist: settings.openIpRestrictionPolicy.blacklist.join(','),
+              openIpWhitelistEnabled: settings.openIpRestrictionPolicy.isWhitelistEnabled,
+              openIpWhitelist: settings.openIpRestrictionPolicy.whitelist.join(','),
+              managementIpBlacklistEnabled: settings.managementIpRestrictionPolicy.isBlacklistEnabled,
+              managementIpBlacklist: settings.managementIpRestrictionPolicy.blacklist.join(','),
+              managementIpWhitelistEnabled: settings.managementIpRestrictionPolicy.isWhitelistEnabled,
+              managementIpWhitelist: settings.managementIpRestrictionPolicy.whitelist.join(','),
+              otpRetryAfterSeconds: String(settings.otpConfirmation.retryAfterSeconds),
+              otpNumberOfSymbols: String(settings.otpConfirmation.numberOfSymbols),
+              otpExpirationSeconds: String(settings.otpConfirmation.expirationSeconds),
+              maxRequestsPerPeriod: String(settings.maxRequestsPerPeriod),
+              rateLimitPeriodSeconds: String(settings.rateLimitPeriodSeconds),
+              isSaving: false,
+              saveError: null
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
       }
     },
 

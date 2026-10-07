@@ -33,4 +33,20 @@ describe('CreateUserScreen', () => {
     expect(screen.getByTestId(CreateUserTestTags.AUTHORITY_LEVEL_INPUT)).toBeDefined()
     expect(screen.getByTestId(CreateUserTestTags.CREATE_BUTTON)).toBeDefined()
   })
+
+  it('disables create button when email is invalid and renders exactly 3 unique roles', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <CreateUserScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    const createBtn = await screen.findByTestId(CreateUserTestTags.CREATE_BUTTON)
+    expect(createBtn.hasAttribute('disabled')).toBe(true)
+
+    const roleSelect = screen.getByTestId(CreateUserTestTags.ROLE_SELECT) as HTMLSelectElement
+    expect(roleSelect.options.length).toBe(3)
+  })
 })

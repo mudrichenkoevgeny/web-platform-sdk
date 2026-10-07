@@ -45,4 +45,17 @@ describe('AuditEventListScreen', () => {
 
     expect(deps.onNavigateToEventDetail).toHaveBeenCalledTimes(1)
   })
+
+  it('executes getAuditEventsUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <AuditEventListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(AuditEventListTestTags.TITLE)).toBeDefined()
+    expect(deps.getAuditEventsUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

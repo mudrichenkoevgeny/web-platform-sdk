@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  appendResultToPaginationState,
+  canLoadMorePages,
+  createInitialPaginationState,
+  createNextPageLoadingPaginationState,
+  getNextPageNumber,
+  isSuccess
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
@@ -72,9 +80,7 @@ export type SelfIdentifierListScreenState =
       availableAuthProviders: AvailableAuthProviders | null
       isAddIdentifierSupported: boolean
       addIdentifierDialogState: AddIdentifierDialogState | null
-      pageNumber: number
-      hasMorePages: boolean
-      isNextPageLoading: boolean
+      paging: PaginationState<UserIdentifier>
       actionLoading: boolean
       actionError: AppError | null
     }
@@ -191,28 +197,40 @@ export const createSelfIdentifierListStore = (
     }, 1000)
   }
 
-  const store = createStore<SelfIdentifierListStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+  let isFetching = false
 
-    loadIdentifiers: async () => {
+  const loadIdentifiersInternal = async (
+    set: StoreApi<SelfIdentifierListStoreState>['setState'],
+    get: StoreApi<SelfIdentifierListStoreState>['getState'],
+    isRefresh = false
+  ) => {
+    if (isFetching) {
+      return
+    }
+    const current = get().screenState
+    if (!isRefresh && current.status === 'content') {
+      return
+    }
+    isFetching = true
+
+    try {
       const storedIdentifierIdRaw = deps.authStorage ? await deps.authStorage.getIdentifierId() : null
       const activeIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
 
       const result = await deps.getUserIdentifiersUseCase.execute(1, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const page = result.data
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
         set({
           screenState: {
             status: 'content',
-            items: page.items,
+            items: nextPaging.items,
             currentIdentifierId: activeIdentifierId,
             availableAuthProviders: null,
             isAddIdentifierSupported: appType === AppType.CLIENT,
             addIdentifierDialogState: null,
-            pageNumber: 1,
-            hasMorePages: page.items.length < page.totalCount,
-            isNextPageLoading: false,
+            paging: nextPaging,
             actionLoading: false,
             actionError: null
           }
@@ -225,6 +243,19 @@ export const createSelfIdentifierListStore = (
           }
         })
       }
+    } finally {
+      isFetching = false
+    }
+  }
+
+  const store = createStore<SelfIdentifierListStoreState>()((set, get) => ({
+    screenState: initialState ?? { status: 'loading' },
+
+    loadIdentifiers: async () => {
+      if (get().screenState.status !== 'content') {
+        set({ screenState: { status: 'loading' } })
+      }
+      await loadIdentifiersInternal(set, get, false)
     },
 
     onRefresh: async () => {
@@ -241,7 +272,7 @@ export const createSelfIdentifierListStore = (
         set({ screenState: { status: 'loading' } })
       }
 
-      await get().loadIdentifiers()
+      await loadIdentifiersInternal(set, get, true)
     },
 
     onIdentifierClick: (identifierId: UserIdentifierId) => {
@@ -722,48 +753,53 @@ export const createSelfIdentifierListStore = (
         return
       }
 
+      const nextItems = current.items.filter((item) => item.id !== identifierId)
       set({
         screenState: {
           ...current,
-          items: current.items.filter((item) => item.id !== identifierId)
+          items: nextItems,
+          paging: {
+            ...current.paging,
+            items: nextItems
+          }
         }
       })
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.hasMorePages || current.isNextPageLoading) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
-      const nextPage = current.pageNumber + 1
+      const nextPage = getNextPageNumber(current.paging)
 
       set({
         screenState: {
           ...current,
-          isNextPageLoading: true
+          paging: createNextPageLoadingPaginationState(current.paging)
         }
       })
 
       const result = await deps.getUserIdentifiersUseCase.execute(nextPage, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const page = result.data
-        const combined = [...current.items, ...page.items]
+        const nextPaging = appendResultToPaginationState(current.paging, result.data)
         set({
           screenState: {
             ...current,
-            items: combined,
-            pageNumber: nextPage,
-            hasMorePages: combined.length < page.totalCount,
-            isNextPageLoading: false
+            items: nextPaging.items,
+            paging: nextPaging
           }
         })
       } else {
         set({
           screenState: {
             ...current,
-            isNextPageLoading: false
+            paging: {
+              ...current.paging,
+              isNextPageLoading: false
+            }
           }
         })
       }

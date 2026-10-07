@@ -12,8 +12,10 @@ import type {
 import {
   ListingParamNames,
   ManagementIdentifierRoutes,
+  pagedResultSchema,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userIdentifierPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
@@ -59,13 +61,19 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
       ? `${ManagementIdentifierRoutes.GET_IDENTIFIERS}?${queryString}`
       : ManagementIdentifierRoutes.GET_IDENTIFIERS
 
-    return callResult(() => this.client.request<PagedResult<UserIdentifierPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+    })
   }
 
   public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_IDENTIFIER_ID]: identifierId })
     const path = `${ManagementIdentifierRoutes.GET_IDENTIFIER}?${query.toString()}`
-    return callResult(() => this.client.request<UserIdentifierPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userIdentifierPayloadSchema.parse(raw)
+    })
   }
 
   public async deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {

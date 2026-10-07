@@ -150,10 +150,6 @@ export const createTotpRecoveryCodesStore = (
     }
   }))
 
-  if (!initialState) {
-    store.getState().loadRecoveryCodes()
-  }
-
   return store
 }
 

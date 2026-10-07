@@ -1,4 +1,7 @@
 import {
+  CompositeAuditActionTypeParser,
+  CompositeAuditMetadataKeyParser,
+  CompositeAuditResourceTypeParser,
   SelfManagementRefreshTokenRoutes,
   SelfManagementSessionRoutes,
   WebSocketContract
@@ -8,7 +11,6 @@ import {
   EncryptedSettingsComponent
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccessTokenProvider,
   EncryptedSettings
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -34,6 +36,9 @@ import type { SyncManagementDataUseCase } from '@/usecase/sync-management-data-u
 
 export interface ManagementAppComponentConfig {
   baseUrl: string
+  compositeActionTypeParser: CompositeAuditActionTypeParser
+  compositeResourceTypeParser: CompositeAuditResourceTypeParser
+  compositeMetadataKeyParser: CompositeAuditMetadataKeyParser
   authServices?: UserAuthServices
   appVersion?: string
   mockCommonComponent?: CommonComponent
@@ -104,7 +109,7 @@ export class ManagementAppComponent {
         encryptedSettings: this.encryptedSettings,
         baseUrl: config.baseUrl,
         webSocketPath: WebSocketContract.WS_MANAGEMENT_REALTIME_PATH,
-        accessTokenProvider: this.authStorage as unknown as AccessTokenProvider,
+        accessTokenProvider: this.authStorage,
         httpClientConfigPlugins: [
           authHttpClientConfigPlugin,
           mfaStepUpHttpClientConfigPlugin
@@ -129,7 +134,10 @@ export class ManagementAppComponent {
         settingsComponent: this.settingsComponent,
         securityComponent: this.securityComponent,
         authStorage: this.authStorage,
-        authServices
+        authServices,
+        compositeActionTypeParser: config.compositeActionTypeParser,
+        compositeResourceTypeParser: config.compositeResourceTypeParser,
+        compositeMetadataKeyParser: config.compositeMetadataKeyParser
       })
     }
 

@@ -34,6 +34,9 @@ export interface FeatureUserStrings extends CoreCommonStrings {
   readonly error_user_total_identifiers_limit_reached: string
   readonly error_user_total_identifiers_limit_reached_args: (limit: string | number) => string
   readonly error_user_email_not_allowed: string
+  readonly error_user_external_auth_cancelled: string
+  readonly error_user_external_auth_failed: string
+  readonly error_user_too_many_confirmation_requests: string
 
   readonly login: string
   readonly login_with: string
@@ -225,6 +228,9 @@ export const enUserStrings: FeatureUserStrings = {
   error_user_total_identifiers_limit_reached: 'The maximum total limit of identifiers has been reached.',
   error_user_total_identifiers_limit_reached_args: (limit: string | number) => `The maximum total limit of ${limit} identifiers per account has been reached.`,
   error_user_email_not_allowed: 'The email address or domain is not permitted by restriction policy.',
+  error_user_external_auth_cancelled: 'Authentication was cancelled.',
+  error_user_external_auth_failed: 'External authentication failed.',
+  error_user_too_many_confirmation_requests: 'Too many confirmation requests. Please try again later.',
 
   login: 'Login',
   login_with: 'Login with:',

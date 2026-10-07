@@ -45,4 +45,17 @@ describe('UserSessionListScreen', () => {
     expect(screen.getByTestId(UserSessionListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(UserSessionListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
+
+  it('executes managementGetSessionsUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <UserSessionListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(UserSessionListTestTags.TITLE)).toBeDefined()
+    expect(deps.managementGetSessionsUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

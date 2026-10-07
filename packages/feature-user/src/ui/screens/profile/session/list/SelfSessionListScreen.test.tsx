@@ -109,4 +109,17 @@ describe('SelfSessionListScreen', () => {
     await user.click(screen.getByTestId(SelfSessionListTestTags.BACK_BUTTON))
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
+
+  it('executes getSessionsUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <SelfSessionListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    await screen.findByText('user1@example.com')
+    expect(deps.getSessionsUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

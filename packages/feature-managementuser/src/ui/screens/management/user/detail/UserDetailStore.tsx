@@ -87,39 +87,51 @@ export const createUserDetailStore = (
   deps: UserDetailStoreDependencies,
   initialState?: UserDetailScreenState
 ) => {
+  let isFetching = false
+
   return createStore<UserDetailStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
-      const result = await deps.getUserUseCase.execute(deps.userId)
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
+      isFetching = true
 
-      if (isSuccess(result)) {
-        const user = result.data
-        set({
-          screenState: {
-            status: 'content',
-            user,
-            authorityLevelInput: String(user.authorityLevel),
-            accountStatusInput: user.accountStatus,
-            lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
-            temporaryLockoutUntilInput: user.temporaryLockoutUntil ? String(user.temporaryLockoutUntil) : '',
-            isSaving: false,
-            saveError: null,
-            isDeleting: false,
-            deleteError: null,
-            isDisablingTotp: false,
-            disableTotpError: null,
-            isDeleteConfirmationVisible: false
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
+      try {
+        set({ screenState: { status: 'loading' } })
+        const result = await deps.getUserUseCase.execute(deps.userId)
+
+        if (isSuccess(result)) {
+          const user = result.data
+          set({
+            screenState: {
+              status: 'content',
+              user,
+              authorityLevelInput: String(user.authorityLevel),
+              accountStatusInput: user.accountStatus,
+              lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
+              temporaryLockoutUntilInput: user.temporaryLockoutUntil ? String(user.temporaryLockoutUntil) : '',
+              isSaving: false,
+              saveError: null,
+              isDeleting: false,
+              deleteError: null,
+              isDisablingTotp: false,
+              disableTotpError: null,
+              isDeleteConfirmationVisible: false
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
       }
     },
 

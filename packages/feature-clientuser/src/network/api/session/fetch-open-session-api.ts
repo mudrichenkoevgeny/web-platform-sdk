@@ -14,8 +14,10 @@ import type {
 import {
   ListingParamNames,
   OpenSessionRoutes,
+  pagedResultSchema,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userSessionPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -119,12 +121,18 @@ export class FetchOpenSessionApi implements SessionApi {
       ? `${OpenSessionRoutes.GET_SESSIONS}?${queryString}`
       : OpenSessionRoutes.GET_SESSIONS
 
-    return callResult(() => this.client.request<PagedResult<UserSessionPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userSessionPayloadSchema).parse(raw)
+    })
   }
 
   public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPayload, AppError>> {
     const path = OpenSessionRoutes.GET_SESSION.replace(`{${UserApiPaths.SESSION_ID}}`, userSessionId)
-    return callResult(() => this.client.request<UserSessionPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userSessionPayloadSchema.parse(raw)
+    })
   }
 
   public async logout(): Promise<AppResult<void, AppError>> {

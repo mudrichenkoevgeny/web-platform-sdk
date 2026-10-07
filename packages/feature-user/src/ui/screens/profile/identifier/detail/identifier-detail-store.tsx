@@ -78,66 +78,78 @@ export const createIdentifierDetailStore = (
   deps: IdentifierDetailStoreDependencies,
   initialState?: IdentifierDetailScreenState
 ) => {
+  let isFetching = false
+
   const store = createStore<IdentifierDetailStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initializeIdentifier: async () => {
-      const targetId = deps.identifierId ?? deps.identifier?.id
-      const storedIdentifierIdRaw = deps.authStorage ? await deps.authStorage.getIdentifierId() : null
-      const activeIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
-      const resolvedIsCurrent = deps.isCurrentIdentifier ?? (targetId != null && targetId === activeIdentifierId)
-
-      if (deps.identifier) {
-        set({
-          screenState: {
-            status: 'content',
-            identifier: deps.identifier,
-            isCurrentIdentifier: resolvedIsCurrent,
-            canChangePassword: deps.emailChangePasswordUseCase != null && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
-            canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
-            actionLoading: false,
-            actionError: null,
-            isChangePasswordDialogVisible: false,
-            isDeleteConfirmationVisible: false
-          }
-        })
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
         return
       }
+      isFetching = true
 
-      if (targetId && deps.getUserIdentifierUseCase) {
-        set({ screenState: { status: 'loading' } })
-        const result = await deps.getUserIdentifierUseCase.execute(targetId)
+      try {
+        const targetId = deps.identifierId ?? deps.identifier?.id
+        const storedIdentifierIdRaw = deps.authStorage ? await deps.authStorage.getIdentifierId() : null
+        const activeIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
+        const resolvedIsCurrent = deps.isCurrentIdentifier ?? (targetId != null && targetId === activeIdentifierId)
 
-        if (isSuccess(result)) {
-          const loaded = result.data
+        if (deps.identifier) {
           set({
             screenState: {
               status: 'content',
-              identifier: loaded,
+              identifier: deps.identifier,
               isCurrentIdentifier: resolvedIsCurrent,
-              canChangePassword: deps.emailChangePasswordUseCase != null && loaded.userAuthProvider === UserAuthProvider.EMAIL,
-              canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && loaded.userAuthProvider === UserAuthProvider.EMAIL,
+              canChangePassword: deps.emailChangePasswordUseCase != null && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
+              canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
               actionLoading: false,
               actionError: null,
               isChangePasswordDialogVisible: false,
               isDeleteConfirmationVisible: false
             }
           })
+          return
+        }
+
+        if (targetId && deps.getUserIdentifierUseCase) {
+          set({ screenState: { status: 'loading' } })
+          const result = await deps.getUserIdentifierUseCase.execute(targetId)
+
+          if (isSuccess(result)) {
+            const loaded = result.data
+            set({
+              screenState: {
+                status: 'content',
+                identifier: loaded,
+                isCurrentIdentifier: resolvedIsCurrent,
+                canChangePassword: deps.emailChangePasswordUseCase != null && loaded.userAuthProvider === UserAuthProvider.EMAIL,
+                canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && loaded.userAuthProvider === UserAuthProvider.EMAIL,
+                actionLoading: false,
+                actionError: null,
+                isChangePasswordDialogVisible: false,
+                isDeleteConfirmationVisible: false
+              }
+            })
+          } else {
+            set({
+              screenState: {
+                status: 'error',
+                error: result.error
+              }
+            })
+          }
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: CommonError.unknown()
             }
           })
         }
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: CommonError.unknown()
-          }
-        })
+      } finally {
+        isFetching = false
       }
     },
 
@@ -339,10 +351,6 @@ export const createIdentifierDetailStore = (
       }
     }
   }))
-
-  if (!initialState) {
-    store.getState().initializeIdentifier()
-  }
 
   return store
 }

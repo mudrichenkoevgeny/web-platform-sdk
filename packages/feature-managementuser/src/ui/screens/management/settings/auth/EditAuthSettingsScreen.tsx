@@ -67,6 +67,9 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
       <FullscreenError
         error={screenState.error}
         onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.edit_auth_settings_title}
+        strings={strings}
       />
     )
   }

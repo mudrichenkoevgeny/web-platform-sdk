@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import {
   cn,
@@ -9,6 +9,7 @@ import {
   CoreIcon,
   CoreScreenTitleText,
   CoreTextButton,
+  FullscreenError,
   FullscreenLoading,
   icons,
   useAppErrorParser
@@ -55,6 +56,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
   const screenState = useTotpMainStore((s) => s.screenState)
+  const loadTotpStatus = useTotpMainStore((s) => s.loadTotpStatus)
   const onSetupClick = useTotpMainStore((s) => s.onSetupClick)
   const onCodeChanged = useTotpMainStore((s) => s.onCodeChanged)
   const onConfirmSetupClick = useTotpMainStore((s) => s.onConfirmSetupClick)
@@ -67,18 +69,24 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   const [isCopied, setIsCopied] = useState(false)
 
+  useEffect(() => {
+    loadTotpStatus()
+  }, [loadTotpStatus])
+
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
   }
 
   if (screenState.status === 'error') {
     return (
-      <div className="w-full h-full flex items-center justify-center p-6">
-        <CoreErrorText
-          text={errorParser.parse(screenState.error) ?? ''}
-          data-testid={TotpMainTestTags.GLOBAL_ERROR_TEXT}
-        />
-      </div>
+      <FullscreenError
+        data-testid={TotpMainTestTags.GLOBAL_ERROR_TEXT}
+        error={screenState.error}
+        onRetry={onSetupClick}
+        onBack={onBackClick}
+        title={strings.totp_main}
+        strings={strings}
+      />
     )
   }
 

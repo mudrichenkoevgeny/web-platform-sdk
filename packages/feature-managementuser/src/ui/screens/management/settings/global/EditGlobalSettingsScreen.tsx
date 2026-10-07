@@ -53,6 +53,9 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
       <FullscreenError
         error={screenState.error}
         onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.edit_global_settings_title}
+        strings={strings}
       />
     )
   }

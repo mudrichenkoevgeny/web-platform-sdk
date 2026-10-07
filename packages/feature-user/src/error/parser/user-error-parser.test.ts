@@ -12,6 +12,10 @@ describe('UserErrorParser', () => {
   it('parses client user feature errors', () => {
     expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The refresh token is invalid.')
     expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled')
+    expect(parserEn.parse(UserError.externalAuthCancelled())).toBe('Authentication was cancelled.')
+    expect(parserEn.parse(UserError.externalAuthFailed())).toBe('External authentication failed.')
+    expect(parserEn.parse(UserError.tooManyConfirmationRequests(60))).toBe('Too many requests. Try again in 60 seconds.')
+    expect(parserRu.parse(UserError.externalAuthCancelled())).toBe('Аутентификация была отменена.')
   })
 
   it('parses shared foundation user error codes', () => {

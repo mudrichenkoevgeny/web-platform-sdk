@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { CreateUserUseCase } from '@/usecase/user/create-user-use-case'
@@ -81,12 +82,22 @@ export const createCreateUserStore = (
     },
 
     onAuthorityLevelChanged: (value: string) => {
-      set({ screenState: { ...get().screenState, authorityLevel: value, error: null } })
+      if (value === '') {
+        set({ screenState: { ...get().screenState, authorityLevel: value, error: null } })
+        return
+      }
+      const trimmed = value.trim()
+      if (/^\d+$/.test(trimmed)) {
+        const num = parseInt(trimmed, 10)
+        if (num >= 0 && num <= 100) {
+          set({ screenState: { ...get().screenState, authorityLevel: trimmed, error: null } })
+        }
+      }
     },
 
     onCreateClick: async () => {
       const current = get().screenState
-      if (current.isLoading) {
+      if (current.isLoading || !FieldValidator.isValidEmail(current.email)) {
         return
       }
 

@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
+import { SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSession, UserSessionId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
+  canLoadMorePages,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
+  getNextPageNumber,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/management-delete-all-user-sessions-use-case'
@@ -58,56 +61,67 @@ export const createUserSessionListStore = (
   deps: UserSessionListStoreDependencies,
   initialState?: UserSessionListScreenState
 ) => {
+  let isFetching = false
+
   const fetchPage = async (set: SetState, get: GetState, pageNumber: number) => {
-    const userIds = deps.userId ? [deps.userId] : undefined
-    const result = await deps.managementGetSessionsUseCase.execute({
-      pageNumber,
-      pageSize: 20,
-      userIds,
-      sortOrder: 'desc'
-    })
+    if (isFetching) {
+      return
+    }
+    isFetching = true
 
-    if (isSuccess(result)) {
-      const current = get().screenState
-      const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
+    try {
+      const userIds = deps.userId ? [deps.userId] : undefined
+      const result = await deps.managementGetSessionsUseCase.execute({
+        pageNumber,
+        pageSize: 20,
+        userIds,
+        sortOrder: SortOrder.DESC
+      })
 
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            paging: nextPaging,
-            actionLoading: false
-          }
-        })
+      if (isSuccess(result)) {
+        const current = get().screenState
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              paging: nextPaging,
+              actionLoading: false
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'content',
+              paging: nextPaging,
+              actionLoading: false,
+              actionError: null
+            }
+          })
+        }
       } else {
-        set({
-          screenState: {
-            status: 'content',
-            paging: nextPaging,
-            actionLoading: false,
-            actionError: null
-          }
-        })
+        const current = get().screenState
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: result.error
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
       }
-    } else {
-      const current = get().screenState
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            actionLoading: false,
-            actionError: result.error
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
-      }
+    } finally {
+      isFetching = false
     }
   }
 
@@ -115,20 +129,24 @@ export const createUserSessionListStore = (
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
       set({ screenState: { status: 'loading' } })
       await fetchPage(set, get, 1)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
       const nextPaging = createNextPageLoadingPaginationState(current.paging)
       set({ screenState: { ...current, paging: nextPaging } })
 
-      await fetchPage(set, get, current.paging.pageNumber + 1)
+      await fetchPage(set, get, getNextPageNumber(current.paging))
     },
 
     onRefresh: async () => {

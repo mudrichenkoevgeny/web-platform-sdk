@@ -42,4 +42,17 @@ describe('GlobalSessionListScreen', () => {
     expect(screen.getByTestId(GlobalSessionListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalSessionListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
+
+  it('executes managementGetSessionsUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <GlobalSessionListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(GlobalSessionListTestTags.TITLE)).toBeDefined()
+    expect(deps.managementGetSessionsUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

@@ -28,7 +28,8 @@ describe('FetchSelfManagementIdentifiersApi', () => {
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
-    const dummyPayload = { items: [] } as any
+    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
+    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getUserIdentifiers(1, 10)
@@ -36,7 +37,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementIdentifierRoutes.GET_IDENTIFIERS)
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: expectedData })
   })
 
   it('dispatches emailChangePassword request', async () => {

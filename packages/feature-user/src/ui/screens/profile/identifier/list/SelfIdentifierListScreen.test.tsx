@@ -100,4 +100,17 @@ describe('SelfIdentifierListScreen', () => {
     await user.click(screen.getByTestId(IdentifierListTestTags.BACK_BUTTON))
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
+
+  it('executes getUserIdentifiersUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <SelfIdentifierListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    await screen.findByText('user1@example.com')
+    expect(deps.getUserIdentifiersUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

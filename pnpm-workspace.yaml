@@ -10,7 +10,7 @@ overrides:
   '@typescript-eslint/typescript-estree>typescript': 'npm:@typescript/typescript6@^6.0.2'
 
 catalog:
-  '@mudrichenkoevgeny/shared-foundation': '^0.0.53'
+  '@mudrichenkoevgeny/shared-foundation': '^0.0.55'
   '@testing-library/react': '^16.0.0'
   '@testing-library/user-event': '^14.5.0'
   '@types/node': '^26.6.3'
@@ -27,4 +27,4 @@ catalog:
   'vitest': '^5.0.3'
 
 minimumReleaseAgeExclude:
-  - '@mudrichenkoevgeny/shared-foundation@0.0.53'
+  - '@mudrichenkoevgeny/shared-foundation@0.0.55'

@@ -1,3 +1,8 @@
+import {
+  CompositeAuditActionTypeParser,
+  CompositeAuditMetadataKeyParser,
+  CompositeAuditResourceTypeParser
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
@@ -30,6 +35,9 @@ export const managementUserComponentMock = (
     securityComponent,
     authStorage,
     authServices,
+    compositeActionTypeParser: config?.compositeActionTypeParser ?? new CompositeAuditActionTypeParser([]),
+    compositeResourceTypeParser: config?.compositeResourceTypeParser ?? new CompositeAuditResourceTypeParser([]),
+    compositeMetadataKeyParser: config?.compositeMetadataKeyParser ?? new CompositeAuditMetadataKeyParser([]),
     ...config
   })
 }

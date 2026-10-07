@@ -41,4 +41,17 @@ describe('GlobalIdentifierListScreen', () => {
     expect(screen.getByTestId(GlobalIdentifierListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalIdentifierListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
+
+  it('executes managementGetIdentifiersUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <GlobalIdentifierListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(GlobalIdentifierListTestTags.TITLE)).toBeDefined()
+    expect(deps.managementGetIdentifiersUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

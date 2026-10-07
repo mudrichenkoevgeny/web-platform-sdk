@@ -8,7 +8,6 @@ import {
   EncryptedSettingsComponent
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccessTokenProvider,
   EncryptedSettings
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -104,7 +103,7 @@ export class ClientAppComponent {
         encryptedSettings: this.encryptedSettings,
         baseUrl: config.baseUrl,
         webSocketPath: WebSocketContract.WS_OPEN_REALTIME_PATH,
-        accessTokenProvider: this.authStorage as unknown as AccessTokenProvider,
+        accessTokenProvider: this.authStorage,
         httpClientConfigPlugins: [
           authHttpClientConfigPlugin,
           mfaStepUpHttpClientConfigPlugin

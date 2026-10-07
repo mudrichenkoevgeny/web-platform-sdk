@@ -6,6 +6,23 @@ import { CommonError } from '@/error/model/common-error'
 import { isNoInternetException } from '@/network/utils/is-no-internet-exception'
 
 /**
+ * Type guard checking if an error is an {@link ApiException}.
+ *
+ * @param error - Unknown error value to check
+ * @returns True if error is instance of ApiException or has apiErrorResponse property
+ */
+export const isApiException = (error: unknown): error is ApiException => {
+  return (
+    error instanceof ApiException ||
+    (typeof error === 'object' &&
+      error !== null &&
+      'apiErrorResponse' in error &&
+      typeof (error as ApiException).apiErrorResponse === 'object' &&
+      (error as ApiException).apiErrorResponse !== null)
+  )
+}
+
+/**
  * Safely executes an async function and wraps the returned result or caught exception into an {@link AppResult}.
  *
  * @param call - Async function producing the data payload
@@ -20,7 +37,7 @@ export const callResult = async <T>(
     const data = await call()
     return appResultSuccess(data)
   } catch (e: unknown) {
-    if (e instanceof ApiException) {
+    if (isApiException(e)) {
       return appResultFailure(toServerError(e.apiErrorResponse, isRetryable))
     }
 

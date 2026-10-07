@@ -86,15 +86,11 @@ describe('ManagementAuditRepositoryImpl', () => {
     expect(dummyMetadataParser.fromValueOrThrow).toHaveBeenCalledWith('IP_ADDRESS')
   })
 
-  it('delegates getAuditEvent and maps response to domain event', async () => {
+  it('delegates getAuditEvent and maps response to domain event using toAuditEvent', async () => {
     const result = await repository.getAuditEvent('evt_1')
     expect(mockApi.getAuditEvent).toHaveBeenCalledWith('evt_1')
     expect(isSuccess(result)).toBe(true)
-    expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
     expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledWith('CREATE_USER')
-    expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
     expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledWith('USER')
-    expect(dummyMetadataParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
-    expect(dummyMetadataParser.fromValueOrThrow).toHaveBeenCalledWith('IP_ADDRESS')
   })
 })

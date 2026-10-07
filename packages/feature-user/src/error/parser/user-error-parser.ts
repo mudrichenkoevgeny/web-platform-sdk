@@ -1,4 +1,4 @@
-import { UserErrorCodes, UserErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientUserErrorCodes } from '@/error/naming/client-user-error-codes'
@@ -135,6 +135,20 @@ export class UserErrorParser implements AppErrorParser {
 
       case ClientUserErrorCodes.REGISTRATION_DISABLED:
         return strings.error_user_registration_disabled
+
+      case ClientUserErrorCodes.EXTERNAL_AUTH_CANCELLED:
+        return strings.error_user_external_auth_cancelled
+
+      case ClientUserErrorCodes.EXTERNAL_AUTH_FAILED:
+        return strings.error_user_external_auth_failed
+
+      case ClientUserErrorCodes.TOO_MANY_CONFIRMATION_REQUESTS: {
+        const seconds = args[CommonErrorArgs.RETRY_AFTER_SECONDS]
+        if (seconds && seconds.trim().length > 0) {
+          return strings.error_common_too_many_requests_args(seconds)
+        }
+        return strings.error_user_too_many_confirmation_requests
+      }
 
       default:
         return null

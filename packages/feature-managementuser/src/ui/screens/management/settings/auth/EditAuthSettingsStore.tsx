@@ -91,54 +91,66 @@ export const createEditAuthSettingsStore = (
   deps: EditAuthSettingsStoreDependencies,
   initialState?: EditAuthSettingsScreenState
 ) => {
+  let isFetching = false
+
   return createStore<EditAuthSettingsStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
-      const result = await deps.getManagementAuthSettingsUseCase.execute()
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
+      isFetching = true
 
-      if (isSuccess(result)) {
-        const settings = result.data
-        const enabled = new Set<UserAuthProvider>([
-          ...settings.availableAuthProviders.primary,
-          ...settings.availableAuthProviders.secondary
-        ])
+      try {
+        set({ screenState: { status: 'loading' } })
+        const result = await deps.getManagementAuthSettingsUseCase.execute()
 
-        set({
-          screenState: {
-            status: 'content',
-            enabledProviders: enabled,
-            maxTotalIdentifiers: String(settings.maxTotalIdentifiers),
-            maxEmailIdentifiers: String(settings.maxEmailIdentifiers),
-            maxPhoneIdentifiers: String(settings.maxPhoneIdentifiers),
-            maxIdentifiersPerExternalProvider: String(settings.maxIdentifiersPerExternalProvider),
-            maxActiveSessionsForOpenUser: String(settings.maxActiveSessionsForOpenUser),
-            maxActiveSessionsForManagementUser: String(settings.maxActiveSessionsForManagementUser),
-            accessTokenExpirationSeconds: String(settings.accessTokenExpirationSeconds),
-            refreshTokenExpirationSeconds: String(settings.refreshTokenExpirationSeconds),
-            accountDeletionGracePeriodSeconds: String(settings.accountDeletionGracePeriodSeconds),
-            accountDeletionCheckIntervalSeconds: String(settings.accountDeletionCheckIntervalSeconds),
-            isRegistrationEnabled: settings.isRegistrationEnabled,
-            openEmailBlacklistEnabled: settings.openEmailRestrictionPolicy.isBlacklistEnabled,
-            openEmailBlacklist: settings.openEmailRestrictionPolicy.blacklist.join(','),
-            openEmailWhitelistEnabled: settings.openEmailRestrictionPolicy.isWhitelistEnabled,
-            openEmailWhitelist: settings.openEmailRestrictionPolicy.whitelist.join(','),
-            managementEmailBlacklistEnabled: settings.managementEmailRestrictionPolicy.isBlacklistEnabled,
-            managementEmailBlacklist: settings.managementEmailRestrictionPolicy.blacklist.join(','),
-            managementEmailWhitelistEnabled: settings.managementEmailRestrictionPolicy.isWhitelistEnabled,
-            managementEmailWhitelist: settings.managementEmailRestrictionPolicy.whitelist.join(','),
-            isSaving: false,
-            saveError: null
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
+        if (isSuccess(result)) {
+          const settings = result.data
+          const enabled = new Set<UserAuthProvider>([
+            ...settings.availableAuthProviders.primary,
+            ...settings.availableAuthProviders.secondary
+          ])
+
+          set({
+            screenState: {
+              status: 'content',
+              enabledProviders: enabled,
+              maxTotalIdentifiers: String(settings.maxTotalIdentifiers),
+              maxEmailIdentifiers: String(settings.maxEmailIdentifiers),
+              maxPhoneIdentifiers: String(settings.maxPhoneIdentifiers),
+              maxIdentifiersPerExternalProvider: String(settings.maxIdentifiersPerExternalProvider),
+              maxActiveSessionsForOpenUser: String(settings.maxActiveSessionsForOpenUser),
+              maxActiveSessionsForManagementUser: String(settings.maxActiveSessionsForManagementUser),
+              accessTokenExpirationSeconds: String(settings.accessTokenExpirationSeconds),
+              refreshTokenExpirationSeconds: String(settings.refreshTokenExpirationSeconds),
+              accountDeletionGracePeriodSeconds: String(settings.accountDeletionGracePeriodSeconds),
+              accountDeletionCheckIntervalSeconds: String(settings.accountDeletionCheckIntervalSeconds),
+              isRegistrationEnabled: settings.isRegistrationEnabled,
+              openEmailBlacklistEnabled: settings.openEmailRestrictionPolicy.isBlacklistEnabled,
+              openEmailBlacklist: settings.openEmailRestrictionPolicy.blacklist.join(','),
+              openEmailWhitelistEnabled: settings.openEmailRestrictionPolicy.isWhitelistEnabled,
+              openEmailWhitelist: settings.openEmailRestrictionPolicy.whitelist.join(','),
+              managementEmailBlacklistEnabled: settings.managementEmailRestrictionPolicy.isBlacklistEnabled,
+              managementEmailBlacklist: settings.managementEmailRestrictionPolicy.blacklist.join(','),
+              managementEmailWhitelistEnabled: settings.managementEmailRestrictionPolicy.isWhitelistEnabled,
+              managementEmailWhitelist: settings.managementEmailRestrictionPolicy.whitelist.join(','),
+              isSaving: false,
+              saveError: null
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
       }
     },
 

@@ -18,8 +18,10 @@ import type {
 import {
   ListingParamNames,
   OpenIdentifierRoutes,
+  pagedResultSchema,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userIdentifierPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
 
@@ -36,7 +38,10 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
     userIdentifierId: UserIdentifierId
   ): Promise<AppResult<UserIdentifierPayload, AppError>> {
     const path = OpenIdentifierRoutes.GET_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, userIdentifierId)
-    return callResult(() => this.client.request<UserIdentifierPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userIdentifierPayloadSchema.parse(raw)
+    })
   }
 
   public async getUserIdentifiers(
@@ -76,7 +81,10 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
       ? `${OpenIdentifierRoutes.GET_IDENTIFIERS}?${queryString}`
       : OpenIdentifierRoutes.GET_IDENTIFIERS
 
-    return callResult(() => this.client.request<PagedResult<UserIdentifierPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+    })
   }
 
   public async deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {

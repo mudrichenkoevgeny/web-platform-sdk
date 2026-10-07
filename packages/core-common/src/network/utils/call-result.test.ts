@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import { callResult } from '@/network/utils/call-result'
+import { callResult, isApiException } from '@/network/utils/call-result'
 import { ApiException } from '@/error/model/api-exception'
 import { ServerError } from '@/error/model/server-error'
 import { CommonErrorNoInternetConnection, CommonErrorNetwork, CommonErrorContractViolation, CommonErrorInternal } from '@/error/model/common-error'
@@ -33,6 +33,19 @@ describe('callResult', () => {
       expect((result.error as ServerError).code).toBe('UNAUTHORIZED')
       expect(result.error.isRetryable).toBe(true)
     }
+  })
+
+  it('correctly identifies ApiException objects via isApiException', () => {
+    const apiErrorResponse = {
+      id: 'err-123' as unknown as UserId,
+      code: 'INVALID_CREDENTIALS',
+      message: 'Invalid credentials',
+      args: {}
+    }
+    const apiException = new ApiException(apiErrorResponse)
+    expect(isApiException(apiException)).toBe(true)
+    expect(isApiException({ apiErrorResponse })).toBe(true)
+    expect(isApiException(new Error('Generic'))).toBe(false)
   })
 
   it('maps TypeError / Failed to fetch to NoInternetConnection or Network', async () => {

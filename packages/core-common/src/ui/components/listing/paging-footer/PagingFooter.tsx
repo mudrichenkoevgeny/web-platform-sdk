@@ -2,28 +2,33 @@ import React, { forwardRef } from 'react'
 import { cn } from '@/utils/cn'
 import { CoreBackButton } from '@/ui/components/button/back/CoreBackButton'
 import { enStrings } from '@/locales/en/strings'
+import type { CoreCommonStrings } from '@/locales/en/strings'
 
 export interface PagingFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  currentPage: number
-  totalPages: number
+  currentPage?: number
+  totalPages?: number
   onPageChange?: (page: number) => void
   totalCount?: number
+  strings?: CoreCommonStrings
 }
 
 export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
   (
     {
-      currentPage,
-      totalPages,
+      currentPage = 1,
+      totalPages = 1,
       onPageChange,
       totalCount,
+      strings = enStrings,
       className,
       ...rest
     },
     ref
   ) => {
-    const hasPrevious = currentPage > 1
-    const hasNext = currentPage < totalPages
+    const page = currentPage ?? 1
+    const total = totalPages ?? 1
+    const hasPrevious = page > 1
+    const hasNext = page < total
 
     return (
       <div
@@ -37,23 +42,23 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
         {onPageChange && (
           <div className="flex items-center gap-1">
             <CoreBackButton
-              onClick={() => onPageChange(currentPage - 1)}
+              onClick={() => onPageChange(page - 1)}
               disabled={!hasPrevious}
-              ariaLabel={enStrings.ui_common_previous_page}
+              ariaLabel={strings.ui_common_previous_page}
             />
             <CoreBackButton
-              onClick={() => onPageChange(currentPage + 1)}
+              onClick={() => onPageChange(page + 1)}
               disabled={!hasNext}
-              ariaLabel={enStrings.ui_common_next_page}
+              ariaLabel={strings.ui_common_next_page}
               className="rotate-180"
             />
           </div>
         )}
 
         <div className="flex items-center gap-4 text-xs font-medium">
-          <span>{enStrings.ui_common_page_info(currentPage, totalPages)}</span>
-          {totalCount !== undefined && (
-            <span>{enStrings.ui_common_total_count(totalCount)}</span>
+          <span>{strings.ui_common_page_info(page, total)}</span>
+          {totalCount !== undefined && totalCount !== null && (
+            <span>{strings.ui_common_total_count(totalCount)}</span>
           )}
         </div>
       </div>

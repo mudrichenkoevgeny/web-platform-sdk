@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -8,6 +8,7 @@ import {
   CoreScreenTitleText,
   CoreTextButton,
   formatEpochMillisToDateTime,
+  FullscreenError,
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -68,6 +69,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
   const screenState = useIdentifierDetailStore((s) => s.screenState)
+  const initializeIdentifier = useIdentifierDetailStore((s) => s.initializeIdentifier)
   const onDeleteIdentifierRequested = useIdentifierDetailStore((s) => s.onDeleteIdentifierRequested)
   const onDismissDeleteIdentifierDialog = useIdentifierDetailStore((s) => s.onDismissDeleteIdentifierDialog)
   const onDeleteIdentifierClick = useIdentifierDetailStore((s) => s.onDeleteIdentifierClick)
@@ -80,6 +82,10 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const onUserClick = useIdentifierDetailStore((s) => s.onUserClick)
   const errorParser = useAppErrorParser()
 
+  useEffect(() => {
+    initializeIdentifier()
+  }, [initializeIdentifier])
+
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false)
@@ -91,17 +97,14 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   if (screenState.status === 'error') {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-6 gap-4">
-        <CoreErrorText
-          text={errorParser.parse(screenState.error) ?? ''}
-          data-testid={IdentifierDetailTestTags.GLOBAL_ERROR}
-        />
-        <CoreTextButton
-          type="button"
-          label={strings.resend_code ? strings.resend_code : 'Retry'}
-          onClick={onRetry}
-        />
-      </div>
+      <FullscreenError
+        data-testid={IdentifierDetailTestTags.GLOBAL_ERROR}
+        error={screenState.error}
+        onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.identifier_detail_title}
+        strings={strings}
+      />
     )
   }
 

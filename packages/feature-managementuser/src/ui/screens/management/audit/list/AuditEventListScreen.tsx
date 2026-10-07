@@ -12,6 +12,7 @@ import {
   ListingHeaderBar,
   ListingOptionsPanel,
   PagingFooter,
+  hasMorePages,
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -54,7 +55,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: pagingState ? pagingState.pageNumber < pagingState.totalPages : false,
+    hasMore: pagingState ? hasMorePages(pagingState) : false,
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
@@ -68,6 +69,9 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         data-testid={AuditEventListTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRefresh}
+        onBack={onBackClick}
+        title={strings.audit_logs_title}
+        strings={strings}
       />
     )
   }
@@ -166,6 +170,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
+              strings={strings}
             />
           </div>
         )}

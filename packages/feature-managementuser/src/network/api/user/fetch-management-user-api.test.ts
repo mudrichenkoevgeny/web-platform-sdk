@@ -29,7 +29,8 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches getUsers request with query params', async () => {
-    const dummyPayload = { items: [] } as any
+    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
+    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getUsers(1, 10)
@@ -37,7 +38,7 @@ describe('FetchManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementUserRoutes.GET_USERS)
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: expectedData })
   })
 
   it('dispatches getUser request', async () => {

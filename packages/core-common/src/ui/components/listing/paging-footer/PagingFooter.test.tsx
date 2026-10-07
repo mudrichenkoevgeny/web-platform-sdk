@@ -28,4 +28,15 @@ describe('PagingFooter', () => {
 
     expect(onPageChange).toHaveBeenCalledWith(3)
   })
+
+  it('falls back to page 1 of 1 when props are undefined without rendering Page undefined of undefined', () => {
+    render(
+      <ComponentTestHarness>
+        <PagingFooter />
+      </ComponentTestHarness>
+    )
+
+    expect(screen.getByText('Page 1 of 1')).toBeDefined()
+    expect(screen.queryByText(/undefined/i)).toBeNull()
+  })
 })

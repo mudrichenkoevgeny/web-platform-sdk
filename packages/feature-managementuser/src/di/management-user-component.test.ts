@@ -1,4 +1,9 @@
 import { describe, it, expect } from 'vitest'
+import {
+  CompositeAuditActionTypeParser,
+  CompositeAuditMetadataKeyParser,
+  CompositeAuditResourceTypeParser
+} from '@mudrichenkoevgeny/shared-foundation'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
@@ -18,7 +23,10 @@ describe('ManagementUserComponent', () => {
       settingsComponent: settingsComponent as any,
       securityComponent: securityComponent as any,
       authStorage: authStorage as any,
-      authServices: authServices as any
+      authServices: authServices as any,
+      compositeActionTypeParser: new CompositeAuditActionTypeParser([]),
+      compositeResourceTypeParser: new CompositeAuditResourceTypeParser([]),
+      compositeMetadataKeyParser: new CompositeAuditMetadataKeyParser([])
     })
 
     expect(component).toBeDefined()

@@ -12,6 +12,7 @@ import {
   ListingEmptyState,
   ListingHeaderBar,
   PagingFooter,
+  hasMorePages,
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -51,7 +52,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: pagingState ? pagingState.pageNumber < pagingState.totalPages : false,
+    hasMore: pagingState ? hasMorePages(pagingState) : false,
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
@@ -65,6 +66,9 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
         data-testid={UserSessionListTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRefresh}
+        onBack={onBackClick}
+        title={strings.user_sessions}
+        strings={strings}
       />
     )
   }
@@ -145,6 +149,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
+              strings={strings}
             />
           </div>
         )}

@@ -39,4 +39,17 @@ describe('UserIdentifierListScreen', () => {
     expect(screen.getByTestId(UserIdentifierListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(UserIdentifierListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
+
+  it('executes managementGetIdentifiersUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <UserIdentifierListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(UserIdentifierListTestTags.TITLE)).toBeDefined()
+    expect(deps.managementGetIdentifiersUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

@@ -64,41 +64,53 @@ export const createEditGlobalSettingsStore = (
   deps: EditGlobalSettingsStoreDependencies,
   initialState?: EditGlobalSettingsScreenState
 ) => {
+  let isFetching = false
+
   return createStore<EditGlobalSettingsStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
-      const result = await deps.getManagementGlobalSettingsUseCase.execute()
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
+      isFetching = true
 
-      if (isSuccess(result)) {
-        const settings = result.data
-        const minVersions = settings.minSupportedAppVersions ?? {}
+      try {
+        set({ screenState: { status: 'loading' } })
+        const result = await deps.getManagementGlobalSettingsUseCase.execute()
 
-        set({
-          screenState: {
-            status: 'content',
-            privacyPolicyUrl: settings.privacyPolicyUrl ?? '',
-            termsOfServiceUrl: settings.termsOfServiceUrl ?? '',
-            contactSupportEmail: settings.contactSupportEmail ?? '',
-            minVersionAndroid: minVersions[ClientType.ANDROID] ?? '',
-            minVersionIos: minVersions[ClientType.IOS] ?? '',
-            minVersionWeb: minVersions[ClientType.WEB] ?? '',
-            minVersionDesktop: minVersions[ClientType.DESKTOP] ?? '',
-            isTracingEnabled: settings.isTracingEnabled,
-            isMetricsEnabled: settings.isMetricsEnabled,
-            isVerboseLoggingEnabled: settings.isVerboseLoggingEnabled,
-            isSaving: false,
-            saveError: null
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
+        if (isSuccess(result)) {
+          const settings = result.data
+          const minVersions = settings.minSupportedAppVersions ?? {}
+
+          set({
+            screenState: {
+              status: 'content',
+              privacyPolicyUrl: settings.privacyPolicyUrl ?? '',
+              termsOfServiceUrl: settings.termsOfServiceUrl ?? '',
+              contactSupportEmail: settings.contactSupportEmail ?? '',
+              minVersionAndroid: minVersions[ClientType.ANDROID] ?? '',
+              minVersionIos: minVersions[ClientType.IOS] ?? '',
+              minVersionWeb: minVersions[ClientType.WEB] ?? '',
+              minVersionDesktop: minVersions[ClientType.DESKTOP] ?? '',
+              isTracingEnabled: settings.isTracingEnabled,
+              isMetricsEnabled: settings.isMetricsEnabled,
+              isVerboseLoggingEnabled: settings.isVerboseLoggingEnabled,
+              isSaving: false,
+              saveError: null
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
       }
     },
 

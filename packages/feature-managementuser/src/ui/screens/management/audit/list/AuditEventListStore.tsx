@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { AuditActorType, AuditFilterValues, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditActorType, AuditEventSortBy, AuditFilterValues, AuditStatus, SortOrder, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuditEvent, AuditEventId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
+  canLoadMorePages,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
+  getNextPageNumber,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
@@ -58,6 +60,8 @@ export const createAuditEventListStore = (
   deps: AuditEventListStoreDependencies,
   initialState?: AuditEventListScreenState
 ) => {
+  let isFetching = false
+
   const fetchPage = async (
     set: SetState,
     get: GetState,
@@ -65,97 +69,106 @@ export const createAuditEventListStore = (
     sortState: ListingSortState | null,
     filterStates: Record<string, ListingFilterState>
   ) => {
-    const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
-    const sortBy = sortState?.optionId ? ('created_at' as const) : null
+    if (isFetching) {
+      return
+    }
+    isFetching = true
 
-    const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
-    const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
-    const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
-    const actionFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTION]
-    const resourceFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE]
-    const resourceIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID]
-    const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
-    const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]
+    try {
+      const sortOrder = sortState ? (sortState.isAscending ? SortOrder.ASC : SortOrder.DESC) : null
+      const sortBy = sortState?.optionId ? AuditEventSortBy.CREATED_AT : null
 
-    const actorTypes = actorTypeFilter?.type === 'choice'
-      ? Array.from(actorTypeFilter.selectedIds).filter((id): id is AuditActorType =>
-          Object.values(AuditActorType).includes(id as AuditActorType)
-        )
-      : undefined
-    const actorUserRoles = actorRoleFilter?.type === 'choice'
-      ? Array.from(actorRoleFilter.selectedIds).filter((id): id is UserRole =>
-          Object.values(UserRole).includes(id as UserRole)
-        )
-      : undefined
-    const statuses = statusFilter?.type === 'choice'
-      ? Array.from(statusFilter.selectedIds).filter((id): id is AuditStatus =>
-          Object.values(AuditStatus).includes(id as AuditStatus)
-        )
-      : undefined
+      const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
+      const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
+      const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
+      const actionFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTION]
+      const resourceFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE]
+      const resourceIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID]
+      const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
+      const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]
 
-    const actorIds = actorIdFilter?.type === 'text' && actorIdFilter.value.trim() ? [actorIdFilter.value.trim()] : undefined
-    const actions = actionFilter?.type === 'text' && actionFilter.value.trim() ? [actionFilter.value.trim()] : undefined
-    const resources = resourceFilter?.type === 'text' && resourceFilter.value.trim() ? [resourceFilter.value.trim()] : undefined
-    const resourceIds = resourceIdFilter?.type === 'text' && resourceIdFilter.value.trim() ? [resourceIdFilter.value.trim()] : undefined
-    const messages = messageFilter?.type === 'text' && messageFilter.value.trim() ? [messageFilter.value.trim()] : undefined
+      const actorTypes = actorTypeFilter?.type === 'choice'
+        ? Array.from(actorTypeFilter.selectedIds).filter((id): id is AuditActorType =>
+            Object.values(AuditActorType).includes(id as AuditActorType)
+          )
+        : undefined
+      const actorUserRoles = actorRoleFilter?.type === 'choice'
+        ? Array.from(actorRoleFilter.selectedIds).filter((id): id is UserRole =>
+            Object.values(UserRole).includes(id as UserRole)
+          )
+        : undefined
+      const statuses = statusFilter?.type === 'choice'
+        ? Array.from(statusFilter.selectedIds).filter((id): id is AuditStatus =>
+            Object.values(AuditStatus).includes(id as AuditStatus)
+          )
+        : undefined
 
-    const result = await deps.getAuditEventsUseCase.execute({
-      pageNumber,
-      pageSize: 20,
-      sortBy,
-      sortOrder,
-      actorIds,
-      actorTypes,
-      actorUserRoles,
-      actions,
-      resources,
-      resourceIds,
-      statuses,
-      messages
-    })
+      const actorIds = actorIdFilter?.type === 'text' && actorIdFilter.value.trim() ? [actorIdFilter.value.trim()] : undefined
+      const actions = actionFilter?.type === 'text' && actionFilter.value.trim() ? [actionFilter.value.trim()] : undefined
+      const resources = resourceFilter?.type === 'text' && resourceFilter.value.trim() ? [resourceFilter.value.trim()] : undefined
+      const resourceIds = resourceIdFilter?.type === 'text' && resourceIdFilter.value.trim() ? [resourceIdFilter.value.trim()] : undefined
+      const messages = messageFilter?.type === 'text' && messageFilter.value.trim() ? [messageFilter.value.trim()] : undefined
 
-    if (isSuccess(result)) {
-      const current = get().screenState
-      const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEvent>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
+      const result = await deps.getAuditEventsUseCase.execute({
+        pageNumber,
+        pageSize: 20,
+        sortBy,
+        sortOrder,
+        actorIds,
+        actorTypes,
+        actorUserRoles,
+        actions,
+        resources,
+        resourceIds,
+        statuses,
+        messages
+      })
 
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            paging: nextPaging
-          }
-        })
+      if (isSuccess(result)) {
+        const current = get().screenState
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEvent>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              paging: nextPaging
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'content',
+              paging: nextPaging,
+              sortState,
+              filterStates,
+              isFilterPanelExpanded: false,
+              actionLoading: false,
+              actionError: null
+            }
+          })
+        }
       } else {
-        set({
-          screenState: {
-            status: 'content',
-            paging: nextPaging,
-            sortState,
-            filterStates,
-            isFilterPanelExpanded: false,
-            actionLoading: false,
-            actionError: null
-          }
-        })
+        const current = get().screenState
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              actionError: result.error
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
       }
-    } else {
-      const current = get().screenState
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            actionError: result.error
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
-      }
+    } finally {
+      isFetching = false
     }
   }
 
@@ -163,13 +176,17 @@ export const createAuditEventListStore = (
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
       set({ screenState: { status: 'loading' } })
       await fetchPage(set, get, 1, null, {})
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -179,7 +196,7 @@ export const createAuditEventListStore = (
       await fetchPage(
         set,
         get,
-        current.paging.pageNumber + 1,
+        getNextPageNumber(current.paging),
         current.sortState,
         current.filterStates
       )

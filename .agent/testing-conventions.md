@@ -9,6 +9,7 @@ alwaysApply: true
 ## 1. Operational Policy
 - **Manual Execution Only:** Test runs must be triggered explicitly by the developer. AI is strictly prohibited from running test commands.
 - **Runnable Code:** AI must provide complete test files without `TODO` markers.
+- **Mandatory Bug Fix Test Coverage:** When fixing a bug or regression, AI must write automated test coverage (unit or UI test) verifying the fix and preventing future regressions.
 
 ## 2. Tooling
 - **Unit & Logic:** `vitest`.

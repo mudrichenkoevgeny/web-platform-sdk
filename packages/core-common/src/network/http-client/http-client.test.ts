@@ -52,6 +52,20 @@ describe('HttpClient', () => {
     await expect(client.request('/users/123')).rejects.toThrow(ApiException)
   })
 
+  it('throws generic Error when error response does not conform to apiErrorResponseSchema', async () => {
+    const errorPayload = {
+      id: 'invalid_id_format',
+      code: 'INVALID_CREDENTIALS',
+      message: 'Invalid credentials'
+    }
+    const mockResponse = new Response(JSON.stringify(errorPayload), { status: 400, statusText: 'Bad Request' })
+    const fetchSpy = vi.fn().mockResolvedValue(mockResponse)
+
+    const client = createTestHttpClient(fetchSpy as unknown as typeof fetch)
+
+    await expect(client.request('/auth/login')).rejects.toThrow('HTTP Error 400: Bad Request')
+  })
+
   it('throws generic Error when response is non-2xx and not ApiErrorResponse', async () => {
     const mockResponse = new Response('Bad Gateway', { status: 502, statusText: 'Bad Gateway' })
     const fetchSpy = vi.fn().mockResolvedValue(mockResponse)

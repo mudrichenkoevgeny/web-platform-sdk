@@ -79,9 +79,12 @@ describe('CommonErrorParser', () => {
     expect(ruParser.parse(error)).toBe('Ошибка сети.')
   })
 
-  it('returns unknown error message for completely unknown error code', () => {
-    const error = new ServerError(dummyErrorId, 'UNKNOWN_CUSTOM_CODE', '', {}, false)
-    expect(parser.parse(error)).toBe('An unknown error has occurred.')
-    expect(ruParser.parse(error)).toBe('Произошла неизвестная ошибка.')
+  it('returns unknown error message or custom error message for completely unknown error code', () => {
+    const errorWithoutMsg = new ServerError(dummyErrorId, 'UNKNOWN_CUSTOM_CODE', '', {}, false)
+    expect(parser.parse(errorWithoutMsg)).toBe('An unknown error has occurred.')
+    expect(ruParser.parse(errorWithoutMsg)).toBe('Произошла неизвестная ошибка.')
+
+    const errorWithMsg = new ServerError(dummyErrorId, 'UNKNOWN_CUSTOM_CODE', 'Custom error from server', {}, false)
+    expect(parser.parse(errorWithMsg)).toBe('Custom error from server')
   })
 })

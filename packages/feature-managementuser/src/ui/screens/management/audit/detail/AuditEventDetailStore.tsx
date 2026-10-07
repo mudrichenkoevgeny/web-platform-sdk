@@ -55,27 +55,39 @@ export const createAuditEventDetailStore = (
   deps: AuditEventDetailStoreDependencies,
   initialState?: AuditEventDetailScreenState
 ) => {
+  let isFetching = false
+
   return createStore<AuditEventDetailStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
-      const result = await deps.getAuditEventUseCase.execute(deps.eventId)
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
+      isFetching = true
 
-      if (isSuccess(result)) {
-        set({
-          screenState: {
-            status: 'content',
-            event: result.data
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
+      try {
+        set({ screenState: { status: 'loading' } })
+        const result = await deps.getAuditEventUseCase.execute(deps.eventId)
+
+        if (isSuccess(result)) {
+          set({
+            screenState: {
+              status: 'content',
+              event: result.data
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
       }
     },
 

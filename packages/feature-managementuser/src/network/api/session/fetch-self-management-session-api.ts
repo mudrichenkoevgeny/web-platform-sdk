@@ -13,9 +13,11 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ListingParamNames,
+  pagedResultSchema,
   SelfManagementSessionRoutes,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userSessionPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -111,12 +113,18 @@ export class FetchSelfManagementSessionApi implements SessionApi {
       ? `${SelfManagementSessionRoutes.GET_SESSIONS}?${queryString}`
       : SelfManagementSessionRoutes.GET_SESSIONS
 
-    return callResult(() => this.client.request<PagedResult<UserSessionPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userSessionPayloadSchema).parse(raw)
+    })
   }
 
   public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPayload, AppError>> {
     const path = SelfManagementSessionRoutes.GET_SESSION.replace(`{${UserApiPaths.SESSION_ID}}`, userSessionId)
-    return callResult(() => this.client.request<UserSessionPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userSessionPayloadSchema.parse(raw)
+    })
   }
 
   public async logout(): Promise<AppResult<void, AppError>> {

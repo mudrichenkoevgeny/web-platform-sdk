@@ -6,7 +6,9 @@ import {
   CoreErrorText,
   CoreScreenTitleText,
   CoreTextButton,
+  FullscreenError,
   FullscreenLoading,
+  hasMorePages,
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -42,12 +44,12 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const errorParser = useAppErrorParser()
 
   const isContent = screenState.status === 'content'
-  const hasMorePages = isContent ? screenState.hasMorePages : false
-  const isNextPageLoading = isContent ? screenState.isNextPageLoading : false
+  const hasMore = isContent ? hasMorePages(screenState.paging) : false
+  const isNextPageLoading = isContent ? Boolean(screenState.paging.isNextPageLoading) : false
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: hasMorePages,
+    hasMore,
     isLoading: isNextPageLoading
   })
 
@@ -57,17 +59,14 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   if (screenState.status === 'error') {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-6 gap-4">
-        <CoreErrorText
-          text={errorParser.parse(screenState.error) ?? ''}
-          data-testid={SelfSessionListTestTags.GLOBAL_ERROR_TEXT}
-        />
-        <CoreTextButton
-          type="button"
-          label="Retry"
-          onClick={onRefresh}
-        />
-      </div>
+      <FullscreenError
+        data-testid={SelfSessionListTestTags.GLOBAL_ERROR_TEXT}
+        error={screenState.error}
+        onRetry={onRefresh}
+        onBack={onBackClick}
+        title={strings.sessions}
+        strings={strings}
+      />
     )
   }
 
@@ -110,7 +109,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           />
         ))}
 
-        {hasMorePages && <div ref={sentinelRef} className="h-4 w-full" />}
+        {hasMore && <div ref={sentinelRef} className="h-4 w-full" />}
 
         {isNextPageLoading && (
           <div className="w-full py-2 text-center text-xs text-muted-foreground">

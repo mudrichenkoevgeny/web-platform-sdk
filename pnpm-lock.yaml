@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@mudrichenkoevgeny/shared-foundation':
-      specifier: ^0.0.53
-      version: 0.0.53
+      specifier: ^0.0.55
+      version: 0.0.55
     '@testing-library/react':
       specifier: ^16.0.0
       version: 16.3.3
@@ -247,7 +247,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -299,7 +299,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -357,7 +357,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -412,7 +412,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -479,7 +479,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -546,7 +546,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -616,7 +616,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -677,7 +677,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: 0.0.53
+        version: 0.0.55
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -1116,8 +1116,8 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@mudrichenkoevgeny/shared-foundation@0.0.53':
-    resolution: {integrity: sha512-mQ3PTQxT/bc62O2si29avmMS4PeKDTGOkPO3YmpGc1TfnaUxAfNg2/O1zNFoJT7CKypZjyUk+xoL1/fDtaBr9A==}
+  '@mudrichenkoevgeny/shared-foundation@0.0.55':
+    resolution: {integrity: sha512-c/R3Cur11llqE7hVOQ1nhS2otphZDQztHAFWTZQnM9rw9mYuPr5PKbdjZreyRrp6XIpY3tVq7C93GpMWVfVSxA==}
 
   '@napi-rs/wasm-runtime@1.2.4':
     resolution: {integrity: sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g==}
@@ -3601,7 +3601,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@mudrichenkoevgeny/shared-foundation@0.0.53':
+  '@mudrichenkoevgeny/shared-foundation@0.0.55':
     dependencies:
       zod: 3.25.76
 

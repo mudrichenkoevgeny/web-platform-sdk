@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifier, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
+  canLoadMorePages,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
+  getNextPageNumber,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementDeleteIdentifierUseCase } from '@/usecase/identifier/management-delete-identifier-use-case'
@@ -61,6 +63,8 @@ export const createGlobalIdentifierListStore = (
   deps: GlobalIdentifierListStoreDependencies,
   initialState?: GlobalIdentifierListScreenState
 ) => {
+  let isFetching = false
+
   const fetchPage = async (
     set: SetState,
     get: GetState,
@@ -68,75 +72,84 @@ export const createGlobalIdentifierListStore = (
     sortState: ListingSortState | null,
     filterStates: Record<string, ListingFilterState>
   ) => {
-    const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
-    const sortBy = sortState?.optionId
-      ? (Object.values(UserSortValues.UserIdentifierSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserIdentifierSortBy | undefined ?? null)
-      : null
+    if (isFetching) {
+      return
+    }
+    isFetching = true
 
-    const providerFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER]
-    const userIdFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_ID]
-    const identifierFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER]
+    try {
+      const sortOrder = sortState ? (sortState.isAscending ? SortOrder.ASC : SortOrder.DESC) : null
+      const sortBy = sortState?.optionId
+        ? (Object.values(UserSortValues.UserIdentifierSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserIdentifierSortBy | undefined ?? null)
+        : null
 
-    const userAuthProviders = providerFilter?.type === 'choice'
-      ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
-          Object.values(UserAuthProvider).includes(id as UserAuthProvider)
-        )
-      : undefined
-    const userIds = userIdFilter?.type === 'text' && userIdFilter.value.trim() ? [userIdFilter.value.trim()] : undefined
-    const identifiers = identifierFilter?.type === 'text' && identifierFilter.value.trim() ? [identifierFilter.value.trim()] : undefined
+      const providerFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER]
+      const userIdFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_ID]
+      const identifierFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER]
 
-    const result = await deps.managementGetIdentifiersUseCase.execute({
-      pageNumber,
-      pageSize: 20,
-      sortBy,
-      sortOrder,
-      userAuthProviders,
-      userIds,
-      identifiers
-    })
+      const userAuthProviders = providerFilter?.type === 'choice'
+        ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
+            Object.values(UserAuthProvider).includes(id as UserAuthProvider)
+          )
+        : undefined
+      const userIds = userIdFilter?.type === 'text' && userIdFilter.value.trim() ? [userIdFilter.value.trim()] : undefined
+      const identifiers = identifierFilter?.type === 'text' && identifierFilter.value.trim() ? [identifierFilter.value.trim()] : undefined
 
-    if (isSuccess(result)) {
-      const current = get().screenState
-      const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
+      const result = await deps.managementGetIdentifiersUseCase.execute({
+        pageNumber,
+        pageSize: 20,
+        sortBy,
+        sortOrder,
+        userAuthProviders,
+        userIds,
+        identifiers
+      })
 
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            paging: nextPaging
-          }
-        })
+      if (isSuccess(result)) {
+        const current = get().screenState
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              paging: nextPaging
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'content',
+              paging: nextPaging,
+              sortState,
+              filterStates,
+              isFilterPanelExpanded: false,
+              actionLoading: false,
+              actionError: null
+            }
+          })
+        }
       } else {
-        set({
-          screenState: {
-            status: 'content',
-            paging: nextPaging,
-            sortState,
-            filterStates,
-            isFilterPanelExpanded: false,
-            actionLoading: false,
-            actionError: null
-          }
-        })
+        const current = get().screenState
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              actionError: result.error
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
       }
-    } else {
-      const current = get().screenState
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            actionError: result.error
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
-      }
+    } finally {
+      isFetching = false
     }
   }
 
@@ -144,13 +157,17 @@ export const createGlobalIdentifierListStore = (
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
       set({ screenState: { status: 'loading' } })
       await fetchPage(set, get, 1, null, {})
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -160,7 +177,7 @@ export const createGlobalIdentifierListStore = (
       await fetchPage(
         set,
         get,
-        current.paging.pageNumber + 1,
+        getNextPageNumber(current.paging),
         current.sortState,
         current.filterStates
       )

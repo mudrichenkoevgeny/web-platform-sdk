@@ -39,4 +39,17 @@ describe('GlobalUserListScreen', () => {
     expect(screen.getByTestId(GlobalUserListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalUserListTestTags.REFRESH_BUTTON)).toBeDefined()
   })
+
+  it('executes getUsersUseCase only once on initial render and prevents duplicate calls', async () => {
+    const deps = createMockDeps()
+
+    render(
+      <ComponentTestHarness>
+        <GlobalUserListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(GlobalUserListTestTags.TITLE)).toBeDefined()
+    expect(deps.getUsersUseCase.execute).toHaveBeenCalledTimes(1)
+  })
 })

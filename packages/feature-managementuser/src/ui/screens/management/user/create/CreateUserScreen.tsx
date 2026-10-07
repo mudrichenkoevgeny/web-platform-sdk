@@ -1,5 +1,6 @@
 import React, { forwardRef, useId } from 'react'
 import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
   CoreBackButton,
@@ -101,6 +102,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.email}
           placeholder="user@example.com"
+          autoComplete="off"
           disabled={isLoading}
         />
 
@@ -112,6 +114,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           label={strings.password}
           isPasswordVisible={isPasswordVisible}
           onTogglePasswordVisibility={onTogglePasswordVisibility}
+          autoComplete="new-password"
           disabled={isLoading}
         />
 
@@ -127,7 +130,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            {Object.values(UserRole).map((r) => (
+            {[UserRole.USER, UserRole.STAFF, UserRole.ADMIN].map((r) => (
               <option key={`role_${r}`} value={r}>
                 {getUserRoleLabel(r, strings)}
               </option>
@@ -147,7 +150,13 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            {Object.values(UserAccountStatus).map((st) => (
+            {[
+              UserAccountStatus.ACTIVE,
+              UserAccountStatus.READ_ONLY,
+              UserAccountStatus.BANNED,
+              UserAccountStatus.SECURITY_HOLD,
+              UserAccountStatus.PENDING_DELETION
+            ].map((st) => (
               <option key={`status_${st}`} value={st}>
                 {getUserAccountStatusLabel(st, strings)}
               </option>
@@ -170,7 +179,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             data-testid={CreateUserTestTags.CREATE_BUTTON}
             label={isLoading ? strings.saving : strings.create_user}
             onClick={onCreateClick}
-            disabled={isLoading}
+            disabled={isLoading || !FieldValidator.isValidEmail(email)}
           />
 
           {error && (

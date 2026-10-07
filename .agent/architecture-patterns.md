@@ -1,5 +1,5 @@
 ---
-description: Architecture, component wiring, bootstrap, and state management patterns
+description: Architecture, component wiring, bootstrap, state management, and data layering patterns
 globs: "**/*.ts, **/*.tsx"
 alwaysApply: true
 ---
@@ -19,18 +19,20 @@ alwaysApply: true
   3. Call `commonComponent.init(errorParsers)`.
 - **Context Injection:** Pass the initialized instances into the React tree via `<SdkProvider value={{ commonComponent, clientUserComponent }}>`.
 
-## 3. Networking (Fetch API)
+## 3. Networking & Data Layering (Fetch API & Zod Schemas)
 - **HttpClient:** Centralized in `core-common` wrapping the native `fetch` API. Do not use Axios.
 - **Interceptors:** Implement `HttpClientConfigPlugin` for modifying headers (auth tokens) and handling 401 retries.
+- **Data Layering & Network DTO Mapping:** All API payload mapping (including `snake_case` to `camelCase` conversion) must happen strictly at the Network layer using Zod schemas (`auditEventPayloadSchema`, `pagedResultSchema`). The UI/Store layer must only consume strictly typed domain models (e.g., a fully parsed `PagedResult`). Never map DTOs inside Repositories or UI stores.
 
-## 4. Error Modeling (Chain of Responsibility)
+## 4. Error Modeling (Chain of Responsibility & POJO Errors)
 - **AppError:** Extend this base class (with `code` and `isRetryable`).
 - **AppErrorParser:** Implement parsers for specific modules (`UserErrorParser`, `SecurityErrorParser`). The root parser falls back to `CommonErrorParser` if a code is unrecognized.
+- **Strict Prohibition on Thrown Exceptions:** Never use `throw new Error()` inside Repositories, Use Cases, or Adapters. Always return Discriminated Unions/POJO errors wrapped in `appResultFailure(CommonError.xxx)`.
 
 ## 5. Persistence
 - **EncryptedSettings:** Interface in `core-common`. Implementation must wrap `window.localStorage` (or `sessionStorage`) using the Web Crypto API for encryption. Do not expose raw tokens.
 
-## 6. Screen State Machines (Isolated Per-Instance Zustand Stores)
+## 6. Screen State Machines (Isolated Per-Instance Zustand Stores) & Pagination State
 - **Isolated Instances Mandate:** Screen-level and component-level stores must NOT be global singletons (`create()`). Because the SDK can be mounted in multiple widgets or routes simultaneously on a single host page, global singletons would leak form inputs and UI state across instances.
 - **Zustand + React Context Pattern:** Screen stores must be instantiated per component mount using `createStore()` (vanilla Zustand), wrapped in a React Context Provider, and consumed via `useStore(context, selector)`.
 - **Lazy Store Initialization in Provider (CRITICAL):**
@@ -43,4 +45,9 @@ alwaysApply: true
 - **Strict Enum Types in State:**
   - **NEVER** use generic `string` types in `ScreenState` for fields representing fixed value sets (statuses, roles, lockout types, etc.).
   - **ALWAYS** use specific imported TypeScript enums (e.g., `UserRole`, `UserAccountStatus`, `AccountLockoutType`). Avoid unsafe casting (`as any`) or string matching against `Object.values()`.
-- **Lifecycle Alignment:** This guarantees every mounted screen receives its own isolated state machine that is garbage-collected on unmount, perfectly matching Decompose's `ComponentContext` / ViewModel lifecycle.
+- **Pagination State Rules:**
+  - **Initial Pagination State:** Initial state before the first fetch must use `pageNumber: 0` and `totalPages: 0` (not 1) to support correct IntersectionObserver logic.
+  - **Pure Selector Functions:** Use pure selector functions (`getNextPageNumber`, `hasMorePages`, `isPaginationIdle`, `canLoadMorePages`) for derived pagination states. Pass the `PagedResult` object intact to `appendResultToPaginationState` without destructuring it in the store.
+
+## 7. Dependency Injection & Domain Parsers
+- **Explicit Domain Parsers:** Never hardcode empty default parsers (e.g., `CompositeAuditActionTypeParser([])`) in DI containers. Domain parsers must be required properties in the Config interface and injected from the top-level application graph.

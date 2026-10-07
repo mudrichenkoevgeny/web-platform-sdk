@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect } from 'react'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
@@ -7,8 +7,8 @@ import {
   CoreErrorText,
   CoreIcon,
   CoreScreenTitleText,
-  CoreTextButton,
   formatEpochMillisToDateTime,
+  FullscreenError,
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -64,6 +64,7 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
   const screenState = useSessionDetailStore((s) => s.screenState)
+  const initializeSession = useSessionDetailStore((s) => s.initializeSession)
   const onRevokeSessionClick = useSessionDetailStore((s) => s.onRevokeSessionClick)
   const onRetry = useSessionDetailStore((s) => s.onRetry)
   const onBackClick = useSessionDetailStore((s) => s.onBackClick)
@@ -71,23 +72,24 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const onUserClick = useSessionDetailStore((s) => s.onUserClick)
   const errorParser = useAppErrorParser()
 
+  useEffect(() => {
+    initializeSession()
+  }, [initializeSession])
+
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
   }
 
   if (screenState.status === 'error') {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-6 gap-4">
-        <CoreErrorText
-          text={errorParser.parse(screenState.error) ?? ''}
-          data-testid={SessionDetailTestTags.GLOBAL_ERROR}
-        />
-        <CoreTextButton
-          type="button"
-          label={strings.resend_code ? strings.resend_code : 'Retry'}
-          onClick={onRetry}
-        />
-      </div>
+      <FullscreenError
+        data-testid={SessionDetailTestTags.GLOBAL_ERROR}
+        error={screenState.error}
+        onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.session_detail_title_session}
+        strings={strings}
+      />
     )
   }
 

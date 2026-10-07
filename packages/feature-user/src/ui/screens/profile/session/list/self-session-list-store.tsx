@@ -1,9 +1,17 @@
 import React, { createContext, useContext, useState } from 'react'
+import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  appendResultToPaginationState,
+  canLoadMorePages,
+  createInitialPaginationState,
+  createNextPageLoadingPaginationState,
+  getNextPageNumber,
+  isSuccess
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
 import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
@@ -22,9 +30,7 @@ export type SelfSessionListScreenState =
       status: 'content'
       items: UserSession[]
       currentSessionId: UserSessionId | null
-      pageNumber: number
-      hasMorePages: boolean
-      isNextPageLoading: boolean
+      paging: PaginationState<UserSession>
       actionLoading: boolean
       actionError: AppError | null
     }
@@ -57,26 +63,37 @@ export const createSelfSessionListStore = (
   initialState?: SelfSessionListScreenState
 ) => {
   const DEFAULT_PAGE_SIZE = 20
+  let isFetching = false
 
-  return createStore<SelfSessionListStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+  const loadSessionsInternal = async (
+    set: StoreApi<SelfSessionListStoreState>['setState'],
+    get: StoreApi<SelfSessionListStoreState>['getState'],
+    isRefresh = false
+  ) => {
+    if (isFetching) {
+      return
+    }
+    const current = get().screenState
+    if (!isRefresh && current.status === 'content') {
+      return
+    }
+    isFetching = true
 
-    loadSessions: async () => {
+    try {
       const storedSessionIdRaw = deps.authStorage ? await deps.authStorage.getSessionId() : null
       const currentSessionId = storedSessionIdRaw ? toUserSessionIdOrNull(storedSessionIdRaw) : null
 
       const result = await deps.getSessionsUseCase.execute(1, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const page = result.data
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
         set({
           screenState: {
             status: 'content',
-            items: page.items,
+            items: nextPaging.items,
             currentSessionId,
-            pageNumber: 1,
-            hasMorePages: page.items.length < page.totalCount,
-            isNextPageLoading: false,
+            paging: nextPaging,
             actionLoading: false,
             actionError: null
           }
@@ -89,6 +106,19 @@ export const createSelfSessionListStore = (
           }
         })
       }
+    } finally {
+      isFetching = false
+    }
+  }
+
+  return createStore<SelfSessionListStoreState>()((set, get) => ({
+    screenState: initialState ?? { status: 'loading' },
+
+    loadSessions: async () => {
+      if (get().screenState.status !== 'content') {
+        set({ screenState: { status: 'loading' } })
+      }
+      await loadSessionsInternal(set, get, false)
     },
 
     onRefresh: async () => {
@@ -105,7 +135,7 @@ export const createSelfSessionListStore = (
         set({ screenState: { status: 'loading' } })
       }
 
-      await get().loadSessions()
+      await loadSessionsInternal(set, get, true)
     },
 
     onSessionClick: (session: UserSession) => {
@@ -118,10 +148,15 @@ export const createSelfSessionListStore = (
         return
       }
 
+      const nextItems = current.items.filter((item) => item.id !== sessionId)
       set({
         screenState: {
           ...current,
-          items: current.items.filter((item) => item.id !== sessionId)
+          items: nextItems,
+          paging: {
+            ...current.paging,
+            items: nextItems
+          }
         }
       })
     },
@@ -186,38 +221,38 @@ export const createSelfSessionListStore = (
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.hasMorePages || current.isNextPageLoading) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
-      const nextPage = current.pageNumber + 1
+      const nextPage = getNextPageNumber(current.paging)
 
       set({
         screenState: {
           ...current,
-          isNextPageLoading: true
+          paging: createNextPageLoadingPaginationState(current.paging)
         }
       })
 
       const result = await deps.getSessionsUseCase.execute(nextPage, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const page = result.data
-        const combined = [...current.items, ...page.items]
+        const nextPaging = appendResultToPaginationState(current.paging, result.data)
         set({
           screenState: {
             ...current,
-            items: combined,
-            pageNumber: nextPage,
-            hasMorePages: combined.length < page.totalCount,
-            isNextPageLoading: false
+            items: nextPaging.items,
+            paging: nextPaging
           }
         })
       } else {
         set({
           screenState: {
             ...current,
-            isNextPageLoading: false
+            paging: {
+              ...current.paging,
+              isNextPageLoading: false
+            }
           }
         })
       }

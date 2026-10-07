@@ -15,7 +15,8 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const dummyPayload = { items: [] } as any
+    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
+    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getSessions(1, 10)
@@ -23,7 +24,7 @@ describe('FetchSelfManagementSessionApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementSessionRoutes.GET_SESSIONS)
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: expectedData })
   })
 
   it('dispatches getSession request', async () => {

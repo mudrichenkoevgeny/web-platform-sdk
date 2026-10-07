@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ClientType, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, SortOrder, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSession, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
+  canLoadMorePages,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
+  getNextPageNumber,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
@@ -62,6 +64,8 @@ export const createGlobalSessionListStore = (
   deps: GlobalSessionListStoreDependencies,
   initialState?: GlobalSessionListScreenState
 ) => {
+  let isFetching = false
+
   const fetchPage = async (
     set: SetState,
     get: GetState,
@@ -69,116 +73,125 @@ export const createGlobalSessionListStore = (
     sortState: ListingSortState | null,
     filterStates: Record<string, ListingFilterState>
   ) => {
-    const sortOrder = sortState ? (sortState.isAscending ? 'asc' as const : 'desc' as const) : null
-    const sortBy = sortState?.optionId
-      ? (Object.values(UserSortValues.UserSessionSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserSessionSortBy | undefined ?? null)
-      : null
+    if (isFetching) {
+      return
+    }
+    isFetching = true
 
-    const roleFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ROLE]
-    const providerFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER]
-    const clientTypeFilter = filterStates[UserFilterValues.UserSessionFilterValues.CLIENT_TYPE]
-    const userIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ID]
-    const identifierFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER]
-    const identifierIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER_ID]
-    const ipAddressFilter = filterStates[UserFilterValues.UserSessionFilterValues.IP_ADDRESS]
-    const userAgentFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AGENT]
-    const languageFilter = filterStates[UserFilterValues.UserSessionFilterValues.LANGUAGE]
-    const deviceIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_ID]
-    const deviceNameFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_NAME]
-    const appVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.APP_VERSION]
-    const osVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.OPERATION_SYSTEM_VERSION]
+    try {
+      const sortOrder = sortState ? (sortState.isAscending ? SortOrder.ASC : SortOrder.DESC) : null
+      const sortBy = sortState?.optionId
+        ? (Object.values(UserSortValues.UserSessionSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserSessionSortBy | undefined ?? null)
+        : null
 
-    const userRoles = roleFilter?.type === 'choice'
-      ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
-          Object.values(UserRole).includes(id as UserRole)
-        )
-      : undefined
-    const userAuthProviders = providerFilter?.type === 'choice'
-      ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
-          Object.values(UserAuthProvider).includes(id as UserAuthProvider)
-        )
-      : undefined
-    const clientTypes = clientTypeFilter?.type === 'choice'
-      ? Array.from(clientTypeFilter.selectedIds).filter((id): id is ClientType =>
-          Object.values(ClientType).includes(id as ClientType)
-        )
-      : undefined
+      const roleFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ROLE]
+      const providerFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER]
+      const clientTypeFilter = filterStates[UserFilterValues.UserSessionFilterValues.CLIENT_TYPE]
+      const userIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_ID]
+      const identifierFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER]
+      const identifierIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER_ID]
+      const ipAddressFilter = filterStates[UserFilterValues.UserSessionFilterValues.IP_ADDRESS]
+      const userAgentFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AGENT]
+      const languageFilter = filterStates[UserFilterValues.UserSessionFilterValues.LANGUAGE]
+      const deviceIdFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_ID]
+      const deviceNameFilter = filterStates[UserFilterValues.UserSessionFilterValues.DEVICE_NAME]
+      const appVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.APP_VERSION]
+      const osVersionFilter = filterStates[UserFilterValues.UserSessionFilterValues.OPERATION_SYSTEM_VERSION]
 
-    const userIds = userIdFilter?.type === 'text' && userIdFilter.value.trim() ? [userIdFilter.value.trim()] : undefined
-    const identifiers = identifierFilter?.type === 'text' && identifierFilter.value.trim() ? [identifierFilter.value.trim()] : undefined
-    const identifierIds = identifierIdFilter?.type === 'text' && identifierIdFilter.value.trim() ? [identifierIdFilter.value.trim()] : undefined
-    const ipAddresses = ipAddressFilter?.type === 'text' && ipAddressFilter.value.trim() ? [ipAddressFilter.value.trim()] : undefined
-    const userAgents = userAgentFilter?.type === 'text' && userAgentFilter.value.trim() ? [userAgentFilter.value.trim()] : undefined
-    const languages = languageFilter?.type === 'text' && languageFilter.value.trim() ? [languageFilter.value.trim()] : undefined
-    const deviceIds = deviceIdFilter?.type === 'text' && deviceIdFilter.value.trim() ? [deviceIdFilter.value.trim()] : undefined
-    const deviceNames = deviceNameFilter?.type === 'text' && deviceNameFilter.value.trim() ? [deviceNameFilter.value.trim()] : undefined
-    const appVersions = appVersionFilter?.type === 'text' && appVersionFilter.value.trim() ? [appVersionFilter.value.trim()] : undefined
-    const operationSystemVersions = osVersionFilter?.type === 'text' && osVersionFilter.value.trim() ? [osVersionFilter.value.trim()] : undefined
+      const userRoles = roleFilter?.type === 'choice'
+        ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
+            Object.values(UserRole).includes(id as UserRole)
+          )
+        : undefined
+      const userAuthProviders = providerFilter?.type === 'choice'
+        ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
+            Object.values(UserAuthProvider).includes(id as UserAuthProvider)
+          )
+        : undefined
+      const clientTypes = clientTypeFilter?.type === 'choice'
+        ? Array.from(clientTypeFilter.selectedIds).filter((id): id is ClientType =>
+            Object.values(ClientType).includes(id as ClientType)
+          )
+        : undefined
 
-    const result = await deps.managementGetSessionsUseCase.execute({
-      pageNumber,
-      pageSize: 20,
-      sortBy,
-      sortOrder,
-      userIds,
-      userRoles,
-      identifiers,
-      identifierIds,
-      userAuthProviders,
-      clientTypes,
-      userAgents,
-      ipAddresses,
-      languages,
-      deviceIds,
-      deviceNames,
-      appVersions,
-      operationSystemVersions
-    })
+      const userIds = userIdFilter?.type === 'text' && userIdFilter.value.trim() ? [userIdFilter.value.trim()] : undefined
+      const identifiers = identifierFilter?.type === 'text' && identifierFilter.value.trim() ? [identifierFilter.value.trim()] : undefined
+      const identifierIds = identifierIdFilter?.type === 'text' && identifierIdFilter.value.trim() ? [identifierIdFilter.value.trim()] : undefined
+      const ipAddresses = ipAddressFilter?.type === 'text' && ipAddressFilter.value.trim() ? [ipAddressFilter.value.trim()] : undefined
+      const userAgents = userAgentFilter?.type === 'text' && userAgentFilter.value.trim() ? [userAgentFilter.value.trim()] : undefined
+      const languages = languageFilter?.type === 'text' && languageFilter.value.trim() ? [languageFilter.value.trim()] : undefined
+      const deviceIds = deviceIdFilter?.type === 'text' && deviceIdFilter.value.trim() ? [deviceIdFilter.value.trim()] : undefined
+      const deviceNames = deviceNameFilter?.type === 'text' && deviceNameFilter.value.trim() ? [deviceNameFilter.value.trim()] : undefined
+      const appVersions = appVersionFilter?.type === 'text' && appVersionFilter.value.trim() ? [appVersionFilter.value.trim()] : undefined
+      const operationSystemVersions = osVersionFilter?.type === 'text' && osVersionFilter.value.trim() ? [osVersionFilter.value.trim()] : undefined
 
-    if (isSuccess(result)) {
-      const current = get().screenState
-      const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
-      const nextPaging = appendResultToPaginationState(currentPaging, result.data.items, result.data.pageNumber, result.data.totalPages, result.data.totalCount)
+      const result = await deps.managementGetSessionsUseCase.execute({
+        pageNumber,
+        pageSize: 20,
+        sortBy,
+        sortOrder,
+        userIds,
+        userRoles,
+        identifiers,
+        identifierIds,
+        userAuthProviders,
+        clientTypes,
+        userAgents,
+        ipAddresses,
+        languages,
+        deviceIds,
+        deviceNames,
+        appVersions,
+        operationSystemVersions
+      })
 
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            paging: nextPaging,
-            actionLoading: false
-          }
-        })
+      if (isSuccess(result)) {
+        const current = get().screenState
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
+        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              paging: nextPaging,
+              actionLoading: false
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'content',
+              paging: nextPaging,
+              sortState,
+              filterStates,
+              isFilterPanelExpanded: false,
+              actionLoading: false,
+              actionError: null
+            }
+          })
+        }
       } else {
-        set({
-          screenState: {
-            status: 'content',
-            paging: nextPaging,
-            sortState,
-            filterStates,
-            isFilterPanelExpanded: false,
-            actionLoading: false,
-            actionError: null
-          }
-        })
+        const current = get().screenState
+        if (current.status === 'content') {
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: result.error
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: 'error',
+              error: result.error
+            }
+          })
+        }
       }
-    } else {
-      const current = get().screenState
-      if (current.status === 'content') {
-        set({
-          screenState: {
-            ...current,
-            actionLoading: false,
-            actionError: result.error
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: result.error
-          }
-        })
-      }
+    } finally {
+      isFetching = false
     }
   }
 
@@ -186,13 +199,17 @@ export const createGlobalSessionListStore = (
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
+        return
+      }
       set({ screenState: { status: 'loading' } })
       await fetchPage(set, get, 1, null, {})
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.paging.pageNumber >= current.paging.totalPages) {
+      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -202,7 +219,7 @@ export const createGlobalSessionListStore = (
       await fetchPage(
         set,
         get,
-        current.paging.pageNumber + 1,
+        getNextPageNumber(current.paging),
         current.sortState,
         current.filterStates
       )

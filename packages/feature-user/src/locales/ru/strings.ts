@@ -35,6 +35,9 @@ export const ruUserStrings: FeatureUserStrings = {
   error_user_total_identifiers_limit_reached: 'Достигнут максимальный общий лимит способов входа.',
   error_user_total_identifiers_limit_reached_args: (limit: string | number) => `Достигнут максимальный общий лимит в ${limit} способов входа для аккаунта.`,
   error_user_email_not_allowed: 'Email-адрес или домен не разрешен политикой ограничений.',
+  error_user_external_auth_cancelled: 'Аутентификация была отменена.',
+  error_user_external_auth_failed: 'Ошибка внешней аутентификации.',
+  error_user_too_many_confirmation_requests: 'Слишком много запросов подтверждения. Пожалуйста, попробуйте позже.',
 
   login: 'Вход',
   login_with: 'Войти через:',

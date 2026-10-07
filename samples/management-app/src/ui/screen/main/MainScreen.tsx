@@ -217,7 +217,6 @@ export function MainScreen(): React.JSX.Element {
                 appComponent.managementUserComponent.addUserIdentifierPhoneUseCase,
               addUserIdentifierGoogleUseCase:
                 appComponent.managementUserComponent.addUserIdentifierGoogleUseCase,
-              identifierRepository: appComponent.managementUserComponent.identifierRepository,
               authStorage: appComponent.managementUserComponent.authStorage,
               onIdentifierSelect: (identifierId) =>
                 pushProfile({ type: 'identifierDetail', identifierId }),

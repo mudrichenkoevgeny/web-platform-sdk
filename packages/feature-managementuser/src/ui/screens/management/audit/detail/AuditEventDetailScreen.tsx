@@ -72,6 +72,9 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
         data-testid={AuditEventDetailTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.audit_event_details_title}
+        strings={strings}
       />
     )
   }

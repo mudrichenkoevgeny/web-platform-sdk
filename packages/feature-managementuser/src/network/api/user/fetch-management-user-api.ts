@@ -16,7 +16,9 @@ import type {
 import {
   ListingParamNames,
   ManagementUserRoutes,
+  pagedResultSchema,
   UserApiPaths,
+  userDetailsPayloadSchema,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
@@ -31,12 +33,13 @@ export class FetchManagementUserApi implements ManagementUserApi {
   public constructor(private readonly client: HttpClient) {}
 
   public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetailsPayload, AppError>> {
-    return callResult(() =>
-      this.client.request<UserDetailsPayload>(ManagementUserRoutes.CREATE_USER, {
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(ManagementUserRoutes.CREATE_USER, {
         method: 'POST',
         body: JSON.stringify(request)
       })
-    )
+      return userDetailsPayloadSchema.parse(raw)
+    })
   }
 
   public async getUsers(
@@ -91,13 +94,19 @@ export class FetchManagementUserApi implements ManagementUserApi {
     const queryString = query.toString()
     const path = queryString ? `${ManagementUserRoutes.GET_USERS}?${queryString}` : ManagementUserRoutes.GET_USERS
 
-    return callResult(() => this.client.request<PagedResult<UserDetailsPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userDetailsPayloadSchema).parse(raw)
+    })
   }
 
   public async getUser(userId: UserId): Promise<AppResult<UserDetailsPayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
     const path = `${ManagementUserRoutes.GET_USER}?${query.toString()}`
-    return callResult(() => this.client.request<UserDetailsPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userDetailsPayloadSchema.parse(raw)
+    })
   }
 
   public async updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {

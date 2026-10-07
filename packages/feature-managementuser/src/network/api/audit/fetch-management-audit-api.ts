@@ -12,8 +12,10 @@ import type {
 import {
   AuditApiPaths,
   AuditFilterValues,
+  auditEventPayloadSchema,
   ListingParamNames,
-  ManagementAuditRoutes
+  ManagementAuditRoutes,
+  pagedResultSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 
@@ -76,11 +78,17 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
       ? `${ManagementAuditRoutes.GET_AUDIT_EVENTS}?${queryString}`
       : ManagementAuditRoutes.GET_AUDIT_EVENTS
 
-    return callResult(() => this.client.request<PagedResult<AuditEventPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(auditEventPayloadSchema).parse(raw)
+    })
   }
 
   public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPayload, AppError>> {
     const path = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
-    return callResult(() => this.client.request<AuditEventPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return auditEventPayloadSchema.parse(raw)
+    })
   }
 }

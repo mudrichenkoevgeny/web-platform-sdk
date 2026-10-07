@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
@@ -55,6 +55,7 @@ export interface TotpMainStoreDependencies {
  */
 export interface TotpMainStoreState {
   screenState: TotpMainScreenState
+  loadTotpStatus: () => Promise<void>
   onSetupClick: () => Promise<void>
   onCodeChanged: (code: string) => void
   onConfirmSetupClick: () => Promise<void>
@@ -76,6 +77,18 @@ export const createTotpMainStore = (
 ) => {
   const store = createStore<TotpMainStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
+
+    loadTotpStatus: async () => {
+      const result = await deps.userRepository.refreshCurrentUser()
+      if (!isSuccess(result)) {
+        set({
+          screenState: {
+            status: 'error',
+            error: result.error
+          }
+        })
+      }
+    },
 
     onSetupClick: async () => {
       const current = get().screenState
@@ -261,22 +274,19 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<TotpMainStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createTotpMainStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createTotpMainStore(dependencies, initialState))
 
   useEffect(() => {
     const unsubscribe = dependencies.userRepository.observeCurrentUser((user) => {
       if (!user) {
-        storeRef.current?.setState({
+        store.setState({
           screenState: {
             status: 'error',
             error: CommonError.unknown()
           }
         })
       } else if (user.isTotpEnabled) {
-        storeRef.current?.setState({
+        store.setState({
           screenState: {
             status: 'enabled',
             showDisableConfirmation: false,
@@ -285,9 +295,9 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
           }
         })
       } else {
-        const current = storeRef.current?.getState().screenState
+        const current = store.getState().screenState
         if (current?.status !== 'setupInProgress') {
-          storeRef.current?.setState({
+          store.setState({
             screenState: {
               status: 'disabled',
               actionLoading: false,
@@ -298,10 +308,10 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
       }
     })
     return () => unsubscribe()
-  }, [dependencies])
+  }, [dependencies, store])
 
   return (
-    <TotpMainContext.Provider value={storeRef.current}>
+    <TotpMainContext.Provider value={store}>
       {children}
     </TotpMainContext.Provider>
   )

@@ -3,6 +3,7 @@ import {
   CompositeAuditMetadataKeyParser,
   CompositeAuditResourceTypeParser
 } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
@@ -129,11 +130,11 @@ class SelfManagementUserRepositoryAdapter implements UserRepository {
   }
 
   public async scheduleUserDeletion(): ReturnType<UserRepository['scheduleUserDeletion']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async restoreUser(): ReturnType<UserRepository['restoreUser']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public clearSession(): ReturnType<UserRepository['clearSession']> {
@@ -153,27 +154,27 @@ class SelfManagementIdentifierRepositoryAdapter implements IdentifierRepository 
   }
 
   public async deleteUserIdentifier(): ReturnType<IdentifierRepository['deleteUserIdentifier']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async addUserIdentifierEmail(): ReturnType<IdentifierRepository['addUserIdentifierEmail']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async addUserIdentifierPhone(): ReturnType<IdentifierRepository['addUserIdentifierPhone']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async addUserIdentifierExternalAuthProvider(): ReturnType<IdentifierRepository['addUserIdentifierExternalAuthProvider']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async sendAddEmailIdentifierConfirmation(): ReturnType<IdentifierRepository['sendAddEmailIdentifierConfirmation']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public async sendAddPhoneIdentifierConfirmation(): ReturnType<IdentifierRepository['sendAddPhoneIdentifierConfirmation']> {
-    throw new Error('Not supported for management users')
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
   public emailChangePassword(...args: Parameters<IdentifierRepository['emailChangePassword']>): ReturnType<IdentifierRepository['emailChangePassword']> {
@@ -267,12 +268,12 @@ export interface ManagementUserComponentConfig {
   managementUserApi?: ManagementUserApi
   /** Optional mock override for management audit API. */
   managementAuditApi?: ManagementAuditApi
-  /** Optional override for audit action type parser. */
-  compositeActionTypeParser?: CompositeAuditActionTypeParser
-  /** Optional override for audit resource type parser. */
-  compositeResourceTypeParser?: CompositeAuditResourceTypeParser
-  /** Optional override for audit metadata key parser. */
-  compositeMetadataKeyParser?: CompositeAuditMetadataKeyParser
+  /** Required override for audit action type parser. */
+  compositeActionTypeParser: CompositeAuditActionTypeParser
+  /** Required override for audit resource type parser. */
+  compositeResourceTypeParser: CompositeAuditResourceTypeParser
+  /** Required override for audit metadata key parser. */
+  compositeMetadataKeyParser: CompositeAuditMetadataKeyParser
 }
 
 /**
@@ -489,12 +490,9 @@ export class ManagementUserComponent {
       this.commonComponent.webSocketService
     )
 
-    this.compositeActionTypeParser =
-      config.compositeActionTypeParser ?? new CompositeAuditActionTypeParser([])
-    this.compositeResourceTypeParser =
-      config.compositeResourceTypeParser ?? new CompositeAuditResourceTypeParser([])
-    this.compositeMetadataKeyParser =
-      config.compositeMetadataKeyParser ?? new CompositeAuditMetadataKeyParser([])
+    this.compositeActionTypeParser = config.compositeActionTypeParser
+    this.compositeResourceTypeParser = config.compositeResourceTypeParser
+    this.compositeMetadataKeyParser = config.compositeMetadataKeyParser
 
     this.managementAuditRepository = new ManagementAuditRepositoryImpl(
       this.managementAuditApi,

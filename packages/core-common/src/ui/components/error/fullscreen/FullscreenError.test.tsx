@@ -36,4 +36,28 @@ describe('FullscreenError', () => {
     expect(screen.getByText('An error has occurred.')).toBeDefined()
     expect(screen.queryByText('Retry')).toBeNull()
   })
+
+  it('renders back button and title when onBack and title are provided', async () => {
+    const error = CommonError.network(new Error('Connection failed'), true)
+    const onRetry = vi.fn()
+    const onBack = vi.fn()
+    const user = userEvent.setup()
+
+    render(
+      <ComponentTestHarness>
+        <FullscreenError
+          error={error}
+          onRetry={onRetry}
+          onBack={onBack}
+          title="Audit Logs"
+        />
+      </ComponentTestHarness>
+    )
+
+    expect(screen.getByText('Audit Logs')).toBeDefined()
+    const backButton = screen.getByRole('button', { name: 'Back' })
+    await user.click(backButton)
+
+    expect(onBack).toHaveBeenCalledTimes(1)
+  })
 })

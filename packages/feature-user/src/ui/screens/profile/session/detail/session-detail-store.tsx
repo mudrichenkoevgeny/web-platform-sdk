@@ -66,57 +66,69 @@ export const createSessionDetailStore = (
   deps: SessionDetailStoreDependencies,
   initialState?: SessionDetailScreenState
 ) => {
+  let isFetching = false
+
   const store = createStore<SessionDetailStoreState>()((set, get) => ({
     screenState: initialState ?? { status: 'loading' },
 
     initializeSession: async () => {
-      const targetId = deps.sessionId ?? deps.session?.id
-      const storedSessionIdRaw = deps.authStorage ? await deps.authStorage.getSessionId() : null
-      const activeSessionId = storedSessionIdRaw ? toUserSessionIdOrNull(storedSessionIdRaw) : null
-      const resolvedIsCurrentSession = deps.isCurrentSession ?? (targetId != null && targetId === activeSessionId)
-
-      if (deps.session) {
-        set({
-          screenState: {
-            status: 'content',
-            session: deps.session,
-            isCurrentSession: resolvedIsCurrentSession,
-            actionLoading: false,
-            actionError: null
-          }
-        })
+      const current = get().screenState
+      if (isFetching || current.status === 'content') {
         return
       }
+      isFetching = true
 
-      if (targetId && deps.getSessionUseCase) {
-        set({ screenState: { status: 'loading' } })
-        const result = await deps.getSessionUseCase.execute(targetId)
+      try {
+        const targetId = deps.sessionId ?? deps.session?.id
+        const storedSessionIdRaw = deps.authStorage ? await deps.authStorage.getSessionId() : null
+        const activeSessionId = storedSessionIdRaw ? toUserSessionIdOrNull(storedSessionIdRaw) : null
+        const resolvedIsCurrentSession = deps.isCurrentSession ?? (targetId != null && targetId === activeSessionId)
 
-        if (isSuccess(result)) {
+        if (deps.session) {
           set({
             screenState: {
               status: 'content',
-              session: result.data,
+              session: deps.session,
               isCurrentSession: resolvedIsCurrentSession,
               actionLoading: false,
               actionError: null
             }
           })
+          return
+        }
+
+        if (targetId && deps.getSessionUseCase) {
+          set({ screenState: { status: 'loading' } })
+          const result = await deps.getSessionUseCase.execute(targetId)
+
+          if (isSuccess(result)) {
+            set({
+              screenState: {
+                status: 'content',
+                session: result.data,
+                isCurrentSession: resolvedIsCurrentSession,
+                actionLoading: false,
+                actionError: null
+              }
+            })
+          } else {
+            set({
+              screenState: {
+                status: 'error',
+                error: result.error
+              }
+            })
+          }
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: CommonError.unknown()
             }
           })
         }
-      } else {
-        set({
-          screenState: {
-            status: 'error',
-            error: CommonError.unknown()
-          }
-        })
+      } finally {
+        isFetching = false
       }
     },
 
@@ -183,10 +195,6 @@ export const createSessionDetailStore = (
       }
     }
   }))
-
-  if (!initialState) {
-    store.getState().initializeSession()
-  }
 
   return store
 }

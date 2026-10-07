@@ -13,8 +13,10 @@ import type {
 import {
   ListingParamNames,
   ManagementSessionRoutes,
+  pagedResultSchema,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userSessionPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
@@ -102,13 +104,19 @@ export class FetchManagementSessionApi implements ManagementSessionApi {
       ? `${ManagementSessionRoutes.GET_SESSIONS}?${queryString}`
       : ManagementSessionRoutes.GET_SESSIONS
 
-    return callResult(() => this.client.request<PagedResult<UserSessionPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userSessionPayloadSchema).parse(raw)
+    })
   }
 
   public async getSession(sessionId: string): Promise<AppResult<UserSessionPayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.SESSION_ID]: sessionId })
     const path = `${ManagementSessionRoutes.GET_SESSION}?${query.toString()}`
-    return callResult(() => this.client.request<UserSessionPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userSessionPayloadSchema.parse(raw)
+    })
   }
 
   public async deleteSession(userId: UserId, sessionId: string): Promise<AppResult<void, AppError>> {

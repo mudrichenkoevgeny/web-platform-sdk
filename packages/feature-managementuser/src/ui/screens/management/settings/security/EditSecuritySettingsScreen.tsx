@@ -82,6 +82,9 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
       <FullscreenError
         error={screenState.error}
         onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.edit_security_settings_title}
+        strings={strings}
       />
     )
   }

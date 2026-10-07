@@ -1,9 +1,14 @@
+import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 
 /** Constants for listing operations. */
 export const ListingConstants = {
   /** Default page size for paginated listing requests. */
-  DEFAULT_PAGE_SIZE: 20
+  DEFAULT_PAGE_SIZE: 20,
+  /** Large page size for extended listing queries. */
+  LARGE_PAGE_SIZE: 100,
+  /** Initial page number index (1-based). */
+  INITIAL_PAGE_NUMBER: 1
 } as const
 
 /**
@@ -29,13 +34,29 @@ export interface PaginationState<T> {
 /** Creates an initial empty pagination state before initial page fetch. */
 export const createInitialPaginationState = <T>(): PaginationState<T> => ({
   items: [],
-  pageNumber: 1,
-  totalPages: 1,
+  pageNumber: 0,
+  totalPages: 0,
   totalCount: 0,
   isInitialLoading: true,
   isNextPageLoading: false,
   error: null
 })
+
+/** Computes the next page number to fetch. */
+export const getNextPageNumber = <T>(state: PaginationState<T>): number =>
+  state.pageNumber === 0 ? ListingConstants.INITIAL_PAGE_NUMBER : state.pageNumber + 1
+
+/** Checks whether more pages are available to fetch. */
+export const hasMorePages = <T>(state: PaginationState<T>): boolean =>
+  state.pageNumber < state.totalPages
+
+/** Checks whether pagination is idle (no active loading requests). */
+export const isPaginationIdle = <T>(state: PaginationState<T>): boolean =>
+  !state.isInitialLoading && !state.isNextPageLoading
+
+/** Checks whether next page load can be dispatched. */
+export const canLoadMorePages = <T>(state: PaginationState<T>): boolean =>
+  hasMorePages(state) && isPaginationIdle(state)
 
 /** Creates a pagination state with next page loading indicator enabled. */
 export const createNextPageLoadingPaginationState = <T>(
@@ -48,18 +69,37 @@ export const createNextPageLoadingPaginationState = <T>(
 /** Appends or replaces page result items into pagination state. */
 export const appendResultToPaginationState = <T>(
   currentPaging: PaginationState<T>,
-  newItems: T[],
-  pageNumber: number,
-  totalPages: number,
-  totalCount: number
+  result: PagedResult<T>
 ): PaginationState<T> => ({
-  items: pageNumber === 1 ? newItems : [...currentPaging.items, ...newItems],
-  pageNumber,
-  totalPages,
-  totalCount,
+  items: currentPaging.pageNumber === 0 || result.pageNumber === 1 ? result.items : [...currentPaging.items, ...result.items],
+  pageNumber: result.pageNumber,
+  totalPages: result.totalPages,
+  totalCount: result.totalCount,
   isInitialLoading: false,
   isNextPageLoading: false,
   error: null
+})
+
+/** Sets error on pagination state. */
+export const setPaginationError = <T>(
+  state: PaginationState<T>,
+  error: AppError,
+  isInitial: boolean
+): PaginationState<T> => ({
+  ...state,
+  isInitialLoading: false,
+  isNextPageLoading: false,
+  error,
+  items: isInitial ? [] : state.items
+})
+
+/** Removes an item matching the predicate from pagination state. */
+export const removePaginationItem = <T>(
+  state: PaginationState<T>,
+  predicate: (item: T) => boolean
+): PaginationState<T> => ({
+  ...state,
+  items: state.items.filter((item) => !predicate(item))
 })
 
 /** Base contract for filter definitions. */

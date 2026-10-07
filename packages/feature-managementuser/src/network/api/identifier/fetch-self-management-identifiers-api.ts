@@ -11,9 +11,11 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ListingParamNames,
+  pagedResultSchema,
   SelfManagementIdentifierRoutes,
   UserApiPaths,
-  UserFilterValues
+  UserFilterValues,
+  userIdentifierPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
@@ -33,7 +35,10 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
       `{${UserApiPaths.USER_IDENTIFIER_ID}}`,
       userIdentifierId
     )
-    return callResult(() => this.client.request<UserIdentifierPayload>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return userIdentifierPayloadSchema.parse(raw)
+    })
   }
 
   public async getUserIdentifiers(
@@ -65,7 +70,10 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
       ? `${SelfManagementIdentifierRoutes.GET_IDENTIFIERS}?${queryString}`
       : SelfManagementIdentifierRoutes.GET_IDENTIFIERS
 
-    return callResult(() => this.client.request<PagedResult<UserIdentifierPayload>>(path))
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(path)
+      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+    })
   }
 
   public async emailChangePassword(request: EmailPasswordChangeRequest): Promise<AppResult<void, AppError>> {

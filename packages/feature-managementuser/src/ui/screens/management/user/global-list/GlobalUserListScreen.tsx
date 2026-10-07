@@ -12,6 +12,7 @@ import {
   ListingHeaderBar,
   ListingOptionsPanel,
   PagingFooter,
+  hasMorePages,
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -56,7 +57,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
     onLoadMore: onLoadNextPage,
-    hasMore: pagingState ? pagingState.pageNumber < pagingState.totalPages : false,
+    hasMore: pagingState ? hasMorePages(pagingState) : false,
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
@@ -70,6 +71,9 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         data-testid={GlobalUserListTestTags.GLOBAL_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRefresh}
+        onBack={onBackClick}
+        title={strings.users_management_title}
+        strings={strings}
       />
     )
   }
@@ -177,6 +181,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
+              strings={strings}
             />
           </div>
         )}

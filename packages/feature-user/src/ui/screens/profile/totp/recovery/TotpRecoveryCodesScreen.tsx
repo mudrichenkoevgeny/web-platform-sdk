@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 import {
   cn,
   CoreBackButton,
@@ -6,6 +6,7 @@ import {
   CoreErrorText,
   CoreScreenTitleText,
   CoreTextButton,
+  FullscreenError,
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -36,6 +37,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
   const screenState = useTotpRecoveryCodesStore((s) => s.screenState)
+  const loadRecoveryCodes = useTotpRecoveryCodesStore((s) => s.loadRecoveryCodes)
   const onRegenerateClick = useTotpRecoveryCodesStore((s) => s.onRegenerateClick)
   const onConfirmRegenerate = useTotpRecoveryCodesStore((s) => s.onConfirmRegenerate)
   const onDismissDialogs = useTotpRecoveryCodesStore((s) => s.onDismissDialogs)
@@ -44,18 +46,24 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   const [isCopied, setIsCopied] = useState(false)
 
+  useEffect(() => {
+    loadRecoveryCodes()
+  }, [loadRecoveryCodes])
+
   if (screenState.status === 'loading') {
     return <FullscreenLoading />
   }
 
   if (screenState.status === 'error') {
     return (
-      <div className="w-full h-full flex items-center justify-center p-6">
-        <CoreErrorText
-          text={errorParser.parse(screenState.error) ?? ''}
-          data-testid={TotpRecoveryCodesTestTags.GLOBAL_ERROR_TEXT}
-        />
-      </div>
+      <FullscreenError
+        data-testid={TotpRecoveryCodesTestTags.GLOBAL_ERROR_TEXT}
+        error={screenState.error}
+        onRetry={loadRecoveryCodes}
+        onBack={onBackClick}
+        title={strings.recovery_codes_title}
+        strings={strings}
+      />
     )
   }
 

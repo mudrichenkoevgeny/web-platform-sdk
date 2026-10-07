@@ -1,10 +1,11 @@
 import { apiErrorResponseSchema } from '@mudrichenkoevgeny/shared-foundation'
-import type { ApiErrorResponse } from "@mudrichenkoevgeny/shared-foundation";
+import type { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
 import { CommonHttpHeaders } from '@/network/contract/common-http-headers'
 import type { HttpClientConfigPlugin } from '@/network/http-client/http-client-config-plugin'
 import { ApiException } from '@/error/model/api-exception'
 import { generateErrorId } from '@/error/model/error-id'
+
 /** Configuration options for {@link HttpClient}. */
 export interface HttpClientConfig {
   /** Target API base URL. */
@@ -112,10 +113,12 @@ export class HttpClient {
       let apiErrorResponse: ApiErrorResponse | null = null
       try {
         const jsonText = await response.text()
-        const parsedJson = JSON.parse(jsonText)
-        const parseResult = apiErrorResponseSchema.safeParse(parsedJson)
-        if (parseResult.success) {
-          apiErrorResponse = parseResult.data
+        if (jsonText && jsonText.trim().length > 0) {
+          const parsedJson = JSON.parse(jsonText)
+          const parseResult = apiErrorResponseSchema.safeParse(parsedJson)
+          if (parseResult.success) {
+            apiErrorResponse = parseResult.data
+          }
         }
       } catch {
         this.logger?.(`Response validator: Failed to parse error response from ${fullUrl}`)
@@ -131,12 +134,12 @@ export class HttpClient {
     }
 
     if (response.status === 204) {
-      return undefined as unknown as T
+      return undefined as T
     }
 
     const text = await response.text()
     if (!text) {
-      return undefined as unknown as T
+      return undefined as T
     }
 
     return JSON.parse(text) as T

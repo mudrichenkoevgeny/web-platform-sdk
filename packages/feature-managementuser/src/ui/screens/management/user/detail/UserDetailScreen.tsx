@@ -118,8 +118,12 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   if (screenState.status === 'error') {
     return (
       <FullscreenError
+        data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT}
         error={screenState.error}
         onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.user_details_title}
+        strings={strings}
       />
     )
   }
