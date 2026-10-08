@@ -1,6 +1,6 @@
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
+import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsObserver } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
 import { openSecuritySettingsMock } from '@/mock/domain/model/open-security-settings-mock'

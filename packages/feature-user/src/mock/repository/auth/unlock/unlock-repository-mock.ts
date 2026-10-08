@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { UnlockRepository } from '@/repository/auth/unlock/unlock-repository'
+import type { UnlockRepository } from '@/repository/auth/unlock/unlock-repository'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link UnlockRepository}.

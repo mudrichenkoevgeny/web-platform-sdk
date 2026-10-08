@@ -3,7 +3,7 @@ import type { AppResult, AppError, WebSocketService, SocketFrame } from "@mudric
 import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { toOpenSecuritySettings } from '@/domain/model/open-security-settings'
 import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
-import { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
+import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsObserver } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
 import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'

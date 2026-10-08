@@ -1,4 +1,4 @@
-import { AppError } from '@/error/model/app-error'
+import type { AppError } from '@/error/model/app-error'
 import {
   CommonErrorInternal,
   CommonErrorNoInternetConnection,

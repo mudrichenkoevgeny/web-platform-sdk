@@ -1,4 +1,4 @@
-import { OpenGlobalSettings } from '@/domain/model/open-global-settings'
+import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
 
 /**
  * Persistence port for {@link OpenGlobalSettings} storage implementations.

@@ -1,5 +1,6 @@
-import { AppResult, appResultSuccess, appResultFailure } from '@/result/app-result'
-import { AppError } from '@/error/model/app-error'
+import { appResultSuccess, appResultFailure } from '@/result/app-result'
+import type { AppResult } from '@/result/app-result'
+import type { AppError } from '@/error/model/app-error'
 import { ApiException } from '@/error/model/api-exception'
 import { toServerError } from '@/error/mapper/to-server-error'
 import { CommonError } from '@/error/model/common-error'

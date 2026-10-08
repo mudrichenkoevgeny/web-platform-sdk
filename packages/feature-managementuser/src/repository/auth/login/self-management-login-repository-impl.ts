@@ -2,7 +2,7 @@ import { appResultFailure, CommonError, mapSuccess } from '@mudrichenkoevgeny/we
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuthData, OtpConfirmation, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { toAuthData } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
 
 /**

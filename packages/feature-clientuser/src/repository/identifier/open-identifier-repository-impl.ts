@@ -14,7 +14,7 @@ import {
   toOtpConfirmation,
   toUserIdentifier
 } from '@mudrichenkoevgeny/shared-foundation'
-import {
+import type {
   ConfirmationRepository,
   IdentifierRepository,
   UserStorage

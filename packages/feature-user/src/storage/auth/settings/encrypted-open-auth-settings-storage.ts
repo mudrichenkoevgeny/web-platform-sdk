@@ -1,6 +1,6 @@
 import { openAuthSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenAuthSettingsStorage } from '@/storage/auth/settings/open-auth-settings-storage'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenAuthSettingsStorage } from '@/storage/auth/settings/open-auth-settings-storage'
 import {
   toOpenAuthSettings,
   toOpenAuthSettingsPayload

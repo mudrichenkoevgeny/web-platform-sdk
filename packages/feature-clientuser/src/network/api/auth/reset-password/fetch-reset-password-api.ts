@@ -7,7 +7,8 @@ import type {
   UserIdentifierPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic, ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Open {@link ResetPasswordApi} implementation backed by {@link HttpClient}. */
 export class FetchResetPasswordApi implements ResetPasswordApi {

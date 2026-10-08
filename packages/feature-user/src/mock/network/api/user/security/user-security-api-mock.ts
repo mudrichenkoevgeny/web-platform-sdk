@@ -5,7 +5,7 @@ import type {
   TotpSetupPayload,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSecurityApi } from '@/network/api/user/security/user-security-api'
+import type { UserSecurityApi } from '@/network/api/user/security/user-security-api'
 /**
  * Mock implementation of {@link UserSecurityApi}.
  */

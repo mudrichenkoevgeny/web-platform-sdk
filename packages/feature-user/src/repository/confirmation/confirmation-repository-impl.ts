@@ -1,6 +1,6 @@
 import { appResultFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { ConfirmationRepository } from '@/repository/confirmation/confirmation-repository'
+import type { ConfirmationRepository } from '@/repository/confirmation/confirmation-repository'
 import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/user-error'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'

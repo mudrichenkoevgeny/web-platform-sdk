@@ -6,7 +6,7 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserSecurityRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSecurityApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { UserSecurityApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Self-management {@link UserSecurityApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementUserSecurityApi implements UserSecurityApi {

@@ -1,4 +1,4 @@
-import { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { availableAuthProvidersMock } from '@/mock/domain/model/auth/settings/available-auth-providers-mock'
 
 /**

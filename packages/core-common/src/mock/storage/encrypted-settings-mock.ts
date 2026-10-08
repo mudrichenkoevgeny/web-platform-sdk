@@ -1,4 +1,4 @@
-import { EncryptedSettings } from '@/storage/encrypted-settings'
+import type { EncryptedSettings } from '@/storage/encrypted-settings'
 import type { StorageChangeListener } from '@/storage/encrypted-settings'
 
 /**

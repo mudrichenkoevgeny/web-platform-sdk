@@ -11,7 +11,7 @@ import {
   toOpenAuthSettings,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenAuthSettingsRepository, OpenAuthSettingsStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { OpenAuthSettingsRepository, OpenAuthSettingsStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenAuthSettingsApi } from '@/network/api/auth/settings/open-auth-settings-api'
 
 /**

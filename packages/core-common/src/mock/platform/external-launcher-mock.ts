@@ -1,4 +1,4 @@
-import { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
+import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
 
 /**
  * Mock implementation of {@link ExternalLauncher} for recording external browser, mail, and file launch actions in tests.

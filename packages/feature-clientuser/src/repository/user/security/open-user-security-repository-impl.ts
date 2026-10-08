@@ -2,7 +2,7 @@ import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { TotpRecoveryCodes, TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
 import { toTotpRecoveryCodes, toTotpSetup } from '@mudrichenkoevgeny/shared-foundation'
-import {
+import type {
   UserSecurityApi,
   UserSecurityRepository,
   UserStorage

@@ -2,7 +2,7 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuthData, OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationType, toAuthData, toOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { ConfirmationRepository, RegistrationRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { ConfirmationRepository, RegistrationRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { RegistrationApi } from '@/network/api/auth/registration/registration-api'
 
 /**

@@ -6,7 +6,7 @@ import type {
   SendResetPasswordConfirmationRequest,
   UserIdentifierPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import { ResetPasswordApi } from '@/network/api/auth/reset-password/reset-password-api'
+import type { ResetPasswordApi } from '@/network/api/auth/reset-password/reset-password-api'
 /**
  * Mock implementation of {@link ResetPasswordApi}.
  */

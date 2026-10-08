@@ -1,4 +1,4 @@
-import { AuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { userDetailsPayloadMock } from '@/mock/network/model/user/user-details-payload-mock'
 import { sessionTokenPayloadMock } from '@/mock/network/model/token/session-token-payload-mock'
 

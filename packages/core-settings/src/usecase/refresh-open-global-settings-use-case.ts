@@ -1,6 +1,6 @@
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
-import { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
+import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
 
 /**
  * Use case that delegates to {@link OpenGlobalSettingsRepository.refreshOpenGlobalSettings}.

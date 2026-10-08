@@ -2,7 +2,7 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OtpConfirmation, UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationType, toOtpConfirmation, toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import {
+import type {
   ConfirmationRepository,
   ResetPasswordApi,
   ResetPasswordRepository

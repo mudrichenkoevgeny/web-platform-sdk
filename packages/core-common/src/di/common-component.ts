@@ -14,7 +14,7 @@ import type { WebSocketService } from '@/network/websocket/service/web-socket-se
 import { WebWebSocketService } from '@/network/websocket/service/web-web-socket-service'
 import type { WebSocketMessageHandler } from '@/network/websocket/message-handler/web-socket-message-handler'
 import { CommonWebSocketMessageHandler } from '@/network/websocket/message-handler/common-web-socket-message-handler'
-import { AppErrorParser } from '@/error/parser/app-error-parser'
+import type { AppErrorParser } from '@/error/parser/app-error-parser'
 import { AppErrorParserBuilder } from '@/error/parser/app-error-parser-builder'
 import { CommonErrorParser } from '@/error/parser/common-error-parser'
 /**

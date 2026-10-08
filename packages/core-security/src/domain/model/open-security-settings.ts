@@ -1,4 +1,4 @@
-import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Password policy requirement constraints. */
 export interface OpenPasswordPolicy {

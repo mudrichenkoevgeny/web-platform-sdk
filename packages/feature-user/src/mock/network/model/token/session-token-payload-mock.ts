@@ -1,8 +1,8 @@
 import {
-  SessionTokenPayload,
   toUserIdentifierIdOrThrow,
   toUserSessionIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { SessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link SessionTokenPayload} instance.

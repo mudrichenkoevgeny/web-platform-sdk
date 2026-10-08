@@ -4,7 +4,7 @@ import {
   UserAccountStatus,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link UserDetails} instance.

@@ -1,8 +1,8 @@
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
+import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/password-policy-validator'
 import { SecurityError } from '@/error/model/security-error'
-import { OpenPasswordPolicy } from '@/domain/model/open-security-settings'
+import type { OpenPasswordPolicy } from '@/domain/model/open-security-settings'
 
 /** Default fallback password policy if loading from repository fails. */
 const FALLBACK_PASSWORD_POLICY: OpenPasswordPolicy = {

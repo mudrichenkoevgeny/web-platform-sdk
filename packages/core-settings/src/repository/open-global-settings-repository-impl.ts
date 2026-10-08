@@ -3,7 +3,7 @@ import type { AppResult, AppError, WebSocketService, SocketFrame } from "@mudric
 import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { toOpenGlobalSettings } from '@/domain/model/open-global-settings'
 import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
-import { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
+import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettingsObserver } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
 import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'

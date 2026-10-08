@@ -1,6 +1,6 @@
 import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
 import {
   toOpenSecuritySettings,
   toOpenSecuritySettingsPayload

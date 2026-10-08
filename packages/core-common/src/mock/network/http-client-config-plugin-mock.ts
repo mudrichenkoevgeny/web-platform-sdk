@@ -1,4 +1,4 @@
-import { HttpClientConfigPlugin } from '@/network/http-client/http-client-config-plugin'
+import type { HttpClientConfigPlugin } from '@/network/http-client/http-client-config-plugin'
 
 /**
  * Mock implementation of {@link HttpClientConfigPlugin} for inspecting or mutating HTTP requests and responses during tests.

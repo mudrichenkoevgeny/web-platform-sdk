@@ -1,4 +1,4 @@
-import { WebSocketService } from '@/network/websocket/service/web-socket-service'
+import type { WebSocketService } from '@/network/websocket/service/web-socket-service'
 import type { SocketEventListener } from "@/network/websocket/service/web-socket-service";
 import type { WebSocketMessageHandler } from '@/network/websocket/message-handler/web-socket-message-handler'
 import type { SocketFrame } from '@/network/model/websocket/socket-frame'

@@ -1,4 +1,4 @@
-import { AccessTokenProvider } from '@/network/provider/access-token-provider'
+import type { AccessTokenProvider } from '@/network/provider/access-token-provider'
 import type { AccessTokenChangeListener } from '@/network/provider/access-token-provider'
 
 /**

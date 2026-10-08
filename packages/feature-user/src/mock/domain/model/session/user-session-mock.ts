@@ -7,7 +7,7 @@ import {
   UserAuthProvider,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link UserSession} instance.

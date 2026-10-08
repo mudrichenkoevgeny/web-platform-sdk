@@ -1,6 +1,6 @@
-import { EncryptedSettings } from '@/storage/encrypted-settings'
+import type { EncryptedSettings } from '@/storage/encrypted-settings'
 import type { StorageChangeListener } from '@/storage/encrypted-settings'
-import { SettingsFactory } from '@/storage/settings-factory'
+import type { SettingsFactory } from '@/storage/settings-factory'
 const MASTER_KEY_STORAGE_KEY = '__sdk_master_key__'
 
 /**

@@ -2,7 +2,7 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationType, toOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { ConfirmationRepository, UnlockRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { ConfirmationRepository, UnlockRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 
 /**

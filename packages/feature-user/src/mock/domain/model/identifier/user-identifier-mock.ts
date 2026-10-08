@@ -3,7 +3,7 @@ import {
   toUserIdentifierIdOrThrow,
   UserAuthProvider
 } from '@mudrichenkoevgeny/shared-foundation'
-import { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link UserIdentifier} instance.

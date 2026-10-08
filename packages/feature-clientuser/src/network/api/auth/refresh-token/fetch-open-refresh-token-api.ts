@@ -2,7 +2,8 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { RefreshTokenPayload, SessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenRefreshTokenRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic, RefreshTokenApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { RefreshTokenApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Open {@link RefreshTokenApi} implementation backed by {@link HttpClient}. */
 export class FetchOpenRefreshTokenApi implements RefreshTokenApi {

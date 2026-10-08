@@ -1,7 +1,7 @@
 import { appResultFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { RefreshTokenRepository } from '@/repository/auth/refresh-token/refresh-token-repository'
-import { AuthStorage } from '@/storage/auth/auth-storage'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/user-error'
 /**

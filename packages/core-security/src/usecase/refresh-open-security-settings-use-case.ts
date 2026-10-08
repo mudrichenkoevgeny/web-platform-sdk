@@ -1,6 +1,6 @@
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
-import { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
+import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 
 /**
  * Use case that delegates to {@link OpenSecuritySettingsRepository.refreshOpenSecuritySettings}.

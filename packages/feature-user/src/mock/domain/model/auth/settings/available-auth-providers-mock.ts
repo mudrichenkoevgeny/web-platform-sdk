@@ -1,5 +1,5 @@
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
+import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link AvailableAuthProviders} instance.

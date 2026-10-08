@@ -2,7 +2,7 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 import { toSessionToken } from '@mudrichenkoevgeny/shared-foundation'
-import { RefreshTokenApi, RefreshTokenRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { RefreshTokenApi, RefreshTokenRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /**
  * Implements {@link RefreshTokenRepository} by delegating to {@link RefreshTokenApi}.

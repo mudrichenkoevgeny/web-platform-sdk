@@ -1,5 +1,5 @@
 import type { AppError } from '@/error/model/app-error'
-import { AppErrorParser } from '@/error/parser/app-error-parser'
+import type { AppErrorParser } from '@/error/parser/app-error-parser'
 
 /**
  * Resolver implementation combining specific and common error parsers into a Chain of Responsibility.

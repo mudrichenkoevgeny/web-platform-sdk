@@ -1,5 +1,5 @@
-import { UserAuthServices } from '@/auth/user-auth-services'
-import { GoogleAuthService } from '@/auth/google/google-auth-service'
+import type { UserAuthServices } from '@/auth/user-auth-services'
+import type { GoogleAuthService } from '@/auth/google/google-auth-service'
 import { GoogleAuthServiceMock } from '@/mock/auth/google/google-auth-service-mock'
 
 /**

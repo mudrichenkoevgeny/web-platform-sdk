@@ -19,7 +19,7 @@ import {
   UserFilterValues,
   userSessionPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Self-management {@link SessionApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementSessionApi implements SessionApi {

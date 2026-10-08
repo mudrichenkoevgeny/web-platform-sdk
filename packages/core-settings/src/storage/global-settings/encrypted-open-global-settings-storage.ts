@@ -1,6 +1,6 @@
 import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
 import {
   toOpenGlobalSettings,
   toOpenGlobalSettingsPayload

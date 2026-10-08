@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
+import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'

@@ -5,9 +5,7 @@ import type {
   UserSessionId,
   UserSessionPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import {
-  UserStorage
-} from '@/storage/user/user-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 import type {
   GetUserIdentifiersListParams,
   GetUserSessionsListParams,

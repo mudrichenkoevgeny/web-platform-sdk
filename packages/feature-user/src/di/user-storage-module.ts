@@ -1,6 +1,6 @@
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
-import { UserStorage } from '@/storage/user/user-storage'
+import type { UserStorage } from '@/storage/user/user-storage'
 
 /**
  * Wiring container for encrypted user-scoped storage backed by {@link EncryptedSettings}.

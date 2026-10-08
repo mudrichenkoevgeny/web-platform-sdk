@@ -1,6 +1,6 @@
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
+import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettingsObserver } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
 import { openGlobalSettingsMock } from '@/mock/domain/model/open-global-settings-mock'

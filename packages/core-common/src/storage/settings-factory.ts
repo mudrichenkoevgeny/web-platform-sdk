@@ -1,4 +1,4 @@
-import { EncryptedSettings } from '@/storage/encrypted-settings'
+import type { EncryptedSettings } from '@/storage/encrypted-settings'
 
 /**
  * Factory interface for instantiating an {@link EncryptedSettings} implementation.

@@ -1,4 +1,4 @@
-import { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
+import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
 import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
 
 /**

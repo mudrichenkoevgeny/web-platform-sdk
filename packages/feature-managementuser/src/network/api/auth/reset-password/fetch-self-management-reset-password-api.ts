@@ -7,7 +7,8 @@ import type {
   UserIdentifierPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic, ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Management {@link ResetPasswordApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementResetPasswordApi implements ResetPasswordApi {

@@ -1,7 +1,7 @@
 import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
+import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
 import { openGlobalSettingsPayloadMock } from '@/mock/network/model/open-global-settings-payload-mock'
 /**
  * Mock implementation of {@link OpenGlobalSettingsApi}.

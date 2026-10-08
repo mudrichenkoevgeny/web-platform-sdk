@@ -1,4 +1,4 @@
-import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Domain model representing open global platform settings.

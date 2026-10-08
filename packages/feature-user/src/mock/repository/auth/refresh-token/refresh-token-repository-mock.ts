@@ -1,6 +1,6 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { RefreshTokenRepository } from '@/repository/auth/refresh-token/refresh-token-repository'
+import type { RefreshTokenRepository } from '@/repository/auth/refresh-token/refresh-token-repository'
 import type { SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link RefreshTokenRepository}.

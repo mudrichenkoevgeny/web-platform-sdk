@@ -4,7 +4,7 @@ import {
   toManagementSecuritySettingsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettingsStorage } from '@/storage/security-settings/management-security-settings-storage'
 
 const KEY_MANAGEMENT_SECURITY_SETTINGS = 'security_management_settings'

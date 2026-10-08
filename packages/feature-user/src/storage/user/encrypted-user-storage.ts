@@ -8,8 +8,8 @@ import {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { PagedResult, UserIdentifierId, UserIdentifierPayload, UserSessionId, UserSessionPayload } from "@mudrichenkoevgeny/shared-foundation";
-import { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type {
   UserStorage
 } from '@/storage/user/user-storage'
 import type { UserChangeListener, UserIdentifiersListChangeListener, UserSessionsListChangeListener } from "@/storage/user/user-storage";
@@ -200,8 +200,14 @@ export class EncryptedUserStorage implements UserStorage {
   public async updateUserIdentifiersPayloadList(
     userIdentifiersList: PagedResult<UserIdentifierPayload>
   ): Promise<void> {
-    await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(userIdentifiersList))
-await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(userIdentifiersList))
+    const pagedPayload = {
+      items: userIdentifiersList.items,
+      total_count: userIdentifiersList.totalCount,
+      page_number: userIdentifiersList.pageNumber,
+      page_size: userIdentifiersList.pageSize,
+      total_pages: userIdentifiersList.totalPages
+    }
+    await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(pagedPayload))
   }
 
   /**

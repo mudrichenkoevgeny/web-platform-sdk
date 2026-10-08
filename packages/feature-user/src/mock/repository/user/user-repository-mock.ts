@@ -1,6 +1,6 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { UserRepository } from '@/repository/user/user-repository'
+import type { UserRepository } from '@/repository/user/user-repository'
 import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Mock implementation of {@link UserRepository}.

@@ -6,7 +6,7 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUserSecurityRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { UserSecurityApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { UserSecurityApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Open {@link UserSecurityApi} implementation backed by {@link HttpClient}. */
 export class FetchOpenUserSecurityApi implements UserSecurityApi {

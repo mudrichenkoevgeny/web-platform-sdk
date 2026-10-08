@@ -1,7 +1,8 @@
-import { OpenSecuritySettingsPayload, OpenSecuritySettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenSecuritySettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { callResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { HttpClient, AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
+import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
 /**
  * Fetch HTTP client implementation of {@link OpenSecuritySettingsApi}.
  */

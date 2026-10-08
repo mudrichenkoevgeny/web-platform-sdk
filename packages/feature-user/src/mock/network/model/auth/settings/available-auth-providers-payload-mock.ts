@@ -1,4 +1,4 @@
-import { AvailableAuthProvidersPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { AvailableAuthProvidersPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link AvailableAuthProvidersPayload} instance.

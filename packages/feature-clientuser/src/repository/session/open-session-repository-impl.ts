@@ -10,7 +10,7 @@ import type {
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
-import {
+import type {
   AuthStorage,
   SessionApi,
   SessionRepository,

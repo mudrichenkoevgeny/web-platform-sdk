@@ -1,5 +1,5 @@
-import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 
 /**

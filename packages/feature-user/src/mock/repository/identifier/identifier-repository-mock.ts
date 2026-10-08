@@ -7,7 +7,7 @@ import type {
   UserIdentifierId,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { IdentifierRepository } from '@/repository/identifier/identifier-repository'
+import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'

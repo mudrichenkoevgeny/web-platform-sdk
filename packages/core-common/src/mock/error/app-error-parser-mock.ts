@@ -1,5 +1,5 @@
-import { AppError } from '@/error/model/app-error'
-import { AppErrorParser } from '@/error/parser/app-error-parser'
+import type { AppError } from '@/error/model/app-error'
+import type { AppErrorParser } from '@/error/parser/app-error-parser'
 
 /**
  * Mock implementation of {@link AppErrorParser} for testing error message resolution.

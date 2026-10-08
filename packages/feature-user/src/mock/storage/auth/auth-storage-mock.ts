@@ -3,7 +3,7 @@ import type {
   UserIdentifierId,
   UserSessionId
 } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthStorage } from '@/storage/auth/auth-storage'
+import type { AuthStorage } from '@/storage/auth/auth-storage'
 import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny/shared-foundation'
 
 /**

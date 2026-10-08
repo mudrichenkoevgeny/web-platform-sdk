@@ -11,7 +11,7 @@ import {
   userDetailsPayloadSchema,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
-import { AuthStorage, UserRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { AuthStorage, UserRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserApi } from '@/network/api/user/open-user-api'
 
 /**

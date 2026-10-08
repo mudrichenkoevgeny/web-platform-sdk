@@ -7,7 +7,7 @@ import type {
   UserSessionPayload,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import { SessionApi } from '@/network/api/session/session-api'
+import type { SessionApi } from '@/network/api/session/session-api'
 /**
  * Mock implementation of {@link SessionApi}.
  */

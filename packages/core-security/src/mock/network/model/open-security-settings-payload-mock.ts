@@ -1,4 +1,4 @@
-import { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link OpenSecuritySettingsPayload} matching server response structures.

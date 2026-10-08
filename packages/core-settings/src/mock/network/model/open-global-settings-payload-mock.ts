@@ -1,4 +1,4 @@
-import { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Creates a mock {@link OpenGlobalSettingsPayload} matching server response structures.
