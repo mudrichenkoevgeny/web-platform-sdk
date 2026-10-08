@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementIdentifiersApi } from '@/network/api/identifier/fetch-self-management-identifiers-api'
 import { SelfManagementIdentifierRoutes, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchSelfManagementIdentifiersApi', () => {
   let mockHttpClient: HttpClient
@@ -15,7 +16,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
   })
 
   it('dispatches getUserIdentifier request', async () => {
-    const dummyPayload = { id: 'ident_1' } as any
+    const dummyPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const id = toUserIdentifierIdOrThrow('ident_1')

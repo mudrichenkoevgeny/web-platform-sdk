@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
 import { SelfManagementSessionRoutes, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { userSessionPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchSelfManagementSessionApi', () => {
   let mockHttpClient: HttpClient
@@ -28,7 +29,7 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches getSession request', async () => {
-    const dummyPayload = { id: 'sess_1' } as any
+    const dummyPayload = userSessionPayloadMock({ id: toUserSessionIdOrThrow('sess_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const id = toUserSessionIdOrThrow('sess_1')

@@ -5,10 +5,6 @@ packages:
 allowBuilds:
   esbuild: true
 
-overrides:
-  'typescript-eslint>typescript': 'npm:@typescript/typescript6@^6.0.2'
-  '@typescript-eslint/typescript-estree>typescript': 'npm:@typescript/typescript6@^6.0.2'
-
 catalog:
   '@mudrichenkoevgeny/shared-foundation': '^0.0.55'
   '@testing-library/react': '^16.0.0'

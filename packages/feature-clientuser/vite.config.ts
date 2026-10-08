@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-import { resolve } from 'path'
+import dts from 'vite-plugin-dts'
+import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig(async ({ command, mode }) => {
+export default defineConfig(({ command, mode }) => {
   const isTest = mode === 'test' || process.env.NODE_ENV === 'test'
   const plugins = [
     svgr({
@@ -13,7 +14,6 @@ export default defineConfig(async ({ command, mode }) => {
   ]
 
   if (!isTest && command === 'build') {
-    const { default: dts } = await import('vite-plugin-dts')
     plugins.push(dts({ rollupTypes: true }))
   }
 
@@ -21,12 +21,14 @@ export default defineConfig(async ({ command, mode }) => {
     plugins,
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src')
+        '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
     test: {
+      name: 'feature-clientuser',
       globals: true,
       environment: 'jsdom',
+      include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
       server: {
         deps: {
           inline: ['@mudrichenkoevgeny/shared-foundation']
@@ -35,7 +37,7 @@ export default defineConfig(async ({ command, mode }) => {
     },
     build: {
       lib: {
-        entry: resolve(__dirname, 'src/index.ts'),
+        entry: './src/index.ts',
         name: 'WebPlatformSdkFeatureClientuser',
         fileName: 'index',
         formats: ['es']

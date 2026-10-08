@@ -184,14 +184,14 @@ export class EncryptedUserStorage implements UserStorage {
    */
   public async updateUserIdentifiersList(userIdentifiersList: PagedResult<UserIdentifier>): Promise<void> {
     const payloadItems = userIdentifiersList.items.map((item) => toUserIdentifierPayload(item))
-    const pagedPayload: PagedResult<UserIdentifierPayload> = {
+    const pagedPayload = {
       items: payloadItems,
-      totalCount: userIdentifiersList.totalCount,
-      pageNumber: userIdentifiersList.pageNumber,
-      pageSize: userIdentifiersList.pageSize,
-      totalPages: userIdentifiersList.totalPages
+      total_count: userIdentifiersList.totalCount,
+      page_number: userIdentifiersList.pageNumber,
+      page_size: userIdentifiersList.pageSize,
+      total_pages: userIdentifiersList.totalPages
     }
-    await this.updateUserIdentifiersPayloadList(pagedPayload)
+    await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(pagedPayload))
   }
 
   /**
@@ -201,6 +201,7 @@ export class EncryptedUserStorage implements UserStorage {
     userIdentifiersList: PagedResult<UserIdentifierPayload>
   ): Promise<void> {
     await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(userIdentifiersList))
+await this.encryptedSettings.put(KEY_USER_IDENTIFIERS, JSON.stringify(userIdentifiersList))
   }
 
   /**
@@ -380,21 +381,28 @@ export class EncryptedUserStorage implements UserStorage {
    */
   public async updateUserSessionsList(userSessionsList: PagedResult<UserSession>): Promise<void> {
     const payloadItems = userSessionsList.items.map((item) => toUserSessionPayload(item))
-    const pagedPayload: PagedResult<UserSessionPayload> = {
+    const pagedPayload = {
       items: payloadItems,
-      totalCount: userSessionsList.totalCount,
-      pageNumber: userSessionsList.pageNumber,
-      pageSize: userSessionsList.pageSize,
-      totalPages: userSessionsList.totalPages
+      total_count: userSessionsList.totalCount,
+      page_number: userSessionsList.pageNumber,
+      page_size: userSessionsList.pageSize,
+      total_pages: userSessionsList.totalPages
     }
-    await this.updateUserSessionsPayloadList(pagedPayload)
+    await this.encryptedSettings.put(KEY_USER_SESSIONS, JSON.stringify(pagedPayload))
   }
 
   /**
    * Replaces stored sessions payload list.
    */
   public async updateUserSessionsPayloadList(userSessionsList: PagedResult<UserSessionPayload>): Promise<void> {
-    await this.encryptedSettings.put(KEY_USER_SESSIONS, JSON.stringify(userSessionsList))
+    const pagedPayload = {
+      items: userSessionsList.items,
+      total_count: userSessionsList.totalCount,
+      page_number: userSessionsList.pageNumber,
+      page_size: userSessionsList.pageSize,
+      total_pages: userSessionsList.totalPages
+    }
+    await this.encryptedSettings.put(KEY_USER_SESSIONS, JSON.stringify(pagedPayload))
   }
 
   /**

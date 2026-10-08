@@ -1,76 +1,38 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
-  AccountLockoutType,
-  ClientType,
-  toClientDeviceIdOrThrow,
+  SortOrder,
   toUserIdOrThrow,
-  toUserIdentifierIdOrThrow,
   toUserSessionIdOrThrow,
-  UserAccountStatus,
-  UserAuthProvider,
-  UserRole,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { userDetailsMock } from '@/mock/domain/model/user/user-details-mock'
+import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
 
 describe('EncryptedUserStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock
   let storage: EncryptedUserStorage
 
-  const dummyUser: UserDetails = {
-    id: toUserIdOrThrow('usr_123'),
-    role: UserRole.CLIENT_USER,
-    accountStatus: UserAccountStatus.ACTIVE,
-    accountStatusOnRestore: null,
-    authorityLevel: 1,
-    permissionCodes: [],
-    isTotpEnabled: false,
-    lastLoginAt: Date.now(),
-    lastActiveAt: Date.now(),
-    createdAt: Date.now(),
-    updatedAt: null,
-    scheduledPermanentDeletionAt: null,
-    lockoutType: AccountLockoutType.NONE,
-    temporaryLockoutUntil: null
-  }
+  const dummyUser = userDetailsMock({ id: toUserIdOrThrow('usr_123') })
 
-  const dummySession1: UserSession = {
+  const dummySession1 = userSessionMock({
     id: toUserSessionIdOrThrow('sess_1'),
     userId: toUserIdOrThrow('usr_123'),
-    userRole: UserRole.CLIENT_USER,
-    identifier: 'user@example.com',
-    identifierId: toUserIdentifierIdOrThrow('ident_1'),
-    identifierDisplayName: 'User',
-    identifierAuthProvider: UserAuthProvider.EMAIL,
-    deviceInfo: {
-      clientType: ClientType.WEB,
-      language: 'en',
-      deviceId: toClientDeviceIdOrThrow('dev_1'),
-      deviceName: 'Chrome',
-      appVersion: '1.0.0',
-      operationSystemVersion: 'macOS'
-    },
-    userAgent: 'Mozilla/5.0',
-    ipAddress: '127.0.0.1',
-    expiresAt: Date.now() + 10000,
     lastAccessedAt: 100,
     lastReauthenticatedAt: 50,
-    isSensitiveValuesMasked: false,
     createdAt: 10,
     updatedAt: 20
-  }
+  })
 
-  const dummySession2: UserSession = {
-    ...dummySession1,
+  const dummySession2 = userSessionMock({
     id: toUserSessionIdOrThrow('sess_2'),
+    userId: toUserIdOrThrow('usr_123'),
     lastAccessedAt: 200,
     lastReauthenticatedAt: 150,
     createdAt: 30,
     updatedAt: 40
-  }
+  })
 
   beforeEach(() => {
     mockEncryptedSettings = new EncryptedSettingsMock()
@@ -132,8 +94,9 @@ describe('EncryptedUserStorage', () => {
     const sortedByUpdatedDesc = await storage.getUserSessionsList({
       pageNumber: 1,
       pageSize: 10,
-      sortBy: UserSortValues.UserSessionSortBy.UPDATED_AT
+      sortBy: UserSortValues.UserSessionSortBy.UPDATED_AT,
+      sortOrder: SortOrder.DESC
     })
-    expect(sortedByUpdatedDesc.items[0]?.id).toBe('sess_1')
+    expect(sortedByUpdatedDesc.items[0]?.id).toBe('sess_2')
   })
 })

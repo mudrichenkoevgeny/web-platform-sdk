@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
-import type { PagedResult, UserIdentifierPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementIdentifierRoutes, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementIdentifierApi', () => {
   let mockHttpClient: HttpClient
@@ -29,7 +29,7 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifier request', async () => {
-    const dummyPayload = { id: 'ident_1' } as unknown as UserIdentifierPayload
+    const dummyPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getIdentifier(toUserIdentifierIdOrThrow('ident_1'))

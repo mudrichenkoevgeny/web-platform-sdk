@@ -91,11 +91,9 @@ export function MainScreen(): React.JSX.Element {
   const profileDependencies: MainProfileStoreDependencies = useMemo(
     () => ({
       appType: AppType.MANAGEMENT,
-      userRepository: appComponent.managementUserComponent.selfManagementUserRepository as any,
+      userRepository: appComponent.managementUserComponent.selfUserRepository,
       logoutUseCase: appComponent.managementUserComponent.logoutUseCase,
       scheduleUserDeletionUseCase: appComponent.managementUserComponent.scheduleUserDeletionUseCase,
-      getAuthSettingsUseCase: appComponent.managementUserComponent.getManagementAuthSettingsUseCase as any,
-      observeAuthSettingsUseCase: appComponent.managementUserComponent.refreshManagementAuthSettingsUseCase as any,
       onNavigateToLogin: () => setIsLoginOpen(true),
       onNavigateToTotp: () => pushProfile({ type: 'totpMain' }),
       onNavigateToSessions: () => pushProfile({ type: 'sessions' }),
@@ -150,7 +148,7 @@ export function MainScreen(): React.JSX.Element {
         return (
           <TotpMainScreen
             dependencies={{
-              userRepository: appComponent.managementUserComponent.selfManagementUserRepository as any,
+              userRepository: appComponent.managementUserComponent.selfUserRepository,
               setupTotpUseCase: appComponent.managementUserComponent.setupTotpUseCase,
               enableTotpUseCase: appComponent.managementUserComponent.enableTotpUseCase,
               disableTotpUseCase: appComponent.managementUserComponent.disableTotpUseCase,

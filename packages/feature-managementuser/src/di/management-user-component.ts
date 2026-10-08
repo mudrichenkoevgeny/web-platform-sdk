@@ -324,6 +324,7 @@ export class ManagementUserComponent {
   public readonly selfManagementSessionRepository: SessionRepository
   public readonly managementSessionRepository: ManagementSessionRepository
   public readonly selfManagementUserRepository: SelfManagementUserRepository
+  public readonly selfUserRepository: UserRepository
   public readonly managementUserRepository: ManagementUserRepository
   public readonly selfManagementUserSecurityRepository: UserSecurityRepository
   public readonly managementUserSecurityRepository: ManagementUserSecurityRepository
@@ -501,7 +502,7 @@ export class ManagementUserComponent {
       this.compositeMetadataKeyParser
     )
 
-    const selfManagementUserRepositoryAdapter = new SelfManagementUserRepositoryAdapter(this.selfManagementUserRepository)
+    this.selfUserRepository = new SelfManagementUserRepositoryAdapter(this.selfManagementUserRepository)
     const selfManagementIdentifierRepositoryAdapter = new SelfManagementIdentifierRepositoryAdapter(this.selfManagementIdentifierRepository)
 
     this.refreshTokenUseCase = new RefreshTokenUseCase(this.selfManagementRefreshTokenRepository, this.authStorage)
@@ -524,9 +525,9 @@ export class ManagementUserComponent {
       this.settingsComponent.globalSettingsRepository,
       this.securityComponent.securitySettingsRepository
     )
-    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, selfManagementUserRepositoryAdapter)
-    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(selfManagementUserRepositoryAdapter)
-    this.restoreUserUseCase = new RestoreUserUseCase(selfManagementUserRepositoryAdapter)
+    this.logoutUseCase = new LogoutUseCase(this.selfManagementSessionRepository, this.selfUserRepository)
+    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(this.selfUserRepository)
+    this.restoreUserUseCase = new RestoreUserUseCase(this.selfUserRepository)
     this.setupTotpUseCase = new SetupTotpUseCase(this.selfManagementUserSecurityRepository)
     this.enableTotpUseCase = new EnableTotpUseCase(this.selfManagementUserSecurityRepository)
     this.disableTotpUseCase = new DisableTotpUseCase(this.selfManagementUserSecurityRepository)
@@ -580,7 +581,7 @@ export class ManagementUserComponent {
 
     this.userWebSocketMessageHandler = new UserWebSocketMessageHandler(
       this.userStorage,
-      selfManagementUserRepositoryAdapter,
+      this.selfUserRepository,
       this.authStorage,
       this.refreshTokenUseCase
     )

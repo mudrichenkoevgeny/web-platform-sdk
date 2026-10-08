@@ -5,6 +5,14 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@mudrichenkoevgeny/web-platform-sdk-core-common": ["./packages/core-common/src/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-security": ["./packages/core-security/src/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-settings": ["./packages/core-settings/src/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-feature-user": ["./packages/feature-user/src/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-feature-clientuser": ["./packages/feature-clientuser/src/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-feature-managementuser": ["./packages/feature-managementuser/src/index.ts"]
+    },
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -21,8 +29,6 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true
+    "forceConsistentCasingInFileNames": true
   }
 }
