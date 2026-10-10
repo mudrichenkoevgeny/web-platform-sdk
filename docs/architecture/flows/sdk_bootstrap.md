@@ -26,7 +26,7 @@ sequenceDiagram
 
     Host->>EncStorage: Instantiate EncryptedSettingsComponent
     EncStorage-->>Host: WebCryptoSettings instance
-    Host->>CommonComp: Instantiate CommonComponent(baseUrl, deviceInfoProvider, encryptedSettings)
+    Host->>CommonComp: Instantiate CommonComponent(baseUrl, clientDeviceInfoProvider, encryptedSettings)
     CommonComp-->>Host: CommonComponent (provides HttpClient, WebWebSocketService)
 
     Host->>CoreFeatures: Instantiate SettingsComponent & SecurityComponent(webSocketService, httpClient, encryptedSettings)
@@ -50,7 +50,7 @@ sequenceDiagram
 The host app initializes `EncryptedSettingsComponent`. In the web environment, this automatically utilizes `WebCryptoSettings`, a secure AES-GCM abstraction wrapping the browser's native `localStorage` and `sessionStorage`.
 
 ### Step 2: Root Infrastructure Assembly (`CommonComponent`)
-`CommonComponent` is instantiated as the single source of truth for base network execution (Fetch), platform metadata (`DeviceInfoProvider`), and the error parsing pipeline (`AppErrorParser`).
+`CommonComponent` is instantiated as the single source of truth for base network execution (Fetch), platform metadata (`ClientDeviceInfoProvider`), and the error parsing pipeline (`AppErrorParser`).
 
 ### Step 3: Domain Components Assembly
 Feature components are constructed by passing `CommonComponent` dependencies down:

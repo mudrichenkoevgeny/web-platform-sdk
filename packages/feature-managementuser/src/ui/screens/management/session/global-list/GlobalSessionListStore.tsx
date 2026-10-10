@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { ClientType, SortOrder, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSession, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionSummary, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -25,7 +25,7 @@ export type GlobalSessionListScreenState =
     }
   | {
       status: 'content'
-      paging: PaginationState<UserSession>
+      paging: PaginationState<UserSessionSummary>
       sortState: ListingSortState | null
       filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
@@ -36,7 +36,7 @@ export type GlobalSessionListScreenState =
 export interface GlobalSessionListStoreDependencies {
   managementGetSessionsUseCase: ManagementGetSessionsUseCase
   managementDeleteSessionUseCase: ManagementDeleteSessionUseCase
-  onNavigateToSessionDetail: (session: UserSession) => void
+  onNavigateToSessionDetail: (session: UserSessionSummary) => void
   onNavigateToUserDetail: (userId: string) => void
   onBack: () => void
 }
@@ -50,7 +50,7 @@ export interface GlobalSessionListStoreState {
   onSortChanged: (sortState: ListingSortState | null) => void
   onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => void
   onApplyFilters: () => void
-  onSessionClick: (session: UserSession) => void
+  onSessionClick: (session: UserSessionSummary) => void
   onDeleteSessionClick: (userId: string, sessionId: UserSessionId) => Promise<void>
   onBackClick: () => void
 }
@@ -147,7 +147,7 @@ export const createGlobalSessionListStore = (
 
       if (isSuccess(result)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSessionSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
 
         if (current.status === 'content') {
@@ -297,14 +297,14 @@ export const createGlobalSessionListStore = (
       set({
         screenState: {
           ...current,
-          paging: createInitialPaginationState<UserSession>()
+          paging: createInitialPaginationState<UserSessionSummary>()
         }
       })
 
       await fetchPage(set, get, 1, current.sortState, current.filterStates)
     },
 
-    onSessionClick: (session: UserSession) => {
+    onSessionClick: (session: UserSessionSummary) => {
       deps.onNavigateToSessionDetail(session)
     },
 

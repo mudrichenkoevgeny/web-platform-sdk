@@ -7,21 +7,22 @@ import type {
   UserAuthProvider,
   UserId,
   UserRole,
-  UserSessionPayload,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
 /** Mock implementation of {@link ManagementSessionApi}. */
 export class ManagementSessionApiMock implements ManagementSessionApi {
-  public getSessionsResult: AppResult<PagedResult<UserSessionPayload>, AppError> = appResultSuccess({
+  public getSessionsResult: AppResult<PagedResult<UserSessionSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 0
   })
-  public getSessionResult: AppResult<UserSessionPayload, AppError> = appResultFailure(CommonError.unknown())
+  public getSessionResult: AppResult<UserSessionPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public deleteSessionResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
   public deleteAllUserSessionsResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
 
@@ -43,11 +44,11 @@ export class ManagementSessionApiMock implements ManagementSessionApi {
     _deviceNames?: string[] | null,
     _appVersions?: string[] | null,
     _operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSessionPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
     return this.getSessionsResult
   }
 
-  public async getSession(_sessionId: string): Promise<AppResult<UserSessionPayload, AppError>> {
+  public async getSession(_sessionId: string): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     return this.getSessionResult
   }
 

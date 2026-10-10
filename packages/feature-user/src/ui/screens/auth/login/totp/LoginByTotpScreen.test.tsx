@@ -12,7 +12,7 @@ describe('LoginByTotpScreen', () => {
     loginByTotpUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
-          userDetails: {
+          userPrivate: {
             id: 'usr_123',
             accountStatus: 'ACTIVE'
           }
@@ -22,7 +22,7 @@ describe('LoginByTotpScreen', () => {
     loginByTotpRecoveryCodeUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
-          userDetails: {
+          userPrivate: {
             id: 'usr_123',
             accountStatus: 'ACTIVE'
           }

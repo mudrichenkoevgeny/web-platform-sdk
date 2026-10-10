@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Associates a new email identifier with current account. */
 export class AddUserIdentifierEmailUseCase {
@@ -17,13 +17,13 @@ export class AddUserIdentifierEmailUseCase {
    * @param email - Target email
    * @param password - Account password for verification
    * @param confirmationCode - One-time code sent to email
-   * @returns UserIdentifier or AppError
+   * @returns UserIdentifierPrivate or AppError
    */
   public async execute(
     email: string,
     password: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     return this.identifierRepository.addUserIdentifierEmail(email, password, confirmationCode)
   }
 }

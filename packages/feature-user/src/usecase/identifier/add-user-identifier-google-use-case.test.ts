@@ -5,14 +5,14 @@ import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
 import type { GoogleAuthService } from '@/auth/google/google-auth-service'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('AddUserIdentifierGoogleUseCase', () => {
   let mockAuthService: GoogleAuthService
   let mockRepository: IdentifierRepository
   let useCase: AddUserIdentifierGoogleUseCase
 
-  const dummyIdentifier: UserIdentifier = {
+  const dummyIdentifier: UserIdentifierPrivate = {
     id: toUserIdentifierIdOrThrow('ident_1'),
     userId: toUserIdOrThrow('usr_1'),
     userAuthProvider: UserAuthProvider.GOOGLE,

@@ -1,16 +1,18 @@
-import { toUserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsMock } from '@/mock/domain/model/user/user-details-mock'
+import { toUserPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
+import { userPrivateMock } from '@/mock/domain/model/user/user-details-mock'
 
 /**
- * Creates a mock {@link UserDetailsPayload} instance.
+ * Creates a mock {@link UserPrivatePayload} instance.
  *
  * @param overrides - Optional property overrides
- * @returns Mock user details payload
+ * @returns Mock user private payload
  */
-export const userDetailsPayloadMock = (
-  overrides?: Partial<UserDetailsPayload>
-): UserDetailsPayload => ({
-  ...toUserDetailsPayload(userDetailsMock()),
+export const userPrivatePayloadMock = (
+  overrides?: Partial<UserPrivatePayload>
+): UserPrivatePayload => ({
+  ...toUserPrivatePayload(userPrivateMock()),
   ...overrides
 })
+
+export const userDetailsPayloadMock = userPrivatePayloadMock

@@ -5,7 +5,7 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserRole,
-  UserSession,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
@@ -44,11 +44,11 @@ export class ManagementGetSessionsUseCase {
    * Executes the use case.
    *
    * @param params - Query and filter parameters
-   * @returns Paginated result containing matching user session models, or a mapped failure
+   * @returns Paginated result containing matching user session summary models, or a mapped failure
    */
   public async execute(
     params?: ManagementGetSessionsParams
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.managementSessionRepository.getSessions(
       params?.pageNumber,
       params?.pageSize,

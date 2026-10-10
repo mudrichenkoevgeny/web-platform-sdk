@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { SortOrder, UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -25,7 +25,7 @@ export type GlobalIdentifierListScreenState =
     }
   | {
       status: 'content'
-      paging: PaginationState<UserIdentifier>
+      paging: PaginationState<UserIdentifierSummary>
       sortState: ListingSortState | null
       filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
@@ -107,7 +107,7 @@ export const createGlobalIdentifierListStore = (
 
       if (isSuccess(result)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
 
         if (current.status === 'content') {
@@ -255,7 +255,7 @@ export const createGlobalIdentifierListStore = (
       set({
         screenState: {
           ...current,
-          paging: createInitialPaginationState<UserIdentifier>()
+          paging: createInitialPaginationState<UserIdentifierSummary>()
         }
       })
 

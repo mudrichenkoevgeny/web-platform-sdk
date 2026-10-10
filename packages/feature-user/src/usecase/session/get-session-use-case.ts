@@ -1,7 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionId, UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns details of a specific session owned by current account. */
 export class GetSessionUseCase {
@@ -16,9 +15,9 @@ export class GetSessionUseCase {
    * Retrieves single session.
    *
    * @param userSessionId - Target session ID
-   * @returns UserSession or AppError
+   * @returns UserSessionPrivate or AppError
    */
-  public async execute(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>> {
+  public async execute(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>> {
     return this.sessionRepository.getSession(userSessionId)
   }
 }

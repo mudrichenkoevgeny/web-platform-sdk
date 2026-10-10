@@ -3,7 +3,7 @@ import { AppErrorParserMock } from '@/mock/error/app-error-parser-mock'
 import { AccessTokenProviderMock } from '@/mock/network/access-token-provider-mock'
 import { HttpClientConfigPluginMock } from '@/mock/network/http-client-config-plugin-mock'
 import { WebSocketServiceMock } from '@/mock/network/web-socket-service-mock'
-import { DeviceInfoProviderMock } from '@/mock/platform/device-info-provider-mock'
+import { ClientDeviceInfoProviderMock } from '@/mock/platform/client-device-info-provider-mock'
 import { ExternalLauncherMock } from '@/mock/platform/external-launcher-mock'
 import { PlatformRepositoryMock } from '@/mock/platform/platform-repository-mock'
 import { CommonStorageMock } from '@/mock/storage/common-storage-mock'
@@ -69,9 +69,9 @@ describe('Domain Mocks', () => {
     expect(service.isConnected).toBe(false)
   })
 
-  it('DeviceInfoProviderMock returns configured mock device payload', async () => {
-    const provider = new DeviceInfoProviderMock({ app_version: '3.0.0' })
-    const info = await provider.getDeviceInfo()
+  it('ClientDeviceInfoProviderMock returns configured mock device payload', async () => {
+    const provider = new ClientDeviceInfoProviderMock({ app_version: '3.0.0' })
+    const info = await provider.getClientDeviceInfo()
 
     expect(info.client_type).toBe('web')
     expect(info.app_version).toBe('3.0.0')
@@ -90,7 +90,7 @@ describe('Domain Mocks', () => {
 
   it('PlatformRepositoryMock delegates to inner mocks', async () => {
     const repo = new PlatformRepositoryMock()
-    const info = await repo.getDeviceInfo()
+    const info = await repo.getClientDeviceInfo()
     expect(info.client_type).toBe('web')
 
     repo.openUrl('https://example.com')

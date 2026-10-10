@@ -211,3 +211,4 @@ export interface ListingOptionsConfig {
   /** Available filter definitions. */
   readonly filters: ListingFilterDefinition[]
 }
+

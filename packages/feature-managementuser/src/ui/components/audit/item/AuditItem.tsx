@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react'
-import type { AuditEvent } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 
 export interface AuditItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
-  event: AuditEvent
+  event: AuditEventSummary
   onClick: () => void
   strings?: FeatureManagementUserStrings
 }

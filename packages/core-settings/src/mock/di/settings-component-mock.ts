@@ -4,7 +4,7 @@ import {
   WebSocketServiceMock,
   HttpClient,
   EncryptedSettingsMock,
-  DeviceInfoProviderMock
+  ClientDeviceInfoProviderMock
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { OpenGlobalSettingsApiMock } from '@/mock/network/open-global-settings-api-mock'
 import { OpenGlobalSettingsStorageMock } from '@/mock/storage/open-global-settings-storage-mock'
@@ -20,7 +20,7 @@ export const createMockSettingsComponent = (
   const ws = config?.webSocketService ?? new WebSocketServiceMock()
   const httpClient = config?.httpClient ?? new HttpClient({
     baseUrl: 'https://api.example.com',
-    deviceInfoProvider: new DeviceInfoProviderMock()
+    clientDeviceInfoProvider: new ClientDeviceInfoProviderMock()
   })
   const encryptedSettings = config?.encryptedSettings ?? new EncryptedSettingsMock()
 

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { AccountLockoutType, SortOrder, UserAccountStatus, UserFilterValues, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSummary, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -24,7 +24,7 @@ export type GlobalUserListScreenState =
     }
   | {
       status: 'content'
-      paging: PaginationState<UserDetails>
+      paging: PaginationState<UserSummary>
       sortState: ListingSortState | null
       filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
@@ -123,7 +123,7 @@ export const createGlobalUserListStore = (
 
       if (isSuccess(result)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserDetails>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
 
         if (current.status === 'content') {
@@ -244,7 +244,7 @@ export const createGlobalUserListStore = (
         screenState: {
           ...current,
           sortState,
-          paging: createInitialPaginationState<UserDetails>()
+          paging: createInitialPaginationState<UserSummary>()
         }
       })
 
@@ -282,7 +282,7 @@ export const createGlobalUserListStore = (
         screenState: {
           ...current,
           isFilterPanelExpanded: false,
-          paging: createInitialPaginationState<UserDetails>()
+          paging: createInitialPaginationState<UserSummary>()
         }
       })
 

@@ -2,8 +2,9 @@ import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEventPayload,
+  AuditEventPrivatePayload,
   AuditEventSortBy,
+  AuditEventSummaryPayload,
   AuditStatus,
   PagedResult,
   SortOrder,
@@ -12,7 +13,8 @@ import type {
 import {
   AuditApiPaths,
   AuditFilterValues,
-  auditEventPayloadSchema,
+  auditEventPrivatePayloadSchema,
+  auditEventSummaryPayloadSchema,
   ListingParamNames,
   ManagementAuditRoutes,
   pagedResultSchema
@@ -41,7 +43,7 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
     resourceIds?: string[] | null,
     statuses?: AuditStatus[] | null,
     messages?: string[] | null
-  ): Promise<AppResult<PagedResult<AuditEventPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<AuditEventSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
@@ -80,15 +82,15 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(auditEventPayloadSchema).parse(raw)
+      return pagedResultSchema(auditEventSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPayload, AppError>> {
+  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivatePayload, AppError>> {
     const path = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return auditEventPayloadSchema.parse(raw)
+      return auditEventPrivatePayloadSchema.parse(raw)
     })
   }
 }

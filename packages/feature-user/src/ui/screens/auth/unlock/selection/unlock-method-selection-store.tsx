@@ -2,7 +2,7 @@ import React, { createContext, useContext, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { AccountLockoutType } from "@mudrichenkoevgeny/shared-foundation";
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserError } from '@/error/model/user-error'
@@ -14,7 +14,7 @@ import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-id
 export interface UnlockMethodSelectionScreenState {
   lockoutType: AccountLockoutType | null
   lockoutUntil: number | null
-  knownIdentifiers: readonly UserIdentifier[]
+  knownIdentifiers: readonly UserIdentifierSummary[]
   hasLoadedIdentifiers: boolean
   isEmailAvailable: boolean
   isPhoneAvailable: boolean

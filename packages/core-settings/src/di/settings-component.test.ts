@@ -3,7 +3,7 @@ import {
   WebSocketServiceMock,
   HttpClient,
   EncryptedSettingsMock,
-  DeviceInfoProviderMock
+  ClientDeviceInfoProviderMock
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SettingsComponent } from '@/di/settings-component'
 
@@ -12,7 +12,7 @@ describe('SettingsComponent', () => {
     const ws = new WebSocketServiceMock()
     const httpClient = new HttpClient({
       baseUrl: 'https://api.example.com',
-      deviceInfoProvider: new DeviceInfoProviderMock()
+      clientDeviceInfoProvider: new ClientDeviceInfoProviderMock()
     })
     const encryptedSettings = new EncryptedSettingsMock()
 

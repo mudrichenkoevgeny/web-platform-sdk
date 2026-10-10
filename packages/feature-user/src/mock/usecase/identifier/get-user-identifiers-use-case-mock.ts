@@ -2,19 +2,19 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-identifiers-use-case'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierRepositoryMock } from '@/mock/repository/identifier/identifier-repository-mock'
 /** Mock implementation of {@link GetUserIdentifiersUseCase}. */
 export class GetUserIdentifiersUseCaseMock extends GetUserIdentifiersUseCase {
   public executeCalls = 0
-  public resultProvider: (page: number, size: number) => Promise<AppResult<PagedResult<UserIdentifier>, AppError>> =
+  public resultProvider: (page: number, size: number) => Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> =
     async (page, size) => appResultSuccess({ items: [], totalCount: 0, pageNumber: page, pageSize: size, totalPages: 0 })
 
   public constructor() {
     super(new IdentifierRepositoryMock())
   }
 
-  public override async execute(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  public override async execute(pageNumber?: number | null, pageSize?: number | null): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     this.executeCalls++
     return this.resultProvider(pageNumber ?? 1, pageSize ?? 10)
   }

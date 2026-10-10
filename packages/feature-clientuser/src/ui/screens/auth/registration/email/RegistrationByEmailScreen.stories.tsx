@@ -13,7 +13,7 @@ const createMockDeps = (): RegistrationByEmailStoreDependencies => ({
   registrationByEmailUseCase: {
     execute: async () =>
       appResultSuccess({
-        userDetails: {
+        userPrivate: {
           id: 'usr_123',
           accountStatus: 'ACTIVE'
         }

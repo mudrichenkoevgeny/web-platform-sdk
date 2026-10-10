@@ -15,7 +15,7 @@ describe('FetchOpenLoginApi', () => {
   })
 
   it('dispatches loginByEmail request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { email: 'test@example.com', password: 'secret' }
@@ -32,7 +32,7 @@ describe('FetchOpenLoginApi', () => {
   })
 
   it('dispatches loginByPhone request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { phone_number: '+1234567890', confirmation_code: '123456' }
@@ -49,7 +49,7 @@ describe('FetchOpenLoginApi', () => {
   })
 
   it('dispatches loginByExternalAuthProvider request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { authProvider: 'GOOGLE', externalProviderToken: 'token123' } as any
@@ -66,7 +66,7 @@ describe('FetchOpenLoginApi', () => {
   })
 
   it('dispatches loginByTotp request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { mfa_token: 'mfa123', totp_code: '654321' }
@@ -83,7 +83,7 @@ describe('FetchOpenLoginApi', () => {
   })
 
   it('dispatches loginByTotpRecoveryCode request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { mfa_token: 'mfa123', totp_code: 'rec_123' }

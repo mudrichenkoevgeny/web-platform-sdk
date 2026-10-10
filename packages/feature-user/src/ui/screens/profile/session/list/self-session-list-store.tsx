@@ -12,7 +12,7 @@ import {
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
 import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
 import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/delete-all-other-sessions-use-case'
@@ -28,9 +28,9 @@ export type SelfSessionListScreenState =
     }
   | {
       status: 'content'
-      items: UserSession[]
+      items: UserSessionSummary[]
       currentSessionId: UserSessionId | null
-      paging: PaginationState<UserSession>
+      paging: PaginationState<UserSessionSummary>
       actionLoading: boolean
       actionError: AppError | null
     }
@@ -39,7 +39,7 @@ export interface SelfSessionListStoreDependencies {
   getSessionsUseCase: GetSessionsUseCase
   deleteSessionUseCase: DeleteSessionUseCase
   deleteAllOtherSessionsUseCase: DeleteAllOtherSessionsUseCase
-  onNavigateToSessionDetail?: (session: UserSession) => void
+  onNavigateToSessionDetail?: (session: UserSessionSummary) => void
   onBack: () => void
   authStorage?: AuthStorage
 }
@@ -48,7 +48,7 @@ export interface SelfSessionListStoreState {
   screenState: SelfSessionListScreenState
   loadSessions: () => Promise<void>
   onRefresh: () => Promise<void>
-  onSessionClick: (session: UserSession) => void
+  onSessionClick: (session: UserSessionSummary) => void
   onSessionRevoked: (sessionId: UserSessionId) => void
   onRevokeSessionClick: (sessionId: UserSessionId) => Promise<void>
   onRevokeAllOtherSessionsClick: () => Promise<void>
@@ -86,7 +86,7 @@ export const createSelfSessionListStore = (
       const result = await deps.getSessionsUseCase.execute(1, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSession>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSessionSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
         set({
           screenState: {
@@ -138,7 +138,7 @@ export const createSelfSessionListStore = (
       await loadSessionsInternal(set, get, true)
     },
 
-    onSessionClick: (session: UserSession) => {
+    onSessionClick: (session: UserSessionSummary) => {
       deps.onNavigateToSessionDetail?.(session)
     },
 

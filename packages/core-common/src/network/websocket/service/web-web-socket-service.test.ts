@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { WebWebSocketService } from '@/network/websocket/service/web-web-socket-service'
 import { AccessTokenProviderMock } from '@/mock/network/access-token-provider-mock'
-import { WebDeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import { WebClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
 import { CommonWebSocketMessageHandler } from '@/network/websocket/message-handler/common-web-socket-message-handler'
@@ -45,13 +45,13 @@ describe('WebWebSocketService', () => {
     const tokenProvider = new AccessTokenProviderMock('initial-token')
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
-    const deviceInfoProvider = new WebDeviceInfoProvider(storage)
+    const clientDeviceInfoProvider = new WebClientDeviceInfoProvider(storage)
 
     const service = new WebWebSocketService({
       baseUrl: 'https://api.example.com',
       webSocketPath: '/ws',
       accessTokenProvider: tokenProvider,
-      deviceInfoProvider,
+      clientDeviceInfoProvider,
       webSocketFactory: () => mockWs as unknown as WebSocket
     })
 

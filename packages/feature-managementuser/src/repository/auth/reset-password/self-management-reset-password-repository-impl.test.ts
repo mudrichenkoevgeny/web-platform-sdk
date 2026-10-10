@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { userIdentifierPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { SelfManagementResetPasswordRepositoryImpl } from '@/repository/auth/reset-password/self-management-reset-password-repository-impl'
 import type { ConfirmationRepository, ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -8,16 +9,7 @@ describe('SelfManagementResetPasswordRepositoryImpl', () => {
   let mockConfirmationRepo: ConfirmationRepository
   let repository: SelfManagementResetPasswordRepositoryImpl
 
-  const dummyIdentifierPayload = {
-    id: 'ident_1',
-    user_id: 'usr_1',
-    identifier: 'admin@example.com',
-    user_auth_provider: 'EMAIL',
-    is_primary: true,
-    is_confirmed: true,
-    created_at: 1000,
-    updated_at: null
-  } as any
+  const dummyIdentifierPayload = userIdentifierPrivatePayloadMock()
 
   beforeEach(() => {
     mockApi = {
@@ -33,7 +25,7 @@ describe('SelfManagementResetPasswordRepositoryImpl', () => {
     repository = new SelfManagementResetPasswordRepositoryImpl(mockApi, mockConfirmationRepo)
   })
 
-  it('delegates resetPassword and maps response to UserIdentifier', async () => {
+  it('delegates resetPassword and maps response to UserIdentifierPrivate', async () => {
     const result = await repository.resetPassword('admin@example.com', 'new_secret', '123456')
     expect(mockApi.resetPassword).toHaveBeenCalledWith({
       email: 'admin@example.com',

@@ -7,25 +7,26 @@ import type {
   UserAuthProvider,
   UserId,
   UserRole,
-  UserSession,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { userSessionPrivateMock, userSessionSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Mock implementation of {@link ManagementSessionRepository}. */
 export class ManagementSessionRepositoryMock implements ManagementSessionRepository {
-  public getSessionsResultProvider: () => Promise<AppResult<PagedResult<UserSession>, AppError>> = async () =>
+  public getSessionsResultProvider: () => Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> = async () =>
     appResultSuccess({
-      items: [userSessionMock()],
+      items: [userSessionSummaryMock()],
       totalCount: 1,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
     })
 
-  public getSessionResultProvider: (sessionId: string) => Promise<AppResult<UserSession, AppError>> = async () =>
-    appResultSuccess(userSessionMock())
+  public getSessionResultProvider: (sessionId: string) => Promise<AppResult<UserSessionPrivate, AppError>> = async () =>
+    appResultSuccess(userSessionPrivateMock())
 
   public deleteSessionResultProvider: (
     userId: UserId,
@@ -56,11 +57,11 @@ export class ManagementSessionRepositoryMock implements ManagementSessionReposit
     _deviceNames?: string[] | null,
     _appVersions?: string[] | null,
     _operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.getSessionsResultProvider()
   }
 
-  public async getSession(sessionId: string): Promise<AppResult<UserSession, AppError>> {
+  public async getSession(sessionId: string): Promise<AppResult<UserSessionPrivate, AppError>> {
     this.lastSessionId = sessionId
     return this.getSessionResultProvider(sessionId)
   }

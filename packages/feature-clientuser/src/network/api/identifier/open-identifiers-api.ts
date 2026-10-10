@@ -11,7 +11,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -23,7 +24,7 @@ export interface OpenIdentifiersApi {
    * @param userIdentifierId - Unique identifier payload id
    * @returns Detailed identifier info or a mapped failure
    */
-  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>>
+  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Returns a paginated and filtered list of identifiers linked to the current authenticated management account.
@@ -43,7 +44,7 @@ export interface OpenIdentifiersApi {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>>
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>>
 
   /**
    * Removes an identifier from the account.
@@ -61,7 +62,7 @@ export interface OpenIdentifiersApi {
    */
   addUserIdentifierEmail(
     request: AddUserIdentifierEmailRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>>
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Starts linking a new phone identifier to the account.
@@ -71,7 +72,7 @@ export interface OpenIdentifiersApi {
    */
   addUserIdentifierPhone(
     request: AddUserIdentifierPhoneRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>>
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Starts linking an external auth provider identity to the account.
@@ -81,7 +82,7 @@ export interface OpenIdentifiersApi {
    */
   addUserIdentifierExternalAuthProvider(
     request: AddUserIdentifierExternalAuthProviderRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>>
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Sends a confirmation message for adding an email identifier.

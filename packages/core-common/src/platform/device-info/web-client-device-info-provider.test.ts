@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest'
-import { WebDeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import { WebClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
 
-describe('WebDeviceInfoProvider', () => {
+describe('WebClientDeviceInfoProvider', () => {
   it('returns ClientDeviceInfoPayload with storage device_id and parsed userAgent', async () => {
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
     await storage.updateDeviceId('device-999')
 
-    const provider = new WebDeviceInfoProvider(storage, '2.1.0')
-    const info = await provider.getDeviceInfo()
+    const provider = new WebClientDeviceInfoProvider(storage, '2.1.0')
+    const info = await provider.getClientDeviceInfo()
 
     expect(info.client_type).toBe('web')
     expect(info.device_id).toBe('device-999')
@@ -23,8 +23,8 @@ describe('WebDeviceInfoProvider', () => {
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
 
-    const provider = new WebDeviceInfoProvider(storage)
-    const info = await provider.getDeviceInfo()
+    const provider = new WebClientDeviceInfoProvider(storage)
+    const info = await provider.getClientDeviceInfo()
 
     expect(info.client_type).toBe('web')
     expect(info.device_id).not.toBeNull()

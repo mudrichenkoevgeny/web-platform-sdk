@@ -1,8 +1,9 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEventPayload,
+  AuditEventPrivatePayload,
   AuditEventSortBy,
+  AuditEventSummaryPayload,
   AuditStatus,
   PagedResult,
   SortOrder,
@@ -26,7 +27,7 @@ export interface ManagementAuditApi {
    * @param resourceIds - Filters by resource IDs
    * @param statuses - Filters by audit status
    * @param messages - Filters by message substrings
-   * @returns Paginated result containing audit event payloads, or a failure
+   * @returns Paginated result containing audit event summary payloads, or a failure
    */
   getAuditEvents(
     pageNumber?: number | null,
@@ -41,13 +42,13 @@ export interface ManagementAuditApi {
     resourceIds?: string[] | null,
     statuses?: AuditStatus[] | null,
     messages?: string[] | null
-  ): Promise<AppResult<PagedResult<AuditEventPayload>, AppError>>
+  ): Promise<AppResult<PagedResult<AuditEventSummaryPayload>, AppError>>
 
   /**
    * Retrieves specific audit event details by ID.
    *
    * @param eventId - Unique audit event identifier string
-   * @returns Audit event payload, or a failure
+   * @returns Audit event private payload, or a failure
    */
-  getAuditEvent(eventId: string): Promise<AppResult<AuditEventPayload, AppError>>
+  getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivatePayload, AppError>>
 }

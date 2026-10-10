@@ -1,8 +1,9 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEvent,
+  AuditEventPrivate,
   AuditEventSortBy,
+  AuditEventSummary,
   AuditStatus,
   PagedResult,
   SortOrder,
@@ -14,7 +15,7 @@ import type {
  */
 export interface ManagementAuditRepository {
   /**
-   * Retrieves a paginated list of domain audit events.
+   * Retrieves a paginated list of domain audit event summaries.
    *
    * @param pageNumber - One-based page index
    * @param pageSize - Maximum items returned per page
@@ -28,7 +29,7 @@ export interface ManagementAuditRepository {
    * @param resourceIds - Filters by resource IDs
    * @param statuses - Filters by audit status
    * @param messages - Filters by message substrings
-   * @returns Paginated result containing domain audit events, or a failure
+   * @returns Paginated result containing domain audit event summaries, or a failure
    */
   getAuditEvents(
     pageNumber?: number | null,
@@ -43,13 +44,13 @@ export interface ManagementAuditRepository {
     resourceIds?: string[] | null,
     statuses?: AuditStatus[] | null,
     messages?: string[] | null
-  ): Promise<AppResult<PagedResult<AuditEvent>, AppError>>
+  ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>>
 
   /**
    * Retrieves specific domain audit event details by ID.
    *
    * @param eventId - Unique audit event identifier string
-   * @returns Domain audit event, or a failure
+   * @returns Domain audit event private details, or a failure
    */
-  getAuditEvent(eventId: string): Promise<AppResult<AuditEvent, AppError>>
+  getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>>
 }

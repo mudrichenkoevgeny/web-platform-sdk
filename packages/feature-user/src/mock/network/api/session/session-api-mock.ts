@@ -4,7 +4,8 @@ import type {
   DeletedSessionsPayload,
   PagedResult,
   UserSessionId,
-  UserSessionPayload,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionApi } from '@/network/api/session/session-api'
@@ -12,14 +13,14 @@ import type { SessionApi } from '@/network/api/session/session-api'
  * Mock implementation of {@link SessionApi}.
  */
 export class SessionApiMock implements SessionApi {
-  public getSessionsResult: AppResult<PagedResult<UserSessionPayload>, AppError> = appResultSuccess({
+  public getSessionsResult: AppResult<PagedResult<UserSessionSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 0
   })
-  public getSessionResult: AppResult<UserSessionPayload, AppError> = appResultFailure(CommonError.unknown())
+  public getSessionResult: AppResult<UserSessionPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public logoutResult: AppResult<void, AppError> = appResultSuccess(undefined)
   public deleteSessionResult: AppResult<void, AppError> = appResultSuccess(undefined)
   public deleteAllOtherSessionsResult: AppResult<DeletedSessionsPayload, AppError> = appResultSuccess({ deleted_session_ids: [] })
@@ -30,12 +31,12 @@ export class SessionApiMock implements SessionApi {
   public lastReauthenticateRequest: VerifyTotpPayload | null = null
 
   /** Mocks sessions list. */
-  public async getSessions(): Promise<AppResult<PagedResult<UserSessionPayload>, AppError>> {
+  public async getSessions(): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
     return this.getSessionsResult
   }
 
   /** Mocks single session retrieval. */
-  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPayload, AppError>> {
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     this.lastRequestedSessionId = userSessionId
     return this.getSessionResult
   }

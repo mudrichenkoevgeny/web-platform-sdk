@@ -10,7 +10,7 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AccountLockoutType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
 import {
@@ -37,19 +37,19 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
 
   const isEmailAvailable =
     knownIdentifiers.length === 0 ||
-    knownIdentifiers.some((i: UserIdentifier) => i.userAuthProvider === UserAuthProvider.EMAIL)
+    knownIdentifiers.some((i: UserIdentifierSummary) => i.userAuthProvider === UserAuthProvider.EMAIL)
 
   const isPhoneAvailable =
     knownIdentifiers.length === 0 ||
-    knownIdentifiers.some((i: UserIdentifier) => i.userAuthProvider === UserAuthProvider.PHONE)
+    knownIdentifiers.some((i: UserIdentifierSummary) => i.userAuthProvider === UserAuthProvider.PHONE)
 
   const isGoogleAvailable =
     knownIdentifiers.length === 0 ||
-    knownIdentifiers.some((i: UserIdentifier) => i.userAuthProvider === UserAuthProvider.GOOGLE)
+    knownIdentifiers.some((i: UserIdentifierSummary) => i.userAuthProvider === UserAuthProvider.GOOGLE)
 
   const isAppleAvailable =
     knownIdentifiers.length === 0 ||
-    knownIdentifiers.some((i: UserIdentifier) => i.userAuthProvider === UserAuthProvider.APPLE)
+    knownIdentifiers.some((i: UserIdentifierSummary) => i.userAuthProvider === UserAuthProvider.APPLE)
 
   let lockoutText: string | null = null
   if (lockoutType === AccountLockoutType.TEMPORARY && lockoutUntil != null) {

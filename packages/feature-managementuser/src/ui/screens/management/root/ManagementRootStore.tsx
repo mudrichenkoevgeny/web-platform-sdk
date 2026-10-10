@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { ManagementDestination } from '@/ui/screens/management/management-destination'
 import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
@@ -26,8 +26,13 @@ import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
 import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
 import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 
 export interface ManagementRootStoreDependencies {
+  currentUserId?: UserId | null
+  selfManagementUserRepository?: SelfManagementUserRepository
+  onNavigateToProfile?: () => void
   getManagementAuthSettingsUseCase: GetManagementAuthSettingsUseCase
   saveRemoteAuthSettingsUseCase: SaveRemoteAuthSettingsUseCase
   resetRemoteAuthSettingsUseCase: ResetRemoteAuthSettingsUseCase
@@ -99,6 +104,10 @@ export const ManagementRootProvider: React.FC<ManagementRootProviderProps> = ({
   children
 }) => {
   const [store] = useState(() => createManagementRootStore(dependencies, initialStack))
+
+  useEffect(() => {
+    store.setState({ dependencies })
+  }, [store, dependencies])
 
   return (
     <ManagementRootContext.Provider value={store}>

@@ -6,20 +6,22 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserSessionId,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
+import { userSessionPrivateMock, userSessionSummaryMock } from '@/mock/domain/model/session/user-session-mock'
+
 /**
  * Mock implementation of {@link SessionRepository}.
  */
 export class SessionRepositoryMock implements SessionRepository {
-  public getSessionsResultProvider: () => Promise<AppResult<PagedResult<UserSession>, AppError>> = async () =>
-    appResultSuccess({ items: [userSessionMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
+  public getSessionsResultProvider: () => Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> = async () =>
+    appResultSuccess({ items: [userSessionSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
 
-  public getSessionResultProvider: (userSessionId: UserSessionId) => Promise<AppResult<UserSession, AppError>> = async () =>
-    appResultSuccess(userSessionMock())
+  public getSessionResultProvider: (userSessionId: UserSessionId) => Promise<AppResult<UserSessionPrivate, AppError>> = async () =>
+    appResultSuccess(userSessionPrivateMock())
 
   public logoutResultProvider: () => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)
@@ -53,11 +55,11 @@ export class SessionRepositoryMock implements SessionRepository {
     _deviceNames?: string[] | null,
     _appVersions?: string[] | null,
     _operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.getSessionsResultProvider()
   }
 
-  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>> {
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>> {
     this.lastSessionId = userSessionId
     return this.getSessionResultProvider(userSessionId)
   }

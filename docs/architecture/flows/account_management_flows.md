@@ -101,7 +101,7 @@ sequenceDiagram
         UI->>UC: ScheduleUserDeletionUseCase()
         UC->>Repo: scheduleUserDeletion()
         Repo->>API: POST /user/schedule-deletion
-        API-->>Repo: UserDetails (status = PENDING_DELETION)
+        API-->>Repo: UserPrivate (status = PENDING_DELETION)
         Repo-->>UI: User details updated (status = PENDING_DELETION)
         UI-->>User: Show grace period banner / Navigate to PendingDeletionScreen
     else User Restores Account During Grace Period (Login Attempt)
@@ -109,7 +109,7 @@ sequenceDiagram
         UI->>UC: RestoreUserUseCase()
         UC->>Repo: restoreUser()
         Repo->>API: POST /user/restore
-        API-->>Repo: UserDetails (status = ACTIVE)
+        API-->>Repo: UserPrivate (status = ACTIVE)
         Repo-->>UI: Account restored to ACTIVE status, redirect to Main App
     end
 ```

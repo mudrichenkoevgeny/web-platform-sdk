@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { AuditActorType, AuditEventSortBy, AuditFilterValues, AuditStatus, SortOrder, UserRole } from '@mudrichenkoevgeny/shared-foundation'
-import type { AuditEvent, AuditEventId } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuditEventId, AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -24,7 +24,7 @@ export type AuditEventListScreenState =
     }
   | {
       status: 'content'
-      paging: PaginationState<AuditEvent>
+      paging: PaginationState<AuditEventSummary>
       sortState: ListingSortState | null
       filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
@@ -32,10 +32,19 @@ export type AuditEventListScreenState =
       actionError: AppError | null
     }
 
+export interface AuditEventListFilters {
+  actorIds?: string[]
+}
+
+export interface AuditEventListParams {
+  filters?: AuditEventListFilters
+}
+
 export interface AuditEventListStoreDependencies {
   getAuditEventsUseCase: GetAuditEventsUseCase
   onNavigateToEventDetail: (eventId: AuditEventId) => void
   onBack: () => void
+  params?: AuditEventListParams
 }
 
 export interface AuditEventListStoreState {
@@ -126,7 +135,7 @@ export const createAuditEventListStore = (
 
       if (isSuccess(result)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEvent>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEventSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
 
         if (current.status === 'content') {
@@ -181,7 +190,17 @@ export const createAuditEventListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, null, {})
+
+      const initialFilters: Record<string, ListingFilterState> = {}
+      const actorIds = deps.params?.filters?.actorIds
+      if (actorIds && actorIds.length > 0) {
+        initialFilters[AuditFilterValues.AuditEventFilterValues.ACTOR_ID] = {
+          type: 'text',
+          value: actorIds[0]!
+        }
+      }
+
+      await fetchPage(set, get, 1, null, initialFilters)
     },
 
     onLoadNextPage: async () => {
@@ -241,7 +260,7 @@ export const createAuditEventListStore = (
         screenState: {
           ...current,
           sortState,
-          paging: createInitialPaginationState<AuditEvent>()
+          paging: createInitialPaginationState<AuditEventSummary>()
         }
       })
 
@@ -279,7 +298,7 @@ export const createAuditEventListStore = (
         screenState: {
           ...current,
           isFilterPanelExpanded: false,
-          paging: createInitialPaginationState<AuditEvent>()
+          paging: createInitialPaginationState<AuditEventSummary>()
         }
       })
 

@@ -4,7 +4,7 @@ import { cn, CoreIcon, formatEpochMillisToDateTime } from '@mudrichenkoevgeny/we
 import { icons } from '@/assets/icons/index'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from "@/locales/index";
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * Props for the {@link SessionItem} component.
  */
@@ -12,11 +12,11 @@ export interface SessionItemProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /**
    * User session domain object to display.
    */
-  session: UserSession
+  session: UserSessionSummary
   /**
-   * Callback invoked when the revoke button is clicked.
+   * Optional callback invoked when the revoke button is clicked.
    */
-  onRevokeClick: () => void
+  onRevokeClick?: () => void
   /**
    * Controls whether the revoke action and UI interactions are permitted.
    */
@@ -71,8 +71,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
     const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
     const formattedLastAccessed = formatEpochMillisToDateTime(session.lastAccessedAt) ?? String(session.lastAccessedAt)
 
-    const deviceName = session.deviceInfo.deviceName ?? session.userAgent ?? strings.not_available
-    const ipAddress = session.ipAddress ?? strings.not_available
+    const deviceName = session.clientDeviceInfo.deviceName ?? strings.not_available
 
     const iconClassName = cn(
       session.identifierAuthProvider === UserAuthProvider.GOOGLE ? '' : 'text-primary-foreground',
@@ -110,20 +109,17 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
 
         <div className="flex flex-col gap-1 text-sm text-surface-foreground relative z-10 pointer-events-none">
           <span className="font-semibold">{deviceName}</span>
-          {session.deviceInfo.clientType && (
+          {session.clientDeviceInfo.clientType && (
             <span className="text-xs text-muted-foreground">
-              {session.deviceInfo.clientType}
+              {session.clientDeviceInfo.clientType}
             </span>
           )}
-          <span className="text-xs text-muted-foreground">
-            {strings.session_ip_address(ipAddress)}
-          </span>
           <span className="text-xs text-muted-foreground">
             {strings.session_last_accessed(formattedLastAccessed)}
           </span>
         </div>
 
-        {!isCurrentSession && (
+        {!isCurrentSession && onRevokeClick && (
           <div className="pt-2 border-t border-border flex justify-end relative z-10">
             <button
               type="button"

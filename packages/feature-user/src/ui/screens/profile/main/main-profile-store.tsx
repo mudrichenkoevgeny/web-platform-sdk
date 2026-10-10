@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { createStore, useStore } from 'zustand'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
@@ -25,7 +25,7 @@ export type MainProfileScreenState =
     }
   | {
       status: 'content'
-      user: UserDetails
+      user: UserPrivate
       appType: AppType
       isAccountDeletionAvailable: boolean
       showDeleteConfirmation: boolean

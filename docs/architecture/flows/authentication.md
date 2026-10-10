@@ -31,11 +31,11 @@ sequenceDiagram
     Component->>UseCase: invoke(credentials)
     UseCase->>Repo: login(credentials)
     Repo->>API: POST /auth/login
-    API-->>Repo: AuthDataPayload (AccessToken, RefreshToken, UserDetails)
+    API-->>Repo: AuthDataPayload (AccessToken, RefreshToken, UserPrivate)
     Repo->>AuthStore: Save tokens (AES-GCM encrypted)
     Repo->>Repo: Update UserStorage cache
-    Repo-->>UseCase: AppResult.Success(UserDetails)
-    UseCase-->>Component: AppResult.Success(UserDetails)
+    Repo-->>UseCase: AppResult.Success(AuthData)
+    UseCase-->>Component: AppResult.Success(AuthData)
     Component->>WS: Re-connect WebSocket with new AccessToken
     Component-->>User: Navigate to Main Application Screen (Zustand state shift)
 ```

@@ -43,7 +43,6 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
   const onRefresh = useGlobalSessionListStore((s) => s.onRefresh)
   const onLoadNextPage = useGlobalSessionListStore((s) => s.onLoadNextPage)
   const onSessionClick = useGlobalSessionListStore((s) => s.onSessionClick)
-  const onDeleteSessionClick = useGlobalSessionListStore((s) => s.onDeleteSessionClick)
   const onBackClick = useGlobalSessionListStore((s) => s.onBackClick)
   const onToggleFilterPanel = useGlobalSessionListStore((s) => s.onToggleFilterPanel)
   const onSortChanged = useGlobalSessionListStore((s) => s.onSortChanged)
@@ -156,7 +155,6 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
                 key={session.id}
                 session={session}
                 enabled={!actionLoading}
-                onRevokeClick={() => onDeleteSessionClick(session.userId, session.id)}
                 onSessionClick={() => onSessionClick(session)}
                 strings={strings}
               />

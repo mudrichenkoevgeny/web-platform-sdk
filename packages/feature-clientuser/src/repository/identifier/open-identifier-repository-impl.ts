@@ -5,14 +5,16 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserIdentifier,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ConfirmationType,
   toOtpConfirmation,
-  toUserIdentifier
+  toUserIdentifierPrivate,
+  toUserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   ConfirmationRepository,
@@ -38,9 +40,9 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     private readonly userStorage: UserStorage
   ) {}
 
-  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>> {
+  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.getUserIdentifier(userIdentifierId)
-    return mapSuccess(result, (payload) => toUserIdentifier(payload))
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async getUserIdentifiers(
@@ -50,7 +52,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     const result = await this.openIdentifiersApi.getUserIdentifiers(
       pageNumber,
       pageSize,
@@ -61,7 +63,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     )
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
-      items: pagedPayload.items.map((payload) => toUserIdentifier(payload))
+      items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))
     }))
   }
 
@@ -77,13 +79,13 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     email: string,
     password: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierEmail({
       email,
       password,
       confirmation_code: confirmationCode
     })
-    const mapped = mapSuccess(result, (payload) => toUserIdentifier(payload))
+    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
     }
@@ -93,12 +95,12 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
   public async addUserIdentifierPhone(
     phoneNumber: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierPhone({
       phone_number: phoneNumber,
       confirmation_code: confirmationCode
     })
-    const mapped = mapSuccess(result, (payload) => toUserIdentifier(payload))
+    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
     }
@@ -108,12 +110,12 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
   public async addUserIdentifierExternalAuthProvider(
     authProvider: string,
     externalProviderToken: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierExternalAuthProvider({
       auth_provider: authProvider,
       external_provider_token: externalProviderToken
     })
-    const mapped = mapSuccess(result, (payload) => toUserIdentifier(payload))
+    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
     }

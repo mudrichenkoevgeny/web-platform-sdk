@@ -4,10 +4,10 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of active sessions for current account. */
 export class GetSessionsUseCase {
@@ -21,7 +21,7 @@ export class GetSessionsUseCase {
   /**
    * Fetches active sessions list.
    *
-   * @returns PagedResult containing UserSession models or AppError
+   * @returns PagedResult containing UserSessionSummary models or AppError
    */
   public async execute(
     pageNumber?: number | null,
@@ -39,7 +39,7 @@ export class GetSessionsUseCase {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.sessionRepository.getSessions(
       pageNumber,
       pageSize,

@@ -145,7 +145,7 @@ export const createLoginByEmailStore = (
       const result = await deps.loginByEmailUseCase.execute(current.email, current.password)
 
       if (isSuccess(result)) {
-        if (result.data.userDetails.accountStatus === UserAccountStatus.PENDING_DELETION) {
+        if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
           deps.onNavigateToPendingDeletion()
         } else {
           deps.onFinished()

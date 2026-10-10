@@ -90,6 +90,9 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
   const subjectValue = `${event.actorType}${event.actorUserRole ? ` (${event.actorUserRole})` : ''}${event.actorId ? `: ${event.actorId}` : ''}`
 
   const formattedTimestamp = formatEpochMillisToDateTime(event.createdAt) ?? String(event.createdAt)
+  const formattedUpdatedAt = event.updatedAt
+    ? formatEpochMillisToDateTime(event.updatedAt) ?? String(event.updatedAt)
+    : null
 
   const metadataItems = Array.from(event.metadata ?? [])
 
@@ -124,10 +127,6 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
             testTag={AuditEventDetailTestTags.RESOURCE_ROW}
           />
           <DetailRow
-            label={strings.audit_event_resource_sensitivity}
-            value={String(event.resourceValueSensitivity)}
-          />
-          <DetailRow
             label={strings.audit_event_actor}
             value={subjectValue}
             onClick={isSubjectClickable ? onSubjectClick : null}
@@ -143,6 +142,12 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
             label={strings.audit_event_timestamp}
             value={formattedTimestamp}
           />
+          {formattedUpdatedAt && (
+            <DetailRow
+              label={strings.audit_event_updated_at}
+              value={formattedUpdatedAt}
+            />
+          )}
         </div>
 
         {metadataItems.length > 0 && (

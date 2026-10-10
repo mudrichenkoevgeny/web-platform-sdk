@@ -157,10 +157,25 @@ pnpm add <package-name> --filter @mudrichenkoevgeny/web-platform-sdk-core-securi
 
 If the dependency is in the catalog, reference it in `package.json` as `"catalog:"`:
 ```json
-"dependencies": {
-  "react": "catalog:"
+{
+  "dependencies": {
+    "react": "catalog:"
+  }
 }
 ```
+
+### Testing Local `.tgz` Builds (`shared-foundation`)
+To test a locally generated `.tgz` archive of `@mudrichenkoevgeny/shared-foundation`:
+
+1. Update `pnpm-workspace.yaml`:
+   ```yaml
+   catalog:
+     '@mudrichenkoevgeny/shared-foundation': 'file:/path/to/mudrichenkoevgeny-shared-foundation-<version>.tgz'
+   ```
+2. Install workspace dependencies:
+   ```bash
+   pnpm install
+   ```
 
 ---
 

@@ -21,6 +21,7 @@ export const userDetailDependenciesMock = (
   } as unknown as UserDetailStoreDependencies['managementDisableTotpUseCase'],
   onNavigateToSessions: () => {},
   onNavigateToIdentifiers: () => {},
+  onNavigateToAuditEvents: () => {},
   onBack: () => {},
   ...overrides
 })

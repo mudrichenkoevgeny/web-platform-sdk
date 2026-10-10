@@ -1,11 +1,11 @@
 import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 
 /**
- * Mock implementation of {@link DeviceInfoProvider} for supplying predictable device metadata in tests.
+ * Mock implementation of {@link ClientDeviceInfoProvider} for supplying predictable device metadata in tests.
  */
-export class DeviceInfoProviderMock implements DeviceInfoProvider {
+export class ClientDeviceInfoProviderMock implements ClientDeviceInfoProvider {
   public mockDeviceInfo: ClientDeviceInfoPayload = {
     client_type: ClientType.WEB,
     language: 'en',
@@ -16,7 +16,7 @@ export class DeviceInfoProviderMock implements DeviceInfoProvider {
   }
 
   /**
-   * Initializes a new instance of {@link DeviceInfoProviderMock}.
+   * Initializes a new instance of {@link ClientDeviceInfoProviderMock}.
    *
    * @param overrides - Partial fields to override default mock device information
    */
@@ -34,7 +34,7 @@ export class DeviceInfoProviderMock implements DeviceInfoProvider {
    *
    * @returns Resolved device metadata payload
    */
-  public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
+  public async getClientDeviceInfo(): Promise<ClientDeviceInfoPayload> {
     return this.mockDeviceInfo
   }
 }

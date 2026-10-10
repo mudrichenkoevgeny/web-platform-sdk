@@ -4,19 +4,19 @@ import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,
-  UserIdentifierPayload
+  UserIdentifierPrivatePayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Mock implementation of {@link ResetPasswordApi} for self management. */
 export class SelfManagementResetPasswordApiMock implements ResetPasswordApi {
-  public resetPasswordResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
+  public resetPasswordResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public sendResetPasswordConfirmationResult: AppResult<OtpConfirmationPayload, AppError> = appResultFailure(CommonError.unknown())
 
   public lastResetPasswordRequest: ResetPasswordRequest | null = null
   public lastSendResetPasswordConfirmationRequest: SendResetPasswordConfirmationRequest | null = null
 
-  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     this.lastResetPasswordRequest = request
     return this.resetPasswordResult
   }

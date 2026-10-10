@@ -129,7 +129,7 @@ const encryptedSettingsComponent = new EncryptedSettingsComponent()
 
 const commonComponent = new CommonComponent({
   encryptedSettings: encryptedSettingsComponent.encryptedSettings,
-  deviceInfoProvider: deviceInfoProvider,
+  clientDeviceInfoProvider: clientDeviceInfoProvider,
   baseUrl: 'https://api.example.com',
   accessTokenProvider: authStorage
 })

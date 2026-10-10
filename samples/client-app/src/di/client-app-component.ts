@@ -26,13 +26,15 @@ import {
   DisabledGoogleAuthService,
   EncryptedAuthStorage,
   MfaStepUpHttpClientConfigPlugin,
-  UserErrorParser
+  UserErrorParser,
+  WebGoogleAuthService
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ClientAppUseCaseModule } from '@/di/client-app-use-case-module'
 import type { SyncDataUseCase } from '@/usecase/sync-data-use-case'
 
 export interface ClientAppComponentConfig {
   baseUrl: string
+  googleClientId?: string
   authServices?: UserAuthServices
   appVersion?: string
   mockCommonComponent?: CommonComponent
@@ -59,8 +61,21 @@ export class ClientAppComponent {
   private readonly clientAppUseCaseModule: ClientAppUseCaseModule
 
   public constructor(config: ClientAppComponentConfig) {
-    const authServices = config.authServices ?? {
-      googleAuth: new DisabledGoogleAuthService()
+    const googleClientId =
+      config.googleClientId ??
+      (typeof import.meta !== 'undefined'
+        ? (import.meta.env.GOOGLE_WEB_CLIENT_ID ?? import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID ?? import.meta.env.VITE_GOOGLE_CLIENT_ID)
+        : undefined)
+
+    const googleAuth =
+      config.authServices?.googleAuth ??
+      (googleClientId && googleClientId.trim().length > 0
+        ? new WebGoogleAuthService(googleClientId)
+        : new DisabledGoogleAuthService())
+
+    const authServices: UserAuthServices = {
+      ...config.authServices,
+      googleAuth
     }
 
     this.encryptedSettingsComponent = new EncryptedSettingsComponent()

@@ -5,11 +5,12 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserId,
-  UserIdentifier,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifierPrivate, toUserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
@@ -32,7 +33,7 @@ export class ManagementIdentifierRepositoryImpl implements ManagementIdentifierR
     userIds?: string[] | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     const result = await this.managementIdentifierApi.getIdentifiers(
       pageNumber,
       pageSize,
@@ -44,13 +45,13 @@ export class ManagementIdentifierRepositoryImpl implements ManagementIdentifierR
     )
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
-      items: pagedPayload.items.map((payload) => toUserIdentifier(payload))
+      items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))
     }))
   }
 
-  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>> {
+  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.managementIdentifierApi.getIdentifier(identifierId)
-    return mapSuccess(result, (payload) => toUserIdentifier(payload))
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {

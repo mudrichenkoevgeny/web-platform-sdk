@@ -4,9 +4,10 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Parameters for filtering and paginating user identifiers. */
@@ -25,7 +26,7 @@ export interface GetUserIdentifiersParams {
  */
 export interface IdentifierRepository {
   /** Retrieves specific identifier details by its unique ID. */
-  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>>
+  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /** Returns a paginated and filtered list of identifiers. */
   getUserIdentifiers(
@@ -35,19 +36,19 @@ export interface IdentifierRepository {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>>
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
   /** Removes an existing identifier from user profile. */
   deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 
   /** Associates a new email identifier with account. */
-  addUserIdentifierEmail(email: string, password: string, confirmationCode: string): Promise<AppResult<UserIdentifier, AppError>>
+  addUserIdentifierEmail(email: string, password: string, confirmationCode: string): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /** Associates a new phone number identifier with account. */
-  addUserIdentifierPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<UserIdentifier, AppError>>
+  addUserIdentifierPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /** Associates an external authentication provider identifier. */
-  addUserIdentifierExternalAuthProvider(authProvider: string, externalProviderToken: string): Promise<AppResult<UserIdentifier, AppError>>
+  addUserIdentifierExternalAuthProvider(authProvider: string, externalProviderToken: string): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /** Triggers a confirmation challenge for email association. */
   sendAddEmailIdentifierConfirmation(email: string): Promise<AppResult<OtpConfirmation, AppError>>

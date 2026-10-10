@@ -5,12 +5,12 @@ import {
   webSocketMessageHandlerResultNotHandled
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SocketFrame, WebSocketMessageHandler, WebSocketMessageHandlerResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { userDetailsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { userPrivatePayloadSchema, UserWebSocketEventTypes, toUserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserStorage } from '@/storage/user/user-storage'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
 import type { UserRepository } from '@/repository/user/user-repository'
 import type { RefreshTokenUseCase } from '@/usecase/auth/refresh-token/refresh-token-use-case'
-import { UserWebSocketEventTypes, toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
+
 /**
  * Interprets user-related WebSocket frames (`UserWebSocketEventTypes`) for unauthorized sessions,
  * account status, and session termination.
@@ -66,12 +66,12 @@ export class UserWebSocketMessageHandler implements WebSocketMessageHandler {
       return webSocketMessageHandlerResultError(CommonError.contractViolation(new Error('Missing frame payload')))
     }
 
-    const validationResult = userDetailsPayloadSchema.safeParse(payload)
+    const validationResult = userPrivatePayloadSchema.safeParse(payload)
     if (!validationResult.success) {
       return webSocketMessageHandlerResultError(CommonError.contractViolation(validationResult.error))
     }
 
-    await this.userStorage.updateCurrentUser(toUserDetails(validationResult.data))
+    await this.userStorage.updateCurrentUser(toUserPrivate(validationResult.data))
     return webSocketMessageHandlerResultHandled()
   }
 

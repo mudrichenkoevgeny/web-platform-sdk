@@ -23,7 +23,6 @@ describe('SessionItem', () => {
     )
 
     expect(screen.getByText('user@example.com')).toBeDefined()
-    expect(screen.getByText('IP: 192.168.1.1')).toBeDefined()
 
     const revokeButton = screen.getByRole('button', { name: enUserStrings.session_revoke })
     await user.click(revokeButton)

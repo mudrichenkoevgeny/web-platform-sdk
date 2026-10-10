@@ -6,7 +6,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserSessionId,
-  UserSessionPayload,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
   UserSortValues,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -49,7 +50,7 @@ export interface SessionApi {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSessionPayload>, AppError>>
+  ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>>
 
   /**
    * Returns details of a specific session owned by current account.
@@ -57,7 +58,7 @@ export interface SessionApi {
    * @param userSessionId - Unique session identifier
    * @returns Detailed session info or mapped failure
    */
-  getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPayload, AppError>>
+  getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivatePayload, AppError>>
 
   /**
    * Ends current active session on the server.

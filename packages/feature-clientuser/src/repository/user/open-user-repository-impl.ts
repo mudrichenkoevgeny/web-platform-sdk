@@ -5,10 +5,10 @@ import type {
   SocketFrame,
   WebSocketService
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  toUserDetails,
-  userDetailsPayloadSchema,
+  toUserPrivate,
+  userPrivatePayloadSchema,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuthStorage, UserRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -19,7 +19,7 @@ import type { OpenUserApi } from '@/network/api/user/open-user-api'
  * and listening for live WebSocket events via {@link WebSocketService}.
  */
 export class OpenUserRepositoryImpl implements UserRepository {
-  private inFlightRefreshPromise: Promise<AppResult<UserDetails, AppError>> | null = null
+  private inFlightRefreshPromise: Promise<AppResult<UserPrivate, AppError>> | null = null
 
   /**
    * Constructs a new {@link OpenUserRepositoryImpl}.
@@ -40,11 +40,11 @@ export class OpenUserRepositoryImpl implements UserRepository {
     this.startWebSocketObservation()
   }
 
-  public observeCurrentUser(listener: (user: UserDetails | null) => void): () => void {
+  public observeCurrentUser(listener: (user: UserPrivate | null) => void): () => void {
     return this.userStorage.observeCurrentUser(listener)
   }
 
-  public async refreshCurrentUser(): Promise<AppResult<UserDetails, AppError>> {
+  public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
     if (this.inFlightRefreshPromise) {
       return this.inFlightRefreshPromise
     }
@@ -56,18 +56,18 @@ export class OpenUserRepositoryImpl implements UserRepository {
     return this.inFlightRefreshPromise
   }
 
-  public async scheduleUserDeletion(): Promise<AppResult<UserDetails, AppError>> {
+  public async scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.openUserApi.scheduleUserDeletion()
-    const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+    const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
     if (isSuccess(mapped)) {
       await this.userStorage.updateCurrentUser(mapped.data)
     }
     return mapped
   }
 
-  public async restoreUser(): Promise<AppResult<UserDetails, AppError>> {
+  public async restoreUser(): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.openUserApi.restoreUser()
-    const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+    const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
     if (isSuccess(mapped)) {
       await this.userStorage.updateCurrentUser(mapped.data)
     }
@@ -79,9 +79,9 @@ export class OpenUserRepositoryImpl implements UserRepository {
     await this.authStorage.clearTokens()
   }
 
-  private async refreshCurrentUserInternal(): Promise<AppResult<UserDetails, AppError>> {
+  private async refreshCurrentUserInternal(): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.openUserApi.getUser()
-    const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+    const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
     if (isSuccess(mapped)) {
       await this.userStorage.updateCurrentUser(mapped.data)
     }
@@ -108,9 +108,9 @@ export class OpenUserRepositoryImpl implements UserRepository {
     }
 
     try {
-      const validationResult = userDetailsPayloadSchema.safeParse(payload)
+      const validationResult = userPrivatePayloadSchema.safeParse(payload)
       if (validationResult.success) {
-        void this.userStorage.updateCurrentUser(toUserDetails(validationResult.data))
+        void this.userStorage.updateCurrentUser(toUserPrivate(validationResult.data))
       } else {
         this.logger?.('OpenUserRepositoryImpl: Invalid user updated WS payload schema')
       }

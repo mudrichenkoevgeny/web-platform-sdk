@@ -4,7 +4,7 @@ import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId, UserId, UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetSessionUseCase } from '@/usecase/session/get-session-use-case'
 import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
@@ -21,7 +21,7 @@ export type SessionDetailScreenState =
     }
   | {
       status: 'content'
-      session: UserSession
+      session: UserSessionPrivate
       isCurrentSession: boolean
       actionLoading: boolean
       actionError: AppError | null
@@ -31,7 +31,7 @@ export type SessionDetailScreenState =
  * Dependencies required to construct and run {@link SessionDetailStore}.
  */
 export interface SessionDetailStoreDependencies {
-  session?: UserSession
+  session?: UserSessionPrivate
   sessionId?: UserSessionId
   getSessionUseCase?: GetSessionUseCase
   deleteSessionUseCase?: DeleteSessionUseCase

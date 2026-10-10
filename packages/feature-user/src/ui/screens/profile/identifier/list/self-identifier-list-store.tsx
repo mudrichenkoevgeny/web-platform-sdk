@@ -12,7 +12,7 @@ import {
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/field-validator'
 import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-identifiers-use-case'
@@ -75,12 +75,12 @@ export type SelfIdentifierListScreenState =
     }
   | {
       status: 'content'
-      items: UserIdentifier[]
+      items: UserIdentifierSummary[]
       currentIdentifierId: UserIdentifierId | null
       availableAuthProviders: AvailableAuthProviders | null
       isAddIdentifierSupported: boolean
       addIdentifierDialogState: AddIdentifierDialogState | null
-      paging: PaginationState<UserIdentifier>
+      paging: PaginationState<UserIdentifierSummary>
       actionLoading: boolean
       actionError: AppError | null
     }
@@ -220,7 +220,7 @@ export const createSelfIdentifierListStore = (
       const result = await deps.getUserIdentifiersUseCase.execute(1, DEFAULT_PAGE_SIZE)
 
       if (isSuccess(result)) {
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifier>()
+        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, result.data)
         set({
           screenState: {

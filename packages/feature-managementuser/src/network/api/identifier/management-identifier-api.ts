@@ -5,7 +5,8 @@ import type {
   UserAuthProvider,
   UserId,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -21,7 +22,7 @@ export interface ManagementIdentifierApi {
    * @param userIds - Filters by specific user identifiers
    * @param userAuthProviders - Filters by authentication provider types
    * @param identifiers - Filters by server-defined free-text identifier values
-   * @returns Paginated result containing matching identifier payloads, or a mapped failure
+   * @returns Paginated result containing matching identifier summary payloads, or a mapped failure
    */
   getIdentifiers(
     pageNumber?: number | null,
@@ -31,7 +32,7 @@ export interface ManagementIdentifierApi {
     userIds?: string[] | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>>
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>>
 
   /**
    * Retrieves specific identifier details.
@@ -39,7 +40,7 @@ export interface ManagementIdentifierApi {
    * @param identifierId - Unique identifier record ID
    * @returns Detailed information of the target identifier, or a mapped failure
    */
-  getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>>
+  getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Removes the identifier record for the given user.

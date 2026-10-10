@@ -4,11 +4,12 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserIdentifier,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifierPrivate, toUserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 import type { SelfManagementIdentifierRepository } from '@/repository/identifier/self-management-identifier-repository'
 
@@ -23,9 +24,9 @@ export class SelfManagementIdentifierRepositoryImpl implements SelfManagementIde
    */
   public constructor(private readonly selfManagementIdentifiersApi: SelfManagementIdentifiersApi) {}
 
-  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>> {
+  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.selfManagementIdentifiersApi.getUserIdentifier(userIdentifierId)
-    return mapSuccess(result, (payload) => toUserIdentifier(payload))
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async getUserIdentifiers(
@@ -35,7 +36,7 @@ export class SelfManagementIdentifierRepositoryImpl implements SelfManagementIde
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     const result = await this.selfManagementIdentifiersApi.getUserIdentifiers(
       pageNumber,
       pageSize,
@@ -46,7 +47,7 @@ export class SelfManagementIdentifierRepositoryImpl implements SelfManagementIde
     )
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
-      items: pagedPayload.items.map((payload) => toUserIdentifier(payload))
+      items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))
     }))
   }
 

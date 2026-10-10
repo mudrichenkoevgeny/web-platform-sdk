@@ -21,6 +21,7 @@ export interface FeatureManagementUserStrings extends FeatureUserStrings {
   readonly audit_event_actor_role: string
   readonly audit_event_message: string
   readonly audit_event_timestamp: string
+  readonly audit_event_updated_at: string
   readonly audit_event_metadata: string
 
   readonly edit_auth_settings_title: string
@@ -149,6 +150,7 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
   audit_event_actor_role: 'Actor Role',
   audit_event_message: 'Message',
   audit_event_timestamp: 'Timestamp',
+  audit_event_updated_at: 'Updated At',
   audit_event_metadata: 'Metadata',
 
   edit_auth_settings_title: 'Edit Auth Settings',

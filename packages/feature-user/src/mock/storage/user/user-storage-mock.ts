@@ -1,10 +1,14 @@
 import type {
   PagedResult,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierSummary,
+  UserIdentifierSummaryPayload,
+  UserPrivate,
   UserSessionId,
-  UserSessionPayload
+  UserSessionSummary,
+  UserSessionSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifierSummary, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserStorage } from '@/storage/user/user-storage'
 import type {
   GetUserIdentifiersListParams,
@@ -13,25 +17,20 @@ import type {
   UserIdentifiersListChangeListener,
   UserSessionsListChangeListener
 } from '@/storage/user/user-storage'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier } from "@mudrichenkoevgeny/shared-foundation";
-import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSession } from "@mudrichenkoevgeny/shared-foundation";
 
 /**
  * In-memory {@link UserStorage} mock for tests and previews.
  */
 export class UserStorageMock implements UserStorage {
-  private currentUserSnapshot: UserDetails | null = null
-  private identifiersPagedResult: PagedResult<UserIdentifier> = {
+  private currentUserSnapshot: UserPrivate | null = null
+  private identifiersPagedResult: PagedResult<UserIdentifierSummary> = {
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 0
   }
-  private sessionsPagedResult: PagedResult<UserSession> = {
+  private sessionsPagedResult: PagedResult<UserSessionSummary> = {
     items: [],
     totalCount: 0,
     pageNumber: 1,
@@ -44,14 +43,14 @@ export class UserStorageMock implements UserStorage {
   private readonly sessionListeners = new Set<UserSessionsListChangeListener>()
 
   public isCleared = false
-  public lastUpdatedIdentifiersPayload: PagedResult<UserIdentifierPayload> | null = null
+  public lastUpdatedIdentifiersPayload: PagedResult<UserIdentifierSummaryPayload> | null = null
   public lastRemovedIdentifierId: UserIdentifierId | null = null
-  public lastUpdatedSessionsPayload: PagedResult<UserSessionPayload> | null = null
-  public lastAddedSession: UserSession | null = null
+  public lastUpdatedSessionsPayload: PagedResult<UserSessionSummaryPayload> | null = null
+  public lastAddedSession: UserSessionSummary | null = null
   public lastRemovedSessionId: UserSessionId | null = null
   public lastRemovedSessionsList: UserSessionId[] | null = null
 
-  public async getCurrentUser(): Promise<UserDetails | null> {
+  public async getCurrentUser(): Promise<UserPrivate | null> {
     return this.currentUserSnapshot
   }
 
@@ -63,12 +62,12 @@ export class UserStorageMock implements UserStorage {
     }
   }
 
-  public async updateCurrentUser(currentUser: UserDetails): Promise<void> {
+  public async updateCurrentUser(currentUser: UserPrivate): Promise<void> {
     this.currentUserSnapshot = currentUser
     this.notifyUserListeners()
   }
 
-  public async getUserIdentifiersList(_params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifier>> {
+  public async getUserIdentifiersList(_params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifierSummary>> {
     return this.identifiersPagedResult
   }
 
@@ -80,16 +79,16 @@ export class UserStorageMock implements UserStorage {
     }
   }
 
-  public async updateUserIdentifiersList(userIdentifiersList: PagedResult<UserIdentifier>): Promise<void> {
+  public async updateUserIdentifiersList(userIdentifiersList: PagedResult<UserIdentifierSummary>): Promise<void> {
     this.identifiersPagedResult = userIdentifiersList
     this.notifyIdentifierListeners()
   }
 
   public async updateUserIdentifiersPayloadList(
-    userIdentifiersList: PagedResult<UserIdentifierPayload>
+    userIdentifiersList: PagedResult<UserIdentifierSummaryPayload>
   ): Promise<void> {
     this.lastUpdatedIdentifiersPayload = userIdentifiersList
-    const mappedItems = userIdentifiersList.items.map((payload) => toUserIdentifier(payload))
+    const mappedItems = userIdentifiersList.items.map((payload) => toUserIdentifierSummary(payload))
     this.identifiersPagedResult = {
       items: mappedItems,
       totalCount: userIdentifiersList.totalCount,
@@ -100,7 +99,7 @@ export class UserStorageMock implements UserStorage {
     this.notifyIdentifierListeners()
   }
 
-  public async addUserIdentifier(userIdentifier: UserIdentifier): Promise<void> {
+  public async addUserIdentifier(userIdentifier: UserIdentifierSummary): Promise<void> {
     const items = [...this.identifiersPagedResult.items, userIdentifier]
     this.identifiersPagedResult = {
       items,
@@ -125,7 +124,7 @@ export class UserStorageMock implements UserStorage {
     this.notifyIdentifierListeners()
   }
 
-  public async getUserSessionsList(_params?: GetUserSessionsListParams): Promise<PagedResult<UserSession>> {
+  public async getUserSessionsList(_params?: GetUserSessionsListParams): Promise<PagedResult<UserSessionSummary>> {
     return this.sessionsPagedResult
   }
 
@@ -137,16 +136,16 @@ export class UserStorageMock implements UserStorage {
     }
   }
 
-  public async updateUserSessionsList(userSessionsList: PagedResult<UserSession>): Promise<void> {
+  public async updateUserSessionsList(userSessionsList: PagedResult<UserSessionSummary>): Promise<void> {
     this.sessionsPagedResult = userSessionsList
     this.notifySessionListeners()
   }
 
   public async updateUserSessionsPayloadList(
-    userSessionsList: PagedResult<UserSessionPayload>
+    userSessionsList: PagedResult<UserSessionSummaryPayload>
   ): Promise<void> {
     this.lastUpdatedSessionsPayload = userSessionsList
-    const mappedItems = userSessionsList.items.map((payload) => toUserSession(payload))
+    const mappedItems = userSessionsList.items.map((payload) => toUserSessionSummary(payload))
     this.sessionsPagedResult = {
       items: mappedItems,
       totalCount: userSessionsList.totalCount,
@@ -157,7 +156,7 @@ export class UserStorageMock implements UserStorage {
     this.notifySessionListeners()
   }
 
-  public async addUserSession(userSession: UserSession): Promise<void> {
+  public async addUserSession(userSession: UserSessionSummary): Promise<void> {
     this.lastAddedSession = userSession
     const items = [...this.sessionsPagedResult.items, userSession]
     this.sessionsPagedResult = {

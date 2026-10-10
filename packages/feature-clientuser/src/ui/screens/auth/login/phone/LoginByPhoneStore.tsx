@@ -308,7 +308,7 @@ export const createLoginByPhoneStore = (
         const result = await deps.loginByPhoneUseCase.execute(current.phoneNumber, current.code)
         if (isSuccess(result)) {
           stopTimer()
-          if (result.data.userDetails.accountStatus === UserAccountStatus.PENDING_DELETION) {
+          if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
             deps.onNavigateToPendingDeletion()
           } else {
             deps.onFinished()

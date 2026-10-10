@@ -1,5 +1,5 @@
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
 
 /**
@@ -9,9 +9,9 @@ export interface PlatformRepository {
   /**
    * Retrieves client device information payload.
    *
-   * @returns Device info payload
+   * @returns Client device info payload
    */
-  getDeviceInfo(): Promise<ClientDeviceInfoPayload>
+  getClientDeviceInfo(): Promise<ClientDeviceInfoPayload>
 
   /**
    * Opens a URL in an external browser.
@@ -44,21 +44,21 @@ export class PlatformRepositoryImpl implements PlatformRepository {
   /**
    * Constructs a new {@link PlatformRepositoryImpl}.
    *
-   * @param deviceInfoProvider - Device information provider
+   * @param clientDeviceInfoProvider - Client device information provider
    * @param externalLauncher - External launcher instance
    */
   public constructor(
-    private readonly deviceInfoProvider: DeviceInfoProvider,
+    private readonly clientDeviceInfoProvider: ClientDeviceInfoProvider,
     private readonly externalLauncher: ExternalLauncher
   ) {}
 
   /**
-   * Resolves device information payload.
+   * Resolves client device information payload.
    *
    * @returns Device metadata
    */
-  public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
-    return this.deviceInfoProvider.getDeviceInfo()
+  public async getClientDeviceInfo(): Promise<ClientDeviceInfoPayload> {
+    return this.clientDeviceInfoProvider.getClientDeviceInfo()
   }
 
   /**

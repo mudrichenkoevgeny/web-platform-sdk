@@ -7,10 +7,11 @@ import type {
   UserAuthProvider,
   UserId,
   UserRole,
-  UserSession,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSessionPrivate, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
@@ -43,7 +44,7 @@ export class ManagementSessionRepositoryImpl implements ManagementSessionReposit
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     const result = await this.managementSessionApi.getSessions(
       pageNumber,
       pageSize,
@@ -65,13 +66,13 @@ export class ManagementSessionRepositoryImpl implements ManagementSessionReposit
     )
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
-      items: pagedPayload.items.map((payload) => toUserSession(payload))
+      items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
     }))
   }
 
-  public async getSession(sessionId: string): Promise<AppResult<UserSession, AppError>> {
+  public async getSession(sessionId: string): Promise<AppResult<UserSessionPrivate, AppError>> {
     const result = await this.managementSessionApi.getSession(sessionId)
-    return mapSuccess(result, (payload) => toUserSession(payload))
+    return mapSuccess(result, (payload) => toUserSessionPrivate(payload))
   }
 
   public async deleteSession(userId: UserId, sessionId: string): Promise<AppResult<void, AppError>> {

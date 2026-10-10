@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 
 export interface UserItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
-  user: UserDetails
+  user: UserSummary
   onClick: () => void
   strings?: FeatureManagementUserStrings
 }

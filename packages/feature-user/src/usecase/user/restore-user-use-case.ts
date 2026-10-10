@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserRepository } from '@/repository/user/user-repository'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Cancels pending account deletion request and restores account. */
 export class RestoreUserUseCase {
@@ -14,9 +14,9 @@ export class RestoreUserUseCase {
   /**
    * Restores user account.
    *
-   * @returns UserDetails or AppError
+   * @returns UserPrivate or AppError
    */
-  public async execute(): Promise<AppResult<UserDetails, AppError>> {
+  public async execute(): Promise<AppResult<UserPrivate, AppError>> {
     return this.userRepository.restoreUser()
   }
 }

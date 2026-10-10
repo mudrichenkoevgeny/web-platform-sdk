@@ -24,6 +24,7 @@ export const ruManagementUserStrings: FeatureManagementUserStrings = {
   audit_event_actor_role: 'Роль субъекта',
   audit_event_message: 'Сообщение',
   audit_event_timestamp: 'Время',
+  audit_event_updated_at: 'Время обновления',
   audit_event_metadata: 'Метаданные',
 
   edit_auth_settings_title: 'Редактировать настройки авторизации',

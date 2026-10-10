@@ -4,8 +4,9 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserId,
-  UserIdentifier,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -21,7 +22,7 @@ export interface ManagementIdentifierRepository {
    * @param userIds - Filters by specific user identifiers
    * @param userAuthProviders - Filters by authentication provider types
    * @param identifiers - Filters by server-defined free-text identifier values
-   * @returns Paginated result containing matching user identifier models, or a mapped failure
+   * @returns Paginated result containing matching user identifier summary models, or a mapped failure
    */
   getIdentifiers(
     pageNumber?: number | null,
@@ -31,7 +32,7 @@ export interface ManagementIdentifierRepository {
     userIds?: string[] | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>>
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
   /**
    * Retrieves specific identifier details.
@@ -39,7 +40,7 @@ export interface ManagementIdentifierRepository {
    * @param identifierId - Unique identifier record ID
    * @returns Detailed information of the target identifier, or a mapped failure
    */
-  getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>>
+  getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /**
    * Removes the identifier record for the given user.

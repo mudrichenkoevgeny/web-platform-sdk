@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
   HttpClient,
-  DeviceInfoProviderMock,
+  ClientDeviceInfoProviderMock,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenSecuritySettingsApi } from '@/network/security-settings/fetch-open-security-settings-api'
@@ -27,11 +27,11 @@ describe('FetchOpenSecuritySettingsApi', () => {
   it('fetches open security settings successfully', async () => {
     const mockResponse = new Response(JSON.stringify(samplePayload), { status: 200 })
     const customFetch = vi.fn().mockResolvedValue(mockResponse)
-    const deviceInfoProvider = new DeviceInfoProviderMock()
+    const clientDeviceInfoProvider = new ClientDeviceInfoProviderMock()
 
     const httpClient = new HttpClient({
       baseUrl: 'https://api.example.com',
-      deviceInfoProvider,
+      clientDeviceInfoProvider,
       customFetch
     })
 

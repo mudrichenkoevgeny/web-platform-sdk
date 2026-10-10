@@ -3,8 +3,9 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserIdentifier,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -16,7 +17,7 @@ export interface SelfManagementIdentifierRepository {
    * @param userIdentifierId - Unique identifier id
    * @returns Detailed identifier info or a mapped failure
    */
-  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>>
+  getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>>
 
   /**
    * Returns a paginated and filtered list of identifiers linked to the current authenticated management account.
@@ -36,7 +37,7 @@ export interface SelfManagementIdentifierRepository {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>>
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
   /**
    * Updates the management account password using current credentials.

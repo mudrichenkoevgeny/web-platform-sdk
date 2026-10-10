@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementUserApi } from '@/network/api/user/fetch-self-management-user-api'
 import { SelfManagementUserRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchSelfManagementUserApi', () => {
   let mockHttpClient: HttpClient
@@ -16,7 +16,7 @@ describe('FetchSelfManagementUserApi', () => {
   })
 
   it('dispatches getUser request', async () => {
-    const dummyPayload = userDetailsPayloadMock({ id: toUserIdOrThrow('usr_1') })
+    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.getUser()

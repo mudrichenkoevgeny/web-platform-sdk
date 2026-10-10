@@ -8,31 +8,32 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetails,
   UserId,
+  UserPrivate,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { userPrivateMock, userSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Mock implementation of {@link ManagementUserRepository}. */
 export class ManagementUserRepositoryMock implements ManagementUserRepository {
   public createUserResultProvider: (
     request: CreateByEmailRequest
-  ) => Promise<AppResult<UserDetails, AppError>> = async () => appResultSuccess(userDetailsMock())
+  ) => Promise<AppResult<UserPrivate, AppError>> = async () => appResultSuccess(userPrivateMock())
 
-  public getUsersResultProvider: () => Promise<AppResult<PagedResult<UserDetails>, AppError>> = async () =>
+  public getUsersResultProvider: () => Promise<AppResult<PagedResult<UserSummary>, AppError>> = async () =>
     appResultSuccess({
-      items: [userDetailsMock()],
+      items: [userSummaryMock()],
       totalCount: 1,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
     })
 
-  public getUserResultProvider: (userId: UserId) => Promise<AppResult<UserDetails, AppError>> = async () =>
-    appResultSuccess(userDetailsMock())
+  public getUserResultProvider: (userId: UserId) => Promise<AppResult<UserPrivate, AppError>> = async () =>
+    appResultSuccess(userPrivateMock())
 
   public updateUserResultProvider: (
     userId: UserId,
@@ -48,7 +49,7 @@ export class ManagementUserRepositoryMock implements ManagementUserRepository {
   public lastDeleteUserId: UserId | null = null
   public lastGetUserId: UserId | null = null
 
-  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetails, AppError>> {
+  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>> {
     this.lastCreateRequest = request
     return this.createUserResultProvider(request)
   }
@@ -66,11 +67,11 @@ export class ManagementUserRepositoryMock implements ManagementUserRepository {
     _authorityLevelTo?: number | null,
     _isTotpEnabled?: boolean | null,
     _permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetails>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSummary>, AppError>> {
     return this.getUsersResultProvider()
   }
 
-  public async getUser(userId: UserId): Promise<AppResult<UserDetails, AppError>> {
+  public async getUser(userId: UserId): Promise<AppResult<UserPrivate, AppError>> {
     this.lastGetUserId = userId
     return this.getUserResultProvider(userId)
   }

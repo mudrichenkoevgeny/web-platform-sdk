@@ -6,8 +6,8 @@ import {
   toUserIdOrNull
 } from '@mudrichenkoevgeny/shared-foundation'
 import type {
-  AuditEvent,
   AuditEventId,
+  AuditEventPrivate,
   UserIdentifierId,
   UserSessionId,
   UserId
@@ -26,7 +26,7 @@ export type AuditEventDetailScreenState =
     }
   | {
       status: 'content'
-      event: AuditEvent
+      event: AuditEventPrivate
     }
 
 export interface AuditEventDetailStoreDependencies {

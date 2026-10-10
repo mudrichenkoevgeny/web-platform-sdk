@@ -1,7 +1,7 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OtpConfirmation, UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { ConfirmationType, toOtpConfirmation, toUserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { OtpConfirmation, UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { ConfirmationType, toOtpConfirmation, toUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   ConfirmationRepository,
   ResetPasswordApi,
@@ -27,13 +27,13 @@ export class OpenResetPasswordRepositoryImpl implements ResetPasswordRepository 
     email: string,
     newPassword: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.resetPasswordApi.resetPassword({
       email,
       new_password: newPassword,
       confirmation_code: confirmationCode
     })
-    return mapSuccess(result, (response) => toUserIdentifier(response))
+    return mapSuccess(result, (response) => toUserIdentifierPrivate(response))
   }
 
   public async sendResetPasswordConfirmationToEmail(email: string): Promise<AppResult<OtpConfirmation, AppError>> {

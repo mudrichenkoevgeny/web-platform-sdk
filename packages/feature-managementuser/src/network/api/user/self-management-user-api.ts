@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Current user profile fetch. */
 export interface SelfManagementUserApi {
@@ -8,5 +8,5 @@ export interface SelfManagementUserApi {
    *
    * @returns Current user DTO from the shared contract, or a mapped failure
    */
-  getUser(): Promise<AppResult<UserDetailsPayload, AppError>>
+  getUser(): Promise<AppResult<UserPrivatePayload, AppError>>
 }

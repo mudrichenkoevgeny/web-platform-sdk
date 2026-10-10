@@ -12,7 +12,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
@@ -21,7 +22,8 @@ import {
   pagedResultSchema,
   UserApiPaths,
   UserFilterValues,
-  userIdentifierPayloadSchema
+  userIdentifierPrivatePayloadSchema,
+  userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
 
@@ -36,11 +38,11 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
   public async getUserIdentifier(
     userIdentifierId: UserIdentifierId
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     const path = OpenIdentifierRoutes.GET_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, userIdentifierId)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userIdentifierPayloadSchema.parse(raw)
+      return userIdentifierPrivatePayloadSchema.parse(raw)
     })
   }
 
@@ -51,7 +53,7 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) {
       query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
@@ -83,7 +85,7 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
     })
   }
 
@@ -94,9 +96,9 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
   public async addUserIdentifierEmail(
     request: AddUserIdentifierEmailRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return callResult(() =>
-      this.client.request<UserIdentifierPayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_EMAIL, {
+      this.client.request<UserIdentifierPrivatePayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_EMAIL, {
         method: 'POST',
         body: JSON.stringify(request)
       })
@@ -105,9 +107,9 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
   public async addUserIdentifierPhone(
     request: AddUserIdentifierPhoneRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return callResult(() =>
-      this.client.request<UserIdentifierPayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_PHONE, {
+      this.client.request<UserIdentifierPrivatePayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_PHONE, {
         method: 'POST',
         body: JSON.stringify(request)
       })
@@ -116,9 +118,9 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
   public async addUserIdentifierExternalAuthProvider(
     request: AddUserIdentifierExternalAuthProviderRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return callResult(() =>
-      this.client.request<UserIdentifierPayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_EXTERNAL_AUTH_PROVIDER, {
+      this.client.request<UserIdentifierPrivatePayload>(OpenIdentifierRoutes.ADD_IDENTIFIER_EXTERNAL_AUTH_PROVIDER, {
         method: 'POST',
         body: JSON.stringify(request)
       })

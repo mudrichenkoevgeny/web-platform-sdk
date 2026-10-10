@@ -2,8 +2,9 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEvent,
+  AuditEventPrivate,
   AuditEventSortBy,
+  AuditEventSummary,
   AuditStatus,
   CompositeAuditActionTypeParser,
   CompositeAuditMetadataKeyParser,
@@ -12,7 +13,7 @@ import type {
   SortOrder,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toAuditEvent } from '@mudrichenkoevgeny/shared-foundation'
+import { toAuditEventPrivate, toAuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
 import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
 
@@ -48,7 +49,7 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     resourceIds?: string[] | null,
     statuses?: AuditStatus[] | null,
     messages?: string[] | null
-  ): Promise<AppResult<PagedResult<AuditEvent>, AppError>> {
+  ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
     const result = await this.managementAuditApi.getAuditEvents(
       pageNumber,
       pageSize,
@@ -66,20 +67,19 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) =>
-        toAuditEvent(
+        toAuditEventSummary(
           payload,
           this.compositeActionTypeParser,
-          this.compositeResourceTypeParser,
-          this.compositeMetadataKeyParser
+          this.compositeResourceTypeParser
         )
       )
     }))
   }
 
-  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEvent, AppError>> {
+  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>> {
     const result = await this.managementAuditApi.getAuditEvent(eventId)
     return mapSuccess(result, (payload) =>
-      toAuditEvent(
+      toAuditEventPrivate(
         payload,
         this.compositeActionTypeParser,
         this.compositeResourceTypeParser,

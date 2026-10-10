@@ -1,6 +1,6 @@
 import { apiErrorResponseSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { ApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import { CommonHttpHeaders } from '@/network/contract/common-http-headers'
 import type { HttpClientConfigPlugin } from '@/network/http-client/http-client-config-plugin'
 import { ApiException } from '@/error/model/api-exception'
@@ -11,7 +11,7 @@ export interface HttpClientConfig {
   /** Target API base URL. */
   baseUrl: string
   /** Provider for device headers metadata. */
-  deviceInfoProvider: DeviceInfoProvider
+  clientDeviceInfoProvider: ClientDeviceInfoProvider
   /** Optional HTTP plugins. */
   plugins?: HttpClientConfigPlugin[]
   /** Optional custom fetch function implementation. */
@@ -25,7 +25,7 @@ export interface HttpClientConfig {
  */
 export class HttpClient {
   private readonly baseUrl: string
-  private readonly deviceInfoProvider: DeviceInfoProvider
+  private readonly clientDeviceInfoProvider: ClientDeviceInfoProvider
   private readonly plugins: HttpClientConfigPlugin[]
   private readonly fetchImpl: typeof fetch
   private readonly logger?: (msg: string) => void
@@ -37,7 +37,7 @@ export class HttpClient {
    */
   public constructor(config: HttpClientConfig) {
     this.baseUrl = config.baseUrl.endsWith('/') ? config.baseUrl.slice(0, -1) : config.baseUrl
-    this.deviceInfoProvider = config.deviceInfoProvider
+    this.clientDeviceInfoProvider = config.clientDeviceInfoProvider
     this.plugins = config.plugins ?? []
     this.fetchImpl = config.customFetch ?? (typeof fetch !== 'undefined' ? fetch.bind(window) : fetch)
     this.logger = config.logger
@@ -57,29 +57,29 @@ export class HttpClient {
       ? path
       : `${this.baseUrl}${path.startsWith('/') ? '' : '/'}${path}`
 
-    const deviceInfo = await this.deviceInfoProvider.getDeviceInfo()
+    const clientDeviceInfo = await this.clientDeviceInfoProvider.getClientDeviceInfo()
     const traceId = generateErrorId()
 
     const headers = new Headers(init.headers)
     headers.set(CommonHttpHeaders.TRACE_HEADER_NAME, traceId)
 
-    if (deviceInfo.client_type) {
-      headers.set(CommonHttpHeaders.CLIENT_TYPE_HEADER_NAME, deviceInfo.client_type)
+    if (clientDeviceInfo.client_type) {
+      headers.set(CommonHttpHeaders.CLIENT_TYPE_HEADER_NAME, clientDeviceInfo.client_type)
     }
-    if (deviceInfo.device_id) {
-      headers.set(CommonHttpHeaders.DEVICE_ID_HEADER_NAME, deviceInfo.device_id)
+    if (clientDeviceInfo.device_id) {
+      headers.set(CommonHttpHeaders.DEVICE_ID_HEADER_NAME, clientDeviceInfo.device_id)
     }
-    if (deviceInfo.device_name) {
-      headers.set(CommonHttpHeaders.DEVICE_NAME_HEADER_NAME, deviceInfo.device_name)
+    if (clientDeviceInfo.device_name) {
+      headers.set(CommonHttpHeaders.DEVICE_NAME_HEADER_NAME, clientDeviceInfo.device_name)
     }
-    if (deviceInfo.app_version) {
-      headers.set(CommonHttpHeaders.APP_VERSION_HEADER_NAME, deviceInfo.app_version)
+    if (clientDeviceInfo.app_version) {
+      headers.set(CommonHttpHeaders.APP_VERSION_HEADER_NAME, clientDeviceInfo.app_version)
     }
-    if (deviceInfo.operation_system_version) {
-      headers.set(CommonHttpHeaders.OPERATION_SYSTEM_VERSION_HEADER_NAME, deviceInfo.operation_system_version)
+    if (clientDeviceInfo.operation_system_version) {
+      headers.set(CommonHttpHeaders.OPERATION_SYSTEM_VERSION_HEADER_NAME, clientDeviceInfo.operation_system_version)
     }
-    if (deviceInfo.language) {
-      headers.set('Accept-Language', deviceInfo.language)
+    if (clientDeviceInfo.language) {
+      headers.set('Accept-Language', clientDeviceInfo.language)
     }
     if (!headers.has('Accept')) {
       headers.set('Accept', 'application/json')

@@ -4,7 +4,7 @@ import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,
-  UserIdentifierPayload
+  UserIdentifierPrivatePayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -19,9 +19,9 @@ export class FetchSelfManagementResetPasswordApi implements ResetPasswordApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return callResult(() =>
-      this.client.request<UserIdentifierPayload>(SelfManagementResetPasswordRoutes.RESET_PASSWORD, {
+      this.client.request<UserIdentifierPrivatePayload>(SelfManagementResetPasswordRoutes.RESET_PASSWORD, {
         method: 'POST',
         body: JSON.stringify(request),
         ...markAsPublic()

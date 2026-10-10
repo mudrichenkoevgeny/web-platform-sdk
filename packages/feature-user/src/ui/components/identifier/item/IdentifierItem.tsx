@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Props for the {@link IdentifierItem} component.
@@ -9,7 +9,7 @@ export interface IdentifierItemProps extends Omit<React.HTMLAttributes<HTMLDivEl
   /**
    * User identifier domain object to display.
    */
-  identifier: UserIdentifier
+  identifier: UserIdentifierSummary
   /**
    * Callback invoked when the identifier item card is clicked.
    */

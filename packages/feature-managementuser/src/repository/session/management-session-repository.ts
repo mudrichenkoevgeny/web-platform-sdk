@@ -6,7 +6,8 @@ import type {
   UserAuthProvider,
   UserId,
   UserRole,
-  UserSession,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -32,7 +33,7 @@ export interface ManagementSessionRepository {
    * @param deviceNames - Filters by server-defined device name substrings
    * @param appVersions - Filters by application version strings
    * @param operationSystemVersions - Filters by server-defined operating system version substrings
-   * @returns Paginated result containing matching user session models, or a mapped failure
+   * @returns Paginated result containing matching user session summary models, or a mapped failure
    */
   getSessions(
     pageNumber?: number | null,
@@ -52,7 +53,7 @@ export interface ManagementSessionRepository {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>>
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>>
 
   /**
    * Retrieves specific session details.
@@ -60,7 +61,7 @@ export interface ManagementSessionRepository {
    * @param sessionId - Unique session identifier
    * @returns Detailed information of the target session model, or a mapped failure
    */
-  getSession(sessionId: string): Promise<AppResult<UserSession, AppError>>
+  getSession(sessionId: string): Promise<AppResult<UserSessionPrivate, AppError>>
 
   /**
    * Deletes a specific session for the given user.

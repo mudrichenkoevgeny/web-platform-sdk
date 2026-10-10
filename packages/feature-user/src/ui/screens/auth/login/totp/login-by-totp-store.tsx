@@ -159,7 +159,7 @@ export const createLoginByTotpStore = (
           : await deps.loginByTotpRecoveryCodeUseCase.execute(current.mfaToken, current.code)
 
       if (isSuccess(result)) {
-        if (result.data.userDetails.accountStatus === UserAccountStatus.PENDING_DELETION) {
+        if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
           deps.onNavigateToPendingDeletion()
         } else {
           deps.onFinished()

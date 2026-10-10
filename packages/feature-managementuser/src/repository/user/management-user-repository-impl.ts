@@ -8,12 +8,13 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetails,
   UserId,
+  UserPrivate,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserPrivate, toUserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
@@ -28,9 +29,9 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
    */
   public constructor(private readonly managementUserApi: ManagementUserApi) {}
 
-  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetails, AppError>> {
+  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.managementUserApi.createUser(request)
-    return mapSuccess(result, (payload) => toUserDetails(payload))
+    return mapSuccess(result, (payload) => toUserPrivate(payload))
   }
 
   public async getUsers(
@@ -46,7 +47,7 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
     authorityLevelTo?: number | null,
     isTotpEnabled?: boolean | null,
     permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetails>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSummary>, AppError>> {
     const result = await this.managementUserApi.getUsers(
       pageNumber,
       pageSize,
@@ -63,13 +64,13 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
     )
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
-      items: pagedPayload.items.map((payload) => toUserDetails(payload))
+      items: pagedPayload.items.map((payload) => toUserSummary(payload))
     }))
   }
 
-  public async getUser(userId: UserId): Promise<AppResult<UserDetails, AppError>> {
+  public async getUser(userId: UserId): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.managementUserApi.getUser(userId)
-    return mapSuccess(result, (payload) => toUserDetails(payload))
+    return mapSuccess(result, (payload) => toUserPrivate(payload))
   }
 
   public async updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {

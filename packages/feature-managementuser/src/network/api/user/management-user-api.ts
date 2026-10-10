@@ -7,10 +7,10 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetailsPayload,
-  UserId,
+  UserPrivatePayload,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Administrator and staff endpoints for full user management. */
@@ -21,7 +21,7 @@ export interface ManagementUserApi {
    * @param request - Payload details for creating an account via email
    * @returns Detailed information of the newly created user, or a mapped failure
    */
-  createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetailsPayload, AppError>>
+  createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>>
 
   /**
    * Returns a paginated and filtered list of users based on search criteria.
@@ -38,7 +38,7 @@ export interface ManagementUserApi {
    * @param authorityLevelTo - Upper bound filter for authority level
    * @param isTotpEnabled - Filters users by whether TOTP second-factor authentication is active
    * @param permissionCodes - Filters users possessing specific permission codes
-   * @returns Paginated result containing user details payloads, or a mapped failure
+   * @returns Paginated result containing user summary payloads, or a mapped failure
    */
   getUsers(
     pageNumber?: number | null,
@@ -53,7 +53,7 @@ export interface ManagementUserApi {
     authorityLevelTo?: number | null,
     isTotpEnabled?: boolean | null,
     permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetailsPayload>, AppError>>
+  ): Promise<AppResult<PagedResult<UserSummaryPayload>, AppError>>
 
   /**
    * Retrieves full management-level details of a specific user.
@@ -61,7 +61,7 @@ export interface ManagementUserApi {
    * @param userId - Unique account identifier
    * @returns Detailed profile information of the target user, or a mapped failure
    */
-  getUser(userId: UserId): Promise<AppResult<UserDetailsPayload, AppError>>
+  getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>>
 
   /**
    * Updates profile details, status, or permissions for a specific user.
@@ -70,7 +70,7 @@ export interface ManagementUserApi {
    * @param request - Patch payload containing fields to change
    * @returns Void result or a mapped failure
    */
-  updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>>
+  updateUser(userId: string, request: UpdateUserRequest): Promise<AppResult<void, AppError>>
 
   /**
    * Completely deletes a specified user account.
@@ -78,5 +78,5 @@ export interface ManagementUserApi {
    * @param userId - Unique account identifier to remove
    * @returns Void result or a mapped failure
    */
-  deleteUser(userId: UserId): Promise<AppResult<void, AppError>>
+  deleteUser(userId: string): Promise<AppResult<void, AppError>>
 }

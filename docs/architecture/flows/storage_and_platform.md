@@ -39,7 +39,7 @@ classDiagram
 
 ---
 
-## 2. Platform Metadata Resolution (`DeviceInfoProvider`)
+## 2. Platform Metadata Resolution (`ClientDeviceInfoProvider`)
 
 `PlatformRepository` collects immutable browser hardware and environment metadata:
 
@@ -47,10 +47,10 @@ classDiagram
 sequenceDiagram
     autonumber
     participant Core as PlatformRepository
-    participant Provider as DeviceInfoProvider
+    participant Provider as ClientDeviceInfoProvider
     participant Context as Browser Navigator API
 
-    Core->>Provider: getDeviceInfo()
+    Core->>Provider: getClientDeviceInfo()
 
     Provider->>Context: Query window.navigator (userAgent, language)
     Provider->>Context: Query window.screen (width, height, pixelRatio)

@@ -6,21 +6,21 @@ import { UserAgentParser } from '@/platform/parser/user-agent-parser'
 /**
  * Interface providing platform device metadata.
  */
-export interface DeviceInfoProvider {
+export interface ClientDeviceInfoProvider {
   /**
    * Resolves client device information payload.
    *
    * @returns Device info payload promise
    */
-  getDeviceInfo(): Promise<ClientDeviceInfoPayload>
+  getClientDeviceInfo(): Promise<ClientDeviceInfoPayload>
 }
 
 /**
- * Web browser implementation of {@link DeviceInfoProvider}.
+ * Web browser implementation of {@link ClientDeviceInfoProvider}.
  */
-export class WebDeviceInfoProvider implements DeviceInfoProvider {
+export class WebClientDeviceInfoProvider implements ClientDeviceInfoProvider {
   /**
-   * Constructs a new {@link WebDeviceInfoProvider}.
+   * Constructs a new {@link WebClientDeviceInfoProvider}.
    *
    * @param commonStorage - Storage instance containing persistent device credentials
    * @param appVersion - Version string of the current application
@@ -36,7 +36,7 @@ export class WebDeviceInfoProvider implements DeviceInfoProvider {
    *
    * @returns Device info payload
    */
-  public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
+  public async getClientDeviceInfo(): Promise<ClientDeviceInfoPayload> {
     let rawDeviceId = await this.commonStorage.getDeviceId()
     if (!rawDeviceId) {
       rawDeviceId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : this.generateUUID()

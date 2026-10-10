@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { AppType, type UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, type UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   ManagementLoginRootScreen,
@@ -40,7 +40,7 @@ export function MainScreen(): React.JSX.Element {
   useHashRouter(activeTab, setActiveTab)
 
   useEffect(() => {
-    return appComponent.managementUserComponent.selfManagementUserRepository.observeCurrentUser((user: UserDetails | null) => {
+    return appComponent.managementUserComponent.selfManagementUserRepository.observeCurrentUser((user: UserPrivate | null) => {
       const authorized = user !== null
       setIsAuthorized(authorized)
       if (!authorized && activeTab === 'settings') {
@@ -128,7 +128,9 @@ export function MainScreen(): React.JSX.Element {
       managementDeleteIdentifierUseCase: appComponent.managementUserComponent.managementDeleteIdentifierUseCase,
       managementDeleteIdentifierPasswordUseCase: appComponent.managementUserComponent.managementDeleteIdentifierPasswordUseCase,
       getAuditEventsUseCase: appComponent.managementUserComponent.getAuditEventsUseCase,
-      getAuditEventUseCase: appComponent.managementUserComponent.getAuditEventUseCase
+      getAuditEventUseCase: appComponent.managementUserComponent.getAuditEventUseCase,
+      selfManagementUserRepository: appComponent.managementUserComponent.selfManagementUserRepository,
+      onNavigateToProfile: () => setActiveTab('profile')
     }),
     [appComponent]
   )

@@ -8,17 +8,18 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetailsPayload,
-  UserId,
+  UserPrivatePayload,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ListingParamNames,
   ManagementUserRoutes,
   pagedResultSchema,
   UserApiPaths,
-  userDetailsPayloadSchema,
+  userPrivatePayloadSchema,
+  userSummaryPayloadSchema,
   UserFilterValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
@@ -32,13 +33,13 @@ export class FetchManagementUserApi implements ManagementUserApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetailsPayload, AppError>> {
+  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
       const raw = await this.client.request<unknown>(ManagementUserRoutes.CREATE_USER, {
         method: 'POST',
         body: JSON.stringify(request)
       })
-      return userDetailsPayloadSchema.parse(raw)
+      return userPrivatePayloadSchema.parse(raw)
     })
   }
 
@@ -55,7 +56,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
     authorityLevelTo?: number | null,
     isTotpEnabled?: boolean | null,
     permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetailsPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
@@ -96,20 +97,20 @@ export class FetchManagementUserApi implements ManagementUserApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userDetailsPayloadSchema).parse(raw)
+      return pagedResultSchema(userSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getUser(userId: UserId): Promise<AppResult<UserDetailsPayload, AppError>> {
+  public async getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
     const path = `${ManagementUserRoutes.GET_USER}?${query.toString()}`
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userDetailsPayloadSchema.parse(raw)
+      return userPrivatePayloadSchema.parse(raw)
     })
   }
 
-  public async updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
+  public async updateUser(userId: string, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
     const path = `${ManagementUserRoutes.UPDATE_USER}?${query.toString()}`
     return callResult(() =>
@@ -120,7 +121,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
     )
   }
 
-  public async deleteUser(userId: UserId): Promise<AppResult<void, AppError>> {
+  public async deleteUser(userId: string): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
     const path = `${ManagementUserRoutes.DELETE_USER}?${query.toString()}`
     return callResult(() =>

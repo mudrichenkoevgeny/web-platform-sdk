@@ -3,10 +3,10 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Returns a paginated and filtered list of identifiers for current account. */
 export class GetUserIdentifiersUseCase {
@@ -20,7 +20,7 @@ export class GetUserIdentifiersUseCase {
   /**
    * Fetches user identifiers list.
    *
-   * @returns PagedResult containing UserIdentifier models or AppError
+   * @returns PagedResult containing UserIdentifierSummary models or AppError
    */
   public async execute(
     pageNumber?: number | null,
@@ -29,7 +29,7 @@ export class GetUserIdentifiersUseCase {
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     return this.identifierRepository.getUserIdentifiers(
       pageNumber,
       pageSize,

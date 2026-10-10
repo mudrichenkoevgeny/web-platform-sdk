@@ -5,9 +5,10 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserSessionId,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Parameters for filtering and paginating sessions. */
 export interface GetSessionsParams {
@@ -49,10 +50,10 @@ export interface SessionRepository {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>>
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>>
 
   /** Returns details of a specific session. */
-  getSession(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>>
+  getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>>
 
   /** Ends current active session on server. */
   logout(): Promise<AppResult<void, AppError>>

@@ -12,7 +12,7 @@ export const loginByPhoneDependenciesMock = (
   } as any,
   loginByPhoneUseCase: {
     execute: async () => appResultSuccess({
-      userDetails: {
+      userPrivate: {
         id: 'usr_123',
         accountStatus: 'ACTIVE'
       }

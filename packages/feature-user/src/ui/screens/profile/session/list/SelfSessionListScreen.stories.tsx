@@ -1,19 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, toUserSessionIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfSessionListScreen } from '@/ui/screens/profile/session/list/SelfSessionListScreen'
 import type { SelfSessionListStoreDependencies } from '@/ui/screens/profile/session/list/self-session-list-store'
 
-const session1: UserSession = {
+const session1: UserSessionSummary = {
   id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440001'),
-  userId: toUserIdOrThrow('usr_123'),
-  userRole: UserRole.USER,
-  identifier: 'user1@example.com',
-  identifierId: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),
-  identifierDisplayName: 'user1@example.com',
-  identifierAuthProvider: UserAuthProvider.EMAIL,
-  deviceInfo: {
+  clientDeviceInfo: {
     clientType: ClientType.WEB,
     language: 'en',
     deviceId: null,
@@ -21,17 +15,13 @@ const session1: UserSession = {
     appVersion: '1.0.0',
     operationSystemVersion: 'Windows'
   },
-  userAgent: 'Mozilla/5.0',
-  ipAddress: '192.168.1.1',
-  expiresAt: 1700000000000,
+  identifierDisplayName: 'user1@example.com',
+  identifierAuthProvider: UserAuthProvider.EMAIL,
   lastAccessedAt: 1690000000000,
-  lastReauthenticatedAt: 1690000000000,
-  isSensitiveValuesMasked: false,
-  createdAt: 1680000000000,
-  updatedAt: null
+  expiresAt: 1700000000000
 }
 
-const session2: UserSession = {
+const session2: UserSessionSummary = {
   ...session1,
   id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440002'),
   identifierDisplayName: 'user2@example.com'

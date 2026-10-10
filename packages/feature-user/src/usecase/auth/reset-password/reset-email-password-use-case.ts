@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Completes password reset for email flow using server-issued confirmation code.
@@ -19,13 +19,13 @@ export class ResetEmailPasswordUseCase {
    * @param email - Account email
    * @param newPassword - New password
    * @param confirmationCode - Confirmation code from email
-   * @returns UserIdentifier on success or AppError
+   * @returns UserIdentifierPrivate on success or AppError
    */
   public async execute(
     email: string,
     newPassword: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     return this.resetPasswordRepository.resetPassword(email, newPassword, confirmationCode)
   }
 }

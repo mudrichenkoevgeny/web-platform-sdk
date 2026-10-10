@@ -5,9 +5,9 @@ import type {
   PermissionCode,
   SortOrder,
   UserAccountStatus,
-  UserDetails,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
 
@@ -40,9 +40,9 @@ export class GetUsersUseCase {
    * Executes the use case.
    *
    * @param params - Query and filter parameters
-   * @returns Paginated result containing user details domain models, or a mapped failure
+   * @returns Paginated result containing user summary domain models, or a mapped failure
    */
-  public async execute(params?: GetUsersParams): Promise<AppResult<PagedResult<UserDetails>, AppError>> {
+  public async execute(params?: GetUsersParams): Promise<AppResult<PagedResult<UserSummary>, AppError>> {
     return this.managementUserRepository.getUsers(
       params?.pageNumber,
       params?.pageSize,

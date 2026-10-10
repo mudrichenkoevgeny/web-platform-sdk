@@ -12,7 +12,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
@@ -21,8 +22,8 @@ import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifie
  * Mock implementation of {@link OpenIdentifiersApi}.
  */
 export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
-  public getUserIdentifierResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
-  public getUserIdentifiersResult: AppResult<PagedResult<UserIdentifierPayload>, AppError> = appResultSuccess({
+  public getUserIdentifierResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public getUserIdentifiersResult: AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
@@ -30,16 +31,16 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
     totalPages: 0
   })
   public deleteUserIdentifierResult: AppResult<void, AppError> = appResultSuccess(undefined)
-  public addUserIdentifierEmailResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
-  public addUserIdentifierPhoneResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
-  public addUserIdentifierExternalAuthProviderResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
+  public addUserIdentifierEmailResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public addUserIdentifierPhoneResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public addUserIdentifierExternalAuthProviderResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public sendAddEmailIdentifierConfirmationResult: AppResult<OtpConfirmationPayload, AppError> = appResultFailure(CommonError.unknown())
   public sendAddPhoneIdentifierConfirmationResult: AppResult<OtpConfirmationPayload, AppError> = appResultFailure(CommonError.unknown())
   public emailChangePasswordResult: AppResult<void, AppError> = appResultSuccess(undefined)
 
   public async getUserIdentifier(
     _userIdentifierId: UserIdentifierId
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.getUserIdentifierResult
   }
 
@@ -50,7 +51,7 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
     _sortOrder?: SortOrder | null,
     _userAuthProviders?: UserAuthProvider[] | null,
     _identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getUserIdentifiersResult
   }
 
@@ -62,19 +63,19 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
 
   public async addUserIdentifierEmail(
     _request: AddUserIdentifierEmailRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierEmailResult
   }
 
   public async addUserIdentifierPhone(
     _request: AddUserIdentifierPhoneRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierPhoneResult
   }
 
   public async addUserIdentifierExternalAuthProvider(
     _request: AddUserIdentifierExternalAuthProviderRequest
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierExternalAuthProviderResult
   }
 

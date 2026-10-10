@@ -1,5 +1,5 @@
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   RefreshManagementAuthSettingsUseCase,
   RefreshManagementGlobalSettingsUseCase,
@@ -20,7 +20,7 @@ export class SyncManagementDataUseCase {
    * Awaits all three refresh jobs concurrently; errors are logged and swallowed.
    */
   public async invoke(): Promise<void> {
-    const logIfError = <T>(result: AppResult<T>, tag: string): AppResult<T> => {
+    const logIfError = <T>(result: AppResult<T, AppError>, tag: string): AppResult<T, AppError> => {
       if (!isSuccess(result)) {
         console.error(`Failed to sync ${tag}:`, result.error)
       }

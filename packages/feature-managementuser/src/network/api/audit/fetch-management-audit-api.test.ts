@@ -39,7 +39,8 @@ describe('FetchManagementAuditApi', () => {
       status: 'success',
       metadata: [],
       message: 'User logged in',
-      created_at: 1000
+      created_at: 1000,
+      updated_at: null
     } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 

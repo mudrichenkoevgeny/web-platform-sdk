@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { AccountLockoutType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserDetails, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
@@ -24,7 +24,7 @@ export type UserDetailScreenState =
     }
   | {
       status: 'content'
-      user: UserDetails
+      user: UserPrivate
       authorityLevelInput: string
       accountStatusInput: UserAccountStatus
       lockoutTypeInput: AccountLockoutType
@@ -46,6 +46,7 @@ export interface UserDetailStoreDependencies {
   managementDisableTotpUseCase: ManagementDisableTotpUseCase
   onNavigateToSessions: (userId: UserId) => void
   onNavigateToIdentifiers: (userId: UserId) => void
+  onNavigateToAuditEvents: (userId: UserId) => void
   onBack: () => void
 }
 
@@ -63,6 +64,7 @@ export interface UserDetailStoreState {
   onDisableTotpClick: () => Promise<void>
   onSessionsClick: () => void
   onIdentifiersClick: () => void
+  onAuditEventsClick: () => void
   onRetry: () => Promise<void>
   onBackClick: () => void
 }
@@ -262,6 +264,10 @@ export const createUserDetailStore = (
 
     onIdentifiersClick: () => {
       deps.onNavigateToIdentifiers(deps.userId)
+    },
+
+    onAuditEventsClick: () => {
+      deps.onNavigateToAuditEvents(deps.userId)
     },
 
     onRetry: async () => {

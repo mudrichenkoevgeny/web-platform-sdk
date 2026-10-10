@@ -15,7 +15,7 @@ describe('FetchRegistrationApi', () => {
   })
 
   it('dispatches registerByEmail request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { email: 'user@example.com', password: 'secret_pass', confirmation_code: '123456' }

@@ -4,7 +4,7 @@ import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,
-  UserIdentifierPayload
+  UserIdentifierPrivatePayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -19,9 +19,9 @@ export class FetchResetPasswordApi implements ResetPasswordApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return callResult(() =>
-      this.client.request<UserIdentifierPayload>(OpenResetPasswordRoutes.RESET_EMAIL_PASSWORD, {
+      this.client.request<UserIdentifierPrivatePayload>(OpenResetPasswordRoutes.RESET_EMAIL_PASSWORD, {
         method: 'POST',
         body: JSON.stringify(request),
         ...markAsPublic()

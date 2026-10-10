@@ -9,14 +9,14 @@ import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk
 import { UserSecurityRepositoryImpl } from '@/repository/user/security/user-security-repository-impl'
 import type { UserSecurityApi } from '@/network/api/user/security/user-security-api'
 import type { UserStorage } from '@/storage/user/user-storage'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('UserSecurityRepositoryImpl', () => {
   let mockApi: UserSecurityApi
   let mockStorage: UserStorage
   let repository: UserSecurityRepositoryImpl
 
-  const dummyUser: UserDetails = {
+  const dummyUser: UserPrivate = {
     id: toUserIdOrThrow('usr_1'),
     role: UserRole.CLIENT_USER,
     accountStatus: UserAccountStatus.ACTIVE,

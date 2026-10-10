@@ -18,7 +18,7 @@ describe('RegistrationByEmailScreen', () => {
     registrationByEmailUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
-          userDetails: {
+          userPrivate: {
             id: 'usr_123',
             accountStatus: 'ACTIVE'
           }

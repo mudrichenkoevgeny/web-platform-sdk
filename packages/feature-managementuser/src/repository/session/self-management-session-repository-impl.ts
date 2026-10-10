@@ -5,11 +5,12 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserSession,
   UserSessionId,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSessionPrivate, toUserSessionSummary, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -62,7 +63,7 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.getSessions(
         pageNumber,
@@ -85,7 +86,7 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
         await this.userStorage.updateUserSessionsPayloadList(networkResult.data)
         return mapSuccess(networkResult, (pagedPayload) => ({
           ...pagedPayload,
-          items: pagedPayload.items.map((payload) => toUserSession(payload))
+          items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
         }))
       }
 
@@ -114,19 +115,12 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
     })
   }
 
-  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>> {
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>> {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.getSession(userSessionId)
       if (networkResult.success) {
-        const session = toUserSession(networkResult.data)
-        await this.userStorage.addUserSession(session)
+        const session = toUserSessionPrivate(networkResult.data)
         return appResultSuccess(session)
-      }
-
-      const cachedList = await this.userStorage.getUserSessionsList()
-      const cachedSession = cachedList.items.find((userSession) => userSession.id === userSessionId)
-      if (cachedSession) {
-        return appResultSuccess(cachedSession)
       }
 
       return networkResult

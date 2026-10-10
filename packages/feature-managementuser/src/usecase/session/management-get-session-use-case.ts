@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
 
 /** Administratively retrieves specific session details. */
@@ -15,9 +15,9 @@ export class ManagementGetSessionUseCase {
    * Executes the use case.
    *
    * @param sessionId - Unique session identifier
-   * @returns Detailed information of the target session model, or a mapped failure
+   * @returns Detailed information of the target session private model, or a mapped failure
    */
-  public async execute(sessionId: string): Promise<AppResult<UserSession, AppError>> {
+  public async execute(sessionId: string): Promise<AppResult<UserSessionPrivate, AppError>> {
     return this.managementSessionRepository.getSession(sessionId)
   }
 }

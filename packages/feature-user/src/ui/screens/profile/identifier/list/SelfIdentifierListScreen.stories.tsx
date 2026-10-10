@@ -1,23 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { AppType, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, toUserIdentifierIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfIdentifierListScreen } from '@/ui/screens/profile/identifier/list/SelfIdentifierListScreen'
 import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/profile/identifier/list/self-identifier-list-store'
 
-const mockIdentifier1: UserIdentifier = {
+const mockIdentifier1: UserIdentifierSummary = {
   id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),
-  userId: toUserIdOrThrow('usr_123'),
   userAuthProvider: UserAuthProvider.EMAIL,
   identifier: 'user1@example.com',
-  displayName: 'user1@example.com',
-  externalProviderEmail: null,
-  isSensitiveValuesMasked: false,
-  createdAt: 1680000000000,
-  updatedAt: null
+  displayName: 'user1@example.com'
 }
 
-const mockIdentifier2: UserIdentifier = {
+const mockIdentifier2: UserIdentifierSummary = {
   ...mockIdentifier1,
   id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440002'),
   identifier: 'user2@example.com',

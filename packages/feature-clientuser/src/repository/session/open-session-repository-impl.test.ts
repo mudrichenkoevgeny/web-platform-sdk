@@ -77,11 +77,10 @@ describe('OpenSessionRepositoryImpl', () => {
     expect(isSuccess(result)).toBe(true)
   })
 
-  it('delegates getSession and adds to storage on success', async () => {
+  it('delegates getSession and maps to domain model on success', async () => {
     const id = toUserSessionIdOrThrow('sess_1')
     const result = await repository.getSession(id)
     expect(mockApi.getSession).toHaveBeenCalledWith(id)
-    expect(mockUserStorage.addUserSession).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 

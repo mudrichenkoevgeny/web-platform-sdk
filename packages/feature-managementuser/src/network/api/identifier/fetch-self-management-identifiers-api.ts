@@ -6,7 +6,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
@@ -15,7 +16,8 @@ import {
   SelfManagementIdentifierRoutes,
   UserApiPaths,
   UserFilterValues,
-  userIdentifierPayloadSchema
+  userIdentifierPrivatePayloadSchema,
+  userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
@@ -30,14 +32,14 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
 
   public async getUserIdentifier(
     userIdentifierId: UserIdentifierId
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     const path = SelfManagementIdentifierRoutes.GET_IDENTIFIER.replace(
       `{${UserApiPaths.USER_IDENTIFIER_ID}}`,
       userIdentifierId
     )
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userIdentifierPayloadSchema.parse(raw)
+      return userIdentifierPrivatePayloadSchema.parse(raw)
     })
   }
 
@@ -48,7 +50,7 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
     sortOrder?: SortOrder | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
@@ -72,7 +74,7 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
     })
   }
 

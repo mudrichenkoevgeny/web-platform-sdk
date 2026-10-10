@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
 import { ManagementUserRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementUserApi', () => {
   let mockHttpClient: HttpClient
@@ -16,7 +16,7 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches createUser request', async () => {
-    const dummyPayload = userDetailsPayloadMock({ id: toUserIdOrThrow('usr_1') })
+    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { email: 'user@example.com', password: 'secret' } as any
@@ -43,7 +43,7 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches getUser request', async () => {
-    const dummyPayload = userDetailsPayloadMock({ id: toUserIdOrThrow('usr_1') })
+    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const userId = toUserIdOrThrow('usr_1')

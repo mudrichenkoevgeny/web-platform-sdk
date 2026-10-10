@@ -23,7 +23,7 @@ describe('LoginByEmailUseCase', () => {
   let useCase: LoginByEmailUseCase
 
   const dummyAuthData: AuthData = {
-    userDetails: {
+    userPrivate: {
       id: toUserIdOrThrow('usr_1'),
       role: UserRole.CLIENT_USER,
       accountStatus: UserAccountStatus.ACTIVE,
@@ -70,6 +70,6 @@ describe('LoginByEmailUseCase', () => {
 
     expect(isSuccess(result)).toBe(true)
     expect(mockAuthStorage.updateTokens).toHaveBeenCalledWith(dummyAuthData.sessionToken)
-    expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith(dummyAuthData.userDetails)
+    expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith(dummyAuthData.userPrivate)
   })
 })

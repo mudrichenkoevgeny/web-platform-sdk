@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  envPrefix: ['VITE_', 'GOOGLE_WEB_CLIENT_ID'],
   plugins: [
     react()
   ],
@@ -12,7 +13,8 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3002
+    port: 3002,
+    strictPort: true
   },
   test: {
     globals: true,

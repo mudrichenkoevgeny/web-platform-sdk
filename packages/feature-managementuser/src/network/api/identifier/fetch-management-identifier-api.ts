@@ -6,7 +6,8 @@ import type {
   UserAuthProvider,
   UserId,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
@@ -15,7 +16,8 @@ import {
   pagedResultSchema,
   UserApiPaths,
   UserFilterValues,
-  userIdentifierPayloadSchema
+  userIdentifierPrivatePayloadSchema,
+  userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
@@ -36,7 +38,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
     userIds?: string[] | null,
     userAuthProviders?: UserAuthProvider[] | null,
     identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
@@ -63,16 +65,16 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userIdentifierPayloadSchema).parse(raw)
+      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_IDENTIFIER_ID]: identifierId })
     const path = `${ManagementIdentifierRoutes.GET_IDENTIFIER}?${query.toString()}`
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userIdentifierPayloadSchema.parse(raw)
+      return userIdentifierPrivatePayloadSchema.parse(raw)
     })
   }
 

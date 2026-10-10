@@ -2,26 +2,27 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEvent,
+  AuditEventPrivate,
   AuditEventSortBy,
+  AuditEventSummary,
   AuditStatus,
   PagedResult,
   SortOrder,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
-import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
+import { auditEventPrivateMock, auditEventSummaryMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 
 /** Mock implementation of {@link ManagementAuditRepository}. */
 export class ManagementAuditRepositoryMock implements ManagementAuditRepository {
-  public getAuditEventsResult: AppResult<PagedResult<AuditEvent>, AppError> = appResultSuccess({
-    items: [auditEventMock()],
+  public getAuditEventsResult: AppResult<PagedResult<AuditEventSummary>, AppError> = appResultSuccess({
+    items: [auditEventSummaryMock()],
     totalCount: 1,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 1
   })
-  public getAuditEventResult: AppResult<AuditEvent, AppError> = appResultSuccess(auditEventMock())
+  public getAuditEventResult: AppResult<AuditEventPrivate, AppError> = appResultSuccess(auditEventPrivateMock())
 
   public async getAuditEvents(
     _pageNumber?: number | null,
@@ -36,11 +37,11 @@ export class ManagementAuditRepositoryMock implements ManagementAuditRepository 
     _resourceIds?: string[] | null,
     _statuses?: AuditStatus[] | null,
     _messages?: string[] | null
-  ): Promise<AppResult<PagedResult<AuditEvent>, AppError>> {
+  ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
     return this.getAuditEventsResult
   }
 
-  public async getAuditEvent(_eventId: string): Promise<AppResult<AuditEvent, AppError>> {
+  public async getAuditEvent(_eventId: string): Promise<AppResult<AuditEventPrivate, AppError>> {
     return this.getAuditEventResult
   }
 }

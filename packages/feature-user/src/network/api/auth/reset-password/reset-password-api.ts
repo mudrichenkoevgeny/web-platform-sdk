@@ -3,7 +3,7 @@ import type {
   OtpConfirmationPayload,
   ResetPasswordRequest,
   SendResetPasswordConfirmationRequest,
-  UserIdentifierPayload
+  UserIdentifierPrivatePayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Password reset and related confirmation calls for unauthenticated recovery flows. */
@@ -14,7 +14,7 @@ export interface ResetPasswordApi {
    * @param request - Reset token and new secret from the shared contract
    * @returns Updated user identifier context, or a mapped failure
    */
-  resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPayload, AppError>>
+  resetPassword(request: ResetPasswordRequest): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Sends a password-reset confirmation link or code to the user email.

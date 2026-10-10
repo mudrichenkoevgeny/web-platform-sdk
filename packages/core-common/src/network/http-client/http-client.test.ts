@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { HttpClient } from '@/network/http-client/http-client'
-import { WebDeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import { WebClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storage'
 import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
 import { ApiException } from '@/error/model/api-exception'
@@ -10,11 +10,11 @@ describe('HttpClient', () => {
   const createTestHttpClient = (customFetch: typeof fetch, logger?: (msg: string) => void) => {
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
-    const deviceInfoProvider = new WebDeviceInfoProvider(storage)
+    const clientDeviceInfoProvider = new WebClientDeviceInfoProvider(storage)
 
     return new HttpClient({
       baseUrl: 'https://api.example.com',
-      deviceInfoProvider,
+      clientDeviceInfoProvider,
       customFetch,
       logger
     })
@@ -84,11 +84,11 @@ describe('HttpClient', () => {
 
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
-    const deviceInfoProvider = new WebDeviceInfoProvider(storage)
+    const clientDeviceInfoProvider = new WebClientDeviceInfoProvider(storage)
 
     const client = new HttpClient({
       baseUrl: 'https://api.example.com',
-      deviceInfoProvider,
+      clientDeviceInfoProvider,
       customFetch: fetchSpy as unknown as typeof fetch,
       plugins: [{ onRequest: onRequestSpy, onResponse: onResponseSpy }]
     })

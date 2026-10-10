@@ -3,7 +3,7 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserIdentifier,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
@@ -32,11 +32,11 @@ export class ManagementGetIdentifiersUseCase {
    * Executes the use case.
    *
    * @param params - Query and filter parameters
-   * @returns Paginated result containing matching user identifier models, or a mapped failure
+   * @returns Paginated result containing matching user identifier summary models, or a mapped failure
    */
   public async execute(
     params?: ManagementGetIdentifiersParams
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     return this.managementIdentifierRepository.getIdentifiers(
       params?.pageNumber,
       params?.pageSize,

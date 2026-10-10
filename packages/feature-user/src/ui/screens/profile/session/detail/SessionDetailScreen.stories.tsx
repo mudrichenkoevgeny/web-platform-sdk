@@ -1,19 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen } from '@/ui/screens/profile/session/detail/SessionDetailScreen'
 import type { SessionDetailStoreDependencies } from '@/ui/screens/profile/session/detail/session-detail-store'
 
-const mockSession: UserSession = {
+const mockSession: UserSessionPrivate = {
   id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440000'),
   userId: toUserIdOrThrow('usr_12345'),
-  userRole: UserRole.USER,
+  userRole: UserRole.CLIENT_USER,
   identifier: 'user@example.com',
   identifierId: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440000'),
   identifierDisplayName: 'user@example.com',
   identifierAuthProvider: UserAuthProvider.EMAIL,
-  deviceInfo: {
+  clientDeviceInfo: {
     clientType: ClientType.WEB,
     language: 'en',
     deviceId: null,

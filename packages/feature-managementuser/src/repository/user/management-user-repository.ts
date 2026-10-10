@@ -7,10 +7,11 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetails,
   UserId,
+  UserPrivate,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Administrative repository providing staff and administrators full control over creating, fetching, filtering, updating, and removing user accounts across the system. */
@@ -21,7 +22,7 @@ export interface ManagementUserRepository {
    * @param request - Payload details for creating an account via email
    * @returns Detailed information of the newly created user domain model, or a mapped failure
    */
-  createUser(request: CreateByEmailRequest): Promise<AppResult<UserDetails, AppError>>
+  createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>>
 
   /**
    * Returns a paginated and filtered list of users based on search criteria.
@@ -38,7 +39,7 @@ export interface ManagementUserRepository {
    * @param authorityLevelTo - Upper bound filter for authority level
    * @param isTotpEnabled - Filters users by whether TOTP second-factor authentication is active
    * @param permissionCodes - Filters users possessing specific permission codes
-   * @returns Paginated result containing user details domain models, or a mapped failure
+   * @returns Paginated result containing user summary domain models, or a mapped failure
    */
   getUsers(
     pageNumber?: number | null,
@@ -53,7 +54,7 @@ export interface ManagementUserRepository {
     authorityLevelTo?: number | null,
     isTotpEnabled?: boolean | null,
     permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetails>, AppError>>
+  ): Promise<AppResult<PagedResult<UserSummary>, AppError>>
 
   /**
    * Retrieves full management-level details of a specific user.
@@ -61,7 +62,7 @@ export interface ManagementUserRepository {
    * @param userId - Unique account identifier
    * @returns Detailed profile information of the target user domain model, or a mapped failure
    */
-  getUser(userId: UserId): Promise<AppResult<UserDetails, AppError>>
+  getUser(userId: UserId): Promise<AppResult<UserPrivate, AppError>>
 
   /**
    * Updates profile details, status, or permissions for a specific user.

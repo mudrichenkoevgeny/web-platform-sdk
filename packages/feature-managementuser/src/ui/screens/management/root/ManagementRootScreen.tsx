@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react'
-import type { UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
+import React, { forwardRef, useEffect, useState } from 'react'
+import type { UserId, UserIdentifierId, UserSessionId } from '@mudrichenkoevgeny/shared-foundation'
 import {
   toUserIdOrThrow,
   toUserIdentifierIdOrThrow
@@ -45,6 +45,27 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
   const deps = useManagementRootStore((s) => s.dependencies)
   const push = useManagementRootStore((s) => s.push)
   const pop = useManagementRootStore((s) => s.pop)
+
+  const [observedUserId, setObservedUserId] = useState<UserId | null>(null)
+
+  useEffect(() => {
+    if (!deps.selfManagementUserRepository) {
+      return
+    }
+    return deps.selfManagementUserRepository.observeCurrentUser((user) => {
+      setObservedUserId(user?.id ?? null)
+    })
+  }, [deps.selfManagementUserRepository])
+
+  const activeUserId = observedUserId ?? deps.currentUserId ?? null
+
+  const handleNavigateToProfile = deps.onNavigateToProfile ?? (() => {
+    if (activeUserId) {
+      push({ type: 'user_detail', userId: activeUserId })
+    } else {
+      push({ type: 'main' })
+    }
+  })
 
   const activeDestination = stack[stack.length - 1] ?? { type: 'main' }
 
@@ -140,6 +161,14 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
             managementDisableTotpUseCase: deps.managementDisableTotpUseCase,
             onNavigateToSessions: (userId) => push({ type: 'user_session_list', userId }),
             onNavigateToIdentifiers: (userId) => push({ type: 'user_identifier_list', userId }),
+            onNavigateToAuditEvents: (userId) => push({
+              type: 'audit_event_list',
+              params: {
+                filters: {
+                  actorIds: [userId]
+                }
+              }
+            }),
             onBack: pop
           }}
           strings={strings}
@@ -179,6 +208,7 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <AuditEventListScreen
           dependencies={{
             getAuditEventsUseCase: deps.getAuditEventsUseCase,
+            params: activeDestination.params,
             onNavigateToEventDetail: (eventId) => push({ type: 'audit_event_detail', eventId }),
             onBack: pop
           }}
@@ -192,10 +222,11 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
           dependencies={{
             eventId: activeDestination.eventId,
             getAuditEventUseCase: deps.getAuditEventUseCase,
+            currentUserId: activeUserId,
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),
             onNavigateToSessionDetail: (sessionId) => push({ type: 'session_detail', sessionId }),
             onNavigateToIdentifierDetail: (identifierId) => push({ type: 'identifier_detail', identifierId }),
-            onNavigateToProfile: () => push({ type: 'main' }),
+            onNavigateToProfile: handleNavigateToProfile,
             onBack: pop
           }}
           strings={strings}
@@ -216,41 +247,46 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
         />
       )
 
-    case 'session_detail':
+    case 'session_detail': {
+      const getSessionUseCase: GetSessionUseCase = {
+        execute: async (id: UserSessionId) => {
+          if (deps.managementGetSessionUseCase) {
+            return deps.managementGetSessionUseCase.execute(id)
+          }
+          return appResultFailure(CommonError.unknown())
+        }
+      }
+
+      const deleteSessionUseCase: DeleteSessionUseCase = {
+        execute: async (sessionId: UserSessionId) => {
+          if (!deps.managementGetSessionUseCase) {
+            return appResultFailure(CommonError.unknown())
+          }
+
+          const sessionRes = await deps.managementGetSessionUseCase.execute(sessionId)
+          if (!isSuccess(sessionRes)) {
+            return sessionRes
+          }
+
+          return deps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, sessionId)
+        }
+      }
+
       return (
         <SessionDetailScreen
           dependencies={{
             sessionId: activeDestination.sessionId,
-            getSessionUseCase: {
-              execute: async (id: UserSessionId) => {
-                if (deps.managementGetSessionUseCase) {
-                  return deps.managementGetSessionUseCase.execute(id)
-                }
-                return appResultFailure(CommonError.unknown())
-              }
-            } as unknown as GetSessionUseCase,
-            deleteSessionUseCase: {
-              execute: async (sessionId: UserSessionId) => {
-                if (!deps.managementGetSessionUseCase) {
-                  return appResultFailure(CommonError.unknown())
-                }
-
-                const sessionRes = await deps.managementGetSessionUseCase.execute(sessionId)
-                if (!isSuccess(sessionRes)) {
-                  return sessionRes
-                }
-
-                return deps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, sessionId)
-              }
-            } as unknown as DeleteSessionUseCase,
+            getSessionUseCase,
+            deleteSessionUseCase,
             onNavigateToIdentifierDetail: (identifierId) => push({ type: 'identifier_detail', identifierId }),
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),
-            onNavigateToProfile: () => push({ type: 'main' }),
+            onNavigateToProfile: handleNavigateToProfile,
             onBack: pop
           }}
           strings={strings}
         />
       )
+    }
 
     case 'global_identifier_list':
       return (
@@ -265,33 +301,37 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
         />
       )
 
-    case 'identifier_detail':
+    case 'identifier_detail': {
+      const getUserIdentifierUseCase: GetUserIdentifierUseCase = {
+        execute: async (id: UserIdentifierId) => {
+          if (deps.managementGetIdentifierUseCase) {
+            return deps.managementGetIdentifierUseCase.execute(id)
+          }
+          return appResultFailure(CommonError.unknown())
+        }
+      }
+
+      const deleteUserIdentifierUseCase: DeleteUserIdentifierUseCase = {
+        execute: async (id: UserIdentifierId) => {
+          if (!deps.managementGetIdentifierUseCase) {
+            return appResultFailure(CommonError.unknown())
+          }
+
+          const idRes = await deps.managementGetIdentifierUseCase.execute(id)
+          if (!isSuccess(idRes)) {
+            return idRes
+          }
+
+          return deps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
+        }
+      }
+
       return (
         <IdentifierDetailScreen
           dependencies={{
             identifierId: activeDestination.identifierId,
-            getUserIdentifierUseCase: {
-              execute: async (id: UserIdentifierId) => {
-                if (deps.managementGetIdentifierUseCase) {
-                  return deps.managementGetIdentifierUseCase.execute(id)
-                }
-                return appResultFailure(CommonError.unknown())
-              }
-            } as unknown as GetUserIdentifierUseCase,
-            deleteUserIdentifierUseCase: {
-              execute: async (id: UserIdentifierId) => {
-                if (!deps.managementGetIdentifierUseCase) {
-                  return appResultFailure(CommonError.unknown())
-                }
-
-                const idRes = await deps.managementGetIdentifierUseCase.execute(id)
-                if (!isSuccess(idRes)) {
-                  return idRes
-                }
-
-                return deps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
-              }
-            } as unknown as DeleteUserIdentifierUseCase,
+            getUserIdentifierUseCase,
+            deleteUserIdentifierUseCase,
             deletePasswordUseCase: {
               execute: async (id: UserIdentifierId) => {
                 if (!deps.managementGetIdentifierUseCase) {
@@ -307,12 +347,13 @@ const ManagementRootContent: React.FC<{ strings?: FeatureManagementUserStrings }
               }
             },
             onNavigateToUserDetail: (userId) => push({ type: 'user_detail', userId }),
-            onNavigateToProfile: () => push({ type: 'main' }),
+            onNavigateToProfile: handleNavigateToProfile,
             onBack: pop
           }}
           strings={strings}
         />
       )
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OtpConfirmation, UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { OtpConfirmation, UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { userIdentifierPrivateMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ResetPasswordRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Mock implementation of {@link ResetPasswordRepository} for self management. */
@@ -12,7 +12,7 @@ export class SelfManagementResetPasswordRepositoryMock implements ResetPasswordR
     numberOfSymbols: 6,
     expirationSeconds: 300
   })
-  public resetResult: AppResult<UserIdentifier, AppError> = appResultSuccess(userIdentifierMock())
+  public resetResult: AppResult<UserIdentifierPrivate, AppError> = appResultSuccess(userIdentifierPrivateMock())
 
   public lastSendEmail: string | null = null
   public lastResetEmail: string | null = null
@@ -32,7 +32,7 @@ export class SelfManagementResetPasswordRepositoryMock implements ResetPasswordR
     email: string,
     newPassword: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     this.lastResetEmail = email
     this.lastResetPassword = newPassword
     this.lastResetCode = confirmationCode

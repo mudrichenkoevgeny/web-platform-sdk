@@ -7,7 +7,8 @@ import type {
   UserAuthProvider,
   UserId,
   UserRole,
-  UserSessionPayload,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
@@ -16,7 +17,8 @@ import {
   pagedResultSchema,
   UserApiPaths,
   UserFilterValues,
-  userSessionPayloadSchema
+  userSessionPrivatePayloadSchema,
+  userSessionSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
@@ -47,7 +49,7 @@ export class FetchManagementSessionApi implements ManagementSessionApi {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSessionPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
@@ -106,16 +108,16 @@ export class FetchManagementSessionApi implements ManagementSessionApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userSessionPayloadSchema).parse(raw)
+      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getSession(sessionId: string): Promise<AppResult<UserSessionPayload, AppError>> {
+  public async getSession(sessionId: string): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.SESSION_ID]: sessionId })
     const path = `${ManagementSessionRoutes.GET_SESSION}?${query.toString()}`
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userSessionPayloadSchema.parse(raw)
+      return userSessionPrivatePayloadSchema.parse(raw)
     })
   }
 

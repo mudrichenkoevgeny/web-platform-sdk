@@ -1,5 +1,5 @@
 import type { AuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { userDetailsPayloadMock } from '@/mock/network/model/user/user-details-payload-mock'
+import { userPrivatePayloadMock } from '@/mock/network/model/user/user-details-payload-mock'
 import { sessionTokenPayloadMock } from '@/mock/network/model/token/session-token-payload-mock'
 
 /**
@@ -11,7 +11,7 @@ import { sessionTokenPayloadMock } from '@/mock/network/model/token/session-toke
 export const authDataPayloadMock = (
   overrides?: Partial<AuthDataPayload>
 ): AuthDataPayload => ({
-  user: userDetailsPayloadMock(),
+  user: userPrivatePayloadMock(),
   session_token: sessionTokenPayloadMock(),
   ...overrides
 })

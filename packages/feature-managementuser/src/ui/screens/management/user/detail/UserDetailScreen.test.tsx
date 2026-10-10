@@ -24,6 +24,7 @@ describe('UserDetailScreen', () => {
     } as unknown as UserDetailStoreDependencies['managementDisableTotpUseCase'],
     onNavigateToSessions: vi.fn(),
     onNavigateToIdentifiers: vi.fn(),
+    onNavigateToAuditEvents: vi.fn(),
     onBack: vi.fn()
   })
 

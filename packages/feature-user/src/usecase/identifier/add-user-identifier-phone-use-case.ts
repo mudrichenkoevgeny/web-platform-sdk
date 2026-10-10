@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Associates a new phone number identifier with current account. */
 export class AddUserIdentifierPhoneUseCase {
@@ -16,12 +16,12 @@ export class AddUserIdentifierPhoneUseCase {
    *
    * @param phoneNumber - Target phone
    * @param confirmationCode - One-time code sent to phone
-   * @returns UserIdentifier or AppError
+   * @returns UserIdentifierPrivate or AppError
    */
   public async execute(
     phoneNumber: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     return this.identifierRepository.addUserIdentifierPhone(phoneNumber, confirmationCode)
   }
 }

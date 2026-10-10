@@ -101,11 +101,11 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     ? strings.session_detail_title_current_session
     : strings.session_detail_title_session
 
-  const deviceName = session.deviceInfo.deviceName ?? session.userAgent ?? notAvailableText
-  const clientType = session.deviceInfo.clientType ?? notAvailableText
-  const language = session.deviceInfo.language ?? notAvailableText
-  const appVersion = session.deviceInfo.appVersion ?? notAvailableText
-  const osVersion = session.deviceInfo.operationSystemVersion ?? notAvailableText
+  const deviceName = session.clientDeviceInfo.deviceName ?? session.userAgent ?? notAvailableText
+  const clientType = session.clientDeviceInfo.clientType ?? notAvailableText
+  const language = session.clientDeviceInfo.language ?? notAvailableText
+  const appVersion = session.clientDeviceInfo.appVersion ?? notAvailableText
+  const osVersion = session.clientDeviceInfo.operationSystemVersion ?? notAvailableText
   const ipAddress = session.ipAddress ?? notAvailableText
 
   const lastAccessedFormatted = formatEpochMillisToDateTime(session.lastAccessedAt) ?? String(session.lastAccessedAt)

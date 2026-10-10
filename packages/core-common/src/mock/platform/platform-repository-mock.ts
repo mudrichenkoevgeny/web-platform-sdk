@@ -1,26 +1,26 @@
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { PlatformRepository } from '@/platform/platform-repository'
-import { DeviceInfoProviderMock } from '@/mock/platform/device-info-provider-mock'
+import { ClientDeviceInfoProviderMock } from '@/mock/platform/client-device-info-provider-mock'
 import { ExternalLauncherMock } from '@/mock/platform/external-launcher-mock'
 
 /**
  * Mock implementation of {@link PlatformRepository} combining device information and external launching mocks.
  */
 export class PlatformRepositoryMock implements PlatformRepository {
-  public readonly deviceInfoProviderMock: DeviceInfoProviderMock
+  public readonly clientDeviceInfoProviderMock: ClientDeviceInfoProviderMock
   public readonly externalLauncherMock: ExternalLauncherMock
 
   /**
    * Initializes a new instance of {@link PlatformRepositoryMock}.
    *
-   * @param deviceInfoProviderMock - Optional custom device info provider mock
+   * @param clientDeviceInfoProviderMock - Optional custom device info provider mock
    * @param externalLauncherMock - Optional custom external launcher mock
    */
   public constructor(
-    deviceInfoProviderMock?: DeviceInfoProviderMock,
+    clientDeviceInfoProviderMock?: ClientDeviceInfoProviderMock,
     externalLauncherMock?: ExternalLauncherMock
   ) {
-    this.deviceInfoProviderMock = deviceInfoProviderMock ?? new DeviceInfoProviderMock()
+    this.clientDeviceInfoProviderMock = clientDeviceInfoProviderMock ?? new ClientDeviceInfoProviderMock()
     this.externalLauncherMock = externalLauncherMock ?? new ExternalLauncherMock()
   }
 
@@ -29,8 +29,8 @@ export class PlatformRepositoryMock implements PlatformRepository {
    *
    * @returns Device info payload
    */
-  public async getDeviceInfo(): Promise<ClientDeviceInfoPayload> {
-    return this.deviceInfoProviderMock.getDeviceInfo()
+  public async getClientDeviceInfo(): Promise<ClientDeviceInfoPayload> {
+    return this.clientDeviceInfoProviderMock.getClientDeviceInfo()
   }
 
   /**

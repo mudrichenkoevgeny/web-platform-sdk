@@ -6,15 +6,16 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
 /** Mock implementation of {@link SelfManagementIdentifiersApi}. */
 export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifiersApi {
-  public getUserIdentifierResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
-  public getUserIdentifiersResult: AppResult<PagedResult<UserIdentifierPayload>, AppError> = appResultSuccess({
+  public getUserIdentifierResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public getUserIdentifiersResult: AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
@@ -25,7 +26,7 @@ export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifie
 
   public async getUserIdentifier(
     _userIdentifierId: UserIdentifierId
-  ): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.getUserIdentifierResult
   }
 
@@ -36,7 +37,7 @@ export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifie
     _sortOrder?: SortOrder | null,
     _userAuthProviders?: UserAuthProvider[] | null,
     _identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getUserIdentifiersResult
   }
 

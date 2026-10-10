@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { SocketFrame, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserDetailsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdOrThrow, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
 import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
 import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -15,22 +15,7 @@ describe('SelfManagementUserRepositoryImpl', () => {
   let wsCallback: ((frame: SocketFrame) => void) | undefined
   let repository: SelfManagementUserRepositoryImpl
 
-  const dummyUserPayload: UserDetailsPayload = {
-    id: toUserIdOrThrow('usr_1'),
-    role: 'staff',
-    account_status: 'active',
-    account_status_on_restore: null,
-    authority_level: 0,
-    permission_codes: [],
-    is_totp_enabled: false,
-    last_login_at: null,
-    last_active_at: null,
-    created_at: 1000,
-    updated_at: 1000,
-    scheduled_permanent_deletion_at: null,
-    account_lockout_type: 'none',
-    temporary_lockout_until: null
-  }
+  const dummyUserPayload = userPrivatePayloadMock()
 
   beforeEach(() => {
     vi.clearAllMocks()

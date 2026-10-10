@@ -5,10 +5,10 @@ import type {
   SocketFrame,
   WebSocketService
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  toUserDetails,
-  userDetailsPayloadSchema,
+  toUserPrivate,
+  userPrivatePayloadSchema,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -54,14 +54,14 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
     this.startWebSocketObservation()
   }
 
-  public observeCurrentUser(listener: (user: UserDetails | null) => void): () => void {
+  public observeCurrentUser(listener: (user: UserPrivate | null) => void): () => void {
     return this.userStorage.observeCurrentUser(listener)
   }
 
-  public async refreshCurrentUser(): Promise<AppResult<UserDetails, AppError>> {
+  public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
     return this.mutex.runExclusive(async () => {
       const result = await this.selfManagementUserApi.getUser()
-      const mapped = mapSuccess(result, (userDetailsPayload) => toUserDetails(userDetailsPayload))
+      const mapped = mapSuccess(result, (userDetailsPayload) => toUserPrivate(userDetailsPayload))
       if (isSuccess(mapped)) {
         await this.userStorage.updateCurrentUser(mapped.data)
       }
@@ -94,9 +94,9 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
     }
 
     try {
-      const validationResult = userDetailsPayloadSchema.safeParse(payload)
+      const validationResult = userPrivatePayloadSchema.safeParse(payload)
       if (validationResult.success) {
-        void this.userStorage.updateCurrentUser(toUserDetails(validationResult.data))
+        void this.userStorage.updateCurrentUser(toUserPrivate(validationResult.data))
       } else {
         this.logger?.('SelfManagementUserRepositoryImpl: Invalid user updated WS payload schema')
       }

@@ -7,7 +7,8 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserSessionId,
-  UserSessionPayload,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
   UserSortValues,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -17,7 +18,8 @@ import {
   pagedResultSchema,
   UserApiPaths,
   UserFilterValues,
-  userSessionPayloadSchema
+  userSessionPrivatePayloadSchema,
+  userSessionSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -46,7 +48,7 @@ export class FetchOpenSessionApi implements SessionApi {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSessionPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
     const query = new URLSearchParams()
     if (pageNumber != null) {
       query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
@@ -123,15 +125,15 @@ export class FetchOpenSessionApi implements SessionApi {
 
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userSessionPayloadSchema).parse(raw)
+      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPayload, AppError>> {
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     const path = OpenSessionRoutes.GET_SESSION.replace(`{${UserApiPaths.SESSION_ID}}`, userSessionId)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
-      return userSessionPayloadSchema.parse(raw)
+      return userSessionPrivatePayloadSchema.parse(raw)
     })
   }
 

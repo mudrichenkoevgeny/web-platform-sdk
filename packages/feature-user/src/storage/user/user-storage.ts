@@ -4,30 +4,30 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
-  UserIdentifierPayload,
+  UserIdentifierSummary,
+  UserIdentifierSummaryPayload,
+  UserPrivate,
   UserRole,
   UserSessionId,
-  UserSessionPayload,
+  UserSessionSummary,
+  UserSessionSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserDetails } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSession } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Observer listener signature for current user profile changes.
  */
-export type UserChangeListener = (user: UserDetails | null) => void
+export type UserChangeListener = (user: UserPrivate | null) => void
 
 /**
  * Observer listener signature for identifier list changes.
  */
-export type UserIdentifiersListChangeListener = (result: PagedResult<UserIdentifier>) => void
+export type UserIdentifiersListChangeListener = (result: PagedResult<UserIdentifierSummary>) => void
 
 /**
  * Observer listener signature for session list changes.
  */
-export type UserSessionsListChangeListener = (result: PagedResult<UserSession>) => void
+export type UserSessionsListChangeListener = (result: PagedResult<UserSessionSummary>) => void
 
 /**
  * Persists user-scoped profile data (current user snapshot, identifiers, sessions) for offline and UI use.
@@ -67,9 +67,9 @@ export interface UserStorage {
   /**
    * Retrieves cached user details snapshot, or null if unstored.
    *
-   * @returns UserDetails or null
+   * @returns UserPrivate or null
    */
-  getCurrentUser(): Promise<UserDetails | null>
+  getCurrentUser(): Promise<UserPrivate | null>
 
   /**
    * Observes changes to current user snapshot.
@@ -84,7 +84,7 @@ export interface UserStorage {
    *
    * @param currentUser - New user details to persist
    */
-  updateCurrentUser(currentUser: UserDetails): Promise<void>
+  updateCurrentUser(currentUser: UserPrivate): Promise<void>
 
   /**
    * Retrieves a paginated and filtered list of identifiers from local cache based on search criteria.
@@ -92,7 +92,7 @@ export interface UserStorage {
    * @param params - Search and filter parameters
    * @returns Paginated result containing matching user identifiers
    */
-  getUserIdentifiersList(params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifier>>
+  getUserIdentifiersList(params?: GetUserIdentifiersListParams): Promise<PagedResult<UserIdentifierSummary>>
 
   /**
    * Observes paginated and filtered list of identifiers from local cache.
@@ -111,21 +111,21 @@ export interface UserStorage {
    *
    * @param userIdentifiersList - New paged result
    */
-  updateUserIdentifiersList(userIdentifiersList: PagedResult<UserIdentifier>): Promise<void>
+  updateUserIdentifiersList(userIdentifiersList: PagedResult<UserIdentifierSummary>): Promise<void>
 
   /**
    * Replaces stored identifiers payload list.
    *
    * @param userIdentifiersList - New paged payload result
    */
-  updateUserIdentifiersPayloadList(userIdentifiersList: PagedResult<UserIdentifierPayload>): Promise<void>
+  updateUserIdentifiersPayloadList(userIdentifiersList: PagedResult<UserIdentifierSummaryPayload>): Promise<void>
 
   /**
    * Adds or updates a single identifier in local cache.
    *
    * @param userIdentifier - Identifier model to add
    */
-  addUserIdentifier(userIdentifier: UserIdentifier): Promise<void>
+  addUserIdentifier(userIdentifier: UserIdentifierSummary): Promise<void>
 
   /**
    * Removes an identifier by ID from local cache.
@@ -140,7 +140,7 @@ export interface UserStorage {
    * @param params - Search and filter parameters
    * @returns Paginated result containing matching user session models
    */
-  getUserSessionsList(params?: GetUserSessionsListParams): Promise<PagedResult<UserSession>>
+  getUserSessionsList(params?: GetUserSessionsListParams): Promise<PagedResult<UserSessionSummary>>
 
   /**
    * Observes paginated and filtered list of active sessions from local cache.
@@ -159,21 +159,21 @@ export interface UserStorage {
    *
    * @param userSessionsList - New paged result
    */
-  updateUserSessionsList(userSessionsList: PagedResult<UserSession>): Promise<void>
+  updateUserSessionsList(userSessionsList: PagedResult<UserSessionSummary>): Promise<void>
 
   /**
    * Replaces stored sessions payload list.
    *
    * @param userSessionsList - New paged payload result
    */
-  updateUserSessionsPayloadList(userSessionsList: PagedResult<UserSessionPayload>): Promise<void>
+  updateUserSessionsPayloadList(userSessionsList: PagedResult<UserSessionSummaryPayload>): Promise<void>
 
   /**
    * Adds or updates a single user session in local cache.
    *
    * @param userSession - Session model to add
    */
-  addUserSession(userSession: UserSession): Promise<void>
+  addUserSession(userSession: UserSessionSummary): Promise<void>
 
   /**
    * Removes a user session by ID from local cache.

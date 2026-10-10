@@ -18,7 +18,7 @@ export const createMockCommonComponent = (
     baseUrl: config?.baseUrl ?? 'https://api.example.com',
     webSocketPath: config?.webSocketPath ?? '/ws',
     accessTokenProvider: tokenProvider,
-    deviceInfoProvider: config?.deviceInfoProvider,
+    clientDeviceInfoProvider: config?.clientDeviceInfoProvider,
     appVersion: config?.appVersion,
     httpClientConfigPlugins: config?.httpClientConfigPlugins,
     customFetch: config?.customFetch,

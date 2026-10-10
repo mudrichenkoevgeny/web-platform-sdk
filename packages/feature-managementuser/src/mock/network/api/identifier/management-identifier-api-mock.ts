@@ -5,21 +5,22 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserId,
-  UserIdentifierPayload,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
 /** Mock implementation of {@link ManagementIdentifierApi}. */
 export class ManagementIdentifierApiMock implements ManagementIdentifierApi {
-  public getIdentifiersResult: AppResult<PagedResult<UserIdentifierPayload>, AppError> = appResultSuccess({
+  public getIdentifiersResult: AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 0
   })
-  public getIdentifierResult: AppResult<UserIdentifierPayload, AppError> = appResultFailure(CommonError.unknown())
+  public getIdentifierResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public deleteIdentifierResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
   public deleteIdentifierPasswordResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
 
@@ -31,11 +32,11 @@ export class ManagementIdentifierApiMock implements ManagementIdentifierApi {
     _userIds?: string[] | null,
     _userAuthProviders?: UserAuthProvider[] | null,
     _identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifierPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getIdentifiersResult
   }
 
-  public async getIdentifier(_identifierId: string): Promise<AppResult<UserIdentifierPayload, AppError>> {
+  public async getIdentifier(_identifierId: string): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.getIdentifierResult
   }
 

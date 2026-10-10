@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { PlatformRepositoryImpl } from '@/platform/platform-repository'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
 import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
@@ -15,8 +15,8 @@ describe('PlatformRepository', () => {
     operation_system_version: 'macOS'
   }
 
-  const mockDeviceInfoProvider: DeviceInfoProvider = {
-    getDeviceInfo: vi.fn().mockResolvedValue(dummyInfo)
+  const mockClientDeviceInfoProvider: ClientDeviceInfoProvider = {
+    getClientDeviceInfo: vi.fn().mockResolvedValue(dummyInfo)
   }
 
   const mockExternalLauncher: ExternalLauncher = {
@@ -25,16 +25,16 @@ describe('PlatformRepository', () => {
     openFile: vi.fn()
   }
 
-  it('delegates getDeviceInfo to DeviceInfoProvider', async () => {
-    const repository = new PlatformRepositoryImpl(mockDeviceInfoProvider, mockExternalLauncher)
-    const info = await repository.getDeviceInfo()
+  it('delegates getClientDeviceInfo to ClientDeviceInfoProvider', async () => {
+    const repository = new PlatformRepositoryImpl(mockClientDeviceInfoProvider, mockExternalLauncher)
+    const info = await repository.getClientDeviceInfo()
 
     expect(info).toEqual(dummyInfo)
-    expect(mockDeviceInfoProvider.getDeviceInfo).toHaveBeenCalled()
+    expect(mockClientDeviceInfoProvider.getClientDeviceInfo).toHaveBeenCalled()
   })
 
   it('delegates openUrl, openMail, openFile to ExternalLauncher', () => {
-    const repository = new PlatformRepositoryImpl(mockDeviceInfoProvider, mockExternalLauncher)
+    const repository = new PlatformRepositoryImpl(mockClientDeviceInfoProvider, mockExternalLauncher)
 
     repository.openUrl('https://example.com')
     expect(mockExternalLauncher.openUrl).toHaveBeenCalledWith('https://example.com')

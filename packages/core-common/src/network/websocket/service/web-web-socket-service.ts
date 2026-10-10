@@ -1,5 +1,5 @@
 import type { AccessTokenProvider } from '@/network/provider/access-token-provider'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import type { SocketFrame } from '@/network/model/websocket/socket-frame'
 import type { WebSocketMessageHandler } from '@/network/websocket/message-handler/web-socket-message-handler'
 import type { WebSocketService, SocketEventListener } from '@/network/websocket/service/web-socket-service'
@@ -20,7 +20,7 @@ export interface WebWebSocketServiceConfig {
   /** Provider for user access token. */
   accessTokenProvider: AccessTokenProvider
   /** Provider for device info payload. */
-  deviceInfoProvider: DeviceInfoProvider
+  clientDeviceInfoProvider: ClientDeviceInfoProvider
   /** Optional diagnostic logging function. */
   logger?: (msg: string) => void
   /** Optional custom WebSocket factory for unit testing. */
@@ -34,7 +34,7 @@ export class WebWebSocketService implements WebSocketService {
   private readonly baseUrl: string
   private readonly webSocketPath: string
   private readonly accessTokenProvider: AccessTokenProvider
-  private readonly deviceInfoProvider: DeviceInfoProvider
+  public readonly clientDeviceInfoProvider: ClientDeviceInfoProvider
   private readonly logger?: (msg: string) => void
   private readonly webSocketFactory: (url: string) => WebSocket
 
@@ -60,7 +60,7 @@ export class WebWebSocketService implements WebSocketService {
     this.baseUrl = config.baseUrl
     this.webSocketPath = config.webSocketPath
     this.accessTokenProvider = config.accessTokenProvider
-    this.deviceInfoProvider = config.deviceInfoProvider
+    this.clientDeviceInfoProvider = config.clientDeviceInfoProvider
     this.logger = config.logger
     this.webSocketFactory =
       config.webSocketFactory ??
@@ -278,8 +278,8 @@ export class WebWebSocketService implements WebSocketService {
   }
 
   private async sendInitializeFrame(): Promise<void> {
-    const deviceInfo = await this.deviceInfoProvider.getDeviceInfo()
-    await this.sendEvent(CommonWebSocketEventTypes.INITIALIZE, deviceInfo)
+    const clientDeviceInfo = await this.clientDeviceInfoProvider.getClientDeviceInfo()
+    await this.sendEvent(CommonWebSocketEventTypes.INITIALIZE, clientDeviceInfo)
   }
 
   private flushOutgoingQueue(): void {

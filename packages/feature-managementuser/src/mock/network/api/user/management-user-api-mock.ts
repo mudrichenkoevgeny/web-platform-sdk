@@ -8,28 +8,28 @@ import type {
   SortOrder,
   UpdateUserRequest,
   UserAccountStatus,
-  UserDetailsPayload,
-  UserId,
+  UserPrivatePayload,
   UserRole,
-  UserSortValues
+  UserSortValues,
+  UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 
 /** Mock implementation of {@link ManagementUserApi}. */
 export class ManagementUserApiMock implements ManagementUserApi {
-  public createUserResult: AppResult<UserDetailsPayload, AppError> = appResultFailure(CommonError.unknown())
-  public getUsersResult: AppResult<PagedResult<UserDetailsPayload>, AppError> = appResultSuccess({
+  public createUserResult: AppResult<UserPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public getUsersResult: AppResult<PagedResult<UserSummaryPayload>, AppError> = appResultSuccess({
     items: [],
     totalCount: 0,
     pageNumber: 1,
     pageSize: 20,
     totalPages: 0
   })
-  public getUserResult: AppResult<UserDetailsPayload, AppError> = appResultFailure(CommonError.unknown())
+  public getUserResult: AppResult<UserPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public updateUserResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
   public deleteUserResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
 
-  public async createUser(_request: CreateByEmailRequest): Promise<AppResult<UserDetailsPayload, AppError>> {
+  public async createUser(_request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>> {
     return this.createUserResult
   }
 
@@ -46,19 +46,19 @@ export class ManagementUserApiMock implements ManagementUserApi {
     _authorityLevelTo?: number | null,
     _isTotpEnabled?: boolean | null,
     _permissionCodes?: PermissionCode[] | null
-  ): Promise<AppResult<PagedResult<UserDetailsPayload>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSummaryPayload>, AppError>> {
     return this.getUsersResult
   }
 
-  public async getUser(_userId: UserId): Promise<AppResult<UserDetailsPayload, AppError>> {
+  public async getUser(_userId: string): Promise<AppResult<UserPrivatePayload, AppError>> {
     return this.getUserResult
   }
 
-  public async updateUser(_userId: UserId, _request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
+  public async updateUser(_userId: string, _request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
     return this.updateUserResult
   }
 
-  public async deleteUser(_userId: UserId): Promise<AppResult<void, AppError>> {
+  public async deleteUser(_userId: string): Promise<AppResult<void, AppError>> {
     return this.deleteUserResult
   }
 }

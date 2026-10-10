@@ -3,8 +3,8 @@ import type { CommonStorage } from '@/storage/common/common-storage'
 import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storage'
 import { getExternalLauncher } from '@/platform/external-launcher/external-launcher'
 import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
-import { WebDeviceInfoProvider } from '@/platform/device-info/device-info-provider'
-import type { DeviceInfoProvider } from '@/platform/device-info/device-info-provider'
+import { WebClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
+import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import { PlatformRepositoryImpl } from '@/platform/platform-repository'
 import type { PlatformRepository } from "@/platform/platform-repository";
 import { HttpClient } from '@/network/http-client/http-client'
@@ -17,6 +17,7 @@ import { CommonWebSocketMessageHandler } from '@/network/websocket/message-handl
 import type { AppErrorParser } from '@/error/parser/app-error-parser'
 import { AppErrorParserBuilder } from '@/error/parser/app-error-parser-builder'
 import { CommonErrorParser } from '@/error/parser/common-error-parser'
+
 /**
  * Configuration options required to instantiate {@link CommonComponent}.
  */
@@ -29,8 +30,8 @@ export interface CommonComponentConfig {
   webSocketPath: string
   /** Access token provider for network authorization. */
   accessTokenProvider: AccessTokenProvider
-  /** Optional custom device information provider. Defaults to {@link WebDeviceInfoProvider}. */
-  deviceInfoProvider?: DeviceInfoProvider
+  /** Optional custom client device information provider. Defaults to {@link WebClientDeviceInfoProvider}. */
+  clientDeviceInfoProvider?: ClientDeviceInfoProvider
   /** Optional application version string. Defaults to '1.0.0'. */
   appVersion?: string
   /** Optional array of HTTP client configuration plugins. */
@@ -53,8 +54,8 @@ export class CommonComponent {
   public readonly commonStorage: CommonStorage
   /** Launcher for external links and system integrations. */
   public readonly externalLauncher: ExternalLauncher
-  /** Device information metadata provider. */
-  public readonly deviceInfoProvider: DeviceInfoProvider
+  /** Client device information metadata provider. */
+  public readonly clientDeviceInfoProvider: ClientDeviceInfoProvider
   /** Repository for client platform capabilities. */
   public readonly platformRepository: PlatformRepository
   /** Pre-configured HTTP client instance. */
@@ -77,18 +78,18 @@ export class CommonComponent {
     this.commonStorage = new EncryptedCommonStorage(this.encryptedSettings)
     this.externalLauncher = getExternalLauncher()
 
-    this.deviceInfoProvider =
-      config.deviceInfoProvider ??
-      new WebDeviceInfoProvider(this.commonStorage, config.appVersion)
+    this.clientDeviceInfoProvider =
+      config.clientDeviceInfoProvider ??
+      new WebClientDeviceInfoProvider(this.commonStorage, config.appVersion)
 
     this.platformRepository = new PlatformRepositoryImpl(
-      this.deviceInfoProvider,
+      this.clientDeviceInfoProvider,
       this.externalLauncher
     )
 
     this.httpClient = new HttpClient({
       baseUrl: config.baseUrl,
-      deviceInfoProvider: this.deviceInfoProvider,
+      clientDeviceInfoProvider: this.clientDeviceInfoProvider,
       plugins: config.httpClientConfigPlugins,
       customFetch: config.customFetch,
       logger: config.logger
@@ -100,7 +101,7 @@ export class CommonComponent {
       baseUrl: config.baseUrl,
       webSocketPath: config.webSocketPath,
       accessTokenProvider: config.accessTokenProvider,
-      deviceInfoProvider: this.deviceInfoProvider,
+      clientDeviceInfoProvider: this.clientDeviceInfoProvider,
       webSocketFactory: config.webSocketFactory,
       logger: config.logger
     })

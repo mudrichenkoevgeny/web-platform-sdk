@@ -30,7 +30,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 - **`CommonStorage` / `EncryptedCommonStorage`:** Typed storage wrappers for device ID, language preferences, and common SDK keys.
 
 ### 5. Platform & Device Metadata
-- **`DeviceInfoProvider`:** Collects browser metadata (User Agent, screen dimensions, OS/Browser versions) into `ClientDeviceInfo`.
+- **`ClientDeviceInfoProvider`:** Collects browser metadata (User Agent, screen dimensions, OS/Browser versions) into `ClientDeviceInfo`.
 - **`ExternalLauncher`:** Safe abstraction for opening URLs and `mailto:` links via `window.open`.
 - **`PlatformRepository`:** Immutable access to platform information and device metrics.
 
@@ -60,7 +60,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 | `src/result/` | Discriminated union `AppResult` (`Success` / `Failure`) and functional monadic helpers. |
 | `src/error/` | `AppError` models, `CommonErrorParser`, `AppErrorParserBuilder`, and `AppErrorLogger`. |
 | `src/storage/` | `EncryptedSettings` interface, `WebCryptoSettings` (AES-GCM), and `CommonStorage`. |
-| `src/platform/` | `DeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
+| `src/platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
 | `src/theme/` | `ThemeProvider`, design tokens (`tokens.css`, `tokens.ts`), and Tailwind preset. |
 | `src/ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
 | `src/listing/` | `PaginationState`, `ListingConstants`, `PagingFooter`, and `useInfiniteScroll`. |
@@ -93,7 +93,7 @@ const encryptedSettingsComponent = new EncryptedSettingsComponent()
 
 const commonComponent = new CommonComponent({
   encryptedSettings: encryptedSettingsComponent.encryptedSettings,
-  deviceInfoProvider: deviceInfoProvider,
+  clientDeviceInfoProvider: clientDeviceInfoProvider,
   baseUrl: 'https://api.example.com',
   accessTokenProvider: authStorage
 })

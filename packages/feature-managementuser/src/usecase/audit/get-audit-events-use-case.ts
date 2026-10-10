@@ -1,8 +1,8 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
-  AuditEvent,
   AuditEventSortBy,
+  AuditEventSummary,
   AuditStatus,
   PagedResult,
   SortOrder,
@@ -39,9 +39,9 @@ export class GetAuditEventsUseCase {
    * Executes the use case.
    *
    * @param params - Query and filter parameters
-   * @returns Paginated result containing audit events, or a failure
+   * @returns Paginated result containing audit event summaries, or a failure
    */
-  public async execute(params?: GetAuditEventsParams): Promise<AppResult<PagedResult<AuditEvent>, AppError>> {
+  public async execute(params?: GetAuditEventsParams): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
     return this.managementAuditRepository.getAuditEvents(
       params?.pageNumber,
       params?.pageSize,

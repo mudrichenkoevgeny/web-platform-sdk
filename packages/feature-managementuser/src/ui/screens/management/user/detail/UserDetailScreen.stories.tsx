@@ -21,6 +21,7 @@ const createMockDeps = (): UserDetailStoreDependencies => ({
   } as unknown as UserDetailStoreDependencies['managementDisableTotpUseCase'],
   onNavigateToSessions: () => {},
   onNavigateToIdentifiers: () => {},
+  onNavigateToAuditEvents: () => {},
   onBack: () => {}
 })
 

@@ -5,27 +5,29 @@ import type {
   SortOrder,
   UserAuthProvider,
   UserIdentifierId,
+  UserIdentifierPrivate,
+  UserIdentifierSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'
+import { userIdentifierPrivateMock, userIdentifierSummaryMock } from '@/mock/domain/model/identifier/user-identifier-mock'
+
 /**
  * Mock implementation of {@link IdentifierRepository}.
  */
 export class IdentifierRepositoryMock implements IdentifierRepository {
-  public getUserIdentifierResultProvider: (userIdentifierId: UserIdentifierId) => Promise<AppResult<UserIdentifier, AppError>> = async () =>
-    appResultSuccess(userIdentifierMock())
+  public getUserIdentifierResultProvider: (userIdentifierId: UserIdentifierId) => Promise<AppResult<UserIdentifierPrivate, AppError>> = async () =>
+    appResultSuccess(userIdentifierPrivateMock())
 
-  public getUserIdentifiersResultProvider: () => Promise<AppResult<PagedResult<UserIdentifier>, AppError>> = async () =>
-    appResultSuccess({ items: [userIdentifierMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
+  public getUserIdentifiersResultProvider: () => Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> = async () =>
+    appResultSuccess({ items: [userIdentifierSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
 
   public deleteUserIdentifierResultProvider: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)
 
-  public addUserIdentifierResultProvider: () => Promise<AppResult<UserIdentifier, AppError>> = async () =>
-    appResultSuccess(userIdentifierMock())
+  public addUserIdentifierResultProvider: () => Promise<AppResult<UserIdentifierPrivate, AppError>> = async () =>
+    appResultSuccess(userIdentifierPrivateMock())
 
   public otpConfirmationResultProvider: () => Promise<AppResult<OtpConfirmation, AppError>> = async () =>
     appResultSuccess({ retryAfterSeconds: 0, numberOfSymbols: 6, expirationSeconds: 300 })
@@ -43,7 +45,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   public lastOldPassword: string | null = null
   public lastNewPassword: string | null = null
 
-  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifier, AppError>> {
+  public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     this.lastIdentifierId = userIdentifierId
     return this.getUserIdentifierResultProvider(userIdentifierId)
   }
@@ -55,7 +57,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
     _sortOrder?: SortOrder | null,
     _userAuthProviders?: UserAuthProvider[] | null,
     _identifiers?: string[] | null
-  ): Promise<AppResult<PagedResult<UserIdentifier>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     return this.getUserIdentifiersResultProvider()
   }
 
@@ -68,7 +70,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
     email: string,
     password: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     this.lastEmail = email
     this.lastPassword = password
     this.lastConfirmationCode = confirmationCode
@@ -78,7 +80,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   public async addUserIdentifierPhone(
     phoneNumber: string,
     confirmationCode: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     this.lastPhoneNumber = phoneNumber
     this.lastConfirmationCode = confirmationCode
     return this.addUserIdentifierResultProvider()
@@ -87,7 +89,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   public async addUserIdentifierExternalAuthProvider(
     authProvider: string,
     externalProviderToken: string
-  ): Promise<AppResult<UserIdentifier, AppError>> {
+  ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     this.lastAuthProvider = authProvider
     this.lastToken = externalProviderToken
     return this.addUserIdentifierResultProvider()

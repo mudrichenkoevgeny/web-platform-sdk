@@ -4,7 +4,7 @@ import { toUserIdentifierIdOrNull, UserAuthProvider } from '@mudrichenkoevgeny/s
 import type { UserIdentifierId, UserId } from "@mudrichenkoevgeny/shared-foundation";
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { UserIdentifier } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetUserIdentifierUseCase } from '@/usecase/identifier/get-user-identifier-use-case'
 import type { DeleteUserIdentifierUseCase } from '@/usecase/identifier/delete-user-identifier-use-case'
 import type { EmailChangePasswordUseCase } from '@/usecase/identifier/email-change-password-use-case'
@@ -22,7 +22,7 @@ export type IdentifierDetailScreenState =
     }
   | {
       status: 'content'
-      identifier: UserIdentifier
+      identifier: UserIdentifierPrivate
       isCurrentIdentifier: boolean
       canChangePassword: boolean
       canDeletePassword: boolean
@@ -36,7 +36,7 @@ export type IdentifierDetailScreenState =
  * Dependencies required to construct and run {@link IdentifierDetailStore}.
  */
 export interface IdentifierDetailStoreDependencies {
-  identifier?: UserIdentifier
+  identifier?: UserIdentifierPrivate
   identifierId?: UserIdentifierId
   getUserIdentifierUseCase?: GetUserIdentifierUseCase
   deleteUserIdentifierUseCase?: DeleteUserIdentifierUseCase

@@ -32,6 +32,7 @@ export const UserDetailTestTags = {
   DISABLE_TOTP_ERROR_TEXT: 'UserDetail_DisableTotpErrorText',
   SESSIONS_BUTTON: 'UserDetail_SessionsButton',
   IDENTIFIERS_BUTTON: 'UserDetail_IdentifiersButton',
+  AUDIT_EVENTS_BUTTON: 'UserDetail_AuditEventsButton',
   ACCOUNT_STATUS_SELECT: 'UserDetail_AccountStatusSelect',
   AUTHORITY_LEVEL_INPUT: 'UserDetail_AuthorityLevelInput',
   LOCKOUT_TYPE_SELECT: 'UserDetail_LockoutTypeSelect',
@@ -102,6 +103,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   const onDisableTotpClick = useUserDetailStore((s) => s.onDisableTotpClick)
   const onSessionsClick = useUserDetailStore((s) => s.onSessionsClick)
   const onIdentifiersClick = useUserDetailStore((s) => s.onIdentifiersClick)
+  const onAuditEventsClick = useUserDetailStore((s) => s.onAuditEventsClick)
   const onRetry = useUserDetailStore((s) => s.onRetry)
   const onBackClick = useUserDetailStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
@@ -206,6 +208,13 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
             label={strings.user_identifiers}
             onClick={onIdentifiersClick}
+            className="flex-1"
+          />
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.AUDIT_EVENTS_BUTTON}
+            label={strings.audit_logs_title}
+            onClick={onAuditEventsClick}
             className="flex-1"
           />
         </div>

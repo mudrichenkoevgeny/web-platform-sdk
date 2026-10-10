@@ -5,11 +5,12 @@ import type {
   PagedResult,
   SortOrder,
   UserAuthProvider,
-  UserSession,
   UserSessionId,
+  UserSessionPrivate,
+  UserSessionSummary,
   UserSortValues
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSession } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSessionPrivate, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   AuthStorage,
   SessionApi,
@@ -50,7 +51,7 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
     deviceNames?: string[] | null,
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
-  ): Promise<AppResult<PagedResult<UserSession>, AppError>> {
+  ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     const networkResult = await this.sessionApi.getSessions(
       pageNumber,
       pageSize,
@@ -73,7 +74,7 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
       await this.userStorage.updateUserSessionsPayloadList(networkResult.data)
       return mapSuccess(networkResult, (pagedPayload) => ({
         ...pagedPayload,
-        items: pagedPayload.items.map((payload) => toUserSession(payload))
+        items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
       }))
     }
 
@@ -102,18 +103,11 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
     return networkResult
   }
 
-  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSession, AppError>> {
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>> {
     const networkResult = await this.sessionApi.getSession(userSessionId)
     if (isSuccess(networkResult)) {
-      const session = toUserSession(networkResult.data)
-      await this.userStorage.addUserSession(session)
+      const session = toUserSessionPrivate(networkResult.data)
       return appResultSuccess(session)
-    }
-
-    const cachedList = await this.userStorage.getUserSessionsList()
-    const cachedSession = cachedList.items.find((userSession) => userSession.id === userSessionId)
-    if (cachedSession) {
-      return appResultSuccess(cachedSession)
     }
 
     return networkResult

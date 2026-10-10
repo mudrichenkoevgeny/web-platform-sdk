@@ -15,7 +15,7 @@ describe('FetchSelfManagementLoginApi', () => {
   })
 
   it('dispatches loginByEmail request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { email: 'admin@example.com', password: 'secret' }
@@ -32,7 +32,7 @@ describe('FetchSelfManagementLoginApi', () => {
   })
 
   it('dispatches loginByTotp request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { mfa_token: 'mfa123', totp_code: '654321' }
@@ -49,7 +49,7 @@ describe('FetchSelfManagementLoginApi', () => {
   })
 
   it('dispatches loginByTotpRecoveryCode request', async () => {
-    const dummyPayload = { userDetails: {} } as any
+    const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const request = { mfa_token: 'mfa123', totp_code: 'rec_123' }
