@@ -16,7 +16,7 @@ import type { LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-featur
 import type { LoginByPhoneUseCase } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SendLoginConfirmationToPhoneUseCase } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
-export const DEFAULT_OTP_LENGTH = 6
+const DEFAULT_OTP_LENGTH = 6
 
 export type LoginByPhoneScreenState =
   | {

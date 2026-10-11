@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
   toUserIdentifierIdOrNull,
@@ -41,6 +41,7 @@ export interface AuditEventDetailStoreDependencies {
 }
 
 export interface AuditEventDetailStoreState {
+  dependencies: AuditEventDetailStoreDependencies
   screenState: AuditEventDetailScreenState
   initScreen: () => Promise<void>
   onRetry: () => Promise<void>
@@ -58,6 +59,7 @@ export const createAuditEventDetailStore = (
   let isFetching = false
 
   return createStore<AuditEventDetailStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
     initScreen: async () => {
@@ -69,7 +71,8 @@ export const createAuditEventDetailStore = (
 
       try {
         set({ screenState: { status: 'loading' } })
-        const result = await deps.getAuditEventUseCase.execute(deps.eventId)
+        const activeDeps = get().dependencies
+        const result = await activeDeps.getAuditEventUseCase.execute(activeDeps.eventId)
 
         if (isSuccess(result)) {
           set({
@@ -101,6 +104,7 @@ export const createAuditEventDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const event = current.event
       const resourceIdStr = event.resourceId
       if (!resourceIdStr) {
@@ -112,20 +116,20 @@ export const createAuditEventDetailStore = (
       if (resourceName.includes('identifier')) {
         const id = toUserIdentifierIdOrNull(resourceIdStr)
         if (id) {
-          deps.onNavigateToIdentifierDetail?.(id)
+          activeDeps.onNavigateToIdentifierDetail?.(id)
         }
       } else if (resourceName.includes('session')) {
         const id = toUserSessionIdOrNull(resourceIdStr)
         if (id) {
-          deps.onNavigateToSessionDetail?.(id)
+          activeDeps.onNavigateToSessionDetail?.(id)
         }
       } else if (resourceName.includes('user')) {
         const userId = toUserIdOrNull(resourceIdStr)
         if (userId) {
-          if (deps.currentUserId && userId === deps.currentUserId) {
-            deps.onNavigateToProfile?.()
+          if (activeDeps.currentUserId && userId === activeDeps.currentUserId) {
+            activeDeps.onNavigateToProfile?.()
           } else {
-            deps.onNavigateToUserDetail?.(userId)
+            activeDeps.onNavigateToUserDetail?.(userId)
           }
         }
       }
@@ -137,6 +141,7 @@ export const createAuditEventDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const event = current.event
       const actorIdStr = event.actorId
       if (!actorIdStr) {
@@ -147,17 +152,17 @@ export const createAuditEventDetailStore = (
       if (actorType.includes('user')) {
         const userId = toUserIdOrNull(actorIdStr)
         if (userId) {
-          if (deps.currentUserId && userId === deps.currentUserId) {
-            deps.onNavigateToProfile?.()
+          if (activeDeps.currentUserId && userId === activeDeps.currentUserId) {
+            activeDeps.onNavigateToProfile?.()
           } else {
-            deps.onNavigateToUserDetail?.(userId)
+            activeDeps.onNavigateToUserDetail?.(userId)
           }
         }
       }
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     }
   }))
 }
@@ -176,6 +181,10 @@ export const AuditEventDetailProvider: React.FC<AuditEventDetailProviderProps> =
   children
 }) => {
   const [store] = useState(() => createAuditEventDetailStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <AuditEventDetailContext.Provider value={store}>

@@ -29,22 +29,14 @@ Managed as a monorepo via `pnpm` workspaces:
 
 Packages in this repository are published to npm under the `@mudrichenkoevgeny` scope and installed via `pnpm`:
 
-### For Client (Consumer) Web Applications:
+### For Client (Consumer) Web Applications
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common \
-  @mudrichenkoevgeny/web-platform-sdk-core-settings \
-  @mudrichenkoevgeny/web-platform-sdk-core-security \
-  @mudrichenkoevgeny/web-platform-sdk-feature-user \
-  @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
 ```
 
-### For Management / Admin Web Applications:
+### For Management / Admin Web Applications
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common \
-  @mudrichenkoevgeny/web-platform-sdk-core-settings \
-  @mudrichenkoevgeny/web-platform-sdk-core-security \
-  @mudrichenkoevgeny/web-platform-sdk-feature-user \
-  @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
 ```
 
 To include design tokens and component styling, import the stylesheet into your application root:
@@ -57,25 +49,41 @@ import '@mudrichenkoevgeny/web-platform-sdk-core-common/tokens.css'
 
 ## Development & Build Commands
 
-From the root directory:
+All development commands are executed from the repository root:
 
+### Build Workspace Packages
+Builds all SDK packages (`packages/*`) in the workspace:
 ```bash
-# Build all SDK packages in workspace
 pnpm build
+```
 
-# Run local development server for Client sample app (http://localhost:3002)
+### Client Sample App Development Server
+Runs local development server for Client sample app at `http://localhost:3002`:
+```bash
 pnpm dev:client
+```
 
-# Run local development server for Management sample app (http://localhost:3003)
+### Management Sample App Development Server
+Runs local development server for Management sample app at `http://localhost:3003`:
+```bash
 pnpm dev:management
+```
 
-# Run unit and UI tests across all workspace packages
+### Run Tests
+Executes unit and UI tests across all workspace packages:
+```bash
 pnpm test
+```
 
-# Run linter across all packages and apps
+### Code Linting
+Runs ESLint across all workspace packages and sample applications:
+```bash
 pnpm lint
+```
 
-# Run type checking across all packages and apps
+### Type Checking
+Runs TypeScript type checking (`tsc --noEmit`) across all workspace packages and apps:
+```bash
 pnpm typecheck
 ```
 

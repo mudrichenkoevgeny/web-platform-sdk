@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { toUserIdentifierIdOrNull, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId, UserId } from "@mudrichenkoevgeny/shared-foundation";
@@ -55,6 +55,7 @@ export interface IdentifierDetailStoreDependencies {
  * State and actions managed by {@link IdentifierDetailStore}.
  */
 export interface IdentifierDetailStoreState {
+  dependencies: IdentifierDetailStoreDependencies
   screenState: IdentifierDetailScreenState
   initializeIdentifier: () => Promise<void>
   onDeleteIdentifierRequested: () => void
@@ -81,6 +82,7 @@ export const createIdentifierDetailStore = (
   let isFetching = false
 
   const store = createStore<IdentifierDetailStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
     initializeIdentifier: async () => {
@@ -91,19 +93,20 @@ export const createIdentifierDetailStore = (
       isFetching = true
 
       try {
-        const targetId = deps.identifierId ?? deps.identifier?.id
-        const storedIdentifierIdRaw = deps.authStorage ? await deps.authStorage.getIdentifierId() : null
+        const activeDeps = get().dependencies
+        const targetId = activeDeps.identifierId ?? activeDeps.identifier?.id
+        const storedIdentifierIdRaw = activeDeps.authStorage ? await activeDeps.authStorage.getIdentifierId() : null
         const activeIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
-        const resolvedIsCurrent = deps.isCurrentIdentifier ?? (targetId != null && targetId === activeIdentifierId)
+        const resolvedIsCurrent = activeDeps.isCurrentIdentifier ?? (targetId != null && targetId === activeIdentifierId)
 
-        if (deps.identifier) {
+        if (activeDeps.identifier) {
           set({
             screenState: {
               status: 'content',
-              identifier: deps.identifier,
+              identifier: activeDeps.identifier,
               isCurrentIdentifier: resolvedIsCurrent,
-              canChangePassword: deps.emailChangePasswordUseCase != null && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
-              canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && deps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
+              canChangePassword: activeDeps.emailChangePasswordUseCase != null && activeDeps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
+              canDeletePassword: (activeDeps.deletePasswordUseCase != null || activeDeps.deletePassword != null) && activeDeps.identifier.userAuthProvider === UserAuthProvider.EMAIL,
               actionLoading: false,
               actionError: null,
               isChangePasswordDialogVisible: false,
@@ -113,9 +116,9 @@ export const createIdentifierDetailStore = (
           return
         }
 
-        if (targetId && deps.getUserIdentifierUseCase) {
+        if (targetId && activeDeps.getUserIdentifierUseCase) {
           set({ screenState: { status: 'loading' } })
-          const result = await deps.getUserIdentifierUseCase.execute(targetId)
+          const result = await activeDeps.getUserIdentifierUseCase.execute(targetId)
 
           if (isSuccess(result)) {
             const loaded = result.data
@@ -124,8 +127,8 @@ export const createIdentifierDetailStore = (
                 status: 'content',
                 identifier: loaded,
                 isCurrentIdentifier: resolvedIsCurrent,
-                canChangePassword: deps.emailChangePasswordUseCase != null && loaded.userAuthProvider === UserAuthProvider.EMAIL,
-                canDeletePassword: (deps.deletePasswordUseCase != null || deps.deletePassword != null) && loaded.userAuthProvider === UserAuthProvider.EMAIL,
+                canChangePassword: activeDeps.emailChangePasswordUseCase != null && loaded.userAuthProvider === UserAuthProvider.EMAIL,
+                canDeletePassword: (activeDeps.deletePasswordUseCase != null || activeDeps.deletePassword != null) && loaded.userAuthProvider === UserAuthProvider.EMAIL,
                 actionLoading: false,
                 actionError: null,
                 isChangePasswordDialogVisible: false,
@@ -186,6 +189,7 @@ export const createIdentifierDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const targetId = current.identifier.id
       set({
         screenState: {
@@ -196,11 +200,11 @@ export const createIdentifierDetailStore = (
         }
       })
 
-      if (deps.deleteUserIdentifierUseCase) {
-        const result = await deps.deleteUserIdentifierUseCase.execute(targetId)
+      if (activeDeps.deleteUserIdentifierUseCase) {
+        const result = await activeDeps.deleteUserIdentifierUseCase.execute(targetId)
         if (isSuccess(result)) {
-          deps.onIdentifierDeleted?.(targetId)
-          deps.onBack()
+          activeDeps.onIdentifierDeleted?.(targetId)
+          activeDeps.onBack()
         } else {
           set({
             screenState: {
@@ -212,8 +216,8 @@ export const createIdentifierDetailStore = (
           })
         }
       } else {
-        deps.onIdentifierDeleted?.(targetId)
-        deps.onBack()
+        activeDeps.onIdentifierDeleted?.(targetId)
+        activeDeps.onBack()
       }
     },
 
@@ -237,6 +241,7 @@ export const createIdentifierDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const email = current.identifier.identifier
       set({
         screenState: {
@@ -246,8 +251,8 @@ export const createIdentifierDetailStore = (
         }
       })
 
-      if (deps.emailChangePasswordUseCase) {
-        const result = await deps.emailChangePasswordUseCase.execute(email, oldPassword, newPassword)
+      if (activeDeps.emailChangePasswordUseCase) {
+        const result = await activeDeps.emailChangePasswordUseCase.execute(email, oldPassword, newPassword)
         if (isSuccess(result)) {
           set({
             screenState: {
@@ -296,6 +301,7 @@ export const createIdentifierDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const targetId = current.identifier.id
       set({
         screenState: {
@@ -305,8 +311,8 @@ export const createIdentifierDetailStore = (
         }
       })
 
-      if (deps.deletePasswordUseCase) {
-        const result = await deps.deletePasswordUseCase.execute(targetId)
+      if (activeDeps.deletePasswordUseCase) {
+        const result = await activeDeps.deletePasswordUseCase.execute(targetId)
         if (isSuccess(result)) {
           await get().initializeIdentifier()
         } else {
@@ -318,8 +324,8 @@ export const createIdentifierDetailStore = (
             }
           })
         }
-      } else if (deps.deletePassword) {
-        await deps.deletePassword(targetId)
+      } else if (activeDeps.deletePassword) {
+        await activeDeps.deletePassword(targetId)
         await get().initializeIdentifier()
       } else {
         set({
@@ -336,7 +342,7 @@ export const createIdentifierDetailStore = (
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     },
 
     onUserClick: () => {
@@ -344,10 +350,11 @@ export const createIdentifierDetailStore = (
       if (current.status !== 'content') {
         return
       }
+      const activeDeps = get().dependencies
       if (current.isCurrentIdentifier) {
-        deps.onNavigateToProfile?.()
+        activeDeps.onNavigateToProfile?.()
       } else {
-        deps.onNavigateToUserDetail?.(current.identifier.userId)
+        activeDeps.onNavigateToUserDetail?.(current.identifier.userId)
       }
     }
   }))
@@ -374,13 +381,14 @@ export const IdentifierDetailProvider: React.FC<IdentifierDetailProviderProps> =
   initialState,
   children
 }) => {
-  const storeRef = useRef<IdentifierDetailStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createIdentifierDetailStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createIdentifierDetailStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <IdentifierDetailContext.Provider value={storeRef.current}>
+    <IdentifierDetailContext.Provider value={store}>
       {children}
     </IdentifierDetailContext.Provider>
   )

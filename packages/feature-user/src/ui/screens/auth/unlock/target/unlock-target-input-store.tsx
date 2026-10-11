@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
@@ -6,6 +6,7 @@ import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
 import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-email-confirmation-use-case'
 import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
 import { FieldValidator } from '@/validator/field-validator'
+
 /**
  * Union representing the active screen state for {@link UnlockTargetInputScreen}.
  */
@@ -43,6 +44,8 @@ export interface UnlockTargetInputStoreDependencies {
  * State and action contract for {@link UnlockTargetInputStore}.
  */
 export interface UnlockTargetInputStoreState {
+  /** Dependencies passed to store instance. */
+  dependencies: UnlockTargetInputStoreDependencies
   /** Active reactive screen state. */
   screenState: UnlockTargetInputScreenState
   /** Updates input value. */
@@ -78,6 +81,7 @@ export const createUnlockTargetInputStore = (
   }
 
   return createStore<UnlockTargetInputStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? defaultContentState,
 
     onInputChanged: (value: string) => {
@@ -101,6 +105,7 @@ export const createUnlockTargetInputStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const target = current.input.trim()
       const isInputValid =
         current.method === UnlockMethod.EMAIL
@@ -121,11 +126,11 @@ export const createUnlockTargetInputStore = (
 
       const result =
         current.method === UnlockMethod.EMAIL
-          ? await deps.sendUnlockEmailConfirmationUseCase.execute(target)
-          : await deps.sendUnlockPhoneConfirmationUseCase.execute(target)
+          ? await activeDeps.sendUnlockEmailConfirmationUseCase.execute(target)
+          : await activeDeps.sendUnlockPhoneConfirmationUseCase.execute(target)
 
       if (isSuccess(result)) {
-        deps.onNavigateToOtp(target, result.data.retryAfterSeconds)
+        activeDeps.onNavigateToOtp(target, result.data.retryAfterSeconds)
         const updated = get().screenState
         if (updated.status === 'content') {
           set({ screenState: { ...updated, actionLoading: false } })
@@ -145,7 +150,7 @@ export const createUnlockTargetInputStore = (
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     }
   }))
 }
@@ -168,13 +173,14 @@ export const UnlockTargetInputProvider: React.FC<UnlockTargetInputProviderProps>
   initialState,
   children
 }) => {
-  const storeRef = useRef<UnlockTargetInputStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createUnlockTargetInputStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createUnlockTargetInputStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <UnlockTargetInputContext.Provider value={storeRef.current}>
+    <UnlockTargetInputContext.Provider value={store}>
       {children}
     </UnlockTargetInputContext.Provider>
   )

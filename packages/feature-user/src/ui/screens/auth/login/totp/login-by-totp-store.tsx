@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -6,6 +6,7 @@ import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-by-totp-recovery-code-use-case'
 import type { LoginByTotpUseCase } from '@/usecase/auth/login/login-by-totp-use-case'
 import { FieldValidator } from '@/validator/field-validator'
+
 /**
  * Mode determining active MFA verification method.
  */
@@ -54,6 +55,8 @@ export interface LoginByTotpStoreDependencies {
  * State and action contract for {@link LoginByTotpStore}.
  */
 export interface LoginByTotpStoreState {
+  /** Dependencies passed to store instance. */
+  dependencies: LoginByTotpStoreDependencies
   /** Active reactive screen state. */
   screenState: LoginByTotpScreenState
   /** Updates verification code text. */
@@ -92,6 +95,7 @@ export const createLoginByTotpStore = (
   }
 
   return createStore<LoginByTotpStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? defaultContentState,
 
     onCodeChanged: (code: string) => {
@@ -136,6 +140,7 @@ export const createLoginByTotpStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const isCodeValid =
         current.mode === LoginByTotpMode.TOTP
           ? FieldValidator.isValidTotp(current.code)
@@ -153,16 +158,18 @@ export const createLoginByTotpStore = (
         }
       })
 
+      const mfaTokenToUse = current.mfaToken || activeDeps.mfaToken
+
       const result =
         current.mode === LoginByTotpMode.TOTP
-          ? await deps.loginByTotpUseCase.execute(current.mfaToken, current.code)
-          : await deps.loginByTotpRecoveryCodeUseCase.execute(current.mfaToken, current.code)
+          ? await activeDeps.loginByTotpUseCase.execute(mfaTokenToUse, current.code)
+          : await activeDeps.loginByTotpRecoveryCodeUseCase.execute(mfaTokenToUse, current.code)
 
       if (isSuccess(result)) {
         if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
-          deps.onNavigateToPendingDeletion()
+          activeDeps.onNavigateToPendingDeletion()
         } else {
-          deps.onFinished()
+          activeDeps.onFinished()
         }
         const updated = get().screenState
         if (updated.status === 'content') {
@@ -183,7 +190,7 @@ export const createLoginByTotpStore = (
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     }
   }))
 }
@@ -210,13 +217,14 @@ export const LoginByTotpProvider: React.FC<LoginByTotpProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<LoginByTotpStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createLoginByTotpStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createLoginByTotpStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <LoginByTotpContext.Provider value={storeRef.current}>
+    <LoginByTotpContext.Provider value={store}>
       {children}
     </LoginByTotpContext.Provider>
   )

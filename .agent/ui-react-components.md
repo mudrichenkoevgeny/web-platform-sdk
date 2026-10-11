@@ -54,3 +54,11 @@ alwaysApply: true
 - **KMP TestTags Mapping:** NEVER drop or ignore Test Tags from the original KMP code when migrating to TypeScript/React.
 - **TestTags Constants:** ALWAYS map KMP `TestTags` objects directly to a `TestTags` constant object exported in TypeScript (e.g., `export const MyScreenTestTags = { ... }`).
 - **data-testid Application:** ALWAYS apply these tags to DOM elements using the `data-testid` attribute (e.g., `data-testid={MyScreenTestTags.SUBMIT_BUTTON}`). This is mandatory for E2E and UI testing.
+
+## 10. Routing Integration & URL Search Parameters
+- **SDK Agnosticism:** UI Screen components in `packages/*` must not hardcode router instances or hooks. They receive `searchParams` and navigation callbacks (`onNavigateToX`, `onSearchParamsChanged`) via their `dependencies` prop.
+- **URL Parameter Schemas:** Create flat Zod schemas (`*SearchSchema.ts`) using `zod` for components accepting search/query parameters. Include array coercion (`z.union([z.string().transform(v => [v]), z.array(z.string())])`).
+- **Pure Converters:** Use pure converter functions outside components (`searchParamsToListingStates` / `listingStatesToSearchParams`) to bridge flat URL parameters and complex panel UI states.
+
+## 11. Mandatory Complete Implementation
+- **Production-Ready Code Only:** Every UI component, route, and store must be fully implemented with complete production logic, DI context, and proper styling. Generating stubs, placeholders, or dummy components is strictly prohibited unless the developer explicitly asks for a stub.

@@ -51,3 +51,10 @@ alwaysApply: true
 
 ## 7. Dependency Injection & Domain Parsers
 - **Explicit Domain Parsers:** Never hardcode empty default parsers (e.g., `CompositeAuditActionTypeParser([])`) in DI containers. Domain parsers must be required properties in the Config interface and injected from the top-level application graph.
+
+## 8. Routing, URL State & Search Param Schemas (TanStack Router)
+- **Host Ownership & File-Based Routing:** Host applications (`samples/*`) configure TanStack Router using Vite plugin file-based routing (`src/routes/`). The SDK exports pure React screens and Zod search parameter schemas.
+- **Router Context for Dependency Injection:** Inject application dependencies (Use Cases, Repositories) into the route tree via TanStack `createRootRouteWithContext<RouterDIContext>()`. Route components extract context via `Route.useRouteContext()` and pass dependencies to SDK components.
+- **URL as Single Source of Truth:** Query parameters, filters, and sorting belong in the URL. Screen Zustand stores MUST NOT hold filter/sort states internally.
+- **Flat Zod Search Schemas & Array Coercion:** Export flat Zod schemas (`*SearchSchema.ts`) for routes with search parameters. Use array coercion (`z.union([z.string().transform(v => [v]), z.array(z.string())])`) to handle single and multi-value query strings safely.
+- **Pure Converters:** Use pure converter functions (`searchParamsToListingStates` / `listingStatesToSearchParams`) to translate between flat URL parameters and complex UI panel states (like `ListingFilterState`).

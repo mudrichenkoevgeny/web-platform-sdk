@@ -31,11 +31,11 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 - **Identifier Control:** `ManagementGetIdentifiersUseCase`, `ManagementDeleteIdentifierUseCase`, `ManagementDeleteIdentifierPasswordUseCase`.
 - **Security Enforcement:** `ManagementDisableTotpUseCase`.
 
-### 5. Management React Admin Panel UI
+### 5. Management React Admin Panel UI & Routing Schemas
 - **Staff Authentication:** `ManagementLoginRootScreen` / `ManagementLoginRootStore`.
-- **Admin Shell & Navigation:** `ManagementRootScreen`, `ManagementRootStore`, `MainManagementScreen`, `MainManagementStore`.
+- **Admin Shell & Screens:** `MainManagementScreen`, `MainManagementStore`.
 - **System Settings Editors:** `EditAuthSettingsScreen`, `EditGlobalSettingsScreen`, `EditSecuritySettingsScreen`.
-- **Audit Trail Inspection:** `AuditEventListScreen`, `AuditEventDetailScreen`, `AuditItem`.
+- **Audit Trail Inspection:** `AuditEventListScreen` (with `auditEventListSearchSchema` Zod validation for TanStack Router), `AuditEventDetailScreen`, `AuditItem`.
 - **User Governance:** `GlobalUserListScreen`, `UserDetailScreen`, `CreateUserScreen`, `UserItem`.
 - **Session & Identifier Oversight:** `GlobalSessionListScreen`, `UserSessionListScreen`, `GlobalIdentifierListScreen`, `UserIdentifierListScreen`.
 
@@ -55,7 +55,7 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 | `src/repository/` | Administrative repositories (`ManagementUserRepositoryImpl`, `ManagementAuditRepositoryImpl`, etc.). |
 | `src/usecase/` | Administrative use cases grouped into `audit/`, `user/`, `session/`, `security/`, `global-settings/`, and `auth/`. |
 | `src/ui/components/` | Administrative UI components (`AuditItem`, `UserItem`). |
-| `src/ui/screens/` | React screens (`ManagementRootScreen`, `GlobalUserListScreen`, `AuditEventListScreen`, `EditGlobalSettingsScreen`, etc.). |
+| `src/ui/screens/` | React screens (`MainManagementScreen`, `GlobalUserListScreen`, `AuditEventListScreen`, `EditGlobalSettingsScreen`, etc.). |
 | `src/locales/` | Typed localization dictionaries (`ManagementUserStrings` with `enStrings` and `ruStrings`). |
 | `src/mock/` | Test doubles (`ManagementUserComponentMock`, mock repositories, API clients). |
 
@@ -85,13 +85,13 @@ const managementUserComponent = new ManagementUserComponent({
 commonComponent.httpClientConfigPlugins.push(managementUserComponent.authHttpClientConfigPlugin)
 ```
 
-### 3. Rendering Admin Panel Root Screen
+### 3. Rendering Admin Panel Screen in Host Application
 
 ```tsx
-import { ManagementRootScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 
 export function AdminPanel() {
-  return <ManagementRootScreen />
+  return <MainManagementScreen dependencies={dependencies} />
 }
 ```
 

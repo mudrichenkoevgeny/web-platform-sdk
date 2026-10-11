@@ -8,7 +8,7 @@ alwaysApply: true
 ## Project Identity
 - **Type:** TypeScript client SDK (library) for Web.
 - **Publishing:** npm via pnpm workspaces.
-- **Tech Stack:** TypeScript, React, Zustand, Zod, Tailwind CSS, shadcn/ui, Framer Motion, Vitest. (No Axios, No TanStack Query).
+- **Tech Stack:** TypeScript, React, TanStack Router (File-based routing in samples), Zustand, Zod, Tailwind CSS, shadcn/ui, Framer Motion, Vitest. (No Axios, No TanStack Query).
 
 ## Module Structure (pnpm workspaces)
 - **`packages/core-common`:** Native Fetch client, WebSocket lifecycle, `AppError` chain, WebCrypto storage.
@@ -20,4 +20,4 @@ alwaysApply: true
 
 ## Boundaries
 - `core-common` is the leaf; it must never depend on `feature-*`.
-- React components must remain host-agnostic and rely on Context injection.
+- React components must remain host-agnostic and rely on Context injection. Host applications (`samples/*`) own the TanStack Router configuration and Router DI Context.

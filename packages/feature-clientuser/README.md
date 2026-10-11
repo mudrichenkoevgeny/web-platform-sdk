@@ -2,7 +2,7 @@
 
 End-user (client) identity and authentication solution for the Web Platform SDK: consumer-facing **Fetch HTTP API integrations**, **open auth & user repositories**, **configuration synchronization use cases**, **`ClientUserComponent` DI wiring**, and complete **React login & registration screens**.
 
-This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows.
+This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows and TanStack Router parameter schemas.
 
 ---
 
@@ -24,10 +24,10 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 - **`RefreshClientUserConfigurationUseCase`:** Orchestrates initialization sync of client user state, active auth providers, and open security policies on startup.
 - **`RefreshOpenAuthSettingsUseCase`:** Synchronizes consumer authentication settings and available login providers.
 
-### 5. Client React Login & Registration UI
-- **`ClientLoginRootScreen` / `ClientLoginRootStore`:** Top-level Zustand state machine orchestrating end-user auth screens (welcome, email login, phone login, registration, password reset, unlock).
-- **`LoginByPhoneScreen`:** Consumer phone number login with SMS OTP verification.
-- **`RegistrationByEmailScreen`:** Consumer account registration with email confirmation.
+### 5. Client React Login & Registration UI & Search Schemas
+- **Consumer Login Screens:** `LoginByPhoneScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (with `loginByTotpSearchSchema` for TanStack Router).
+- **Registration & Recovery:** `RegistrationByEmailScreen`, `ResetEmailPasswordScreen`, `UnlockTargetInputScreen` (with `unlockTargetSearchSchema`), `UnlockOtpScreen` (with `unlockOtpSearchSchema`).
+- **Orchestration Container:** `ClientLoginRootScreen` / `ClientLoginRootStore` for modal/step-based login overlays.
 
 ### 6. Testing & Mocks Infrastructure
 - **`ClientUserComponentMock`:** Complete mock implementations (mock repositories, API clients, and DI container doubles) for isolated testing and Storybook previewing.
@@ -43,7 +43,7 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 | `src/network/` | Consumer REST API clients (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchOpenSessionApi`, etc.). |
 | `src/repository/` | Open repository implementations (`OpenLoginRepositoryImpl`, `OpenUserRepositoryImpl`, etc.). |
 | `src/usecase/` | `RefreshClientUserConfigurationUseCase` and `RefreshOpenAuthSettingsUseCase`. |
-| `src/ui/screens/` | React screens (`ClientLoginRootScreen`, `LoginByPhoneScreen`, `RegistrationByEmailScreen`) and Zustand stores. |
+| `src/ui/screens/` | React screens (`LoginByPhoneScreen`, `RegistrationByEmailScreen`, etc.) and Zustand stores. |
 | `src/mock/` | Test doubles (`ClientUserComponentMock`, mock repositories, mock API clients). |
 
 ---
@@ -72,13 +72,13 @@ const clientUserComponent = new ClientUserComponent({
 commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
 ```
 
-### 3. Rendering Client Login Root Screen
+### 3. Rendering Consumer Login Screen in Host Application
 
 ```tsx
-import { ClientLoginRootScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
 
-export function ConsumerLoginPage() {
-  return <ClientLoginRootScreen />
+export function ConsumerPhoneLoginPage() {
+  return <LoginByPhoneScreen dependencies={dependencies} />
 }
 ```
 

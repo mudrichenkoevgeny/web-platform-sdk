@@ -1,6 +1,6 @@
 # Sample Client App (`@web-platform-sdk/sample-client-app`)
 
-Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`).
+Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`) with **TanStack Router** file-based routing.
 
 ## How to Build & Run
 
@@ -72,7 +72,8 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
   - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
   - Installs WebSocket event handlers.
   - Refreshes user configuration upon startup.
-- **UI Architecture (`RootContent`):**
+- **UI Architecture (`RootContent` & TanStack Router):**
   - Displays `InitialLoader` during initialization.
-  - Hosts `ClientLoginRootScreen` when unauthenticated or `MainProfileScreen` when authenticated.
-  - Wraps UI in `SdkProvider` and `ThemeProvider`.
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/profile`, `/profile/sessions/$sessionId`, `/profile/identifiers/$identifierId`, `/profile/totp/*`, `/login/*`).
+  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
+  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

@@ -26,10 +26,11 @@
     "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
     "@types/qrcode.react": "^3.0.0",
-    "clsx": "^2.1.1",
+    "clsx": "catalog:",
     "qrcode.react": "^4.2.0",
-    "tailwind-merge": "^3.7.0",
-    "zustand": "^5.0.0"
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:",
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@storybook/react": "^10.6.1",

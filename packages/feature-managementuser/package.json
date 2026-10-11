@@ -26,9 +26,10 @@
     "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-feature-user": "workspace:*",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.7.0",
-    "zustand": "^5.0.0"
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:",
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@storybook/react": "^10.6.1",

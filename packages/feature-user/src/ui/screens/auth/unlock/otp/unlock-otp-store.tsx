@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
@@ -7,6 +7,7 @@ import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/s
 import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
 import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
 import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/unlock-by-phone-use-case'
+
 /**
  * Union representing the active screen state for {@link UnlockOtpScreen}.
  */
@@ -52,6 +53,8 @@ export interface UnlockOtpStoreDependencies {
  * State and action contract for {@link UnlockOtpStore}.
  */
 export interface UnlockOtpStoreState {
+  /** Dependencies passed to store instance. */
+  dependencies: UnlockOtpStoreDependencies
   /** Active reactive screen state. */
   screenState: UnlockOtpScreenState
   /** Initializes resend countdown timer if initial delay is present. */
@@ -136,11 +139,13 @@ export const createUnlockOtpStore = (
   }
 
   return createStore<UnlockOtpStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? defaultContentState,
 
     initTimer: () => {
-      if ((deps.initialDelaySeconds ?? 0) > 0) {
-        startTimer(deps.initialDelaySeconds!, get, set)
+      const activeDeps = get().dependencies
+      if ((activeDeps.initialDelaySeconds ?? 0) > 0) {
+        startTimer(activeDeps.initialDelaySeconds!, get, set)
       }
     },
 
@@ -165,6 +170,7 @@ export const createUnlockOtpStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const code = current.codeInput.trim()
       if (!code) {
         return
@@ -178,17 +184,19 @@ export const createUnlockOtpStore = (
         }
       })
 
+      const targetToUse = current.target || activeDeps.target
+
       const result =
         current.method === UnlockMethod.EMAIL
-          ? await deps.unlockByEmailUseCase.execute(current.target, code)
-          : await deps.unlockByPhoneUseCase.execute(current.target, code)
+          ? await activeDeps.unlockByEmailUseCase.execute(targetToUse, code)
+          : await activeDeps.unlockByPhoneUseCase.execute(targetToUse, code)
 
       if (isSuccess(result)) {
         const updated = get().screenState
         if (updated.status === 'content') {
           set({ screenState: { ...updated, actionLoading: false } })
         }
-        deps.onUnlockSuccess()
+        activeDeps.onUnlockSuccess()
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
@@ -209,6 +217,7 @@ export const createUnlockOtpStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       set({
         screenState: {
           ...current,
@@ -217,10 +226,12 @@ export const createUnlockOtpStore = (
         }
       })
 
+      const targetToUse = current.target || activeDeps.target
+
       const result =
         current.method === UnlockMethod.EMAIL
-          ? await deps.sendUnlockEmailConfirmationUseCase.execute(current.target)
-          : await deps.sendUnlockPhoneConfirmationUseCase.execute(current.target)
+          ? await activeDeps.sendUnlockEmailConfirmationUseCase.execute(targetToUse)
+          : await activeDeps.sendUnlockPhoneConfirmationUseCase.execute(targetToUse)
 
       if (isSuccess(result)) {
         const updated = get().screenState
@@ -248,7 +259,7 @@ export const createUnlockOtpStore = (
 
     onBackClick: () => {
       timerController?.abort()
-      deps.onBack()
+      get().dependencies.onBack()
     }
   }))
 }
@@ -268,13 +279,14 @@ export const UnlockOtpProvider: React.FC<UnlockOtpProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<UnlockOtpStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createUnlockOtpStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createUnlockOtpStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <UnlockOtpContext.Provider value={storeRef.current}>
+    <UnlockOtpContext.Provider value={store}>
       {children}
     </UnlockOtpContext.Provider>
   )

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { toUserSessionIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId, UserId, UserSessionId } from "@mudrichenkoevgeny/shared-foundation";
@@ -48,6 +48,7 @@ export interface SessionDetailStoreDependencies {
  * State and actions managed by {@link SessionDetailStore}.
  */
 export interface SessionDetailStoreState {
+  dependencies: SessionDetailStoreDependencies
   screenState: SessionDetailScreenState
   initializeSession: () => Promise<void>
   onRevokeSessionClick: () => Promise<void>
@@ -69,6 +70,7 @@ export const createSessionDetailStore = (
   let isFetching = false
 
   const store = createStore<SessionDetailStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
     initializeSession: async () => {
@@ -79,16 +81,17 @@ export const createSessionDetailStore = (
       isFetching = true
 
       try {
-        const targetId = deps.sessionId ?? deps.session?.id
-        const storedSessionIdRaw = deps.authStorage ? await deps.authStorage.getSessionId() : null
+        const activeDeps = get().dependencies
+        const targetId = activeDeps.sessionId ?? activeDeps.session?.id
+        const storedSessionIdRaw = activeDeps.authStorage ? await activeDeps.authStorage.getSessionId() : null
         const activeSessionId = storedSessionIdRaw ? toUserSessionIdOrNull(storedSessionIdRaw) : null
-        const resolvedIsCurrentSession = deps.isCurrentSession ?? (targetId != null && targetId === activeSessionId)
+        const resolvedIsCurrentSession = activeDeps.isCurrentSession ?? (targetId != null && targetId === activeSessionId)
 
-        if (deps.session) {
+        if (activeDeps.session) {
           set({
             screenState: {
               status: 'content',
-              session: deps.session,
+              session: activeDeps.session,
               isCurrentSession: resolvedIsCurrentSession,
               actionLoading: false,
               actionError: null
@@ -97,9 +100,9 @@ export const createSessionDetailStore = (
           return
         }
 
-        if (targetId && deps.getSessionUseCase) {
+        if (targetId && activeDeps.getSessionUseCase) {
           set({ screenState: { status: 'loading' } })
-          const result = await deps.getSessionUseCase.execute(targetId)
+          const result = await activeDeps.getSessionUseCase.execute(targetId)
 
           if (isSuccess(result)) {
             set({
@@ -138,6 +141,7 @@ export const createSessionDetailStore = (
         return
       }
 
+      const activeDeps = get().dependencies
       const targetSessionId = current.session.id
       set({
         screenState: {
@@ -147,11 +151,11 @@ export const createSessionDetailStore = (
         }
       })
 
-      if (deps.deleteSessionUseCase) {
-        const result = await deps.deleteSessionUseCase.execute(targetSessionId)
+      if (activeDeps.deleteSessionUseCase) {
+        const result = await activeDeps.deleteSessionUseCase.execute(targetSessionId)
         if (isSuccess(result)) {
-          deps.onSessionRevoked?.(targetSessionId)
-          deps.onBack()
+          activeDeps.onSessionRevoked?.(targetSessionId)
+          activeDeps.onBack()
         } else {
           set({
             screenState: {
@@ -162,8 +166,8 @@ export const createSessionDetailStore = (
           })
         }
       } else {
-        deps.onSessionRevoked?.(targetSessionId)
-        deps.onBack()
+        activeDeps.onSessionRevoked?.(targetSessionId)
+        activeDeps.onBack()
       }
     },
 
@@ -172,7 +176,7 @@ export const createSessionDetailStore = (
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     },
 
     onIdentifierClick: () => {
@@ -180,7 +184,7 @@ export const createSessionDetailStore = (
       if (current.status !== 'content') {
         return
       }
-      deps.onNavigateToIdentifierDetail?.(current.session.identifierId)
+      get().dependencies.onNavigateToIdentifierDetail?.(current.session.identifierId)
     },
 
     onUserClick: () => {
@@ -188,10 +192,11 @@ export const createSessionDetailStore = (
       if (current.status !== 'content') {
         return
       }
+      const activeDeps = get().dependencies
       if (current.isCurrentSession) {
-        deps.onNavigateToProfile?.()
+        activeDeps.onNavigateToProfile?.()
       } else {
-        deps.onNavigateToUserDetail?.(current.session.userId)
+        activeDeps.onNavigateToUserDetail?.(current.session.userId)
       }
     }
   }))
@@ -218,13 +223,14 @@ export const SessionDetailProvider: React.FC<SessionDetailProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<SessionDetailStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createSessionDetailStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createSessionDetailStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <SessionDetailContext.Provider value={storeRef.current}>
+    <SessionDetailContext.Provider value={store}>
       {children}
     </SessionDetailContext.Provider>
   )

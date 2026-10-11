@@ -1,4 +1,5 @@
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
   CoreBackButton,
@@ -21,6 +22,10 @@ import type { FeatureManagementUserStrings } from '@/locales/index'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
 import { getAuditEventListingOptionsConfig } from '@/ui/screens/management/audit/list/audit-event-list-options-config'
 import {
+  searchParamsToListingStates,
+  listingStatesToSearchParams
+} from '@/ui/screens/management/audit/list/auditEventListSearchConverters'
+import {
   AuditEventListProvider,
   useAuditEventListStore
 } from '@/ui/screens/management/audit/list/AuditEventListStore'
@@ -39,16 +44,45 @@ export const AuditEventListTestTags = {
 const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useAuditEventListStore((s) => s.dependencies)
   const screenState = useAuditEventListStore((s) => s.screenState)
   const onRefresh = useAuditEventListStore((s) => s.onRefresh)
   const onLoadNextPage = useAuditEventListStore((s) => s.onLoadNextPage)
   const onEventClick = useAuditEventListStore((s) => s.onEventClick)
   const onBackClick = useAuditEventListStore((s) => s.onBackClick)
   const onToggleFilterPanel = useAuditEventListStore((s) => s.onToggleFilterPanel)
-  const onSortChanged = useAuditEventListStore((s) => s.onSortChanged)
-  const onFilterChanged = useAuditEventListStore((s) => s.onFilterChanged)
-  const onApplyFilters = useAuditEventListStore((s) => s.onApplyFilters)
   const errorParser = useAppErrorParser()
+
+  const [draftSortState, setDraftSortState] = useState<ListingSortState | null>(
+    () => searchParamsToListingStates(deps.searchParams).sortState
+  )
+  const [draftFilterStates, setDraftFilterStates] = useState<Record<string, ListingFilterState>>(
+    () => searchParamsToListingStates(deps.searchParams).filterStates
+  )
+
+  useEffect(() => {
+    const { sortState, filterStates } = searchParamsToListingStates(deps.searchParams)
+    setDraftSortState(sortState)
+    setDraftFilterStates(filterStates)
+  }, [deps.searchParams])
+
+  const handleFilterChanged = (filterId: string, filterState: ListingFilterState | null) => {
+    setDraftFilterStates((prev) => {
+      const next = { ...prev }
+      if (filterState === null) {
+        delete next[filterId]
+      } else {
+        next[filterId] = filterState
+      }
+      return next
+    })
+  }
+
+  const handleApplyFilters = () => {
+    const newSearchParams = listingStatesToSearchParams(draftSortState, draftFilterStates)
+    deps.onSearchParamsChanged?.(newSearchParams)
+    onToggleFilterPanel()
+  }
 
   const isContent = screenState.status === 'content'
   const pagingState = isContent ? screenState.paging : undefined
@@ -78,8 +112,6 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const {
     paging,
-    sortState,
-    filterStates,
     isFilterPanelExpanded,
     actionError
   } = screenState
@@ -129,11 +161,11 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           <div className="w-full mb-2">
             <ListingOptionsPanel
               config={optionsConfig}
-              sortState={sortState}
-              filterStates={filterStates}
-              onSortChanged={onSortChanged}
-              onFilterChanged={onFilterChanged}
-              onApplyClick={onApplyFilters}
+              sortState={draftSortState}
+              filterStates={draftFilterStates}
+              onSortChanged={setDraftSortState}
+              onFilterChanged={handleFilterChanged}
+              onApplyClick={handleApplyFilters}
             />
           </div>
         )}
@@ -182,11 +214,12 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 const AuditEventListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings
 }) => {
+  const deps = useAuditEventListStore((s) => s.dependencies)
   const initScreen = useAuditEventListStore((s) => s.initScreen)
 
   useEffect(() => {
-    initScreen()
-  }, [initScreen])
+    initScreen(deps.searchParams)
+  }, [initScreen, deps.searchParams])
 
   return <AuditEventListContent strings={strings} />
 }

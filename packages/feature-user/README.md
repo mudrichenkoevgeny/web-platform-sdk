@@ -1,6 +1,6 @@
 # @mudrichenkoevgeny/web-platform-sdk-feature-user
 
-Base identity and authentication domain module for the Web Platform SDK: core **authentication state machine**, **WebCrypto token storage**, **MFA / TOTP 2FA workflows**, **session oversight**, **multi-identifier linking**, **MFA step-up HTTP interceptors**, and responsive **React UI screens & components** powered by Zustand.
+Base identity and authentication domain module for the Web Platform SDK: core **authentication state machine**, **WebCrypto token storage**, **MFA / TOTP 2FA workflows**, **session oversight**, **multi-identifier linking**, **MFA step-up HTTP interceptors**, responsive **React UI screens & components**, and **Zod search parameter schemas for TanStack Router**.
 
 This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mudrichenkoevgeny/web-platform-sdk-core-security`, and `@mudrichenkoevgeny/web-platform-sdk-core-settings`. It serves as the shared domain foundation for both `@mudrichenkoevgeny/web-platform-sdk-feature-clientuser` and `@mudrichenkoevgeny/web-platform-sdk-feature-managementuser`.
 
@@ -34,11 +34,11 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 - **Identifier Management:** `AddUserIdentifierEmailUseCase`, `AddUserIdentifierPhoneUseCase`, `AddUserIdentifierGoogleUseCase`, `DeleteUserIdentifierUseCase`.
 - **Account Lifecycles:** `ScheduleUserDeletionUseCase`, `RestoreUserUseCase`.
 
-### 6. React UI Components & Screens
+### 6. React UI Components, Screens & Router Search Schemas
 - **Reusable Components:** `AuthProviderButton`, `AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `MfaChallengeDialog`, `LegalFooter`.
-- **Authentication Screens:**
-  - `LoginWelcomeScreen`, `LoginByEmailScreen`, `LoginByTotpScreen`, `PendingDeletionScreen`, `ResetEmailPasswordScreen`.
-  - `UnlockRootContainer`, `UnlockMethodSelectionScreen`, `UnlockTargetInputScreen`, `UnlockOtpScreen`, `UnlockSuccessScreen`.
+- **Authentication Screens & Schemas:**
+  - `LoginWelcomeScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (`loginByTotpSearchSchema`), `PendingDeletionScreen`, `ResetEmailPasswordScreen`.
+  - `UnlockMethodSelectionScreen`, `UnlockTargetInputScreen` (`unlockTargetSearchSchema`), `UnlockOtpScreen` (`unlockOtpSearchSchema`, `accountUnlockSearchSchema`), `UnlockSuccessScreen`.
 - **Profile & Account Management Screens:**
   - `MainProfileScreen` (user overview & navigation hub).
   - `TotpMainScreen`, `TotpRecoveryCodesScreen` (2FA configuration).
@@ -64,7 +64,7 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 | `src/error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
 | `src/validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
 | `src/ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
-| `src/ui/screens/` | React screens & Zustand stores for Auth, Reset Password, Unlock, and Profile. |
+| `src/ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and Profile. |
 | `src/locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
 | `src/mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
 
@@ -101,10 +101,10 @@ commonComponent.webSocketService.updateWebSocketMessageHandlers([
 ### 3. Rendering User Profile Screen
 
 ```tsx
-import { ProfileRootContainer } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { MainProfileScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 export function UserProfilePage() {
-  return <ProfileRootContainer />
+  return <MainProfileScreen dependencies={dependencies} />
 }
 ```
 

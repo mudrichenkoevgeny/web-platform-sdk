@@ -17,15 +17,15 @@ For detailed domain models, component relationships, and sequence diagrams of sp
 
 ## 1. High-Level Architecture
 
-The platform is designed as a modular **TypeScript** client SDK targeting web browsers. It provides a unified foundation for `fetch`-based networking, AES-GCM encrypted storage, security policies, and identity management. By combining **React** UI components (styled with Tailwind CSS and tokens) with **Zustand** state machines for navigation flows, host applications can integrate complete authentication and management dashboards with minimal boilerplate.
+The platform is designed as a modular **TypeScript** client SDK targeting web browsers. It provides a unified foundation for `fetch`-based networking, AES-GCM encrypted storage, security policies, and identity management. By combining **React** UI components (styled with Tailwind CSS and tokens) with **Zustand** state machines for business logic, host applications can integrate complete authentication and management dashboards with TanStack Router file-based navigation and minimal boilerplate.
 
 ```mermaid
 flowchart TD
     %% Host Applications
     subgraph HostLayer [Host Applications / Samples]
         direction LR
-        ClientApp["sample-client-app\nClient Web Application"]
-        MgmtApp["sample-management-app\nManagement Admin Panel"]
+        ClientApp["sample-client-app\nClient Web Application + TanStack Router"]
+        MgmtApp["sample-management-app\nManagement Admin Panel + TanStack Router"]
     end
 
     %% SDK Feature Modules
@@ -128,3 +128,15 @@ graph TD
     CoreSecurity --> CoreCommon
     CoreSettings --> CoreCommon
 ```
+
+---
+
+## 3. Routing & Web URL Architecture (TanStack Router)
+
+Navigation across SDK screens is driven by **TanStack Router** in host applications (`samples/management-app` and `samples/client-app`) using File-based routing (`src/routes/`).
+
+### Architectural Principles:
+1. **Host-Owned Routing:** Host applications own the `createRouter` instance and route definitions. The SDK provides pure React screens, flat Zod search parameter schemas (`*SearchSchema.ts`), and DI interfaces.
+2. **Router DI Context:** Applications inject UseCases and Repositories into the route tree via TanStack `createRootRouteWithContext<RouterDIContext>()`. Route components extract context using `Route.useRouteContext()` and pass dependencies to SDK components.
+3. **URL as Single Source of Truth:** Query parameters, search filters, and sorting parameters belong in the URL. Zustand stores handle only async network calls and local UI draft state, ensuring F5 page refreshes, deep linking, and browser back/forward buttons work out of the box.
+4. **Flat Search Params & Array Coercion:** Exported Zod schemas (`auditEventListSearchSchema`, etc.) are flat and use array coercion (`z.union([z.string().transform(v => [v]), z.array(z.string())])`) to prevent URL validation errors.

@@ -1,6 +1,6 @@
 # Sample Management App (`@web-platform-sdk/sample-management-app`)
 
-Administrative host application demonstrating how to wire **`web-platform-sdk`** modules for internal management staff (`ManagementAppComponent`).
+Administrative host application demonstrating how to wire **`web-platform-sdk`** modules for internal management staff (`ManagementAppComponent`) with **TanStack Router** file-based routing.
 
 ## How to Build & Run
 
@@ -24,7 +24,7 @@ To run the local development server with Hot Module Replacement (HMR):
   pnpm dev
   ```
 
-* **URL:** `http://localhost:3003`
+* **URL:** `http://localhost:3001`
 
 ### 3. Production Build
 Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
@@ -72,7 +72,8 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
   - Registers administrative error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
   - Installs management WebSocket event handlers.
   - Refreshes management user configuration upon startup.
-- **UI Architecture (`RootContent`):**
+- **UI Architecture (`RootContent` & TanStack Router):**
   - Displays `InitialLoader` during initialization.
-  - Hosts `ManagementLoginRootScreen` when unauthenticated or `ManagementRootScreen` (Admin Panel) when authenticated.
-  - Wraps UI in `SdkProvider` and `ThemeProvider`.
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/management/audit-events`, `/management/users`, `/management/sessions`, `/management/settings/*`).
+  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects UseCases directly into route handlers.
+  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

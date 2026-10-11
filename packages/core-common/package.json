@@ -24,8 +24,9 @@
   },
   "dependencies": {
     "@mudrichenkoevgeny/shared-foundation": "catalog:",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.7.0"
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@storybook/react": "^10.6.1",

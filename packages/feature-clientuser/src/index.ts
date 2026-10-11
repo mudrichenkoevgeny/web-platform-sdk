@@ -36,9 +36,14 @@ export * from './usecase/configuration/refresh-client-user-configuration-use-cas
 export * from './di/client-user-component.js'
 
 export * from './ui/screens/auth/login/client-login-destination.js'
+export * from './ui/screens/auth/login/phone/LoginByPhoneStore.js'
 export * from './ui/screens/auth/login/phone/LoginByPhoneScreen.js'
+export * from './ui/screens/auth/login/phone/LoginByPhoneSearchSchema.js'
+export * from './ui/screens/auth/registration/email/RegistrationByEmailStore.js'
 export * from './ui/screens/auth/registration/email/RegistrationByEmailScreen.js'
+export * from './ui/screens/auth/registration/email/RegistrationByEmailSearchSchema.js'
 export * from './ui/screens/auth/login/root/ClientLoginRootStore.js'
 export * from './ui/screens/auth/login/root/ClientLoginRootScreen.js'
+export * from './ui/screens/auth/login/root/ClientLoginRootSearchSchema.js'
 
 export * from './mock/index.js'

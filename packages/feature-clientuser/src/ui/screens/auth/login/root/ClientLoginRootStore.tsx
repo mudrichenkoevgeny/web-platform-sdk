@@ -57,6 +57,8 @@ export interface ClientLoginRootStoreDependencies {
   unlockByEmailUseCase: UnlockByEmailUseCase
   unlockByPhoneUseCase: UnlockByPhoneUseCase
   externalLauncher: ExternalLauncher
+  loginStep?: string
+  onStepChange?: (step: string) => void
   onDismiss: () => void
   onFinished: () => void
 }

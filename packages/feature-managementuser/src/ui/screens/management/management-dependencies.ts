@@ -1,6 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { createStore, useStore } from 'zustand'
-import type { ManagementDestination } from '@/ui/screens/management/management-destination'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
 import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'
@@ -26,7 +24,6 @@ import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
 import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
 import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 
 export interface ManagementRootStoreDependencies {
@@ -58,70 +55,4 @@ export interface ManagementRootStoreDependencies {
   managementDeleteIdentifierPasswordUseCase: ManagementDeleteIdentifierPasswordUseCase
   getAuditEventsUseCase: GetAuditEventsUseCase
   getAuditEventUseCase: GetAuditEventUseCase
-}
-
-export interface ManagementRootStoreState {
-  stack: ManagementDestination[]
-  dependencies: ManagementRootStoreDependencies
-  push: (dest: ManagementDestination) => void
-  pop: () => void
-}
-
-export type ManagementRootStore = ReturnType<typeof createManagementRootStore>
-
-export const createManagementRootStore = (
-  deps: ManagementRootStoreDependencies,
-  initialStack: ManagementDestination[] = [{ type: 'main' }]
-) => {
-  return createStore<ManagementRootStoreState>()((set, get) => ({
-    stack: initialStack,
-    dependencies: deps,
-
-    push: (dest: ManagementDestination) => {
-      set({ stack: [...get().stack, dest] })
-    },
-
-    pop: () => {
-      const current = get().stack
-      if (current.length > 1) {
-        set({ stack: current.slice(0, current.length - 1) })
-      }
-    }
-  }))
-}
-
-const ManagementRootContext = createContext<ManagementRootStore | null>(null)
-
-export interface ManagementRootProviderProps {
-  dependencies: ManagementRootStoreDependencies
-  initialStack?: ManagementDestination[]
-  children: React.ReactNode
-}
-
-export const ManagementRootProvider: React.FC<ManagementRootProviderProps> = ({
-  dependencies,
-  initialStack,
-  children
-}) => {
-  const [store] = useState(() => createManagementRootStore(dependencies, initialStack))
-
-  useEffect(() => {
-    store.setState({ dependencies })
-  }, [store, dependencies])
-
-  return (
-    <ManagementRootContext.Provider value={store}>
-      {children}
-    </ManagementRootContext.Provider>
-  )
-}
-
-export const useManagementRootStore = <T,>(
-  selector: (state: ManagementRootStoreState) => T
-): T => {
-  const store = useContext(ManagementRootContext)
-  if (!store) {
-    throw new Error('useManagementRootStore must be used within ManagementRootProvider')
-  }
-  return useStore(store, selector)
 }
