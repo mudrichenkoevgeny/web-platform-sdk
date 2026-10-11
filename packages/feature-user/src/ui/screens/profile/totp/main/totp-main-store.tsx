@@ -1,15 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { TotpSetup } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserRepository } from '@/repository/user/user-repository'
 import type { SetupTotpUseCase } from '@/usecase/user/security/setup-totp-use-case'
 import type { EnableTotpUseCase } from '@/usecase/user/security/enable-totp-use-case'
 import type { DisableTotpUseCase } from '@/usecase/user/security/disable-totp-use-case'
-/**
- * Discriminated union representing active screen state for {@link TotpMainScreen}.
- */
+import { TotpMainMode } from '@/ui/screens/profile/totp/main/TotpMainSearchSchema'
+
 export type TotpMainScreenState =
   | {
       status: 'loading'
@@ -38,9 +37,6 @@ export type TotpMainScreenState =
       error: AppError
     }
 
-/**
- * Dependencies required to construct and run {@link TotpMainStore}.
- */
 export interface TotpMainStoreDependencies {
   userRepository: UserRepository
   setupTotpUseCase: SetupTotpUseCase
@@ -48,14 +44,14 @@ export interface TotpMainStoreDependencies {
   disableTotpUseCase: DisableTotpUseCase
   onNavigateToRecoveryCodes: () => void
   onBack: () => void
+  totpMode?: TotpMainMode
+  onTotpModeChange?: (totpMode: TotpMainMode) => void
 }
 
-/**
- * State and actions managed by {@link TotpMainStore}.
- */
 export interface TotpMainStoreState {
   screenState: TotpMainScreenState
   loadTotpStatus: () => Promise<void>
+  initSetup: () => Promise<void>
   onSetupClick: () => Promise<void>
   onCodeChanged: (code: string) => void
   onConfirmSetupClick: () => Promise<void>
@@ -68,9 +64,6 @@ export interface TotpMainStoreState {
 
 export type TotpMainStore = ReturnType<typeof createTotpMainStore>
 
-/**
- * Factory function creating a Zustand store instance for {@link TotpMainScreen}.
- */
 export const createTotpMainStore = (
   deps: TotpMainStoreDependencies,
   initialState?: TotpMainScreenState
@@ -90,15 +83,15 @@ export const createTotpMainStore = (
       }
     },
 
-    onSetupClick: async () => {
+    initSetup: async () => {
       const current = get().screenState
-      if (current.status !== 'disabled') {
+      if (current.status === 'setupInProgress') {
         return
       }
 
       set({
         screenState: {
-          ...current,
+          status: 'disabled',
           actionLoading: true,
           actionError: null
         }
@@ -107,6 +100,7 @@ export const createTotpMainStore = (
       const result = await deps.setupTotpUseCase.execute()
 
       if (isSuccess(result)) {
+        deps.onTotpModeChange?.(TotpMainMode.SETUP_IN_PROGRESS)
         set({
           screenState: {
             status: 'setupInProgress',
@@ -126,6 +120,10 @@ export const createTotpMainStore = (
           }
         })
       }
+    },
+
+    onSetupClick: async () => {
+      await get().initSetup()
     },
 
     onCodeChanged: (code: string) => {
@@ -165,6 +163,7 @@ export const createTotpMainStore = (
 
       if (isSuccess(result)) {
         await deps.userRepository.refreshCurrentUser()
+        deps.onTotpModeChange?.(TotpMainMode.ENABLED)
         deps.onNavigateToRecoveryCodes()
       } else {
         const isValidCode = current.code.length === 6 && /^\d+$/.test(current.code)
@@ -215,6 +214,7 @@ export const createTotpMainStore = (
 
       if (isSuccess(result)) {
         await deps.userRepository.refreshCurrentUser()
+        deps.onTotpModeChange?.(TotpMainMode.DISABLED)
         set({
           screenState: {
             status: 'disabled',
@@ -257,18 +257,12 @@ export const createTotpMainStore = (
 
 const TotpMainContext = createContext<TotpMainStore | null>(null)
 
-/**
- * Props for {@link TotpMainProvider}.
- */
 export interface TotpMainProviderProps {
   dependencies: TotpMainStoreDependencies
   initialState?: TotpMainScreenState
   children: React.ReactNode
 }
 
-/**
- * React Context Provider for {@link TotpMainStore}.
- */
 export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
   dependencies,
   initialState,
@@ -295,8 +289,27 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
           }
         })
       } else {
-        const current = store.getState().screenState
-        if (current?.status !== 'setupInProgress') {
+        const currentStatus = store.getState().screenState.status
+        if (
+          dependencies.totpMode === TotpMainMode.SETUP_IN_PROGRESS &&
+          currentStatus !== 'setupInProgress'
+        ) {
+          void store.getState().initSetup()
+        } else if (
+          dependencies.totpMode !== TotpMainMode.SETUP_IN_PROGRESS &&
+          currentStatus === 'setupInProgress'
+        ) {
+          store.setState({
+            screenState: {
+              status: 'disabled',
+              actionLoading: false,
+              actionError: null
+            }
+          })
+        } else if (
+          currentStatus !== 'setupInProgress' &&
+          currentStatus !== 'disabled'
+        ) {
           store.setState({
             screenState: {
               status: 'disabled',
@@ -317,9 +330,6 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
   )
 }
 
-/**
- * Custom hook to select state from {@link TotpMainStore}.
- */
 export const useTotpMainStore = <T,>(selector: (state: TotpMainStoreState) => T): T => {
   const store = useContext(TotpMainContext)
   if (!store) {

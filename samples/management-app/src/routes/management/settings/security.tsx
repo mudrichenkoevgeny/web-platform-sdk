@@ -1,11 +1,11 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { EditSecuritySettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/management/settings/security')({
   component: function EditSecuritySettingsRoute() {
     const { managementDeps } = Route.useRouteContext()
-    const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     return (
       <EditSecuritySettingsScreen
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/management/settings/security')({
           getManagementSecuritySettingsUseCase: managementDeps.getManagementSecuritySettingsUseCase,
           saveRemoteSecuritySettingsUseCase: managementDeps.saveRemoteSecuritySettingsUseCase,
           resetRemoteSecuritySettingsUseCase: managementDeps.resetRemoteSecuritySettingsUseCase,
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/management' })
         }}
       />
     )

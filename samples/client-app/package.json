@@ -22,6 +22,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "tailwind-merge": "catalog:",
+    "zod": "catalog:",
     "zustand": "catalog:"
   },
   "devDependencies": {

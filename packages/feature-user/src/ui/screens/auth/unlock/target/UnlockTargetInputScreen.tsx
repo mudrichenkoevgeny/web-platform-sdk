@@ -12,18 +12,19 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import type { FeatureUserStrings } from '@/locales/index'
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/field-validator'
 import {
   UnlockTargetInputProvider,
   useUnlockTargetInputStore
 } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
-import type { UnlockTargetInputStoreDependencies } from "@/ui/screens/auth/unlock/target/unlock-target-input-store";
+import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
 
 const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
+  const deps = useUnlockTargetInputStore((s) => s.dependencies)
   const screenState = useUnlockTargetInputStore((s) => s.screenState)
   const onInputChanged = useUnlockTargetInputStore((s) => s.onInputChanged)
   const onSendCodeClick = useUnlockTargetInputStore((s) => s.onSendCodeClick)
@@ -34,7 +35,8 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     return <FullscreenLoading />
   }
 
-  const { method, input, actionLoading, actionError } = screenState
+  const { input, actionLoading, actionError } = screenState
+  const method = deps.method ?? UnlockMethod.EMAIL
 
   const isInputValid =
     method === UnlockMethod.EMAIL
@@ -129,23 +131,11 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-/**
- * Props for the {@link UnlockTargetInputScreen} component.
- */
 export interface UnlockTargetInputScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Screen dependencies for unlock target input.
-   */
   dependencies: UnlockTargetInputStoreDependencies
-  /**
-   * Localized strings dictionary override.
-   */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component for entering an email address or phone number to request an unlock OTP code.
- */
 export const UnlockTargetInputScreen = forwardRef<HTMLDivElement, UnlockTargetInputScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (

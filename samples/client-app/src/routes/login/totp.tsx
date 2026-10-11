@@ -1,15 +1,18 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { z } from 'zod'
 import { LoginByTotpScreen, loginByTotpSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 export const Route = createFileRoute('/login/totp')({
-  validateSearch: loginByTotpSearchSchema,
+  validateSearch: loginByTotpSearchSchema.extend({
+    mfaToken: z.string().optional()
+  }),
   component: function ClientLoginByTotpRoute() {
-    const { loginDeps } = Route.useRouteContext()
-    const { mfaToken = '' } = Route.useSearch()
+    const { loginDependencies } = Route.useRouteContext()
+    const search = Route.useSearch()
+    const { mfaToken = '' } = search
     const navigate = Route.useNavigate()
 
-    if (!loginDeps) {
+    if (!loginDependencies) {
       return null
     }
 
@@ -17,11 +20,14 @@ export const Route = createFileRoute('/login/totp')({
       <LoginByTotpScreen
         dependencies={{
           mfaToken,
-          loginByTotpUseCase: loginDeps.loginByTotpUseCase,
-          loginByTotpRecoveryCodeUseCase: loginDeps.loginByTotpRecoveryCodeUseCase,
-          onNavigateToPendingDeletion: () => navigate({ to: '..' }),
-          onBack: () => navigate({ to: '..' }),
-          onFinished: () => navigate({ to: '..' })
+          loginTotpMode: search.loginTotpMode,
+          onModeChange: (loginTotpMode) =>
+            void navigate({ search: (prev) => ({ ...prev, loginTotpMode }) }),
+          loginByTotpUseCase: loginDependencies.loginByTotpUseCase,
+          loginByTotpRecoveryCodeUseCase: loginDependencies.loginByTotpRecoveryCodeUseCase,
+          onNavigateToPendingDeletion: () => navigate({ to: '/login' }),
+          onBack: () => navigate({ to: '/login' }),
+          onFinished: () => navigate({ to: '/login' })
         }}
       />
     )

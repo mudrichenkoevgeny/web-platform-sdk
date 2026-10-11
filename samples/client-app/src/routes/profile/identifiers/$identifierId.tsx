@@ -1,13 +1,14 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/profile/identifiers/$identifierId')({
   component: function ProfileIdentifierDetailRoute() {
     const { appComponent } = Route.useRouteContext()
     const { identifierId } = Route.useParams()
     const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     if (!appComponent) {
       return null
@@ -23,7 +24,7 @@ export const Route = createFileRoute('/profile/identifiers/$identifierId')({
           authStorage: appComponent.clientUserComponent.authStorage,
           onNavigateToProfile: () => navigate({ to: '/profile' }),
           onNavigateToUserDetail: () => navigate({ to: '/profile' }),
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/profile/identifiers' })
         }}
       />
     )

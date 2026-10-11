@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import type { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import type { AccountLockoutType, AppType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ExternalLauncher } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
@@ -58,6 +58,9 @@ export interface ClientLoginRootStoreDependencies {
   unlockByPhoneUseCase: UnlockByPhoneUseCase
   externalLauncher: ExternalLauncher
   loginStep?: string
+  mfaToken?: string
+  lockoutType?: AccountLockoutType | null
+  lockoutUntil?: number | null
   onStepChange?: (step: string) => void
   onDismiss: () => void
   onFinished: () => void
@@ -72,21 +75,70 @@ export interface ClientLoginRootStoreState {
 
 export type ClientLoginRootStore = ReturnType<typeof createClientLoginRootStore>
 
+export function mapStepToClientLoginDestination(
+  step?: string,
+  mfaToken?: string,
+  lockoutType?: AccountLockoutType | null,
+  lockoutUntil?: number | null
+): ClientLoginDestination | null {
+  if (!step) {
+    return null
+  }
+  switch (step) {
+    case 'welcome':
+      return { type: 'welcome' }
+    case 'email':
+    case 'loginByEmail':
+      return { type: 'loginByEmail' }
+    case 'phone':
+    case 'loginByPhone':
+      return { type: 'loginByPhone' }
+    case 'registration':
+    case 'registrationByEmail':
+      return { type: 'registrationByEmail' }
+    case 'reset_password':
+    case 'resetEmailPassword':
+      return { type: 'resetEmailPassword' }
+    case 'totp':
+    case 'loginByTotp':
+      return { type: 'loginByTotp', mfaToken: mfaToken ?? '' }
+    case 'pending_deletion':
+    case 'pendingDeletion':
+      return { type: 'pendingDeletion' }
+    case 'unlock':
+    case 'accountUnlock':
+      return { type: 'accountUnlock', lockoutType, lockoutUntil }
+    default:
+      return null
+  }
+}
+
 export const createClientLoginRootStore = (
   deps: ClientLoginRootStoreDependencies,
-  initialDestination: ClientLoginDestination = { type: 'welcome' }
+  initialDestination?: ClientLoginDestination
 ) => {
+  const startDestination =
+    initialDestination ??
+    mapStepToClientLoginDestination(deps.loginStep, deps.mfaToken, deps.lockoutType, deps.lockoutUntil) ??
+    { type: 'welcome' }
+
   return createStore<ClientLoginRootStoreState>()((set, get) => ({
-    stack: [initialDestination],
+    stack: [startDestination],
 
     push: (destination: ClientLoginDestination) => {
+      deps.onStepChange?.(destination.type)
       set({ stack: [...get().stack, destination] })
     },
 
     pop: () => {
       const currentStack = get().stack
       if (currentStack.length > 1) {
-        set({ stack: currentStack.slice(0, currentStack.length - 1) })
+        const nextStack = currentStack.slice(0, currentStack.length - 1)
+        const previousDestination = nextStack[nextStack.length - 1]
+        if (previousDestination) {
+          deps.onStepChange?.(previousDestination.type)
+        }
+        set({ stack: nextStack })
       } else {
         deps.onDismiss()
       }
@@ -112,6 +164,27 @@ export const ClientLoginRootProvider: React.FC<ClientLoginRootProviderProps> = (
   children
 }) => {
   const [store] = useState(() => createClientLoginRootStore(dependencies, initialDestination))
+
+  useEffect(() => {
+    store.setState((state) => {
+      const currentTop = state.stack[state.stack.length - 1]
+      const mappedDestination = mapStepToClientLoginDestination(
+        dependencies.loginStep,
+        dependencies.mfaToken,
+        dependencies.lockoutType,
+        dependencies.lockoutUntil
+      )
+
+      if (mappedDestination && currentTop?.type !== mappedDestination.type) {
+        return {
+          ...state,
+          dependencies,
+          stack: [mappedDestination]
+        }
+      }
+      return { ...state, dependencies }
+    })
+  }, [store, dependencies])
 
   return (
     <ClientLoginRootContext.Provider value={store}>

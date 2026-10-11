@@ -1,13 +1,14 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { AuditEventDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import { toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/management/audit-events/$eventId')({
   component: function AuditEventDetailRoute() {
     const { managementDeps } = Route.useRouteContext()
     const { eventId } = Route.useParams()
     const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     if (!managementDeps) {
       return null
@@ -25,8 +26,8 @@ export const Route = createFileRoute('/management/audit-events/$eventId')({
             navigate({ to: '/management/sessions/$sessionId', params: { sessionId } }),
           onNavigateToIdentifierDetail: (identifierId) =>
             navigate({ to: '/management/identifiers/$identifierId', params: { identifierId } }),
-          onNavigateToProfile: managementDeps.onNavigateToProfile,
-          onBack: () => navigate({ to: '..' })
+          onNavigateToProfile: () => navigate({ to: '/management' }),
+          onBack: () => navigateUp({ to: '/management/audit-events' })
         }}
       />
     )

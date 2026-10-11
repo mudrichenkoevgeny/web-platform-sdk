@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ManagementLoginRootScreen,
@@ -10,7 +10,6 @@ export const Route = createFileRoute('/management/login/')({
   component: function ManagementLoginRoute() {
     const { appComponent, loginDependencies } = Route.useRouteContext()
     const navigate = Route.useNavigate()
-    const search = Route.useSearch()
     const [isAuthorized, setIsAuthorized] = useState(false)
 
     useEffect(() => {
@@ -33,12 +32,7 @@ export const Route = createFileRoute('/management/login/')({
       <div className="w-full h-full flex items-center justify-center p-4">
         <div className="bg-card text-card-foreground border border-border rounded-xl shadow-lg w-full max-w-lg overflow-hidden relative p-4">
           <ManagementLoginRootScreen
-            dependencies={{
-              ...loginDependencies,
-              loginStep: search.loginStep,
-              onStepChange: (step) =>
-                void navigate({ search: (prev) => ({ ...prev, loginStep: step }) })
-            }}
+            dependencies={loginDependencies}
           />
         </div>
       </div>

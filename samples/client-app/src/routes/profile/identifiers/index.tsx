@@ -1,12 +1,13 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { SelfIdentifierListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/profile/identifiers/')({
   component: function SelfIdentifierListRoute() {
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     if (!appComponent) return null
 
@@ -31,7 +32,7 @@ export const Route = createFileRoute('/profile/identifiers/')({
           authStorage: appComponent.clientUserComponent.authStorage,
           onIdentifierSelect: (identifierId) =>
             navigate({ to: '/profile/identifiers/$identifierId', params: { identifierId } }),
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/profile' })
         }}
       />
     )

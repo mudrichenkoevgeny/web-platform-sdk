@@ -12,16 +12,17 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import type { FeatureUserStrings } from '@/locales/index'
 import {
   UnlockOtpProvider,
   useUnlockOtpStore
 } from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
-import type { UnlockOtpStoreDependencies } from "@/ui/screens/auth/unlock/otp/unlock-otp-store";
+import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
 
 const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
+  const deps = useUnlockOtpStore((s) => s.dependencies)
   const screenState = useUnlockOtpStore((s) => s.screenState)
   const onCodeChanged = useUnlockOtpStore((s) => s.onCodeChanged)
   const onUnlockClick = useUnlockOtpStore((s) => s.onUnlockClick)
@@ -33,7 +34,8 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     return <FullscreenLoading />
   }
 
-  const { target, codeInput, remainingDelaySeconds, actionLoading, actionError } = screenState
+  const { codeInput, remainingDelaySeconds, actionLoading, actionError } = screenState
+  const target = deps.target
 
   const canUnlock = !actionLoading && codeInput.trim().length > 0
 
@@ -122,23 +124,11 @@ const UnlockOtpController: React.FC<{ strings?: FeatureUserStrings }> = ({ strin
   return <UnlockOtpContent strings={strings} />
 }
 
-/**
- * Props for the {@link UnlockOtpScreen} component.
- */
 export interface UnlockOtpScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Screen dependencies for unlock OTP verification.
-   */
   dependencies: UnlockOtpStoreDependencies
-  /**
-   * Localized strings dictionary override.
-   */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component for confirming an unlock OTP code sent via email or phone.
- */
 export const UnlockOtpScreen = forwardRef<HTMLDivElement, UnlockOtpScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (

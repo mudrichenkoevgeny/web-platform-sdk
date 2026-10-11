@@ -26,9 +26,6 @@ export function MainScreen(): React.JSX.Element {
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
 
   const activeTab: MainTabKey = useMemo(() => {
-    if (location.pathname.startsWith('/profile')) {
-      return 'profile'
-    }
     if (location.pathname.startsWith('/management')) {
       return 'settings'
     }
@@ -85,9 +82,7 @@ export function MainScreen(): React.JSX.Element {
     }
     if (tabKey === 'home') {
       void navigate({ to: '/', replace: true })
-    } else if (tabKey === 'profile') {
-      void navigate({ to: '/profile', replace: true })
-    } else if (tabKey === 'settings') {
+    } else if (tabKey === 'settings' || tabKey === 'profile') {
       void navigate({ to: '/management', replace: true })
     }
   }

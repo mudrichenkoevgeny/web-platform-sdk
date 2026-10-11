@@ -13,18 +13,19 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import type { FeatureUserStrings } from '@/locales/index'
 import { FieldValidator } from '@/validator/field-validator'
 import {
   LoginByTotpMode,
   LoginByTotpProvider,
   useLoginByTotpStore
 } from '@/ui/screens/auth/login/totp/login-by-totp-store'
-import type { LoginByTotpStoreDependencies } from "@/ui/screens/auth/login/totp/login-by-totp-store";
+import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/login-by-totp-store'
 
 const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   strings = enUserStrings
 }) => {
+  const deps = useLoginByTotpStore((s) => s.dependencies)
   const screenState = useLoginByTotpStore((s) => s.screenState)
   const onCodeChanged = useLoginByTotpStore((s) => s.onCodeChanged)
   const onToggleModeClick = useLoginByTotpStore((s) => s.onToggleModeClick)
@@ -36,7 +37,8 @@ const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     return <FullscreenLoading />
   }
 
-  const { code, mode, actionLoading, actionError } = screenState
+  const { code, actionLoading, actionError } = screenState
+  const mode = deps.loginTotpMode ?? LoginByTotpMode.TOTP
 
   const isCodeValid =
     mode === LoginByTotpMode.TOTP
@@ -147,23 +149,11 @@ const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-/**
- * Props for the {@link LoginByTotpScreen} component.
- */
 export interface LoginByTotpScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Screen dependencies for state management and MFA verification.
-   */
   dependencies: LoginByTotpStoreDependencies
-  /**
-   * Localized strings dictionary override.
-   */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component for MFA TOTP verification and backup recovery code sign-in.
- */
 export const LoginByTotpScreen = forwardRef<HTMLDivElement, LoginByTotpScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (

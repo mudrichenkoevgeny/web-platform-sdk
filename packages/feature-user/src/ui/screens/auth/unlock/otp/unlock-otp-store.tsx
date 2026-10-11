@@ -1,86 +1,49 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
 import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-email-confirmation-use-case'
 import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
 import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
 import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/unlock-by-phone-use-case'
 
-/**
- * Union representing the active screen state for {@link UnlockOtpScreen}.
- */
 export type UnlockOtpScreenState =
   | {
       status: 'loading'
     }
   | {
       status: 'content'
-      method: UnlockMethod
-      target: string
       codeInput: string
       remainingDelaySeconds: number
       actionLoading: boolean
       actionError: AppError | null
     }
 
-/**
- * Dependencies required for initializing {@link UnlockOtpStore}.
- */
 export interface UnlockOtpStoreDependencies {
-  /** Target unlock method (email or phone). */
   method: UnlockMethod
-  /** Target email address or phone number receiving OTP code. */
   target: string
-  /** Initial resend cooldown delay in seconds. */
   initialDelaySeconds?: number
-  /** Use case for unlocking account using email OTP code. */
   unlockByEmailUseCase: UnlockByEmailUseCase
-  /** Use case for unlocking account using phone OTP code. */
   unlockByPhoneUseCase: UnlockByPhoneUseCase
-  /** Use case for resending email unlock confirmation code. */
   sendUnlockEmailConfirmationUseCase: SendUnlockEmailConfirmationUseCase
-  /** Use case for resending phone unlock confirmation code. */
   sendUnlockPhoneConfirmationUseCase: SendUnlockPhoneConfirmationUseCase
-  /** Navigation callback for unlock success step. */
   onUnlockSuccess: () => void
-  /** Navigation callback for popping screen step. */
   onBack: () => void
 }
 
-/**
- * State and action contract for {@link UnlockOtpStore}.
- */
 export interface UnlockOtpStoreState {
-  /** Dependencies passed to store instance. */
   dependencies: UnlockOtpStoreDependencies
-  /** Active reactive screen state. */
   screenState: UnlockOtpScreenState
-  /** Initializes resend countdown timer if initial delay is present. */
   initTimer: () => void
-  /** Updates OTP code text. */
   onCodeChanged: (code: string) => void
-  /** Submits OTP code to unlock account. */
   onUnlockClick: () => Promise<void>
-  /** Resends new OTP confirmation code. */
   onResendCodeClick: () => Promise<void>
-  /** Handles back button navigation. */
   onBackClick: () => void
 }
 
-/**
- * Type alias for the per-instance Zustand store.
- */
 export type UnlockOtpStore = ReturnType<typeof createUnlockOtpStore>
 
-/**
- * Instantiates a new isolated {@link UnlockOtpStore} for a screen instance.
- *
- * @param deps - Screen dependencies
- * @param initialState - Optional initial state override
- * @returns Vanilla Zustand store instance
- */
 export const createUnlockOtpStore = (
   deps: UnlockOtpStoreDependencies,
   initialState?: UnlockOtpScreenState
@@ -130,8 +93,6 @@ export const createUnlockOtpStore = (
 
   const defaultContentState: UnlockOtpScreenState = {
     status: 'content',
-    method: deps.method,
-    target: deps.target,
     codeInput: '',
     remainingDelaySeconds: deps.initialDelaySeconds ?? 0,
     actionLoading: false,
@@ -184,10 +145,11 @@ export const createUnlockOtpStore = (
         }
       })
 
-      const targetToUse = current.target || activeDeps.target
+      const targetToUse = activeDeps.target
+      const activeMethod = activeDeps.method ?? UnlockMethod.EMAIL
 
       const result =
-        current.method === UnlockMethod.EMAIL
+        activeMethod === UnlockMethod.EMAIL
           ? await activeDeps.unlockByEmailUseCase.execute(targetToUse, code)
           : await activeDeps.unlockByPhoneUseCase.execute(targetToUse, code)
 
@@ -218,6 +180,9 @@ export const createUnlockOtpStore = (
       }
 
       const activeDeps = get().dependencies
+      const targetToUse = activeDeps.target
+      const activeMethod = activeDeps.method ?? UnlockMethod.EMAIL
+
       set({
         screenState: {
           ...current,
@@ -226,10 +191,8 @@ export const createUnlockOtpStore = (
         }
       })
 
-      const targetToUse = current.target || activeDeps.target
-
       const result =
-        current.method === UnlockMethod.EMAIL
+        activeMethod === UnlockMethod.EMAIL
           ? await activeDeps.sendUnlockEmailConfirmationUseCase.execute(targetToUse)
           : await activeDeps.sendUnlockPhoneConfirmationUseCase.execute(targetToUse)
 
@@ -266,14 +229,12 @@ export const createUnlockOtpStore = (
 
 const UnlockOtpContext = createContext<UnlockOtpStore | null>(null)
 
-/** Props for {@link UnlockOtpProvider}. */
 export interface UnlockOtpProviderProps {
   dependencies: UnlockOtpStoreDependencies
   initialState?: UnlockOtpScreenState
   children: React.ReactNode
 }
 
-/** Context provider isolating {@link UnlockOtpStore} per component mount. */
 export const UnlockOtpProvider: React.FC<UnlockOtpProviderProps> = ({
   dependencies,
   initialState,
@@ -292,12 +253,6 @@ export const UnlockOtpProvider: React.FC<UnlockOtpProviderProps> = ({
   )
 }
 
-/**
- * Custom hook to consume isolated {@link UnlockOtpStore} state.
- *
- * @param selector - State selector function
- * @returns Selected state slice
- */
 export const useUnlockOtpStore = <T,>(
   selector: (state: UnlockOtpStoreState) => T
 ): T => {

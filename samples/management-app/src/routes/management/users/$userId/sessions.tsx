@@ -1,13 +1,14 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { UserSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import { toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/management/users/$userId/sessions')({
   component: function UserSessionListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const { userId } = Route.useParams()
     const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     if (!managementDeps) {
       return null
@@ -22,7 +23,7 @@ export const Route = createFileRoute('/management/users/$userId/sessions')({
           managementDeleteAllUserSessionsUseCase: managementDeps.managementDeleteAllUserSessionsUseCase,
           onNavigateToSessionDetail: (session) =>
             navigate({ to: '/management/sessions/$sessionId', params: { sessionId: session.id } }),
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/management/users/$userId', params: { userId } })
         }}
       />
     )

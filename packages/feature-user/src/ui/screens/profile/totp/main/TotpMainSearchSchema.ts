@@ -1,13 +1,13 @@
 import { z } from 'zod'
 
-/**
- * Search parameter schema for TotpMainScreen route.
- */
+export enum TotpMainMode {
+  DISABLED = 'disabled',
+  SETUP_IN_PROGRESS = 'setupInProgress',
+  ENABLED = 'enabled'
+}
+
 export const totpMainSearchSchema = z.object({
-  totpMode: z.enum(['disabled', 'setupInProgress', 'enabled']).optional()
+  totpMode: z.nativeEnum(TotpMainMode).optional()
 })
 
-/**
- * Inferred search parameters type for TotpMainScreen route.
- */
 export type TotpMainSearch = z.infer<typeof totpMainSearchSchema>

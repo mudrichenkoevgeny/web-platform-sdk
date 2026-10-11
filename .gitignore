@@ -2,11 +2,12 @@
 node_modules/
 .pnpm-store/
 
-# Build outputs
+# Build outputs and generated files
 dist/
 build/
 out/
 *.tsbuildinfo
+*.gen.ts
 
 # Test and coverage artifacts
 coverage/

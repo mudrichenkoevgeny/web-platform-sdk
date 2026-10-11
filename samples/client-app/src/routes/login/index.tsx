@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ClientLoginRootScreen,
-  clientLoginRootSearchSchema
+  clientLoginRootSearchSchema,
+  type ClientLoginRootSearch
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
 
 export const Route = createFileRoute('/login/')({
@@ -36,8 +37,8 @@ export const Route = createFileRoute('/login/')({
             dependencies={{
               ...loginDependencies,
               loginStep: search.loginStep,
-              onStepChange: (step) =>
-                void navigate({ search: (prev) => ({ ...prev, loginStep: step }) })
+              onStepChange: (step: string) =>
+                void navigate({ search: (prev) => ({ ...prev, loginStep: step as ClientLoginRootSearch['loginStep'] }) })
             }}
           />
         </div>

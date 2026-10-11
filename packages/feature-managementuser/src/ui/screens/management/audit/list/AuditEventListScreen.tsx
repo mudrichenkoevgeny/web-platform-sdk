@@ -216,10 +216,17 @@ const AuditEventListController: React.FC<{ strings?: FeatureManagementUserString
 }) => {
   const deps = useAuditEventListStore((s) => s.dependencies)
   const initScreen = useAuditEventListStore((s) => s.initScreen)
+  const onSearchParamsUpdated = useAuditEventListStore((s) => s.onSearchParamsUpdated)
+  const isMounted = React.useRef(false)
 
   useEffect(() => {
-    initScreen(deps.searchParams)
-  }, [initScreen, deps.searchParams])
+    if (!isMounted.current) {
+      isMounted.current = true
+      initScreen(deps.searchParams)
+    } else {
+      onSearchParamsUpdated(deps.searchParams)
+    }
+  }, [deps.searchParams, initScreen, onSearchParamsUpdated])
 
   return <AuditEventListContent strings={strings} />
 }

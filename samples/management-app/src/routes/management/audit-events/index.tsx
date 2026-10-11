@@ -1,6 +1,6 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { AuditEventListScreen, auditEventListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/management/audit-events/')({
   validateSearch: auditEventListSearchSchema,
@@ -8,6 +8,7 @@ export const Route = createFileRoute('/management/audit-events/')({
     const { managementDeps } = Route.useRouteContext()
     const searchParams = Route.useSearch()
     const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     return (
       <AuditEventListScreen
@@ -18,7 +19,7 @@ export const Route = createFileRoute('/management/audit-events/')({
             navigate({ search: (old) => ({ ...old, ...newParams }) }),
           onNavigateToEventDetail: (eventId) =>
             navigate({ to: '/management/audit-events/$eventId', params: { eventId } }),
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/management' })
         }}
       />
     )

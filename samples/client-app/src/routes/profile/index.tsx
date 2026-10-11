@@ -1,4 +1,3 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { MainProfileScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'

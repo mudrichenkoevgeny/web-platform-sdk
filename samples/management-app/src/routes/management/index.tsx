@@ -1,4 +1,3 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 

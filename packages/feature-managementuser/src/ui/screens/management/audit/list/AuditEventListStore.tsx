@@ -43,6 +43,7 @@ export interface AuditEventListStoreState {
   dependencies: AuditEventListStoreDependencies
   screenState: AuditEventListScreenState
   initScreen: (searchParams?: AuditEventListSearchParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: AuditEventListSearchParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onEventClick: (eventId: AuditEventId) => void
@@ -166,6 +167,19 @@ export const createAuditEventListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
+      await fetchPage(set, get, 1, searchParams)
+    },
+
+    onSearchParamsUpdated: async (searchParams?: AuditEventListSearchParams) => {
+      set({
+        screenState: {
+          status: 'content',
+          paging: createInitialPaginationState<AuditEventSummary>(),
+          isFilterPanelExpanded: false,
+          actionLoading: false,
+          actionError: null
+        }
+      })
       await fetchPage(set, get, 1, searchParams)
     },
 

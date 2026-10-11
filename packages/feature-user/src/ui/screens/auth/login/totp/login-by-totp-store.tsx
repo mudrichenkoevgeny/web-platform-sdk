@@ -2,24 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-by-totp-recovery-code-use-case'
 import type { LoginByTotpUseCase } from '@/usecase/auth/login/login-by-totp-use-case'
 import { FieldValidator } from '@/validator/field-validator'
 
-/**
- * Mode determining active MFA verification method.
- */
 export enum LoginByTotpMode {
-  /** Time-based One-Time Password from authenticator app. */
   TOTP = 'TOTP',
-  /** Static backup recovery code. */
   RECOVERY_CODE = 'RECOVERY_CODE'
 }
 
-/**
- * Union representing the active screen state for {@link LoginByTotpScreen}.
- */
 export type LoginByTotpScreenState =
   | {
       status: 'loading'
@@ -28,59 +20,32 @@ export type LoginByTotpScreenState =
       status: 'content'
       mfaToken: string
       code: string
-      mode: LoginByTotpMode
       actionLoading: boolean
       actionError: AppError | null
     }
 
-/**
- * Dependencies required for initializing {@link LoginByTotpStore}.
- */
 export interface LoginByTotpStoreDependencies {
-  /** Opaque intermediate token required for MFA sign-in call. */
   mfaToken: string
-  /** Use case for performing sign-in with TOTP code. */
   loginByTotpUseCase: LoginByTotpUseCase
-  /** Use case for performing sign-in with recovery code. */
   loginByTotpRecoveryCodeUseCase: LoginByTotpRecoveryCodeUseCase
-  /** Navigation callback for account pending deletion restoration screen. */
   onNavigateToPendingDeletion: () => void
-  /** Navigation callback for popping current screen step. */
   onBack: () => void
-  /** Flow completion callback. */
   onFinished: () => void
+  loginTotpMode?: LoginByTotpMode
+  onModeChange?: (mode: LoginByTotpMode) => void
 }
 
-/**
- * State and action contract for {@link LoginByTotpStore}.
- */
 export interface LoginByTotpStoreState {
-  /** Dependencies passed to store instance. */
   dependencies: LoginByTotpStoreDependencies
-  /** Active reactive screen state. */
   screenState: LoginByTotpScreenState
-  /** Updates verification code text. */
   onCodeChanged: (code: string) => void
-  /** Toggles between TOTP and Recovery Code modes. */
   onToggleModeClick: () => void
-  /** Validates code and executes login request. */
   onSubmitClick: () => Promise<void>
-  /** Pops screen step. */
   onBackClick: () => void
 }
 
-/**
- * Type alias for the per-instance Zustand store.
- */
 export type LoginByTotpStore = ReturnType<typeof createLoginByTotpStore>
 
-/**
- * Instantiates a new isolated {@link LoginByTotpStore} for a screen instance.
- *
- * @param deps - Screen dependencies
- * @param initialState - Optional initial state override
- * @returns Vanilla Zustand store instance
- */
 export const createLoginByTotpStore = (
   deps: LoginByTotpStoreDependencies,
   initialState?: LoginByTotpScreenState
@@ -89,7 +54,6 @@ export const createLoginByTotpStore = (
     status: 'content',
     mfaToken: deps.mfaToken,
     code: '',
-    mode: LoginByTotpMode.TOTP,
     actionLoading: false,
     actionError: null
   }
@@ -114,24 +78,25 @@ export const createLoginByTotpStore = (
     },
 
     onToggleModeClick: () => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
+      const activeDeps = get().dependencies
+      const currentMode = activeDeps.loginTotpMode ?? LoginByTotpMode.TOTP
       const nextMode =
-        current.mode === LoginByTotpMode.TOTP
+        currentMode === LoginByTotpMode.TOTP
           ? LoginByTotpMode.RECOVERY_CODE
           : LoginByTotpMode.TOTP
 
-      set({
-        screenState: {
-          ...current,
-          mode: nextMode,
-          code: '',
-          actionError: null
-        }
-      })
+      activeDeps.onModeChange?.(nextMode)
+
+      const current = get().screenState
+      if (current.status === 'content') {
+        set({
+          screenState: {
+            ...current,
+            code: '',
+            actionError: null
+          }
+        })
+      }
     },
 
     onSubmitClick: async () => {
@@ -141,8 +106,9 @@ export const createLoginByTotpStore = (
       }
 
       const activeDeps = get().dependencies
+      const currentMode = activeDeps.loginTotpMode ?? LoginByTotpMode.TOTP
       const isCodeValid =
-        current.mode === LoginByTotpMode.TOTP
+        currentMode === LoginByTotpMode.TOTP
           ? FieldValidator.isValidTotp(current.code)
           : current.code.trim().length > 0
 
@@ -161,7 +127,7 @@ export const createLoginByTotpStore = (
       const mfaTokenToUse = current.mfaToken || activeDeps.mfaToken
 
       const result =
-        current.mode === LoginByTotpMode.TOTP
+        currentMode === LoginByTotpMode.TOTP
           ? await activeDeps.loginByTotpUseCase.execute(mfaTokenToUse, current.code)
           : await activeDeps.loginByTotpRecoveryCodeUseCase.execute(mfaTokenToUse, current.code)
 
@@ -197,21 +163,12 @@ export const createLoginByTotpStore = (
 
 const LoginByTotpContext = createContext<LoginByTotpStore | null>(null)
 
-/**
- * Props for {@link LoginByTotpProvider}.
- */
 export interface LoginByTotpProviderProps {
-  /** Dependencies for initializing the store. */
   dependencies: LoginByTotpStoreDependencies
-  /** Optional initial state override. */
   initialState?: LoginByTotpScreenState
-  /** React children. */
   children: React.ReactNode
 }
 
-/**
- * Context provider isolating {@link LoginByTotpStore} per component mount.
- */
 export const LoginByTotpProvider: React.FC<LoginByTotpProviderProps> = ({
   dependencies,
   initialState,
@@ -230,12 +187,6 @@ export const LoginByTotpProvider: React.FC<LoginByTotpProviderProps> = ({
   )
 }
 
-/**
- * Custom hook to consume isolated {@link LoginByTotpStore} state.
- *
- * @param selector - State selector function
- * @returns Selected state slice
- */
 export const useLoginByTotpStore = <T,>(
   selector: (state: LoginByTotpStoreState) => T
 ): T => {

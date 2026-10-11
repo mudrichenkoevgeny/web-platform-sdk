@@ -1,11 +1,11 @@
-import React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TotpRecoveryCodesScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/profile/totp/recovery')({
   component: function TotpRecoveryCodesRoute() {
     const { appComponent } = Route.useRouteContext()
-    const navigate = Route.useNavigate()
+    const navigateUp = useNavigateUp()
 
     if (!appComponent) return null
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/profile/totp/recovery')({
         dependencies={{
           getRecoveryCodesUseCase: appComponent.clientUserComponent.getRecoveryCodesUseCase,
           regenerateRecoveryCodesUseCase: appComponent.clientUserComponent.regenerateRecoveryCodesUseCase,
-          onBack: () => navigate({ to: '..' })
+          onBack: () => navigateUp({ to: '/profile/totp' })
         }}
       />
     )

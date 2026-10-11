@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import type { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import type { AccountLockoutType, AppType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ExternalLauncher } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
@@ -41,6 +41,11 @@ export interface ManagementLoginRootStoreDependencies {
   unlockByEmailUseCase: UnlockByEmailUseCase
   unlockByPhoneUseCase: UnlockByPhoneUseCase
   externalLauncher: ExternalLauncher
+  loginStep?: string
+  mfaToken?: string
+  lockoutType?: AccountLockoutType | null
+  lockoutUntil?: number | null
+  onStepChange?: (step: string) => void
   onDismiss: () => void
   onFinished: () => void
 }
@@ -54,21 +59,64 @@ export interface ManagementLoginRootStoreState {
 
 export type ManagementLoginRootStore = ReturnType<typeof createManagementLoginRootStore>
 
+export function mapStepToManagementLoginDestination(
+  step?: string,
+  mfaToken?: string,
+  lockoutType?: AccountLockoutType | null,
+  lockoutUntil?: number | null
+): ManagementLoginDestination | null {
+  if (!step) {
+    return null
+  }
+  switch (step) {
+    case 'welcome':
+      return { type: 'welcome' }
+    case 'email':
+    case 'loginByEmail':
+      return { type: 'loginByEmail' }
+    case 'reset_password':
+    case 'resetEmailPassword':
+      return { type: 'resetEmailPassword' }
+    case 'totp':
+    case 'loginByTotp':
+      return { type: 'loginByTotp', mfaToken: mfaToken ?? '' }
+    case 'pending_deletion':
+    case 'pendingDeletion':
+      return { type: 'pendingDeletion' }
+    case 'unlock':
+    case 'accountUnlock':
+      return { type: 'accountUnlock', lockoutType, lockoutUntil }
+    default:
+      return null
+  }
+}
+
 export const createManagementLoginRootStore = (
   deps: ManagementLoginRootStoreDependencies,
-  initialDestination: ManagementLoginDestination = { type: 'welcome' }
+  initialDestination?: ManagementLoginDestination
 ) => {
+  const startDestination =
+    initialDestination ??
+    mapStepToManagementLoginDestination(deps.loginStep, deps.mfaToken, deps.lockoutType, deps.lockoutUntil) ??
+    { type: 'welcome' }
+
   return createStore<ManagementLoginRootStoreState>()((set, get) => ({
-    stack: [initialDestination],
+    stack: [startDestination],
 
     push: (destination: ManagementLoginDestination) => {
+      deps.onStepChange?.(destination.type)
       set({ stack: [...get().stack, destination] })
     },
 
     pop: () => {
       const currentStack = get().stack
       if (currentStack.length > 1) {
-        set({ stack: currentStack.slice(0, currentStack.length - 1) })
+        const nextStack = currentStack.slice(0, currentStack.length - 1)
+        const previousDestination = nextStack[nextStack.length - 1]
+        if (previousDestination) {
+          deps.onStepChange?.(previousDestination.type)
+        }
+        set({ stack: nextStack })
       } else {
         deps.onDismiss()
       }
@@ -94,6 +142,27 @@ export const ManagementLoginRootProvider: React.FC<ManagementLoginRootProviderPr
   children
 }) => {
   const [store] = useState(() => createManagementLoginRootStore(dependencies, initialDestination))
+
+  useEffect(() => {
+    store.setState((state) => {
+      const currentTop = state.stack[state.stack.length - 1]
+      const mappedDestination = mapStepToManagementLoginDestination(
+        dependencies.loginStep,
+        dependencies.mfaToken,
+        dependencies.lockoutType,
+        dependencies.lockoutUntil
+      )
+
+      if (mappedDestination && currentTop?.type !== mappedDestination.type) {
+        return {
+          ...state,
+          dependencies,
+          stack: [mappedDestination]
+        }
+      }
+      return { ...state, dependencies }
+    })
+  }, [store, dependencies])
 
   return (
     <ManagementLoginRootContext.Provider value={store}>
