@@ -1,12 +1,10 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Repository interface for managing user identifiers in self-management context. */
@@ -22,21 +20,11 @@ export interface SelfManagementIdentifierRepository {
   /**
    * Returns a paginated and filtered list of identifiers linked to the current authenticated management account.
    *
-   * @param pageNumber - One-based page index
-   * @param pageSize - Maximum items returned per page
-   * @param sortBy - Field to sort by
-   * @param sortOrder - Sorting direction
-   * @param userAuthProviders - Filters by specific provider types
-   * @param identifiers - Filters by substring patterns of identifier values
+   * @param params - Self identifier list parameters
    * @returns Paginated result containing matching user identifier models, or a mapped failure
    */
   getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
   /**

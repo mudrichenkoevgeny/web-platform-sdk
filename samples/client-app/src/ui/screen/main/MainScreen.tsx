@@ -13,9 +13,6 @@ import {
 import { useClientAppComponent } from '@/di/client-app-context'
 import { mainScreenDestinations, type MainTabKey } from '@/ui/screen/main/main-screen-destination'
 
-/**
- * Sample main shell with navigation tabs, Decompose-style stack view, and login / MFA dialog overlays.
- */
 export function MainScreen(): React.JSX.Element {
   const appComponent = useClientAppComponent()
   const navigate = useNavigate()
@@ -80,7 +77,6 @@ export function MainScreen(): React.JSX.Element {
 
   return (
     <div className="w-full h-screen flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
-      {/* Navigation Bar / Rail */}
       <nav className="w-full md:w-64 md:h-full border-r border-border bg-card p-4 flex md:flex-col justify-between items-center md:items-start gap-4">
         <div className="flex md:flex-col w-full gap-2">
           {mainScreenDestinations.map((dest) => {
@@ -105,12 +101,10 @@ export function MainScreen(): React.JSX.Element {
         </div>
       </nav>
 
-      {/* Screen Content Area */}
       <main className="flex-1 h-full overflow-auto relative">
         <Outlet />
       </main>
 
-      {/* Login Dialog Overlay */}
       {isLoginOpen && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card text-card-foreground border border-border rounded-xl shadow-lg w-full max-w-lg overflow-hidden relative p-4">
@@ -119,7 +113,6 @@ export function MainScreen(): React.JSX.Element {
         </div>
       )}
 
-      {/* MFA Challenge Dialog Overlay */}
       {mfaRequest && (
         <MfaChallengeDialog
           request={mfaRequest}

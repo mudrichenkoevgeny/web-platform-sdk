@@ -31,7 +31,7 @@ export type AuditEventDetailScreenState =
 
 export interface AuditEventDetailStoreDependencies {
   eventId: AuditEventId
-  getAuditEventUseCase: GetAuditEventUseCase
+  getAuditEventUseCase: { execute: (eventId: AuditEventId) => Promise<AppResult<AuditEventPrivate, AppError>> }
   currentUserId?: UserId | null
   onNavigateToUserDetail?: (userId: UserId) => void
   onNavigateToSessionDetail?: (sessionId: UserSessionId) => void

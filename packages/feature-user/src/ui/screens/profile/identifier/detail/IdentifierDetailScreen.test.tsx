@@ -26,10 +26,10 @@ describe('IdentifierDetailScreen', () => {
     isCurrentIdentifier: isCurrent,
     deleteUserIdentifierUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+    },
     emailChangePasswordUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+    },
     deletePassword: vi.fn().mockResolvedValue(undefined),
     onIdentifierDeleted: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
@@ -115,5 +115,21 @@ describe('IdentifierDetailScreen', () => {
 
     await user.click(screen.getByTestId(IdentifierDetailTestTags.BACK_BUTTON))
     expect(deps.onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it('navigates to profile when clicking user for identifier matching currentUserId', async () => {
+    const deps = createMockDeps(false)
+    deps.currentUserId = mockIdentifier.userId
+    const user = userEvent.setup()
+
+    render(
+      <ComponentTestHarness>
+        <IdentifierDetailScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    await user.click(screen.getByTestId(IdentifierDetailTestTags.USER_ROW))
+    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
+    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
   })
 })

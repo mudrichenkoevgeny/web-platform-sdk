@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import { AuditActorType, AuditEventSortBy, AuditStatus, SortOrder, UserRole } from '@mudrichenkoevgeny/shared-foundation'
-import type { AuditEventId, AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuditEventId, AuditEventSummary, ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -35,15 +35,15 @@ export interface AuditEventListStoreDependencies {
   getAuditEventsUseCase: GetAuditEventsUseCase
   onNavigateToEventDetail: (eventId: AuditEventId) => void
   onBack: () => void
-  searchParams?: AuditEventListSearchParams
-  onSearchParamsChanged?: (params: AuditEventListSearchParams) => void
+  searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams
+  onSearchParamsChanged?: (params: ManagementAuditEventListParams) => void
 }
 
 export interface AuditEventListStoreState {
   dependencies: AuditEventListStoreDependencies
   screenState: AuditEventListScreenState
-  initScreen: (searchParams?: AuditEventListSearchParams) => Promise<void>
-  onSearchParamsUpdated: (searchParams?: AuditEventListSearchParams) => Promise<void>
+  initScreen: (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onEventClick: (eventId: AuditEventId) => void
@@ -66,7 +66,7 @@ export const createAuditEventListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    overrideParams?: AuditEventListSearchParams
+    overrideParams?: ManagementAuditEventListParams | AuditEventListSearchParams
   ) => {
     if (isFetching) {
       return
@@ -77,39 +77,44 @@ export const createAuditEventListStore = (
       const activeDeps = get().dependencies
       const params = overrideParams ?? activeDeps.searchParams
 
-      const sortOrder = params?.sortOrder === 'ASC' ? SortOrder.ASC : params?.sortOrder === 'DESC' ? SortOrder.DESC : null
-      const sortBy = params?.sortBy ? (params.sortBy as AuditEventSortBy) : null
+      let result
+      if (params && typeof params === 'object' && ('toQueryMap' in params || 'actorIds' in params)) {
+        result = await activeDeps.getAuditEventsUseCase.execute(params as ManagementAuditEventListParams)
+      } else {
+        const sortOrder = params?.sortOrder === 'ASC' ? SortOrder.ASC : params?.sortOrder === 'DESC' ? SortOrder.DESC : null
+        const sortBy = params?.sortBy ? (params.sortBy as AuditEventSortBy) : null
 
-      const actorTypes = params?.actorTypes?.filter((id): id is AuditActorType =>
-        Object.values(AuditActorType).includes(id as AuditActorType)
-      )
-      const actorUserRoles = params?.actorUserRoles?.filter((id): id is UserRole =>
-        Object.values(UserRole).includes(id as UserRole)
-      )
-      const statuses = params?.statuses?.filter((id): id is AuditStatus =>
-        Object.values(AuditStatus).includes(id as AuditStatus)
-      )
+        const actorTypes = params?.actorTypes?.filter((id): id is AuditActorType =>
+          Object.values(AuditActorType).includes(id as AuditActorType)
+        )
+        const actorUserRoles = params?.actorUserRoles?.filter((id): id is UserRole =>
+          Object.values(UserRole).includes(id as UserRole)
+        )
+        const statuses = params?.statuses?.filter((id): id is AuditStatus =>
+          Object.values(AuditStatus).includes(id as AuditStatus)
+        )
 
-      const actorIds = params?.actorIds
-      const actions = params?.actions
-      const resources = params?.resources
-      const resourceIds = params?.resourceIds
-      const messages = params?.messages
+        const actorIds = params?.actorIds
+        const actions = params?.actions
+        const resources = params?.resources
+        const resourceIds = params?.resourceIds
+        const messages = params?.messages
 
-      const result = await activeDeps.getAuditEventsUseCase.execute({
-        pageNumber,
-        pageSize: 20,
-        sortBy,
-        sortOrder,
-        actorIds,
-        actorTypes,
-        actorUserRoles,
-        actions,
-        resources,
-        resourceIds,
-        statuses,
-        messages
-      })
+        result = await activeDeps.getAuditEventsUseCase.execute({
+          pageNumber,
+          pageSize: 20,
+          sortBy,
+          sortOrder,
+          actorIds,
+          actorTypes,
+          actorUserRoles,
+          actions,
+          resources,
+          resourceIds,
+          statuses,
+          messages
+        })
+      }
 
       if (isSuccess(result)) {
         const current = get().screenState
@@ -161,7 +166,7 @@ export const createAuditEventListStore = (
     dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async (searchParams?: AuditEventListSearchParams) => {
+    initScreen: async (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
@@ -170,7 +175,7 @@ export const createAuditEventListStore = (
       await fetchPage(set, get, 1, searchParams)
     },
 
-    onSearchParamsUpdated: async (searchParams?: AuditEventListSearchParams) => {
+    onSearchParamsUpdated: async (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => {
       set({
         screenState: {
           status: 'content',
@@ -257,3 +262,4 @@ export const useAuditEventListStore = <T,>(
   }
   return useStore(store, selector)
 }
+

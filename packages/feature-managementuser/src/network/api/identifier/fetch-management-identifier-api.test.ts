@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
-import { ManagementIdentifierRoutes, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementIdentifiersRoutes, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementIdentifierApi', () => {
@@ -23,7 +23,7 @@ describe('FetchManagementIdentifierApi', () => {
     const result = await api.getIdentifiers(1, 10)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(ManagementIdentifierRoutes.GET_IDENTIFIERS)
+      expect.stringContaining(ManagementIdentifiersRoutes.GET_IDENTIFIERS)
     )
     expect(result).toEqual({ success: true, data: expectedData })
   })

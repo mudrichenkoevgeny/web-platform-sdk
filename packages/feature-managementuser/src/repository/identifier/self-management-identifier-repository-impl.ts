@@ -2,12 +2,10 @@ import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifierPrivate, toUserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
@@ -30,21 +28,9 @@ export class SelfManagementIdentifierRepositoryImpl implements SelfManagementIde
   }
 
   public async getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
-    const result = await this.selfManagementIdentifiersApi.getUserIdentifiers(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      userAuthProviders,
-      identifiers
-    )
+    const result = await this.selfManagementIdentifiersApi.getUserIdentifiers(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))

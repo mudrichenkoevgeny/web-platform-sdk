@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AuditEventDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditNavigation, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/management/audit-events/$eventId')({
@@ -26,10 +26,11 @@ export const Route = createFileRoute('/management/audit-events/$eventId')({
             navigate({ to: '/management/sessions/$sessionId', params: { sessionId } }),
           onNavigateToIdentifierDetail: (identifierId) =>
             navigate({ to: '/management/identifiers/$identifierId', params: { identifierId } }),
-          onNavigateToProfile: () => navigate({ to: '/management' }),
-          onBack: () => navigateUp({ to: '/management/audit-events' })
+          onNavigateToProfile: () => navigate({ to: '/management/profile' }),
+          onBack: () => navigateUp({ to: ManagementAuditNavigation.AuditEventDetail.PARENT_ROUTE })
         }}
       />
     )
   }
 })
+

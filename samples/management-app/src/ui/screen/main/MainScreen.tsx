@@ -13,10 +13,6 @@ import {
 import { useManagementAppComponent } from '@/di/management-app-context'
 import { getDestinations, type MainTabKey } from '@/ui/screen/main/main-screen-destination'
 
-/**
- * Sample main shell for management app: sidebar navigation, tab content (home, profile, settings),
- * and login / MFA challenge dialog overlays.
- */
 export function MainScreen(): React.JSX.Element {
   const appComponent = useManagementAppComponent()
   const navigate = useNavigate()
@@ -26,6 +22,9 @@ export function MainScreen(): React.JSX.Element {
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
 
   const activeTab: MainTabKey = useMemo(() => {
+    if (location.pathname.startsWith('/management/profile')) {
+      return 'profile'
+    }
     if (location.pathname.startsWith('/management')) {
       return 'settings'
     }
@@ -36,8 +35,8 @@ export function MainScreen(): React.JSX.Element {
     return appComponent.managementUserComponent.selfManagementUserRepository.observeCurrentUser((user: UserPrivate | null) => {
       const authorized = user !== null
       setIsAuthorized(authorized)
-      if (!authorized && location.pathname.startsWith('/management')) {
-        void navigate({ to: '/', replace: true })
+      if (!authorized && location.pathname !== '/management/login' && !location.pathname.startsWith('/management/login/')) {
+        void navigate({ to: '/management/login', replace: true })
       }
     })
   }, [appComponent, location.pathname, navigate])
@@ -77,19 +76,21 @@ export function MainScreen(): React.JSX.Element {
   )
 
   const handleTabClick = (tabKey: MainTabKey) => {
-    if (tabKey === 'settings' && !isAuthorized) {
+    if (!isAuthorized) {
+      void navigate({ to: '/management/login', replace: true })
       return
     }
     if (tabKey === 'home') {
       void navigate({ to: '/', replace: true })
-    } else if (tabKey === 'settings' || tabKey === 'profile') {
+    } else if (tabKey === 'profile') {
+      void navigate({ to: '/management/profile', replace: true })
+    } else if (tabKey === 'settings') {
       void navigate({ to: '/management', replace: true })
     }
   }
 
   return (
     <div className="w-full h-screen flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
-      {/* Navigation Bar / Rail */}
       <nav className="w-full md:w-64 md:h-full border-r border-border bg-card p-4 flex md:flex-col justify-between items-center md:items-start gap-4">
         <div className="flex md:flex-col w-full gap-2">
           {destinations.map((dest) => {
@@ -114,12 +115,10 @@ export function MainScreen(): React.JSX.Element {
         </div>
       </nav>
 
-      {/* Screen Content Area */}
       <main className="flex-1 h-full overflow-auto relative">
         <Outlet />
       </main>
 
-      {/* Login Dialog Overlay */}
       {isLoginOpen && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card text-card-foreground border border-border rounded-xl shadow-lg w-full max-w-lg overflow-hidden relative p-4">
@@ -128,7 +127,6 @@ export function MainScreen(): React.JSX.Element {
         </div>
       )}
 
-      {/* MFA Challenge Dialog Overlay */}
       {mfaRequest && (
         <MfaChallengeDialog
           request={mfaRequest}

@@ -1,10 +1,8 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
-  UserIdentifierSummary,
-  UserSortValues
+  SelfIdentifierListParams,
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 
@@ -20,23 +18,12 @@ export class GetUserIdentifiersUseCase {
   /**
    * Fetches user identifiers list.
    *
+   * @param params - Self identifier list parameters
    * @returns PagedResult containing UserIdentifierSummary models or AppError
    */
   public async execute(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
-    return this.identifierRepository.getUserIdentifiers(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      userAuthProviders,
-      identifiers
-    )
+    return this.identifierRepository.getUserIdentifiers(params)
   }
 }

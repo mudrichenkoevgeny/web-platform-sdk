@@ -1,9 +1,10 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   ClientType,
   DeletedSessionsPayload,
   PagedResult,
+  SelfSessionListParams,
   SortOrder,
   UserAuthProvider,
   UserSessionId,
@@ -33,7 +34,7 @@ export class FetchSelfManagementSessionApi implements SessionApi {
   public constructor(private readonly client: HttpClient) {}
 
   public async getSessions(
-    pageNumber?: number | null,
+    params?: SelfSessionListParams | number | null,
     pageSize?: number | null,
     sortBy?: UserSortValues.UserSessionSortBy | null,
     sortOrder?: SortOrder | null,
@@ -49,11 +50,23 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     appVersions?: string[] | null,
     operationSystemVersions?: string[] | null
   ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
+    if (typeof params === 'object' && params !== null && ('toQueryMap' in params || 'pageNumber' in params)) {
+      const path = appendQueryParamsToPath(
+        SelfManagementSessionRoutes.GET_SESSIONS,
+        params as SelfSessionListParams
+      )
+      return callResult(async () => {
+        const raw = await this.client.request<unknown>(path)
+        return pagedResultSchema(userSessionSummaryPayloadSchema).parse(raw)
+      })
+    }
+
     const query = new URLSearchParams()
+    const pageNumber = typeof params === 'number' ? params : null
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy))
-    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder))
+    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy.value ?? sortBy))
+    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder.value ?? sortOrder))
     if (identifiers) {
       identifiers.forEach((identifier) =>
         query.append(UserFilterValues.UserSessionFilterValues.IDENTIFIER, identifier)
@@ -66,12 +79,12 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     }
     if (userAuthProviders) {
       userAuthProviders.forEach((provider) =>
-        query.append(UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER, String(provider))
+        query.append(UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER, String(provider.value ?? provider))
       )
     }
     if (clientTypes) {
       clientTypes.forEach((type) =>
-        query.append(UserFilterValues.UserSessionFilterValues.CLIENT_TYPE, String(type))
+        query.append(UserFilterValues.UserSessionFilterValues.CLIENT_TYPE, String(type.value ?? type))
       )
     }
     if (userAgents) {
@@ -157,3 +170,4 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     )
   }
 }
+

@@ -1,33 +1,11 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfSessionListParams,
   UserSessionId,
   UserSessionPrivate,
-  UserSessionSummary,
-  UserSortValues
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-
-/** Parameters for filtering and paginating sessions. */
-export interface GetSessionsParams {
-  pageNumber?: number | null
-  pageSize?: number | null
-  sortBy?: UserSortValues.UserSessionSortBy | null
-  sortOrder?: SortOrder | null
-  identifiers?: string[] | null
-  identifierIds?: string[] | null
-  userAuthProviders?: UserAuthProvider[] | null
-  clientTypes?: ClientType[] | null
-  userAgents?: string[] | null
-  ipAddresses?: string[] | null
-  languages?: string[] | null
-  deviceIds?: string[] | null
-  deviceNames?: string[] | null
-  appVersions?: string[] | null
-  operationSystemVersions?: string[] | null
-}
 
 /**
  * Manages active sessions linked to current authenticated account.
@@ -35,21 +13,7 @@ export interface GetSessionsParams {
 export interface SessionRepository {
   /** Returns a paginated and filtered list of active sessions for current account. */
   getSessions(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
+    params?: SelfSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>>
 
   /** Returns details of a specific session. */

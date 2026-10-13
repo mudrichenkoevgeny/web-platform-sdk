@@ -7,7 +7,7 @@ alwaysApply: true
 # TypeScript Coding Style
 
 ## 1. Core Syntax Constraints
-- **Strict Ban (Comments):** Do not write or preserve comments in the code.
+- **No Implementation Comments (Preserve TSDoc/JSDoc):** Do not write inline implementation comments (`//` or `/* ... */`) inside code bodies; logic must be self-documenting. **CRITICAL:** TSDoc / JSDoc documentation (`/** ... */`) on classes, interfaces, types, exported functions, properties, and parameters is structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing API documentation / docstrings during code edits, refactorings, or updates!
 - **Strict Ban (Trailing Commas):** Do not write trailing commas in arguments, parameters, objects, or arrays.
 - **Strict Ban (as any & Double Casting):** Do not write `as any`, `as unknown as Record<...>`, or double casting to bypass TypeScript. Always use strict type narrowing, Type Guards (`in`, `typeof`, `instanceof`), or explicit interface inheritance. Type safety must be strictly preserved across all modules.
 - **No Implicit Any:** Code must strictly pass TS `strict` mode.

@@ -1,24 +1,12 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-
-/** Parameters for filtering and paginating user identifiers. */
-export interface GetUserIdentifiersParams {
-  pageNumber?: number | null
-  pageSize?: number | null
-  sortBy?: UserSortValues.UserIdentifierSortBy | null
-  sortOrder?: SortOrder | null
-  userAuthProviders?: UserAuthProvider[] | null
-  identifiers?: string[] | null
-}
 
 /**
  * Manages user identity identifiers, facilitating retrieval, pagination,
@@ -30,12 +18,7 @@ export interface IdentifierRepository {
 
   /** Returns a paginated and filtered list of identifiers. */
   getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
   /** Removes an existing identifier from user profile. */

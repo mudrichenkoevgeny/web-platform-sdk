@@ -1,14 +1,11 @@
 import { appResultSuccess, isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfSessionListParams,
   UserSessionId,
   UserSessionPrivate,
-  UserSessionSummary,
-  UserSortValues
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserSessionPrivate, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type {
@@ -36,39 +33,9 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
   ) {}
 
   public async getSessions(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
+    params?: SelfSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
-    const networkResult = await this.sessionApi.getSessions(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      identifiers,
-      identifierIds,
-      userAuthProviders,
-      clientTypes,
-      userAgents,
-      ipAddresses,
-      languages,
-      deviceIds,
-      deviceNames,
-      appVersions,
-      operationSystemVersions
-    )
+    const networkResult = await this.sessionApi.getSessions(params)
 
     if (isSuccess(networkResult)) {
       await this.userStorage.updateUserSessionsPayloadList(networkResult.data)
@@ -78,23 +45,7 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
       }))
     }
 
-    const cachedResult = await this.userStorage.getUserSessionsList({
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      identifiers,
-      identifierIds,
-      userAuthProviders,
-      clientTypes,
-      userAgents,
-      ipAddresses,
-      languages,
-      deviceIds,
-      deviceNames,
-      appVersions,
-      operationSystemVersions
-    })
+    const cachedResult = await this.userStorage.getUserSessionsList()
 
     if (cachedResult.items.length > 0) {
       return appResultSuccess(cachedResult)

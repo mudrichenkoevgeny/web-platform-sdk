@@ -1,26 +1,19 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccountLockoutType,
   CreateByEmailRequest,
+  ManagementUserListParams,
   PagedResult,
-  PermissionCode,
-  SortOrder,
   UpdateUserRequest,
-  UserAccountStatus,
   UserPrivatePayload,
-  UserRole,
-  UserSortValues,
   UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  ListingParamNames,
-  ManagementUserRoutes,
+  ManagementUsersRoutes,
   pagedResultSchema,
   UserApiPaths,
   userPrivatePayloadSchema,
-  userSummaryPayloadSchema,
-  UserFilterValues
+  userSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 
@@ -35,7 +28,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
 
   public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(ManagementUserRoutes.CREATE_USER, {
+      const raw = await this.client.request<unknown>(ManagementUsersRoutes.CREATE_USER, {
         method: 'POST',
         body: JSON.stringify(request)
       })
@@ -44,57 +37,12 @@ export class FetchManagementUserApi implements ManagementUserApi {
   }
 
   public async getUsers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSortBy | null,
-    sortOrder?: SortOrder | null,
-    roles?: UserRole[] | null,
-    accountStatuses?: UserAccountStatus[] | null,
-    accountStatusesBeforeDeletion?: UserAccountStatus[] | null,
-    accountLockoutTypes?: AccountLockoutType[] | null,
-    authorityLevelFrom?: number | null,
-    authorityLevelTo?: number | null,
-    isTotpEnabled?: boolean | null,
-    permissionCodes?: PermissionCode[] | null
+    params?: ManagementUserListParams | null
   ): Promise<AppResult<PagedResult<UserSummaryPayload>, AppError>> {
-    const query = new URLSearchParams()
-    if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
-    if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy))
-    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder))
-
-    if (roles) {
-      roles.forEach((role) => query.append(UserFilterValues.UserFilterValues.ROLE, String(role)))
-    }
-    if (accountStatuses) {
-      accountStatuses.forEach((status) => query.append(UserFilterValues.UserFilterValues.ACCOUNT_STATUS, String(status)))
-    }
-    if (accountStatusesBeforeDeletion) {
-      accountStatusesBeforeDeletion.forEach((status) =>
-        query.append(UserFilterValues.UserFilterValues.ACCOUNT_STATUS_ON_RESTORE, String(status))
-      )
-    }
-    if (accountLockoutTypes) {
-      accountLockoutTypes.forEach((type) =>
-        query.append(UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE, String(type))
-      )
-    }
-    if (authorityLevelFrom != null) {
-      query.append(UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM, String(authorityLevelFrom))
-    }
-    if (authorityLevelTo != null) {
-      query.append(UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO, String(authorityLevelTo))
-    }
-    if (isTotpEnabled != null) {
-      query.append(UserFilterValues.UserFilterValues.IS_TOTP_ENABLED, String(isTotpEnabled))
-    }
-    if (permissionCodes) {
-      permissionCodes.forEach((code) => query.append(UserFilterValues.UserFilterValues.PERMISSION_CODES, String(code)))
-    }
-
-    const queryString = query.toString()
-    const path = queryString ? `${ManagementUserRoutes.GET_USERS}?${queryString}` : ManagementUserRoutes.GET_USERS
-
+    const path = appendQueryParamsToPath(
+      ManagementUsersRoutes.GET_USERS,
+      params
+    )
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return pagedResultSchema(userSummaryPayloadSchema).parse(raw)
@@ -103,7 +51,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
 
   public async getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUserRoutes.GET_USER}?${query.toString()}`
+    const path = `${ManagementUsersRoutes.GET_USER}?${query.toString()}`
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return userPrivatePayloadSchema.parse(raw)
@@ -112,7 +60,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
 
   public async updateUser(userId: string, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUserRoutes.UPDATE_USER}?${query.toString()}`
+    const path = `${ManagementUsersRoutes.UPDATE_USER}?${query.toString()}`
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'PATCH',
@@ -123,7 +71,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
 
   public async deleteUser(userId: string): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUserRoutes.DELETE_USER}?${query.toString()}`
+    const path = `${ManagementUsersRoutes.DELETE_USER}?${query.toString()}`
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'DELETE'

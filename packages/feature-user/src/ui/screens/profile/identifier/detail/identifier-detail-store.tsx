@@ -38,12 +38,13 @@ export type IdentifierDetailScreenState =
 export interface IdentifierDetailStoreDependencies {
   identifier?: UserIdentifierPrivate
   identifierId?: UserIdentifierId
-  getUserIdentifierUseCase?: GetUserIdentifierUseCase
-  deleteUserIdentifierUseCase?: DeleteUserIdentifierUseCase
-  emailChangePasswordUseCase?: EmailChangePasswordUseCase
+  getUserIdentifierUseCase?: { execute: (identifierId: UserIdentifierId) => Promise<AppResult<UserIdentifierPrivate, AppError>> }
+  deleteUserIdentifierUseCase?: { execute: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> }
+  emailChangePasswordUseCase?: { execute: (email: string, oldPassword: string, newPassword: string) => Promise<AppResult<void, AppError>> }
   deletePasswordUseCase?: { execute: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> }
   deletePassword?: (identifierId: UserIdentifierId) => Promise<void>
   isCurrentIdentifier?: boolean
+  currentUserId?: UserId | null
   authStorage?: AuthStorage
   onIdentifierDeleted?: (identifierId: UserIdentifierId) => void
   onNavigateToUserDetail?: (userId: UserId) => void
@@ -351,7 +352,7 @@ export const createIdentifierDetailStore = (
         return
       }
       const activeDeps = get().dependencies
-      if (current.isCurrentIdentifier) {
+      if (current.isCurrentIdentifier || (activeDeps.currentUserId != null && current.identifier.userId === activeDeps.currentUserId)) {
         activeDeps.onNavigateToProfile?.()
       } else {
         activeDeps.onNavigateToUserDetail?.(current.identifier.userId)

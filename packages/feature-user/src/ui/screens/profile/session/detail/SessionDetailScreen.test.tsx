@@ -40,7 +40,7 @@ describe('SessionDetailScreen', () => {
     isCurrentSession: isCurrent,
     deleteSessionUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
+    },
     onSessionRevoked: vi.fn(),
     onNavigateToIdentifierDetail: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
@@ -105,5 +105,21 @@ describe('SessionDetailScreen', () => {
 
     await user.click(screen.getByTestId(SessionDetailTestTags.BACK_BUTTON))
     expect(deps.onBack).toHaveBeenCalledTimes(1)
+  })
+
+  it('navigates to profile when clicking user for session matching currentUserId', async () => {
+    const deps = createMockDeps(false)
+    deps.currentUserId = mockSession.userId
+    const user = userEvent.setup()
+
+    render(
+      <ComponentTestHarness>
+        <SessionDetailScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    await user.click(screen.getByTestId(SessionDetailTestTags.USER_ROW))
+    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
+    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
   })
 })

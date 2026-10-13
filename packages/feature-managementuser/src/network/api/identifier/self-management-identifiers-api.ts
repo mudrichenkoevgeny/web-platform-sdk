@@ -2,12 +2,10 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   EmailPasswordChangeRequest,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Manage user identifiers (email, phone, external providers) and related confirmations. */
@@ -23,21 +21,11 @@ export interface SelfManagementIdentifiersApi {
   /**
    * Returns a paginated and filtered list of identifiers linked to the current authenticated management account.
    *
-   * @param pageNumber - One-based page index
-   * @param pageSize - Maximum items returned per page
-   * @param sortBy - Field to sort by
-   * @param sortOrder - Sorting direction
-   * @param userAuthProviders - Filters by specific provider types
-   * @param identifiers - Filters by substring patterns of identifier values
+   * @param params - Self identifier list parameters
    * @returns Paginated result containing matching user identifier summary payloads, or a mapped failure
    */
   getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>>
 
   /**

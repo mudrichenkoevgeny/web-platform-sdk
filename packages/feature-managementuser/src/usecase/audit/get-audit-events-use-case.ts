@@ -4,6 +4,7 @@ import type {
   AuditEventSortBy,
   AuditEventSummary,
   AuditStatus,
+  ManagementAuditEventListParams,
   PagedResult,
   SortOrder,
   UserRole
@@ -41,7 +42,12 @@ export class GetAuditEventsUseCase {
    * @param params - Query and filter parameters
    * @returns Paginated result containing audit event summaries, or a failure
    */
-  public async execute(params?: GetAuditEventsParams): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
+  public async execute(
+    params?: ManagementAuditEventListParams | GetAuditEventsParams
+  ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
+    if (typeof params === 'object' && params !== null && ('toQueryMap' in params || 'pageNumber' in params)) {
+      return this.managementAuditRepository.getAuditEvents(params as ManagementAuditEventListParams)
+    }
     return this.managementAuditRepository.getAuditEvents(
       params?.pageNumber,
       params?.pageSize,
@@ -58,3 +64,4 @@ export class GetAuditEventsUseCase {
     )
   }
 }
+

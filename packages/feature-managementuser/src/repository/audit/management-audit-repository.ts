@@ -5,6 +5,7 @@ import type {
   AuditEventSortBy,
   AuditEventSummary,
   AuditStatus,
+  ManagementAuditEventListParams,
   PagedResult,
   SortOrder,
   UserRole
@@ -17,22 +18,11 @@ export interface ManagementAuditRepository {
   /**
    * Retrieves a paginated list of domain audit event summaries.
    *
-   * @param pageNumber - One-based page index
-   * @param pageSize - Maximum items returned per page
-   * @param sortBy - Field to sort by
-   * @param sortOrder - Sorting direction
-   * @param actorIds - Filters by actor IDs
-   * @param actorTypes - Filters by actor types
-   * @param actorUserRoles - Filters by actor user roles
-   * @param actions - Filters by action strings
-   * @param resources - Filters by resource strings
-   * @param resourceIds - Filters by resource IDs
-   * @param statuses - Filters by audit status
-   * @param messages - Filters by message substrings
+   * @param params - Management audit event list parameters or pageNumber
    * @returns Paginated result containing domain audit event summaries, or a failure
    */
   getAuditEvents(
-    pageNumber?: number | null,
+    params?: ManagementAuditEventListParams | number | null,
     pageSize?: number | null,
     sortBy?: AuditEventSortBy | null,
     sortOrder?: SortOrder | null,
@@ -54,3 +44,4 @@ export interface ManagementAuditRepository {
    */
   getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>>
 }
+

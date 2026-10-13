@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AddUserIdentifierEmailRequest,
@@ -7,21 +7,17 @@ import type {
   EmailPasswordChangeRequest,
   OtpConfirmationPayload,
   PagedResult,
+  SelfIdentifierListParams,
   SendConfirmationToEmailRequest,
   SendConfirmationToPhoneRequest,
-  SortOrder,
-  UserAuthProvider,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  ListingParamNames,
   OpenIdentifierRoutes,
   pagedResultSchema,
   UserApiPaths,
-  UserFilterValues,
   userIdentifierPrivatePayloadSchema,
   userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -47,42 +43,12 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
   }
 
   public async getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
-    const query = new URLSearchParams()
-    if (pageNumber != null) {
-      query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
-    }
-    if (pageSize != null) {
-      query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    }
-    if (sortBy != null) {
-      query.append(ListingParamNames.SORT_BY, String(sortBy))
-    }
-    if (sortOrder != null) {
-      query.append(ListingParamNames.SORT_ORDER, String(sortOrder))
-    }
-    if (userAuthProviders) {
-      userAuthProviders.forEach((provider) =>
-        query.append(UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER, String(provider))
-      )
-    }
-    if (identifiers) {
-      identifiers.forEach((identifier) =>
-        query.append(UserFilterValues.UserIdentifierFilterValues.IDENTIFIER, identifier)
-      )
-    }
-
-    const queryString = query.toString()
-    const path = queryString
-      ? `${OpenIdentifierRoutes.GET_IDENTIFIERS}?${queryString}`
-      : OpenIdentifierRoutes.GET_IDENTIFIERS
-
+    const path = appendQueryParamsToPath(
+      OpenIdentifierRoutes.GET_IDENTIFIERS,
+      params
+    )
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)

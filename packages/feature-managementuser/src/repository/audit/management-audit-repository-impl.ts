@@ -9,6 +9,7 @@ import type {
   CompositeAuditActionTypeParser,
   CompositeAuditMetadataKeyParser,
   CompositeAuditResourceTypeParser,
+  ManagementAuditEventListParams,
   PagedResult,
   SortOrder,
   UserRole
@@ -37,7 +38,7 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
   ) {}
 
   public async getAuditEvents(
-    pageNumber?: number | null,
+    params?: ManagementAuditEventListParams | number | null,
     pageSize?: number | null,
     sortBy?: AuditEventSortBy | null,
     sortOrder?: SortOrder | null,
@@ -51,7 +52,7 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     messages?: string[] | null
   ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
     const result = await this.managementAuditApi.getAuditEvents(
-      pageNumber,
+      params as ManagementAuditEventListParams,
       pageSize,
       sortBy,
       sortOrder,
@@ -88,3 +89,4 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     )
   }
 }
+

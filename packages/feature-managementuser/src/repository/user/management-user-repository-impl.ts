@@ -1,17 +1,12 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccountLockoutType,
   CreateByEmailRequest,
+  ManagementUserListParams,
   PagedResult,
-  PermissionCode,
-  SortOrder,
   UpdateUserRequest,
-  UserAccountStatus,
   UserId,
   UserPrivate,
-  UserRole,
-  UserSortValues,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserPrivate, toUserSummary } from '@mudrichenkoevgeny/shared-foundation'
@@ -35,33 +30,9 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
   }
 
   public async getUsers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSortBy | null,
-    sortOrder?: SortOrder | null,
-    roles?: UserRole[] | null,
-    accountStatuses?: UserAccountStatus[] | null,
-    accountStatusesBeforeDeletion?: UserAccountStatus[] | null,
-    accountLockoutTypes?: AccountLockoutType[] | null,
-    authorityLevelFrom?: number | null,
-    authorityLevelTo?: number | null,
-    isTotpEnabled?: boolean | null,
-    permissionCodes?: PermissionCode[] | null
+    params?: ManagementUserListParams | null
   ): Promise<AppResult<PagedResult<UserSummary>, AppError>> {
-    const result = await this.managementUserApi.getUsers(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      roles,
-      accountStatuses,
-      accountStatusesBeforeDeletion,
-      accountLockoutTypes,
-      authorityLevelFrom,
-      authorityLevelTo,
-      isTotpEnabled,
-      permissionCodes
-    )
+    const result = await this.managementUserApi.getUsers(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) => toUserSummary(payload))

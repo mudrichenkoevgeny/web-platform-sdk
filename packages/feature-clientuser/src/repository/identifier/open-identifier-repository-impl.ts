@@ -3,12 +3,10 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   OtpConfirmation,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ConfirmationType,
@@ -46,21 +44,9 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
   }
 
   public async getUserIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
-    const result = await this.openIdentifiersApi.getUserIdentifiers(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      userAuthProviders,
-      identifiers
-    )
+    const result = await this.openIdentifiersApi.getUserIdentifiers(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))

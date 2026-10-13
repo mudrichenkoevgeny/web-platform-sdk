@@ -1,16 +1,11 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccountLockoutType,
   CreateByEmailRequest,
+  ManagementUserListParams,
   PagedResult,
-  PermissionCode,
-  SortOrder,
   UpdateUserRequest,
-  UserAccountStatus,
   UserId,
   UserPrivate,
-  UserRole,
-  UserSortValues,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -27,33 +22,11 @@ export interface ManagementUserRepository {
   /**
    * Returns a paginated and filtered list of users based on search criteria.
    *
-   * @param pageNumber - One-based page index
-   * @param pageSize - Maximum items returned per page
-   * @param sortBy - Field to sort by
-   * @param sortOrder - Sorting direction
-   * @param roles - Filters users by their assigned role types
-   * @param accountStatuses - Filters users by current account statuses
-   * @param accountStatusesBeforeDeletion - Filters users by status held prior to scheduled deletion
-   * @param accountLockoutTypes - Filters users by account lockout state types
-   * @param authorityLevelFrom - Lower bound filter for authority level
-   * @param authorityLevelTo - Upper bound filter for authority level
-   * @param isTotpEnabled - Filters users by whether TOTP second-factor authentication is active
-   * @param permissionCodes - Filters users possessing specific permission codes
+   * @param params - Query parameters for management user list
    * @returns Paginated result containing user summary domain models, or a mapped failure
    */
   getUsers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSortBy | null,
-    sortOrder?: SortOrder | null,
-    roles?: UserRole[] | null,
-    accountStatuses?: UserAccountStatus[] | null,
-    accountStatusesBeforeDeletion?: UserAccountStatus[] | null,
-    accountLockoutTypes?: AccountLockoutType[] | null,
-    authorityLevelFrom?: number | null,
-    authorityLevelTo?: number | null,
-    isTotpEnabled?: boolean | null,
-    permissionCodes?: PermissionCode[] | null
+    params?: ManagementUserListParams | null
   ): Promise<AppResult<PagedResult<UserSummary>, AppError>>
 
   /**

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
-import { ManagementUserRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUsersRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementUserApi', () => {
@@ -23,7 +23,7 @@ describe('FetchManagementUserApi', () => {
     const result = await api.createUser(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      ManagementUserRoutes.CREATE_USER,
+      ManagementUsersRoutes.CREATE_USER,
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -37,7 +37,7 @@ describe('FetchManagementUserApi', () => {
     const result = await api.getUsers(1, 10)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(ManagementUserRoutes.GET_USERS)
+      expect.stringContaining(ManagementUsersRoutes.GET_USERS)
     )
     expect(result).toEqual({ success: true, data: expectedData })
   })

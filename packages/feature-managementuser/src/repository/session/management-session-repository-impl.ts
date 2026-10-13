@@ -1,15 +1,12 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
+  ManagementGlobalSessionListParams,
+  ManagementUserSessionListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
-  UserRole,
   UserSessionPrivate,
-  UserSessionSummary,
-  UserSortValues
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserSessionPrivate, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
@@ -27,43 +24,9 @@ export class ManagementSessionRepositoryImpl implements ManagementSessionReposit
   public constructor(private readonly managementSessionApi: ManagementSessionApi) {}
 
   public async getSessions(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userRoles?: UserRole[] | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
+    params?: ManagementGlobalSessionListParams | ManagementUserSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
-    const result = await this.managementSessionApi.getSessions(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      userIds,
-      userRoles,
-      identifiers,
-      identifierIds,
-      userAuthProviders,
-      clientTypes,
-      userAgents,
-      ipAddresses,
-      languages,
-      deviceIds,
-      deviceNames,
-      appVersions,
-      operationSystemVersions
-    )
+    const result = await this.managementSessionApi.getSessions(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))

@@ -1,14 +1,13 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  ManagementGlobalIdentifierListParams,
+  ManagementUserIdentifierListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserIdentifierPrivate, toUserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
@@ -26,23 +25,9 @@ export class ManagementIdentifierRepositoryImpl implements ManagementIdentifierR
   public constructor(private readonly managementIdentifierApi: ManagementIdentifierApi) {}
 
   public async getIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
-    const result = await this.managementIdentifierApi.getIdentifiers(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      userIds,
-      userAuthProviders,
-      identifiers
-    )
+    const result = await this.managementIdentifierApi.getIdentifiers(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) => toUserIdentifierSummary(payload))

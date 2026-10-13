@@ -1,21 +1,16 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AuditActorType,
   AuditEventPrivatePayload,
-  AuditEventSortBy,
   AuditEventSummaryPayload,
-  AuditStatus,
-  PagedResult,
-  SortOrder,
-  UserRole
+  ManagementAuditEventDetailParams,
+  ManagementAuditEventListParams,
+  PagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   AuditApiPaths,
-  AuditFilterValues,
   auditEventPrivatePayloadSchema,
   auditEventSummaryPayloadSchema,
-  ListingParamNames,
   ManagementAuditRoutes,
   pagedResultSchema
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -31,63 +26,29 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
   public constructor(private readonly client: HttpClient) {}
 
   public async getAuditEvents(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: AuditEventSortBy | null,
-    sortOrder?: SortOrder | null,
-    actorIds?: string[] | null,
-    actorTypes?: AuditActorType[] | null,
-    actorUserRoles?: UserRole[] | null,
-    actions?: string[] | null,
-    resources?: string[] | null,
-    resourceIds?: string[] | null,
-    statuses?: AuditStatus[] | null,
-    messages?: string[] | null
+    params?: ManagementAuditEventListParams | null
   ): Promise<AppResult<PagedResult<AuditEventSummaryPayload>, AppError>> {
-    const query = new URLSearchParams()
-    if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
-    if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy))
-    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder))
-
-    if (actorIds) {
-      actorIds.forEach((id) => query.append(AuditFilterValues.AuditEventFilterValues.ACTOR_ID, id))
-    }
-    if (actorTypes) {
-      actorTypes.forEach((type) => query.append(AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE, String(type)))
-    }
-    if (actorUserRoles) {
-      actorUserRoles.forEach((role) => query.append(AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE, String(role)))
-    }
-    if (actions) {
-      actions.forEach((action) => query.append(AuditFilterValues.AuditEventFilterValues.ACTION, action))
-    }
-    if (resources) {
-      resources.forEach((resource) => query.append(AuditFilterValues.AuditEventFilterValues.RESOURCE, resource))
-    }
-    if (resourceIds) {
-      resourceIds.forEach((id) => query.append(AuditFilterValues.AuditEventFilterValues.RESOURCE_ID, id))
-    }
-    if (statuses) {
-      statuses.forEach((status) => query.append(AuditFilterValues.AuditEventFilterValues.STATUS, String(status)))
-    }
-    if (messages) {
-      messages.forEach((msg) => query.append(AuditFilterValues.AuditEventFilterValues.MESSAGE, msg))
-    }
-
-    const queryString = query.toString()
-    const path = queryString
-      ? `${ManagementAuditRoutes.GET_AUDIT_EVENTS}?${queryString}`
-      : ManagementAuditRoutes.GET_AUDIT_EVENTS
-
+    const path = appendQueryParamsToPath(
+      ManagementAuditRoutes.GET_AUDIT_EVENTS,
+      params
+    )
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return pagedResultSchema(auditEventSummaryPayloadSchema).parse(raw)
     })
   }
 
-  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivatePayload, AppError>> {
-    const path = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
+  public async getAuditEvent(
+    params: ManagementAuditEventDetailParams | string
+  ): Promise<AppResult<AuditEventPrivatePayload, AppError>> {
+    const eventId = typeof params === 'string' ? params : params.eventId
+    if (!eventId) {
+      return callResult(async () => {
+        throw new Error('Event ID is required')
+      })
+    }
+    const basePath = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
+    const path = appendQueryParamsToPath(basePath, typeof params === 'string' ? null : params)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return auditEventPrivatePayloadSchema.parse(raw)

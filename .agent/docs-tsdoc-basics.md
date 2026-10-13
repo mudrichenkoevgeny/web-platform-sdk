@@ -32,6 +32,5 @@ A documentation task for a module or feature is considered complete ONLY if:
 4. **Side Effects:** For void/Promise<void> functions, the summary must clearly state the outcome (e.g., "Persists the session token and notifies the active storage listeners").
 
 ## 5. Inline Comments vs. TSDoc
-- **No Narrative Comments:** Strictly forbidden to write comments that narrate the obvious flow of code.
-- **Logic Clarity:** Prefer self-documenting code through expressive naming and clear structure.
-- **Constraints Only:** Use inline documentation strictly for non-obvious technical constraints, browser quirks, or Web Crypto limitations.
+- **No Inline Implementation Comments:** Strictly forbidden to write narrative inline comments (`//` or `/* ... */`) inside code bodies. Logic must be self-documenting through expressive naming and clean structure.
+- **MANDATORY TSDoc Preservation:** TSDoc blocks (`/** ... */`) are structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing TSDoc documentation during refactorings, updates, or code edits. All public and exported API elements must strictly retain, maintain, and update their TSDoc documentation.

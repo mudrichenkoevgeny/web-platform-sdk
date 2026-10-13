@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementSessionApi } from '@/network/api/session/fetch-management-session-api'
-import { ManagementSessionRoutes, toUserIdOrThrow, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementSessionsRoutes, toUserIdOrThrow, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userSessionPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementSessionApi', () => {
@@ -23,7 +23,7 @@ describe('FetchManagementSessionApi', () => {
     const result = await api.getSessions(1, 10)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(ManagementSessionRoutes.GET_SESSIONS)
+      expect.stringContaining(ManagementSessionsRoutes.GET_SESSIONS)
     )
     expect(result).toEqual({ success: true, data: expectedData })
   })

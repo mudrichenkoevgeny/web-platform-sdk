@@ -1,7 +1,7 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
-import { ManagementUserSecurityRoutes, UserApiPaths } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUsersSecurityRoutes, UserApiPaths } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserSecurityApi } from '@/network/api/user/security/management-user-security-api'
 
 /** {@link ManagementUserSecurityApi} implementation backed by {@link HttpClient}. */
@@ -15,7 +15,7 @@ export class FetchManagementUserSecurityApi implements ManagementUserSecurityApi
 
   public async disableTotp(userId: UserId): Promise<AppResult<void, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUserSecurityRoutes.DISABLE_TOTP}?${query.toString()}`
+    const path = `${ManagementUsersSecurityRoutes.DISABLE_TOTP}?${query.toString()}`
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'DELETE'
@@ -23,3 +23,4 @@ export class FetchManagementUserSecurityApi implements ManagementUserSecurityApi
     )
   }
 }
+

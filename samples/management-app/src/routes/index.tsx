@@ -1,7 +1,6 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import { HomeScreen } from '@/ui/screen/home/HomeScreen'
 
 export const Route = createFileRoute('/')({
-  component: function IndexRoute() {
-    return <Navigate to="/management" />
-  }
+  component: HomeScreen
 })

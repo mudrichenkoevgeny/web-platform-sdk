@@ -1,21 +1,18 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  ManagementGlobalIdentifierListParams,
+  ManagementUserIdentifierListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
-  ListingParamNames,
-  ManagementIdentifierRoutes,
+  ManagementIdentifiersRoutes,
   pagedResultSchema,
   UserApiPaths,
-  UserFilterValues,
   userIdentifierPrivatePayloadSchema,
   userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -31,38 +28,12 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
   public constructor(private readonly client: HttpClient) {}
 
   public async getIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
-    const query = new URLSearchParams()
-    if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
-    if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy))
-    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder))
-    if (userIds) {
-      userIds.forEach((id) => query.append(UserFilterValues.UserIdentifierFilterValues.USER_ID, id))
-    }
-    if (userAuthProviders) {
-      userAuthProviders.forEach((provider) =>
-        query.append(UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER, String(provider))
-      )
-    }
-    if (identifiers) {
-      identifiers.forEach((identifier) =>
-        query.append(UserFilterValues.UserIdentifierFilterValues.IDENTIFIER, identifier)
-      )
-    }
-
-    const queryString = query.toString()
-    const path = queryString
-      ? `${ManagementIdentifierRoutes.GET_IDENTIFIERS}?${queryString}`
-      : ManagementIdentifierRoutes.GET_IDENTIFIERS
-
+    const path = appendQueryParamsToPath(
+      ManagementIdentifiersRoutes.GET_IDENTIFIERS,
+      params
+    )
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
@@ -71,7 +42,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
 
   public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     const query = new URLSearchParams({ [UserApiPaths.USER_IDENTIFIER_ID]: identifierId })
-    const path = `${ManagementIdentifierRoutes.GET_IDENTIFIER}?${query.toString()}`
+    const path = `${ManagementIdentifiersRoutes.GET_IDENTIFIER}?${query.toString()}`
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return userIdentifierPrivatePayloadSchema.parse(raw)
@@ -83,7 +54,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
       [UserApiPaths.USER_ID]: userId,
       [UserApiPaths.USER_IDENTIFIER_ID]: identifierId
     })
-    const path = `${ManagementIdentifierRoutes.DELETE_IDENTIFIER}?${query.toString()}`
+    const path = `${ManagementIdentifiersRoutes.DELETE_IDENTIFIER}?${query.toString()}`
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
@@ -92,7 +63,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
       [UserApiPaths.USER_ID]: userId,
       [UserApiPaths.USER_IDENTIFIER_ID]: identifierId
     })
-    const path = `${ManagementIdentifierRoutes.DELETE_IDENTIFIER_PASSWORD}?${query.toString()}`
+    const path = `${ManagementIdentifiersRoutes.DELETE_IDENTIFIER_PASSWORD}?${query.toString()}`
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 }

@@ -1,11 +1,8 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
-  UserSessionSummary,
-  UserSortValues
+  SelfSessionListParams,
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
 
@@ -21,41 +18,12 @@ export class GetSessionsUseCase {
   /**
    * Fetches active sessions list.
    *
+   * @param params - Query and filter parameters
    * @returns PagedResult containing UserSessionSummary models or AppError
    */
   public async execute(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserSessionSortBy | null,
-    sortOrder?: SortOrder | null,
-    identifiers?: string[] | null,
-    identifierIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    clientTypes?: ClientType[] | null,
-    userAgents?: string[] | null,
-    ipAddresses?: string[] | null,
-    languages?: string[] | null,
-    deviceIds?: string[] | null,
-    deviceNames?: string[] | null,
-    appVersions?: string[] | null,
-    operationSystemVersions?: string[] | null
+    params?: SelfSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
-    return this.sessionRepository.getSessions(
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortOrder,
-      identifiers,
-      identifierIds,
-      userAuthProviders,
-      clientTypes,
-      userAgents,
-      ipAddresses,
-      languages,
-      deviceIds,
-      deviceNames,
-      appVersions,
-      operationSystemVersions
-    )
+    return this.sessionRepository.getSessions(params)
   }
 }

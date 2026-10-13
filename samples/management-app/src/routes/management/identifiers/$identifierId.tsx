@@ -1,46 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  IdentifierDetailScreen,
-  GetUserIdentifierUseCase,
-  DeleteUserIdentifierUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { ManagementRootStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultFailure, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
-
-class CustomGetUserIdentifierUseCase extends GetUserIdentifierUseCase {
-  public constructor(private readonly managementDeps: ManagementRootStoreDependencies) {
-    super(undefined!)
-  }
-
-  public override async execute(id: UserIdentifierId) {
-    if (this.managementDeps.managementGetIdentifierUseCase) {
-      return this.managementDeps.managementGetIdentifierUseCase.execute(id)
-    }
-    return appResultFailure(CommonError.unknown())
-  }
-}
-
-class CustomDeleteUserIdentifierUseCase extends DeleteUserIdentifierUseCase {
-  public constructor(private readonly managementDeps: ManagementRootStoreDependencies) {
-    super(undefined!)
-  }
-
-  public override async execute(id: UserIdentifierId) {
-    if (!this.managementDeps.managementGetIdentifierUseCase) {
-      return appResultFailure(CommonError.unknown())
-    }
-
-    const idRes = await this.managementDeps.managementGetIdentifierUseCase.execute(id)
-    if (!isSuccess(idRes)) {
-      return idRes
-    }
-
-    return this.managementDeps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
-  }
-}
 
 export const Route = createFileRoute('/management/identifiers/$identifierId')({
   component: function IdentifierDetailRoute() {
@@ -57,10 +19,28 @@ export const Route = createFileRoute('/management/identifiers/$identifierId')({
       <IdentifierDetailScreen
         dependencies={{
           identifierId: toUserIdentifierIdOrThrow(identifierId),
-          getUserIdentifierUseCase: new CustomGetUserIdentifierUseCase(managementDeps),
-          deleteUserIdentifierUseCase: new CustomDeleteUserIdentifierUseCase(managementDeps),
+          getUserIdentifierUseCase: {
+            execute: (id) =>
+              managementDeps.managementGetIdentifierUseCase
+                ? managementDeps.managementGetIdentifierUseCase.execute(id)
+                : Promise.resolve(appResultFailure(CommonError.unknown()))
+          },
+          deleteUserIdentifierUseCase: {
+            execute: async (id) => {
+              if (!managementDeps.managementGetIdentifierUseCase) {
+                return appResultFailure(CommonError.unknown())
+              }
+
+              const idRes = await managementDeps.managementGetIdentifierUseCase.execute(id)
+              if (!isSuccess(idRes)) {
+                return idRes
+              }
+
+              return managementDeps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
+            }
+          },
           deletePasswordUseCase: {
-            execute: async (id: UserIdentifierId) => {
+            execute: async (id) => {
               if (!managementDeps.managementGetIdentifierUseCase) {
                 return appResultFailure(CommonError.unknown())
               }
@@ -73,9 +53,10 @@ export const Route = createFileRoute('/management/identifiers/$identifierId')({
               return managementDeps.managementDeleteIdentifierPasswordUseCase.execute(idRes.data.userId, id)
             }
           },
+          currentUserId: managementDeps.currentUserId,
           onNavigateToUserDetail: (userId) =>
             navigate({ to: '/management/users/$userId', params: { userId } }),
-          onNavigateToProfile: () => navigate({ to: '/management' }),
+          onNavigateToProfile: () => navigate({ to: '/management/profile' }),
           onBack: () => navigateUp({ to: '/management/identifiers' })
         }}
       />

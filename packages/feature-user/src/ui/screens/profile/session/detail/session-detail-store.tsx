@@ -33,9 +33,10 @@ export type SessionDetailScreenState =
 export interface SessionDetailStoreDependencies {
   session?: UserSessionPrivate
   sessionId?: UserSessionId
-  getSessionUseCase?: GetSessionUseCase
-  deleteSessionUseCase?: DeleteSessionUseCase
+  getSessionUseCase?: { execute: (sessionId: UserSessionId) => Promise<AppResult<UserSessionPrivate, AppError>> }
+  deleteSessionUseCase?: { execute: (sessionId: UserSessionId) => Promise<AppResult<void, AppError>> }
   isCurrentSession?: boolean
+  currentUserId?: UserId | null
   authStorage?: AuthStorage
   onSessionRevoked?: (sessionId: UserSessionId) => void
   onNavigateToIdentifierDetail?: (identifierId: UserIdentifierId) => void
@@ -193,7 +194,7 @@ export const createSessionDetailStore = (
         return
       }
       const activeDeps = get().dependencies
-      if (current.isCurrentSession) {
+      if (current.isCurrentSession || (activeDeps.currentUserId != null && current.session.userId === activeDeps.currentUserId)) {
         activeDeps.onNavigateToProfile?.()
       } else {
         activeDeps.onNavigateToUserDetail?.(current.session.userId)

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { RouterProvider } from '@tanstack/react-router'
-import { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, type UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { SdkProvider, ThemeProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementLoginRootStoreDependencies, ManagementRootStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import type { ManagementAppComponent } from '@/di/management-app-component'
@@ -40,6 +40,14 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
     }
   }, [managementAppComponent, isInitialized])
 
+  const [currentUserId, setCurrentUserId] = useState<UserId | null>(null)
+
+  useEffect(() => {
+    return managementAppComponent.managementUserComponent.selfManagementUserRepository.observeCurrentUser((user) => {
+      setCurrentUserId(user?.id ?? null)
+    })
+  }, [managementAppComponent])
+
   const loginDependencies: ManagementLoginRootStoreDependencies = useMemo(
     () => ({
       appType: AppType.MANAGEMENT,
@@ -68,6 +76,8 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
 
   const managementDependencies: ManagementRootStoreDependencies = useMemo(
     () => ({
+      currentUserId,
+      onNavigateToProfile: () => void router.navigate({ to: '/management/profile' }),
       getManagementAuthSettingsUseCase: managementAppComponent.managementUserComponent.getManagementAuthSettingsUseCase,
       saveRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.saveRemoteAuthSettingsUseCase,
       resetRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.resetRemoteAuthSettingsUseCase,
@@ -95,7 +105,7 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
       getAuditEventUseCase: managementAppComponent.managementUserComponent.getAuditEventUseCase,
       selfManagementUserRepository: managementAppComponent.managementUserComponent.selfManagementUserRepository
     }),
-    [managementAppComponent]
+    [managementAppComponent, currentUserId]
   )
 
   if (!isInitialized) {

@@ -36,7 +36,7 @@ const createMockDeps = (isCurrent = false): SessionDetailStoreDependencies => ({
   isCurrentSession: isCurrent,
   deleteSessionUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  },
   onSessionRevoked: () => {},
   onNavigateToIdentifierDetail: () => {},
   onNavigateToUserDetail: () => {},

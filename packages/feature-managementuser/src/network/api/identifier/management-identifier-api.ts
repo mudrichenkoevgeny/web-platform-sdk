@@ -1,13 +1,12 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  ManagementGlobalIdentifierListParams,
+  ManagementUserIdentifierListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Administrative user identifiers management. */
@@ -15,23 +14,11 @@ export interface ManagementIdentifierApi {
   /**
    * Returns a paginated and filtered list of identifiers based on search criteria.
    *
-   * @param pageNumber - One-based page index
-   * @param pageSize - Maximum items returned per page
-   * @param sortBy - Field to sort by
-   * @param sortOrder - Sorting direction
-   * @param userIds - Filters by specific user identifiers
-   * @param userAuthProviders - Filters by authentication provider types
-   * @param identifiers - Filters by server-defined free-text identifier values
+   * @param params - Query parameters for global or user-specific identifiers list
    * @returns Paginated result containing matching identifier summary payloads, or a mapped failure
    */
   getIdentifiers(
-    pageNumber?: number | null,
-    pageSize?: number | null,
-    sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    sortOrder?: SortOrder | null,
-    userIds?: string[] | null,
-    userAuthProviders?: UserAuthProvider[] | null,
-    identifiers?: string[] | null
+    params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>>
 
   /**
