@@ -58,6 +58,7 @@ alwaysApply: true
 ## 10. Routing Integration & URL Search Parameters
 - **SDK Agnosticism:** UI Screen components in `packages/*` must not hardcode router instances or hooks. They receive `searchParams` and navigation callbacks (`onNavigateToX`, `onSearchParamsChanged`) via their `dependencies` prop.
 - **URL Parameter Schemas:** Create flat Zod schemas (`*SearchSchema.ts`) using `zod` for components accepting search/query parameters. Include array coercion (`z.union([z.string().transform(v => [v]), z.array(z.string())])`).
+- **Search Parameter Callbacks:** The `onSearchParamsChanged` callbacks passed from host router screens must use `replace: true` during `navigate(...)` to prevent creating redundant history stack entries for mere filter/pagination updates.
 - **Pure Converters:** Use pure converter functions outside components (`searchParamsToListingStates` / `listingStatesToSearchParams`) to bridge flat URL parameters and complex panel UI states.
 
 ## 11. Mandatory Complete Implementation

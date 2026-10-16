@@ -33,7 +33,7 @@ export class FetchManagementUserApi implements ManagementUserApi {
     const payload: CreateByEmailRequest = {
       email: params.email,
       password: params.password ?? null,
-      role: UserRole.CLIENT_USER,
+      role: params.role ?? UserRole.USER,
       account_status: params.status ?? UserAccountStatus.ACTIVE,
       authority_level: params.authorityLevel ?? 0,
       permission_codes: []

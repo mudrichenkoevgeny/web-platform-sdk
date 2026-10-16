@@ -14,6 +14,7 @@ import type {
 export interface CreateUserParams {
   email: string
   password?: string | null
+  role?: UserRole | null
   status?: UserAccountStatus | null
   authorityLevel?: number | null
 }
