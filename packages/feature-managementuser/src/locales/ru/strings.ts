@@ -27,6 +27,7 @@ export const ruManagementUserStrings: FeatureManagementUserStrings = {
   audit_event_updated_at: 'Время обновления',
   audit_event_metadata: 'Метаданные',
 
+  settings: 'Настройки',
   edit_auth_settings_title: 'Редактировать настройки авторизации',
   enabled_auth_providers: 'Включенные провайдеры авторизации',
   is_registration_enabled: 'Разрешить регистрацию новых пользователей',

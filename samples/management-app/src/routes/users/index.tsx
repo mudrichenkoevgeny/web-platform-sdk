@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GlobalUserListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { ManagementMainNavigation, managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { GlobalUserListScreen, globalUserListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/users/')({
-  validateSearch: (rawSearch) => cleanSearchParams(managementUserListParamsSchema.parse(rawSearch)),
+  validateSearch: (rawSearch) => parseSearchParams(globalUserListSearchSchema, rawSearch),
   component: function GlobalUserListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const searchParams = Route.useSearch()
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/users/')({
           getUsersUseCase: managementDeps.getUsersUseCase,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }) }),
+            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToCreateUser: () => void navigate({ to: '/users/new' }),

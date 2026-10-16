@@ -4,9 +4,7 @@ import { MainManagementScreen } from '@/ui/screens/management/main/MainManagemen
 import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
 
 const createMockDeps = (): MainManagementStoreDependencies => ({
-  onEditAuthSettingsClick: () => {},
-  onEditGlobalSettingsClick: () => {},
-  onEditSecuritySettingsClick: () => {},
+  onSettingsClick: () => {},
   onGlobalUserListClick: () => {},
   onAuditEventListClick: () => {},
   onGlobalSessionListClick: () => {},

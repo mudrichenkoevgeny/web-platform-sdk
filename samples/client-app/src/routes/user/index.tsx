@@ -19,9 +19,9 @@ export const Route = createFileRoute('/user/')({
           getAuthSettingsUseCase: appComponent.clientUserComponent.getAuthSettingsUseCase,
           observeAuthSettingsUseCase: appComponent.clientUserComponent.observeAuthSettingsUseCase,
           onNavigateToLogin: () => navigate({ to: ClientAuthNavigation.Main.ROUTE }),
-          onNavigateToTotp: () => navigate({ to: ClientUserNavigation.TotpMain.ROUTE, search: (prev: Record<string, unknown>) => prev }),
-          onNavigateToSessions: () => navigate({ to: ClientUserNavigation.SessionList.ROUTE, search: (prev: Record<string, unknown>) => prev }),
-          onNavigateToIdentifiers: () => navigate({ to: ClientUserNavigation.IdentifierList.ROUTE, search: (prev: Record<string, unknown>) => prev })
+          onNavigateToTotp: () => navigate({ to: ClientUserNavigation.TotpMain.ROUTE }),
+          onNavigateToSessions: () => navigate({ to: ClientUserNavigation.SessionList.ROUTE }),
+          onNavigateToIdentifiers: () => navigate({ to: ClientUserNavigation.IdentifierList.ROUTE })
         }}
       />
     )

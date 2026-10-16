@@ -57,14 +57,14 @@ describe('appendQueryParamsToPath', () => {
     expect(appendQueryParamsToPath('/api/test', mockParams)).toBe('/api/test')
   })
 
-  it('supports Record with scalar primitive values', () => {
+  it('supports Record with scalar primitive values and maps to snake_case', () => {
     const params = {
       pageNumber: 1,
       sortBy: 'created_at',
       isTotpEnabled: true
     }
     expect(appendQueryParamsToPath('/api/test', params)).toBe(
-      '/api/test?pageNumber=1&sortBy=created_at&isTotpEnabled=true'
+      '/api/test?page_number=1&sort_by=created_at&is_totp_enabled=true'
     )
   })
 })

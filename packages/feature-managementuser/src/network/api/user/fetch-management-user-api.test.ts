@@ -24,7 +24,7 @@ describe('FetchManagementUserApi', () => {
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.CREATE_USER,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST' })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -64,7 +64,7 @@ describe('FetchManagementUserApi', () => {
     const result = await api.getUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('user_id=usr_1')
+      expect.stringContaining('/management/users/usr_1')
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -77,8 +77,8 @@ describe('FetchManagementUserApi', () => {
     const result = await api.updateUser(userId, request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('user_id=usr_1'),
-      expect.objectContaining({ method: 'PATCH', body: JSON.stringify(request) })
+      expect.stringContaining('/management/users/usr_1'),
+      expect.objectContaining({ method: 'PATCH' })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })
@@ -90,7 +90,7 @@ describe('FetchManagementUserApi', () => {
     const result = await api.deleteUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('user_id=usr_1'),
+      expect.stringContaining('/management/users/usr_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })

@@ -8,5 +8,8 @@ export const ruManagementAppStrings: ManagementAppStrings = {
   nav_management: 'Управление',
   nav_user: 'Пользователь',
   btn_back_to_home: 'На главную',
-  home_screen_title: 'Главный экран'
+  home_screen_title: 'Главный экран',
+  settings_auth: 'Настройки аутентификации',
+  settings_global: 'Глобальные настройки',
+  settings_security: 'Настройки безопасности'
 }

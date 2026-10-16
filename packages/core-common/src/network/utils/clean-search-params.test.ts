@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { cleanSearchParams } from './clean-search-params'
+import { z } from 'zod'
+import { cleanSearchParams, parseSearchParams } from './clean-search-params'
 
 describe('cleanSearchParams', () => {
-  it('removes empty arrays, null, and undefined values', () => {
+  it('removes empty arrays, null, undefined values, and default pageNumber/pageSize', () => {
     const raw = {
       pageNumber: 1,
       pageSize: 20,
@@ -15,9 +16,35 @@ describe('cleanSearchParams', () => {
     const cleaned = cleanSearchParams(raw)
 
     expect(cleaned).toEqual({
-      pageNumber: 1,
-      pageSize: 20,
       userAuthProviders: ['EMAIL']
     })
+  })
+
+  it('preserves non-default pageNumber and pageSize', () => {
+    const raw = {
+      pageNumber: 2,
+      pageSize: 50,
+      userAuthProviders: ['EMAIL']
+    }
+
+    const cleaned = cleanSearchParams(raw)
+
+    expect(cleaned).toEqual({
+      pageNumber: 2,
+      pageSize: 50,
+      userAuthProviders: ['EMAIL']
+    })
+  })
+
+  it('coerces stringified numbers and parses via parseSearchParams', () => {
+    const schema = z.object({
+      pageNumber: z.number().default(1),
+      pageSize: z.number().default(20)
+    })
+
+    const raw = { pageNumber: '2', pageSize: '20' }
+    const result = parseSearchParams(schema, raw)
+
+    expect(result).toEqual({ pageNumber: 2 })
   })
 })

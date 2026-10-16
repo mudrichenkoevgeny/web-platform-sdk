@@ -44,7 +44,7 @@ describe('FetchOpenSecuritySettingsApi', () => {
     }
 
     expect(customFetch).toHaveBeenCalledWith(
-      'https://api.example.com/security/settings',
+      'https://api.example.com/settings/security',
       expect.any(Object)
     )
   })

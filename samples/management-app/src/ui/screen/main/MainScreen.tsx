@@ -8,8 +8,10 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useManagementAppComponent } from '@/di/management-app-context'
 import { getDestinations, type MainTabKey } from '@/ui/screen/main/main-screen-destination'
+import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'
 
 export function MainScreen(): React.JSX.Element {
+  useEnsureHistoryStack()
   const appComponent = useManagementAppComponent()
   const navigate = useNavigate()
   const location = useLocation()

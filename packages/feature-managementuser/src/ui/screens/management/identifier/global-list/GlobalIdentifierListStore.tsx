@@ -15,6 +15,8 @@ import {
 import type { ManagementDeleteIdentifierUseCase } from '@/usecase/identifier/management-delete-identifier-use-case'
 import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/management-get-identifiers-use-case'
 
+import type { GlobalIdentifierListSearchParams } from '@/ui/screens/management/identifier/global-list/globalIdentifierListSearchSchema'
+
 export type GlobalIdentifierListScreenState =
   | {
       status: 'loading'
@@ -36,15 +38,15 @@ export interface GlobalIdentifierListStoreDependencies {
   managementDeleteIdentifierUseCase: ManagementDeleteIdentifierUseCase
   onNavigateToIdentifierDetail: (identifierId: UserIdentifierId) => void
   onBack: () => void
-  searchParams?: ManagementGlobalIdentifierListParams
-  onSearchParamsChanged?: (params: ManagementGlobalIdentifierListParams) => void
+  searchParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams
+  onSearchParamsChanged?: (params: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams) => void
 }
 
 export interface GlobalIdentifierListStoreState {
   dependencies: GlobalIdentifierListStoreDependencies
   screenState: GlobalIdentifierListScreenState
-  initScreen: (searchParams?: ManagementGlobalIdentifierListParams) => Promise<void>
-  onSearchParamsUpdated: (searchParams?: ManagementGlobalIdentifierListParams) => Promise<void>
+  initScreen: (searchParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onToggleFilterPanel: () => void
@@ -68,7 +70,7 @@ export const createGlobalIdentifierListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    overrideParams?: ManagementGlobalIdentifierListParams
+    overrideParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams
   ) => {
     if (isFetching) {
       return
@@ -77,11 +79,23 @@ export const createGlobalIdentifierListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const searchParams = overrideParams ?? activeDeps.searchParams
+      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+
+      const mappedParams: Partial<ManagementGlobalIdentifierListParams> = { ...(rawParams as Partial<ManagementGlobalIdentifierListParams>) }
+      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementGlobalIdentifierListParams['sortBy']
+      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementGlobalIdentifierListParams['sortOrder']
+      if ('user_auth_providers' in rawParams && rawParams.user_auth_providers) mappedParams.userAuthProviders = rawParams.user_auth_providers as ManagementGlobalIdentifierListParams['userAuthProviders']
+      if ('user_ids' in rawParams) mappedParams.userIds = rawParams.user_ids
+      if ('identifiers' in rawParams) mappedParams.identifiers = rawParams.identifiers
+      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
+      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
+
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
+
       const result = await activeDeps.managementGetIdentifiersUseCase.execute(
         managementGlobalIdentifierListParamsSchema.parse({
-          ...searchParams,
-          pageNumber
+          ...mappedParams,
+          pageNumber: effectivePageNumber
         })
       )
 
@@ -141,7 +155,8 @@ export const createGlobalIdentifierListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementGlobalIdentifierListParams) => {
@@ -154,7 +169,8 @@ export const createGlobalIdentifierListStore = (
           actionError: null
         }
       })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {

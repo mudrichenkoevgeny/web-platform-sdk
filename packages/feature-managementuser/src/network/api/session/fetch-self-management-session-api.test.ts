@@ -76,7 +76,7 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow('sess_2')] } })
   })
 
   it('dispatches reauthenticateSession request', async () => {

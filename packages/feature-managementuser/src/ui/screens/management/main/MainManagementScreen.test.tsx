@@ -7,9 +7,7 @@ import { enManagementUserStrings } from '@/locales/index'
 
 describe('MainManagementScreen', () => {
   const createMockDeps = (): MainManagementStoreDependencies => ({
-    onEditAuthSettingsClick: vi.fn(),
-    onEditGlobalSettingsClick: vi.fn(),
-    onEditSecuritySettingsClick: vi.fn(),
+    onSettingsClick: vi.fn(),
     onGlobalUserListClick: vi.fn(),
     onAuditEventListClick: vi.fn(),
     onGlobalSessionListClick: vi.fn(),

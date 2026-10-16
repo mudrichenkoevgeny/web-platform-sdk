@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AuditEventListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { ManagementMainNavigation, managementAuditEventListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { AuditEventListScreen, auditEventListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/audit/events/')({
-  validateSearch: (rawSearch) => cleanSearchParams(managementAuditEventListParamsSchema.parse(rawSearch)),
+  validateSearch: (rawSearch) => parseSearchParams(auditEventListSearchSchema, rawSearch),
   component: function AuditEventsRoute() {
     const { managementDeps } = Route.useRouteContext()
     const searchParams = Route.useSearch()
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/audit/events/')({
           getAuditEventsUseCase: managementDeps.getAuditEventsUseCase,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }) }),
+            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToEventDetail: (eventId) =>
             void navigate({ to: '/audit/events/$eventId', params: { eventId } }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })

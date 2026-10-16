@@ -23,7 +23,7 @@ export const Route = createFileRoute('/users/$userId/identifiers')({
           managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }) }),
+            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
           onIdentifierSelect: (identifierId) =>
             navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
           onBack: () => navigateUp({ to: '/users/$userId', params: { userId } })

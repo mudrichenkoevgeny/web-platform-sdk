@@ -21,7 +21,7 @@ describe('FetchManagementUserSecurityApi', () => {
     const result = await api.disableTotp(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('user_id=usr_1'),
+      expect.stringContaining('/management/users/usr_1/totp'),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AppType, ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, ManagementAuthNavigation, ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
 export const Route = createFileRoute('/user/')({
   component: function MainUserRoute() {
@@ -16,10 +16,10 @@ export const Route = createFileRoute('/user/')({
           userRepository: appComponent.managementUserComponent.selfUserRepository,
           logoutUseCase: appComponent.managementUserComponent.logoutUseCase,
           scheduleUserDeletionUseCase: appComponent.managementUserComponent.scheduleUserDeletionUseCase,
-          onNavigateToLogin: () => {},
-          onNavigateToTotp: () => navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE, search: (prev: Record<string, unknown>) => prev }),
-          onNavigateToSessions: () => navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE, search: (prev: Record<string, unknown>) => prev }),
-          onNavigateToIdentifiers: () => navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE, search: (prev: Record<string, unknown>) => prev })
+          onNavigateToLogin: () => navigate({ to: ManagementAuthNavigation.Main.ROUTE }),
+          onNavigateToTotp: () => navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE }),
+          onNavigateToSessions: () => navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE }),
+          onNavigateToIdentifiers: () => navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE })
         }}
       />
     )

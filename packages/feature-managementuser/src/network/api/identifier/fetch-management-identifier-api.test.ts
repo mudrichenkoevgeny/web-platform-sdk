@@ -62,7 +62,7 @@ describe('FetchManagementIdentifierApi', () => {
     const result = await api.getIdentifier(toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('user_identifier_id=ident_1')
+      expect.stringContaining('/management/identifiers/ident_1')
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -74,7 +74,7 @@ describe('FetchManagementIdentifierApi', () => {
     const result = await api.deleteIdentifier(userId, toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('usr_1'),
+      expect.stringContaining('/management/identifiers/ident_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })
@@ -87,7 +87,7 @@ describe('FetchManagementIdentifierApi', () => {
     const result = await api.deleteIdentifierPassword(userId, toUserIdentifierIdOrThrow('ident_1'))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('usr_1'),
+      expect.stringContaining('/management/identifiers/ident_1/password'),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })

@@ -53,9 +53,9 @@ describe('auditEventListSearchConverters', () => {
 
     const result = listingStatesToSearchParams(sortState, filterStates)
 
-    expect(result.sortBy).toBe('created_at')
-    expect(result.sortOrder).toBe(SortOrder.ASC)
-    expect(result.actorIds).toEqual(['user-456'])
+    expect(result.sort_by).toBe('created_at')
+    expect(result.sort_order).toBe(SortOrder.ASC)
+    expect(result.actor_ids).toEqual(['user-456'])
     expect(result.statuses).toEqual(['success'])
   })
 

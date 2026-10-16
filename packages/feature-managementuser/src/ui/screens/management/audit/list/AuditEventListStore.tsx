@@ -36,7 +36,7 @@ export interface AuditEventListStoreDependencies {
   onNavigateToEventDetail: (eventId: AuditEventId) => void
   onBack: () => void
   searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams
-  onSearchParamsChanged?: (params: ManagementAuditEventListParams) => void
+  onSearchParamsChanged?: (params: ManagementAuditEventListParams | AuditEventListSearchParams) => void
 }
 
 export interface AuditEventListStoreState {
@@ -75,11 +75,28 @@ export const createAuditEventListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const searchParams = overrideParams ?? activeDeps.searchParams
+      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+
+      const mappedParams: Partial<ManagementAuditEventListParams> = { ...(rawParams as Partial<ManagementAuditEventListParams>) }
+      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementAuditEventListParams['sortBy']
+      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementAuditEventListParams['sortOrder']
+      if ('actor_ids' in rawParams) mappedParams.actorIds = rawParams.actor_ids
+      if ('actor_types' in rawParams && rawParams.actor_types) mappedParams.actorTypes = rawParams.actor_types as ManagementAuditEventListParams['actorTypes']
+      if ('actor_user_roles' in rawParams) mappedParams.actorUserRoles = rawParams.actor_user_roles
+      if ('actions' in rawParams) mappedParams.actions = rawParams.actions
+      if ('resources' in rawParams) mappedParams.resources = rawParams.resources
+      if ('resource_ids' in rawParams) mappedParams.resourceIds = rawParams.resource_ids
+      if ('statuses' in rawParams && rawParams.statuses) mappedParams.statuses = rawParams.statuses as ManagementAuditEventListParams['statuses']
+      if ('messages' in rawParams) mappedParams.messages = rawParams.messages
+      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
+      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
+
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
+
       const result = await activeDeps.getAuditEventsUseCase.execute(
         managementAuditEventListParamsSchema.parse({
-          ...searchParams,
-          pageNumber
+          ...mappedParams,
+          pageNumber: effectivePageNumber
         })
       )
 
@@ -139,7 +156,8 @@ export const createAuditEventListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams ? ('page_number' in searchParams ? searchParams.page_number : (searchParams as ManagementAuditEventListParams).pageNumber) ?? 1 : 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => {
@@ -152,7 +170,8 @@ export const createAuditEventListStore = (
           actionError: null
         }
       })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams ? ('page_number' in searchParams ? searchParams.page_number : (searchParams as ManagementAuditEventListParams).pageNumber) ?? 1 : 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {

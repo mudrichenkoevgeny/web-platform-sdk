@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ManagementUsersNavigation, managementGlobalIdentifierListParamsSchema, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUsersNavigation, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { globalIdentifierListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
@@ -57,7 +58,7 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToProfile: () => void navigate({ to: '/user' }),
-          onBack: () => navigateUp({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE, search: (raw) => cleanSearchParams(managementGlobalIdentifierListParamsSchema.parse(raw)) })
+          onBack: () => navigateUp({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE, search: (raw) => cleanSearchParams(globalIdentifierListSearchSchema.parse(raw)) })
         }}
       />
     )

@@ -15,68 +15,81 @@ export const searchParamsToListingStates = (
     return { sortState: null, filterStates: {} }
   }
 
-  const sortState: ListingSortState | null = params.sortBy
+  // Handle both snake_case (URL) and camelCase (internal)
+  const p = params as ManagementAuditEventListParams & AuditEventListSearchParams
+  const sortBy = 'sort_by' in params ? params.sort_by : p.sortBy
+  const sortOrder = 'sort_order' in params ? params.sort_order : p.sortOrder
+  const actorIds = 'actor_ids' in params ? params.actor_ids : p.actorIds
+  const actorTypes = 'actor_types' in params ? params.actor_types : p.actorTypes
+  const actorUserRoles = 'actor_user_roles' in params ? params.actor_user_roles : p.actorUserRoles
+  const actions = 'actions' in params ? params.actions : p.actions
+  const resources = 'resources' in params ? params.resources : p.resources
+  const resourceIds = 'resource_ids' in params ? params.resource_ids : p.resourceIds
+  const statuses = 'statuses' in params ? params.statuses : p.statuses
+  const messages = 'messages' in params ? params.messages : p.messages
+
+  const sortState: ListingSortState | null = sortBy
     ? {
-        optionId: params.sortBy,
-        isAscending: params.sortOrder === SortOrder.ASC
+        optionId: sortBy,
+        isAscending: sortOrder === SortOrder.ASC
       }
     : null
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (params.actorIds && params.actorIds.length > 0) {
+  if (actorIds && actorIds.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID] = {
       type: 'text',
-      value: params.actorIds[0] ?? ''
+      value: actorIds[0] ?? ''
     }
   }
 
-  if (params.actorTypes && params.actorTypes.length > 0) {
+  if (actorTypes && actorTypes.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE] = {
       type: 'choice',
-      selectedIds: new Set(params.actorTypes)
+      selectedIds: new Set(actorTypes)
     }
   }
 
-  if (params.actorUserRoles && params.actorUserRoles.length > 0) {
+  if (actorUserRoles && actorUserRoles.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE] = {
       type: 'choice',
-      selectedIds: new Set(params.actorUserRoles)
+      selectedIds: new Set(actorUserRoles)
     }
   }
 
-  if (params.actions && params.actions.length > 0) {
+  if (actions && actions.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.ACTION] = {
       type: 'text',
-      value: params.actions[0] ?? ''
+      value: actions[0] ?? ''
     }
   }
 
-  if (params.resources && params.resources.length > 0) {
+  if (resources && resources.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE] = {
       type: 'text',
-      value: params.resources[0] ?? ''
+      value: resources[0] ?? ''
     }
   }
 
-  if (params.resourceIds && params.resourceIds.length > 0) {
+  if (resourceIds && resourceIds.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID] = {
       type: 'text',
-      value: params.resourceIds[0] ?? ''
+      value: resourceIds[0] ?? ''
     }
   }
 
-  if (params.statuses && params.statuses.length > 0) {
+  if (statuses && statuses.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.STATUS] = {
       type: 'choice',
-      selectedIds: new Set(params.statuses)
+      selectedIds: new Set(statuses)
     }
   }
 
-  if (params.messages && params.messages.length > 0) {
+  if (messages && messages.length > 0) {
     filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE] = {
       type: 'text',
-      value: params.messages[0] ?? ''
+      value: messages[0] ?? ''
     }
   }
 
@@ -86,40 +99,38 @@ export const searchParamsToListingStates = (
 export const listingStatesToSearchParams = (
   sortState: ListingSortState | null,
   filterStates: Record<string, ListingFilterState>
-): ManagementAuditEventListParams => {
-  const params: ManagementAuditEventListParams = {
-    pageNumber: 1,
-    pageSize: 20,
-    sortBy: 'created_at',
-    sortOrder: SortOrder.DESC,
-    actorIds: [],
-    actorTypes: [],
-    actorUserRoles: [],
+): AuditEventListSearchParams => {
+  const params: AuditEventListSearchParams = {
+    sort_by: 'created_at',
+    sort_order: SortOrder.DESC,
+    actor_ids: [],
+    actor_types: [],
+    actor_user_roles: [],
     actions: [],
     resources: [],
-    resourceIds: [],
+    resource_ids: [],
     statuses: [],
     messages: []
   }
 
   if (sortState) {
-    params.sortBy = sortState.optionId as NonNullable<ManagementAuditEventListParams['sortBy']>
-    params.sortOrder = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
+    params.sort_by = sortState.optionId
+    params.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
   const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
   if (actorIdFilter?.type === 'text' && actorIdFilter.value.trim()) {
-    params.actorIds = [actorIdFilter.value.trim()]
+    params.actor_ids = [actorIdFilter.value.trim()]
   }
 
   const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
   if (actorTypeFilter?.type === 'choice' && actorTypeFilter.selectedIds.size > 0) {
-    params.actorTypes = Array.from(actorTypeFilter.selectedIds) as NonNullable<ManagementAuditEventListParams['actorTypes']>
+    params.actor_types = Array.from(actorTypeFilter.selectedIds)
   }
 
   const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
   if (actorRoleFilter?.type === 'choice' && actorRoleFilter.selectedIds.size > 0) {
-    params.actorUserRoles = Array.from(actorRoleFilter.selectedIds)
+    params.actor_user_roles = Array.from(actorRoleFilter.selectedIds)
   }
 
   const actionFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTION]
@@ -134,12 +145,12 @@ export const listingStatesToSearchParams = (
 
   const resourceIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID]
   if (resourceIdFilter?.type === 'text' && resourceIdFilter.value.trim()) {
-    params.resourceIds = [resourceIdFilter.value.trim()]
+    params.resource_ids = [resourceIdFilter.value.trim()]
   }
 
   const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
   if (statusFilter?.type === 'choice' && statusFilter.selectedIds.size > 0) {
-    params.statuses = Array.from(statusFilter.selectedIds) as NonNullable<ManagementAuditEventListParams['statuses']>
+    params.statuses = Array.from(statusFilter.selectedIds)
   }
 
   const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]

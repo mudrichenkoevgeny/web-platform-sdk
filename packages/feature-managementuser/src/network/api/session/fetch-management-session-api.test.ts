@@ -72,7 +72,7 @@ describe('FetchManagementSessionApi', () => {
     const result = await api.getSession('sess_1')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('session_id=sess_1')
+      expect.stringContaining('/management/sessions/sess_1')
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -84,7 +84,7 @@ describe('FetchManagementSessionApi', () => {
     const result = await api.deleteSession(userId, 'sess_1')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('usr_1'),
+      expect.stringContaining('/management/sessions/sess_1'),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })

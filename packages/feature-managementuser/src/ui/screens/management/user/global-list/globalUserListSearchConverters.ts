@@ -1,6 +1,7 @@
 import { SortOrder, UserFilterValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { GlobalUserListSearchParams } from '@/ui/screens/management/user/global-list/globalUserListSearchSchema'
 
 export interface GlobalUserListingOptionsState {
   sortState: ListingSortState | null
@@ -8,60 +9,70 @@ export interface GlobalUserListingOptionsState {
 }
 
 export const searchParamsToListingStates = (
-  params?: ManagementUserListParams
+  params?: ManagementUserListParams | GlobalUserListSearchParams
 ): GlobalUserListingOptionsState => {
   if (!params) {
     return { sortState: null, filterStates: {} }
   }
 
-  const sortState: ListingSortState | null = params.sortBy
+  const p = params as ManagementUserListParams & GlobalUserListSearchParams
+  const sortBy = 'sort_by' in params ? params.sort_by : p.sortBy
+  const sortOrder = 'sort_order' in params ? params.sort_order : p.sortOrder
+  const userRoles = 'user_roles' in params ? params.user_roles : p.userRoles
+  const accountStatuses = 'account_statuses' in params ? params.account_statuses : p.accountStatuses
+  const accountLockoutTypes = 'account_lockout_types' in params ? params.account_lockout_types : p.accountLockoutTypes
+  const authorityLevelFrom = 'authority_level_from' in params ? params.authority_level_from : p.authorityLevelFrom
+  const authorityLevelTo = 'authority_level_to' in params ? params.authority_level_to : p.authorityLevelTo
+  const isTotpEnabled = 'is_totp_enabled' in params ? params.is_totp_enabled : p.isTotpEnabled
+
+  const sortState: ListingSortState | null = sortBy
     ? {
-        optionId: params.sortBy,
-        isAscending: params.sortOrder === SortOrder.ASC
+        optionId: sortBy,
+        isAscending: sortOrder === SortOrder.ASC
       }
     : null
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (params.userRoles && params.userRoles.length > 0) {
+  if (userRoles && userRoles.length > 0) {
     filterStates[UserFilterValues.UserFilterValues.ROLE] = {
       type: 'choice',
-      selectedIds: new Set(params.userRoles)
+      selectedIds: new Set(userRoles)
     }
   }
 
-  if (params.accountStatuses && params.accountStatuses.length > 0) {
+  if (accountStatuses && accountStatuses.length > 0) {
     filterStates[UserFilterValues.UserFilterValues.ACCOUNT_STATUS] = {
       type: 'choice',
-      selectedIds: new Set(params.accountStatuses)
+      selectedIds: new Set(accountStatuses)
     }
   }
 
-  if (params.accountLockoutTypes && params.accountLockoutTypes.length > 0) {
+  if (accountLockoutTypes && accountLockoutTypes.length > 0) {
     filterStates[UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE] = {
       type: 'choice',
-      selectedIds: new Set(params.accountLockoutTypes)
+      selectedIds: new Set(accountLockoutTypes)
     }
   }
 
-  if (params.isTotpEnabled != null) {
+  if (isTotpEnabled != null) {
     filterStates[UserFilterValues.UserFilterValues.IS_TOTP_ENABLED] = {
       type: 'boolean',
-      value: params.isTotpEnabled
+      value: isTotpEnabled
     }
   }
 
-  if (params.authorityLevelFrom != null) {
+  if (authorityLevelFrom != null) {
     filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM] = {
       type: 'number',
-      value: params.authorityLevelFrom
+      value: authorityLevelFrom
     }
   }
 
-  if (params.authorityLevelTo != null) {
+  if (authorityLevelTo != null) {
     filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO] = {
       type: 'number',
-      value: params.authorityLevelTo
+      value: authorityLevelTo
     }
   }
 
@@ -71,50 +82,48 @@ export const searchParamsToListingStates = (
 export const listingStatesToSearchParams = (
   sortState: ListingSortState | null,
   filterStates: Record<string, ListingFilterState>
-): ManagementUserListParams => {
-  const params: ManagementUserListParams = {
-    pageNumber: 1,
-    pageSize: 20,
-    sortBy: 'created_at',
-    sortOrder: SortOrder.DESC,
-    userRoles: [],
-    accountStatuses: [],
-    accountLockoutTypes: []
+): GlobalUserListSearchParams => {
+  const params: GlobalUserListSearchParams = {
+    sort_by: 'created_at',
+    sort_order: SortOrder.DESC,
+    user_roles: [],
+    account_statuses: [],
+    account_lockout_types: []
   }
 
   if (sortState) {
-    params.sortBy = sortState.optionId as NonNullable<ManagementUserListParams['sortBy']>
-    params.sortOrder = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
+    params.sort_by = sortState.optionId
+    params.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
   const roleFilter = filterStates[UserFilterValues.UserFilterValues.ROLE]
   if (roleFilter?.type === 'choice' && roleFilter.selectedIds.size > 0) {
-    params.userRoles = Array.from(roleFilter.selectedIds) as NonNullable<ManagementUserListParams['userRoles']>
+    params.user_roles = Array.from(roleFilter.selectedIds)
   }
 
   const statusFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_STATUS]
   if (statusFilter?.type === 'choice' && statusFilter.selectedIds.size > 0) {
-    params.accountStatuses = Array.from(statusFilter.selectedIds) as NonNullable<ManagementUserListParams['accountStatuses']>
+    params.account_statuses = Array.from(statusFilter.selectedIds)
   }
 
   const lockoutFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE]
   if (lockoutFilter?.type === 'choice' && lockoutFilter.selectedIds.size > 0) {
-    params.accountLockoutTypes = Array.from(lockoutFilter.selectedIds) as NonNullable<ManagementUserListParams['accountLockoutTypes']>
+    params.account_lockout_types = Array.from(lockoutFilter.selectedIds)
   }
 
   const totpFilter = filterStates[UserFilterValues.UserFilterValues.IS_TOTP_ENABLED]
   if (totpFilter?.type === 'boolean') {
-    params.isTotpEnabled = totpFilter.value
+    params.is_totp_enabled = totpFilter.value
   }
 
   const authFromFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM]
   if (authFromFilter?.type === 'number' && authFromFilter.value != null) {
-    params.authorityLevelFrom = authFromFilter.value
+    params.authority_level_from = authFromFilter.value
   }
 
   const authToFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO]
   if (authToFilter?.type === 'number' && authToFilter.value != null) {
-    params.authorityLevelTo = authToFilter.value
+    params.authority_level_to = authToFilter.value
   }
 
   return params

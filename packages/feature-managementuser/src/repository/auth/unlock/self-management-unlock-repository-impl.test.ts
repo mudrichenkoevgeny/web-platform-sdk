@@ -38,7 +38,7 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
 
   it('delegates unlockByEmail request', async () => {
     const result = await repository.unlockByEmail('admin@example.com', '123456')
-    expect(mockApi.unlockByEmail).toHaveBeenCalledWith({ email: 'admin@example.com', confirmation_code: '123456' })
+    expect(mockApi.unlockByEmail).toHaveBeenCalledWith('admin@example.com', '123456')
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -54,16 +54,13 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
 
   it('delegates unlockByPhone request', async () => {
     const result = await repository.unlockByPhone('+1234567890', '123456')
-    expect(mockApi.unlockByPhone).toHaveBeenCalledWith({ phone_number: '+1234567890', confirmation_code: '123456' })
+    expect(mockApi.unlockByPhone).toHaveBeenCalledWith('+1234567890', '123456')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates unlockByExternalAuthProvider request', async () => {
     const result = await repository.unlockByExternalAuthProvider('GOOGLE', 'token_xyz')
-    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith({
-      auth_provider: 'GOOGLE',
-      external_provider_token: 'token_xyz'
-    })
+    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith('GOOGLE', 'token_xyz')
     expect(isSuccess(result)).toBe(true)
   })
 })

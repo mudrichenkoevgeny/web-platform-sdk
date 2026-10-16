@@ -11,9 +11,7 @@ import type { MainManagementStoreDependencies } from '@/ui/screens/management/ma
 const MainManagementContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
-  const onEditAuthSettingsClick = useMainManagementStore((s) => s.onEditAuthSettingsClick)
-  const onEditGlobalSettingsClick = useMainManagementStore((s) => s.onEditGlobalSettingsClick)
-  const onEditSecuritySettingsClick = useMainManagementStore((s) => s.onEditSecuritySettingsClick)
+  const onSettingsClick = useMainManagementStore((s) => s.onSettingsClick)
   const onGlobalUserListClick = useMainManagementStore((s) => s.onGlobalUserListClick)
   const onAuditEventListClick = useMainManagementStore((s) => s.onAuditEventListClick)
   const onGlobalSessionListClick = useMainManagementStore((s) => s.onGlobalSessionListClick)
@@ -51,18 +49,8 @@ const MainManagementContent: React.FC<{ strings?: FeatureManagementUserStrings }
         />
         <CoreButton
           type="button"
-          label={strings.edit_auth_settings}
-          onClick={onEditAuthSettingsClick}
-        />
-        <CoreButton
-          type="button"
-          label={strings.edit_global_settings}
-          onClick={onEditGlobalSettingsClick}
-        />
-        <CoreButton
-          type="button"
-          label={strings.edit_security_settings}
-          onClick={onEditSecuritySettingsClick}
+          label={strings.settings}
+          onClick={onSettingsClick}
         />
       </div>
     </div>

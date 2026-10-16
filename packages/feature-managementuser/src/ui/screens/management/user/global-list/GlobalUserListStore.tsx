@@ -13,6 +13,7 @@ import {
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
+import type { GlobalUserListSearchParams } from '@/ui/screens/management/user/global-list/globalUserListSearchSchema'
 
 export type GlobalUserListScreenState =
   | {
@@ -35,15 +36,15 @@ export interface GlobalUserListStoreDependencies {
   onNavigateToUserDetail: (userId: UserId) => void
   onNavigateToCreateUser: () => void
   onBack: () => void
-  searchParams?: ManagementUserListParams
-  onSearchParamsChanged?: (params: ManagementUserListParams) => void
+  searchParams?: ManagementUserListParams | GlobalUserListSearchParams
+  onSearchParamsChanged?: (params: ManagementUserListParams | GlobalUserListSearchParams) => void
 }
 
 export interface GlobalUserListStoreState {
   dependencies: GlobalUserListStoreDependencies
   screenState: GlobalUserListScreenState
-  initScreen: (searchParams?: ManagementUserListParams) => Promise<void>
-  onSearchParamsUpdated: (searchParams?: ManagementUserListParams) => Promise<void>
+  initScreen: (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onToggleFilterPanel: () => void
@@ -67,7 +68,7 @@ export const createGlobalUserListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    overrideParams?: ManagementUserListParams
+    overrideParams?: ManagementUserListParams | GlobalUserListSearchParams
   ) => {
     if (isFetching) {
       return
@@ -76,11 +77,26 @@ export const createGlobalUserListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const searchParams = overrideParams ?? activeDeps.searchParams
+      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+
+      const mappedParams: Partial<ManagementUserListParams> = { ...(rawParams as Partial<ManagementUserListParams>) }
+      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementUserListParams['sortBy']
+      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementUserListParams['sortOrder']
+      if ('user_roles' in rawParams && rawParams.user_roles) mappedParams.userRoles = rawParams.user_roles as ManagementUserListParams['userRoles']
+      if ('account_statuses' in rawParams && rawParams.account_statuses) mappedParams.accountStatuses = rawParams.account_statuses as ManagementUserListParams['accountStatuses']
+      if ('account_lockout_types' in rawParams && rawParams.account_lockout_types) mappedParams.accountLockoutTypes = rawParams.account_lockout_types as ManagementUserListParams['accountLockoutTypes']
+      if ('authority_level_from' in rawParams) mappedParams.authorityLevelFrom = rawParams.authority_level_from
+      if ('authority_level_to' in rawParams) mappedParams.authorityLevelTo = rawParams.authority_level_to
+      if ('is_totp_enabled' in rawParams) mappedParams.isTotpEnabled = rawParams.is_totp_enabled
+      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
+      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
+
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
+
       const result = await activeDeps.getUsersUseCase.execute(
         managementUserListParamsSchema.parse({
-          ...searchParams,
-          pageNumber
+          ...mappedParams,
+          pageNumber: effectivePageNumber
         })
       )
 
@@ -140,7 +156,8 @@ export const createGlobalUserListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementUserListParams) => {
@@ -153,7 +170,8 @@ export const createGlobalUserListStore = (
           actionError: null
         }
       })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {

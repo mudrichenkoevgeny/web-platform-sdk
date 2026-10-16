@@ -1,6 +1,7 @@
 import { SortOrder, UserFilterValues } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalIdentifierListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { GlobalIdentifierListSearchParams } from '@/ui/screens/management/identifier/global-list/globalIdentifierListSearchSchema'
 
 export interface GlobalIdentifierListingOptionsState {
   sortState: ListingSortState | null
@@ -8,32 +9,38 @@ export interface GlobalIdentifierListingOptionsState {
 }
 
 export const searchParamsToListingStates = (
-  params?: ManagementGlobalIdentifierListParams
+  params?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams
 ): GlobalIdentifierListingOptionsState => {
   if (!params) {
     return { sortState: null, filterStates: {} }
   }
 
-  const sortState: ListingSortState | null = params.sortBy
+  const p = params as ManagementGlobalIdentifierListParams & GlobalIdentifierListSearchParams
+  const sortBy = 'sort_by' in params ? params.sort_by : p.sortBy
+  const sortOrder = 'sort_order' in params ? params.sort_order : p.sortOrder
+  const userAuthProviders = 'user_auth_providers' in params ? params.user_auth_providers : p.userAuthProviders
+  const identifiers = 'identifiers' in params ? params.identifiers : p.identifiers
+
+  const sortState: ListingSortState | null = sortBy
     ? {
-        optionId: params.sortBy,
-        isAscending: params.sortOrder === SortOrder.ASC
+        optionId: sortBy,
+        isAscending: sortOrder === SortOrder.ASC
       }
     : null
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (params.userAuthProviders && params.userAuthProviders.length > 0) {
+  if (userAuthProviders && userAuthProviders.length > 0) {
     filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER] = {
       type: 'choice',
-      selectedIds: new Set(params.userAuthProviders)
+      selectedIds: new Set(userAuthProviders)
     }
   }
 
-  if (params.identifiers && params.identifiers.length > 0) {
+  if (identifiers && identifiers.length > 0) {
     filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER] = {
       type: 'text',
-      value: params.identifiers[0] ?? ''
+      value: identifiers[0] ?? ''
     }
   }
 
@@ -43,24 +50,22 @@ export const searchParamsToListingStates = (
 export const listingStatesToSearchParams = (
   sortState: ListingSortState | null,
   filterStates: Record<string, ListingFilterState>
-): ManagementGlobalIdentifierListParams => {
-  const params: ManagementGlobalIdentifierListParams = {
-    pageNumber: 1,
-    pageSize: 20,
-    sortBy: 'created_at',
-    sortOrder: SortOrder.DESC,
-    userAuthProviders: [],
+): GlobalIdentifierListSearchParams => {
+  const params: GlobalIdentifierListSearchParams = {
+    sort_by: 'created_at',
+    sort_order: SortOrder.DESC,
+    user_auth_providers: [],
     identifiers: []
   }
 
   if (sortState) {
-    params.sortBy = sortState.optionId as NonNullable<ManagementGlobalIdentifierListParams['sortBy']>
-    params.sortOrder = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
+    params.sort_by = sortState.optionId
+    params.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
   const providerFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER]
   if (providerFilter?.type === 'choice' && providerFilter.selectedIds.size > 0) {
-    params.userAuthProviders = Array.from(providerFilter.selectedIds) as NonNullable<ManagementGlobalIdentifierListParams['userAuthProviders']>
+    params.user_auth_providers = Array.from(providerFilter.selectedIds)
   }
 
   const identifierFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER]

@@ -38,7 +38,7 @@ describe('FetchOpenGlobalSettingsApi', () => {
     }
 
     expect(customFetch).toHaveBeenCalledWith(
-      'https://api.example.com/global-settings',
+      'https://api.example.com/settings/global',
       expect.any(Object)
     )
   })

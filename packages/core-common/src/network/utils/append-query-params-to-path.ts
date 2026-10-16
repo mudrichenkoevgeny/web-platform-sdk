@@ -5,6 +5,8 @@ export interface NavigationScreenParams {
   toQueryMap(): Record<string, string[]> | Map<string, string[]> | Record<string, unknown>
 }
 
+const camelToSnake = (str: string): string => str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+
 /**
  * Combines a base route path with a query parameters map or {@link NavigationScreenParams} into a fully formatted URL string.
  *
@@ -30,14 +32,15 @@ export const appendQueryParamsToPath = (
 
   const query = new URLSearchParams()
   entries.forEach(([key, values]) => {
+    const snakeKey = camelToSnake(key)
     if (Array.isArray(values)) {
       values.forEach((val) => {
         if (val != null && val !== '') {
-          query.append(key, String(val))
+          query.append(snakeKey, String(val))
         }
       })
     } else if (values != null && values !== '') {
-      query.append(key, String(values))
+      query.append(snakeKey, String(values))
     }
   })
 

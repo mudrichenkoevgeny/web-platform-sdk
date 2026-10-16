@@ -15,6 +15,8 @@ import {
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
 import type { ManagementGetSessionsUseCase } from '@/usecase/session/management-get-sessions-use-case'
 
+import type { GlobalSessionListSearchParams } from '@/ui/screens/management/session/global-list/globalSessionListSearchSchema'
+
 export type GlobalSessionListScreenState =
   | {
       status: 'loading'
@@ -37,15 +39,15 @@ export interface GlobalSessionListStoreDependencies {
   onNavigateToSessionDetail: (session: UserSessionSummary) => void
   onNavigateToUserDetail: (userId: UserId) => void
   onBack: () => void
-  searchParams?: ManagementGlobalSessionListParams
-  onSearchParamsChanged?: (params: ManagementGlobalSessionListParams) => void
+  searchParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams
+  onSearchParamsChanged?: (params: ManagementGlobalSessionListParams | GlobalSessionListSearchParams) => void
 }
 
 export interface GlobalSessionListStoreState {
   dependencies: GlobalSessionListStoreDependencies
   screenState: GlobalSessionListScreenState
-  initScreen: (searchParams?: ManagementGlobalSessionListParams) => Promise<void>
-  onSearchParamsUpdated: (searchParams?: ManagementGlobalSessionListParams) => Promise<void>
+  initScreen: (searchParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onToggleFilterPanel: () => void
@@ -70,7 +72,7 @@ export const createGlobalSessionListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    overrideParams?: ManagementGlobalSessionListParams
+    overrideParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams
   ) => {
     if (isFetching) {
       return
@@ -79,11 +81,33 @@ export const createGlobalSessionListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const searchParams = overrideParams ?? activeDeps.searchParams
+      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+
+      const mappedParams: Partial<ManagementGlobalSessionListParams> = { ...(rawParams as Partial<ManagementGlobalSessionListParams>) }
+      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementGlobalSessionListParams['sortBy']
+      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementGlobalSessionListParams['sortOrder']
+      if ('user_ids' in rawParams) mappedParams.userIds = rawParams.user_ids
+      if ('user_roles' in rawParams && rawParams.user_roles) mappedParams.userRoles = rawParams.user_roles as ManagementGlobalSessionListParams['userRoles']
+      if ('identifiers' in rawParams) mappedParams.identifiers = rawParams.identifiers
+      if ('identifier_ids' in rawParams) mappedParams.identifierIds = rawParams.identifier_ids
+      if ('user_auth_providers' in rawParams && rawParams.user_auth_providers) mappedParams.userAuthProviders = rawParams.user_auth_providers as ManagementGlobalSessionListParams['userAuthProviders']
+      if ('client_types' in rawParams && rawParams.client_types) mappedParams.clientTypes = rawParams.client_types as ManagementGlobalSessionListParams['clientTypes']
+      if ('user_agents' in rawParams) mappedParams.userAgents = rawParams.user_agents
+      if ('ip_addresses' in rawParams) mappedParams.ipAddresses = rawParams.ip_addresses
+      if ('languages' in rawParams) mappedParams.languages = rawParams.languages
+      if ('device_ids' in rawParams) mappedParams.deviceIds = rawParams.device_ids
+      if ('device_names' in rawParams) mappedParams.deviceNames = rawParams.device_names
+      if ('app_versions' in rawParams) mappedParams.appVersions = rawParams.app_versions
+      if ('os_versions' in rawParams) mappedParams.osVersions = rawParams.os_versions
+      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
+      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
+
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
+
       const result = await activeDeps.managementGetSessionsUseCase.execute(
         managementGlobalSessionListParamsSchema.parse({
-          ...searchParams,
-          pageNumber
+          ...mappedParams,
+          pageNumber: effectivePageNumber
         })
       )
 
@@ -143,7 +167,8 @@ export const createGlobalSessionListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementGlobalSessionListParams) => {
@@ -156,7 +181,8 @@ export const createGlobalSessionListStore = (
           actionError: null
         }
       })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {

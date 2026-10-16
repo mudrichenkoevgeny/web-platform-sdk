@@ -2,9 +2,7 @@ import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 
 export interface MainManagementStoreDependencies {
-  onEditAuthSettingsClick: () => void
-  onEditGlobalSettingsClick: () => void
-  onEditSecuritySettingsClick: () => void
+  onSettingsClick: () => void
   onGlobalUserListClick: () => void
   onAuditEventListClick: () => void
   onGlobalSessionListClick: () => void
@@ -12,9 +10,7 @@ export interface MainManagementStoreDependencies {
 }
 
 export interface MainManagementStoreState {
-  onEditAuthSettingsClick: () => void
-  onEditGlobalSettingsClick: () => void
-  onEditSecuritySettingsClick: () => void
+  onSettingsClick: () => void
   onGlobalUserListClick: () => void
   onAuditEventListClick: () => void
   onGlobalSessionListClick: () => void
@@ -25,9 +21,7 @@ export type MainManagementStore = ReturnType<typeof createMainManagementStore>
 
 export const createMainManagementStore = (deps: MainManagementStoreDependencies) => {
   return createStore<MainManagementStoreState>()(() => ({
-    onEditAuthSettingsClick: deps.onEditAuthSettingsClick,
-    onEditGlobalSettingsClick: deps.onEditGlobalSettingsClick,
-    onEditSecuritySettingsClick: deps.onEditSecuritySettingsClick,
+    onSettingsClick: deps.onSettingsClick,
     onGlobalUserListClick: deps.onGlobalUserListClick,
     onAuditEventListClick: deps.onAuditEventListClick,
     onGlobalSessionListClick: deps.onGlobalSessionListClick,

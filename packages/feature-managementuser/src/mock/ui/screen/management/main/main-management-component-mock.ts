@@ -3,9 +3,7 @@ import type { MainManagementStoreDependencies } from '@/ui/screens/management/ma
 export const mainManagementDependenciesMock = (
   overrides?: Partial<MainManagementStoreDependencies>
 ): MainManagementStoreDependencies => ({
-  onEditAuthSettingsClick: () => {},
-  onEditGlobalSettingsClick: () => {},
-  onEditSecuritySettingsClick: () => {},
+  onSettingsClick: () => {},
   onGlobalUserListClick: () => {},
   onAuditEventListClick: () => {},
   onGlobalSessionListClick: () => {},

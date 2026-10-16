@@ -44,7 +44,7 @@ describe('SelfManagementSessionRepositoryImpl', () => {
       logout: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
       deleteSession: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
       deleteAllOtherSessions: vi.fn().mockResolvedValue(appResultSuccess({
-        deleted_session_ids: ['sess_2']
+        deletedSessionIds: [dummySessionId2]
       })),
       reauthenticateSession: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as unknown as SessionApi

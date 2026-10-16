@@ -8,8 +8,10 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useClientAppComponent } from '@/di/client-app-context'
 import { enClientAppStrings } from '@/locales/index'
+import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'
 
 export function MainScreen(): React.JSX.Element {
+  useEnsureHistoryStack()
   const appComponent = useClientAppComponent()
   const navigate = useNavigate()
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)

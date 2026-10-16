@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SelfIdentifierListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { AppType, ClientUserNavigation, selfIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/user/identifiers/')({
-  validateSearch: (rawSearch) => cleanSearchParams(selfIdentifierListParamsSchema.parse(rawSearch)),
+  validateSearch: (rawSearch) => parseSearchParams(selfIdentifierListParamsSchema, rawSearch),
   component: function SelfIdentifierListRoute() {
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()

@@ -7,6 +7,9 @@ export interface ManagementAppStrings {
   nav_user: string
   btn_back_to_home: string
   home_screen_title: string
+  settings_auth: string
+  settings_global: string
+  settings_security: string
 }
 
 export const enManagementAppStrings: ManagementAppStrings = {
@@ -16,5 +19,8 @@ export const enManagementAppStrings: ManagementAppStrings = {
   nav_management: 'Management',
   nav_user: 'User',
   btn_back_to_home: 'Back to home',
-  home_screen_title: 'Home Screen'
+  home_screen_title: 'Home Screen',
+  settings_auth: 'Authentication Settings',
+  settings_global: 'Global Settings',
+  settings_security: 'Security Settings'
 }

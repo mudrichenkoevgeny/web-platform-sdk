@@ -138,7 +138,8 @@ export const createUserIdentifierListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementUserIdentifierListParams) => {
@@ -150,7 +151,8 @@ export const createUserIdentifierListStore = (
           actionError: null
         }
       })
-      await fetchPage(set, get, 1, searchParams)
+      const startPage = searchParams?.pageNumber ?? 1
+      await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {

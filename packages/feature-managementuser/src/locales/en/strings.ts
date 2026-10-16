@@ -24,6 +24,7 @@ export interface FeatureManagementUserStrings extends FeatureUserStrings {
   readonly audit_event_updated_at: string
   readonly audit_event_metadata: string
 
+  readonly settings: string
   readonly edit_auth_settings_title: string
   readonly enabled_auth_providers: string
   readonly is_registration_enabled: string
@@ -153,6 +154,7 @@ export const enManagementUserStrings: FeatureManagementUserStrings = {
   audit_event_updated_at: 'Updated At',
   audit_event_metadata: 'Metadata',
 
+  settings: 'Settings',
   edit_auth_settings_title: 'Edit Auth Settings',
   enabled_auth_providers: 'Enabled Auth Providers',
   is_registration_enabled: 'Allow New User Registrations',

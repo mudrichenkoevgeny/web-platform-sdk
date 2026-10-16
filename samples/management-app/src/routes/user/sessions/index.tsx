@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SelfSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ManagementSelfUserNavigation, selfSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/user/sessions/')({
-  validateSearch: (rawSearch) => cleanSearchParams(selfSessionListParamsSchema.parse(rawSearch) as Record<string, unknown>),
+  validateSearch: (rawSearch) => parseSearchParams(selfSessionListParamsSchema, rawSearch as Record<string, unknown>),
   component: function SelfSessionListRoute() {
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()
