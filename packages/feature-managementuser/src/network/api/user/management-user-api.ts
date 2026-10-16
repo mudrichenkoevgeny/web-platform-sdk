@@ -1,22 +1,21 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  CreateByEmailRequest,
   ManagementUserListParams,
   PagedResult,
-  UpdateUserRequest,
   UserPrivatePayload,
   UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 /** Administrator and staff endpoints for full user management. */
 export interface ManagementUserApi {
   /**
    * Creates a new user account.
    *
-   * @param request - Payload details for creating an account via email
+   * @param params - Domain parameters for creating an account
    * @returns Detailed information of the newly created user, or a mapped failure
    */
-  createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>>
+  createUser(params: CreateUserParams): Promise<AppResult<UserPrivatePayload, AppError>>
 
   /**
    * Returns a paginated and filtered list of users based on search criteria.
@@ -40,10 +39,10 @@ export interface ManagementUserApi {
    * Updates profile details, status, or permissions for a specific user.
    *
    * @param userId - Unique account identifier to update
-   * @param request - Patch payload containing fields to change
+   * @param params - Patch domain parameters containing fields to change
    * @returns Void result or a mapped failure
    */
-  updateUser(userId: string, request: UpdateUserRequest): Promise<AppResult<void, AppError>>
+  updateUser(userId: string, params: UpdateUserParams): Promise<AppResult<void, AppError>>
 
   /**
    * Completely deletes a specified user account.

@@ -182,12 +182,14 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
             />
 
             {paging.items.map((event) => (
-              <AuditItem
-                key={event.id}
-                event={event}
-                onClick={() => onEventClick(event.id)}
-                strings={strings}
-              />
+              event.id ? (
+                <AuditItem
+                  key={event.id}
+                  event={event}
+                  onClick={() => onEventClick(event.id!)}
+                  strings={strings}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (

@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AuditEventPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuditEventId, AuditEventPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditRepository } from '@/repository/audit/management-audit-repository'
 
 /** Retrieves full details of a specific audit event. */
@@ -14,10 +14,10 @@ export class GetAuditEventUseCase {
   /**
    * Executes the use case.
    *
-   * @param eventId - Unique audit event identifier string
+   * @param eventId - Unique audit event identifier
    * @returns Detailed audit event private model, or a failure
    */
-  public async execute(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>> {
+  public async execute(eventId: AuditEventId): Promise<AppResult<AuditEventPrivate, AppError>> {
     return this.managementAuditRepository.getAuditEvent(eventId)
   }
 }

@@ -66,11 +66,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     password: string,
     confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
-    const result = await this.openIdentifiersApi.addUserIdentifierEmail({
-      email,
-      password,
-      confirmation_code: confirmationCode
-    })
+    const result = await this.openIdentifiersApi.addUserIdentifierEmail(email, password, confirmationCode)
     const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
@@ -82,10 +78,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     phoneNumber: string,
     confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
-    const result = await this.openIdentifiersApi.addUserIdentifierPhone({
-      phone_number: phoneNumber,
-      confirmation_code: confirmationCode
-    })
+    const result = await this.openIdentifiersApi.addUserIdentifierPhone(phoneNumber, confirmationCode)
     const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
@@ -97,10 +90,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     authProvider: string,
     externalProviderToken: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
-    const result = await this.openIdentifiersApi.addUserIdentifierExternalAuthProvider({
-      auth_provider: authProvider,
-      external_provider_token: externalProviderToken
-    })
+    const result = await this.openIdentifiersApi.addUserIdentifierExternalAuthProvider(authProvider, externalProviderToken)
     const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
     if (isSuccess(mapped)) {
       await this.userStorage.addUserIdentifier(mapped.data)
@@ -113,7 +103,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
       ConfirmationType.ADD_EMAIL,
       email,
       async () => {
-        const result = await this.openIdentifiersApi.sendAddEmailIdentifierConfirmation({ email })
+        const result = await this.openIdentifiersApi.sendAddEmailIdentifierConfirmation(email)
         return mapSuccess(result, (payload) => toOtpConfirmation(payload))
       }
     )
@@ -124,22 +114,18 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
       ConfirmationType.ADD_PHONE,
       phoneNumber,
       async () => {
-        const result = await this.openIdentifiersApi.sendAddPhoneIdentifierConfirmation({ phone_number: phoneNumber })
+        const result = await this.openIdentifiersApi.sendAddPhoneIdentifierConfirmation(phoneNumber)
         return mapSuccess(result, (payload) => toOtpConfirmation(payload))
       }
     )
   }
 
   public async emailChangePassword(
-    email: string,
+    userIdentifierId: UserIdentifierId,
     oldPassword: string,
     newPassword: string
   ): Promise<AppResult<void, AppError>> {
-    return this.openIdentifiersApi.emailChangePassword({
-      email,
-      old_password: oldPassword,
-      new_password: newPassword
-    })
+    return this.openIdentifiersApi.emailChangePassword(userIdentifierId, oldPassword, newPassword)
   }
 
   public getRemainingEmailConfirmationDelayInSeconds(email: string): number {

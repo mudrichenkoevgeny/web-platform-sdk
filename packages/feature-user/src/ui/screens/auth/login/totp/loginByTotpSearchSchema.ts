@@ -1,11 +1,11 @@
 import { z } from 'zod'
-import { LoginByTotpMode } from '@/ui/screens/auth/login/totp/login-by-totp-store'
+import { loginByTotpModeSchema } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Search parameter schema for LoginByTotpScreen route.
  */
 export const loginByTotpSearchSchema = z.object({
-  loginTotpMode: z.nativeEnum(LoginByTotpMode).optional()
+  loginTotpMode: loginByTotpModeSchema.optional()
 })
 
 /**

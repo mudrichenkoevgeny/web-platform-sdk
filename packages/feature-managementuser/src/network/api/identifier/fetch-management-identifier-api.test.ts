@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
-import { ManagementIdentifiersRoutes, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementIdentifiersRoutes, SortOrder, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementIdentifierApi', () => {
@@ -20,10 +20,37 @@ describe('FetchManagementIdentifierApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getIdentifiers(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userIds: [],
+      userAuthProviders: [],
+      identifiers: []
+    }
+    const result = await api.getIdentifiers(params)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementIdentifiersRoutes.GET_IDENTIFIERS)
+    )
+    expect(result).toEqual({ success: true, data: expectedData })
+  })
+
+  it('dispatches getIdentifiers request using GET_USER_IDENTIFIERS route when userId param is provided', async () => {
+    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
+    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+
+    const params = {
+      userId: toUserIdOrThrow('usr_1'),
+      pageNumber: 1,
+      pageSize: 10
+    }
+    const result = await api.getIdentifiers(params)
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      expect.stringContaining('/management/users/usr_1/identifiers')
     )
     expect(result).toEqual({ success: true, data: expectedData })
   })

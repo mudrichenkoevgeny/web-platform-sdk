@@ -31,8 +31,9 @@ export interface SelfManagementIdentifiersApi {
   /**
    * Updates the management account password using current credentials.
    *
+   * @param userIdentifierId - Unique identifier payload ID
    * @param request - Current and new password payload from the shared contract
    * @returns Void result or a mapped failure
    */
-  emailChangePassword(request: EmailPasswordChangeRequest): Promise<AppResult<void, AppError>>
+  emailChangePassword(userIdentifierId: UserIdentifierId, request: EmailPasswordChangeRequest): Promise<AppResult<void, AppError>>
 }

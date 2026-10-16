@@ -14,8 +14,7 @@ export class FetchManagementUserSecurityApi implements ManagementUserSecurityApi
   public constructor(private readonly client: HttpClient) {}
 
   public async disableTotp(userId: UserId): Promise<AppResult<void, AppError>> {
-    const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUsersSecurityRoutes.DISABLE_TOTP}?${query.toString()}`
+    const path = ManagementUsersSecurityRoutes.DISABLE_TOTP.replace(`{${UserApiPaths.USER_ID}}`, userId)
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'DELETE'
@@ -23,4 +22,3 @@ export class FetchManagementUserSecurityApi implements ManagementUserSecurityApi
     )
   }
 }
-

@@ -164,7 +164,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
       </div>
 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
-        <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${strings.user_id(user.id)}`} />
+        <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${strings.user_id(user.id ?? '')}`} />
         <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role as UserRole, strings)}`}</p>
         <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.totp_enabled_label(user.isTotpEnabled ? strings.ui_common_yes : strings.ui_common_no)}</p>
 

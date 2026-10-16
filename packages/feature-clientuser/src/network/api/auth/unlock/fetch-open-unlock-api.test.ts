@@ -18,14 +18,13 @@ describe('FetchOpenUnlockApi', () => {
     const dummyPayload = { retryAfterSeconds: 60 } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { email: 'user@example.com' } as any
-    const result = await api.sendUnlockEmailConfirmation(request)
+    const result = await api.sendUnlockEmailConfirmation('user@example.com')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.SEND_UNLOCK_EMAIL_CONFIRMATION,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ email: 'user@example.com' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -34,14 +33,13 @@ describe('FetchOpenUnlockApi', () => {
   it('dispatches unlockByEmail request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { email: 'user@example.com', confirmation_code: '123456' }
-    const result = await api.unlockByEmail(request)
+    const result = await api.unlockByEmail('user@example.com', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.UNLOCK_BY_EMAIL,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ email: 'user@example.com', confirmation_code: '123456' })
       })
     )
     expect(result).toEqual({ success: true, data: undefined })
@@ -51,14 +49,13 @@ describe('FetchOpenUnlockApi', () => {
     const dummyPayload = { retryAfterSeconds: 60 } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { phoneNumber: '+1234567890' } as any
-    const result = await api.sendUnlockPhoneConfirmation(request)
+    const result = await api.sendUnlockPhoneConfirmation('+1234567890')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.SEND_UNLOCK_PHONE_CONFIRMATION,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ phone_number: '+1234567890' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -67,14 +64,13 @@ describe('FetchOpenUnlockApi', () => {
   it('dispatches unlockByPhone request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { phone_number: '+1234567890', confirmation_code: '123456' }
-    const result = await api.unlockByPhone(request)
+    const result = await api.unlockByPhone('+1234567890', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.UNLOCK_BY_PHONE,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ phone_number: '+1234567890', confirmation_code: '123456' })
       })
     )
     expect(result).toEqual({ success: true, data: undefined })
@@ -83,14 +79,13 @@ describe('FetchOpenUnlockApi', () => {
   it('dispatches unlockByExternalAuthProvider request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { authProvider: 'GOOGLE', externalProviderToken: 'token123' } as any
-    const result = await api.unlockByExternalAuthProvider(request)
+    const result = await api.unlockByExternalAuthProvider('GOOGLE', 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
       })
     )
     expect(result).toEqual({ success: true, data: undefined })

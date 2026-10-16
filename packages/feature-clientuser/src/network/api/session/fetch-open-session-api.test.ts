@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
-import { OpenSessionRoutes, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenSessionRoutes, selfSessionListParamsSchema, SortOrder, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userSessionPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchOpenSessionApi', () => {
@@ -20,7 +20,25 @@ describe('FetchOpenSessionApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getSessions(1, 10)
+    const result = await api.getSessions(
+      selfSessionListParamsSchema.parse({
+        pageNumber: 1,
+        pageSize: 10,
+        sortBy: 'created_at',
+        sortOrder: SortOrder.DESC,
+        identifiers: [],
+        identifierIds: [],
+        userAuthProviders: [],
+        clientTypes: [],
+        userAgents: [],
+        ipAddresses: [],
+        languages: [],
+        deviceIds: [],
+        deviceNames: [],
+        appVersions: [],
+        osVersions: []
+      })
+    )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(OpenSessionRoutes.GET_SESSIONS)
@@ -67,7 +85,7 @@ describe('FetchOpenSessionApi', () => {
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
-    const dummyPayload = { deletedCount: 2 } as any
+    const dummyPayload = { deleted_session_ids: ['sess_2'] }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.deleteAllOtherSessions()
@@ -82,12 +100,11 @@ describe('FetchOpenSessionApi', () => {
   it('dispatches reauthenticateSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { mfa_token: 'mfa123', totp_code: '123456' }
-    const result = await api.reauthenticateSession(request)
+    const result = await api.reauthenticateSession('mfa123', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenSessionRoutes.REAUTHENTICATE_SESSION,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa123', totp_code: '123456' }) })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })

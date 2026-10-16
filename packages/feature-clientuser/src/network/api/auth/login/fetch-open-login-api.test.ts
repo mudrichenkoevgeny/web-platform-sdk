@@ -18,14 +18,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { email: 'test@example.com', password: 'secret' }
-    const result = await api.loginByEmail(request)
+    const result = await api.loginByEmail('test@example.com', 'secret')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_EMAIL,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ email: 'test@example.com', password: 'secret' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -35,14 +34,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { phone_number: '+1234567890', confirmation_code: '123456' }
-    const result = await api.loginByPhone(request)
+    const result = await api.loginByPhone('+1234567890', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_PHONE,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ phone_number: '+1234567890', confirmation_code: '123456' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -52,14 +50,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { authProvider: 'GOOGLE', externalProviderToken: 'token123' } as any
-    const result = await api.loginByExternalAuthProvider(request)
+    const result = await api.loginByExternalAuthProvider('GOOGLE' as any, 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_EXTERNAL_AUTH_PROVIDER,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -69,14 +66,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { mfa_token: 'mfa123', totp_code: '654321' }
-    const result = await api.loginByTotp(request)
+    const result = await api.loginByTotp('mfa123', '654321')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_TOTP,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ mfa_token: 'mfa123', totp_code: '654321' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -86,14 +82,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { user_private: {} } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { mfa_token: 'mfa123', totp_code: 'rec_123' }
-    const result = await api.loginByTotpRecoveryCode(request)
+    const result = await api.loginByTotpRecoveryCode('mfa123', 'rec_123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_TOTP_RECOVERY_CODE,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ mfa_token: 'mfa123', totp_code: 'rec_123' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
@@ -103,14 +98,13 @@ describe('FetchOpenLoginApi', () => {
     const dummyPayload = { retryAfterSeconds: 60 } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { phoneNumber: '+1234567890' } as any
-    const result = await api.sendLoginConfirmationToPhone(request)
+    const result = await api.sendLoginConfirmationToPhone('+1234567890')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.SEND_LOGIN_CONFIRMATION_TO_PHONE,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify({ phone_number: '+1234567890' })
       })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })

@@ -30,10 +30,15 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
   public async getIdentifiers(
     params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
-    const path = appendQueryParamsToPath(
-      ManagementIdentifiersRoutes.GET_IDENTIFIERS,
-      params
-    )
+    const route = params && 'userId' in params && params.userId
+      ? ManagementIdentifiersRoutes.GET_USER_IDENTIFIERS.replace(`{${UserApiPaths.USER_ID}}`, params.userId)
+      : ManagementIdentifiersRoutes.GET_IDENTIFIERS
+    let queryParams: Record<string, unknown> | null = null
+    if (params) {
+      const { userId: _ignored, ...rest } = params as Record<string, unknown>
+      queryParams = rest
+    }
+    const path = appendQueryParamsToPath(route, queryParams)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
@@ -41,29 +46,20 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
   }
 
   public async getIdentifier(identifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
-    const query = new URLSearchParams({ [UserApiPaths.USER_IDENTIFIER_ID]: identifierId })
-    const path = `${ManagementIdentifiersRoutes.GET_IDENTIFIER}?${query.toString()}`
+    const path = ManagementIdentifiersRoutes.GET_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, identifierId)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return userIdentifierPrivatePayloadSchema.parse(raw)
     })
   }
 
-  public async deleteIdentifier(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
-    const query = new URLSearchParams({
-      [UserApiPaths.USER_ID]: userId,
-      [UserApiPaths.USER_IDENTIFIER_ID]: identifierId
-    })
-    const path = `${ManagementIdentifiersRoutes.DELETE_IDENTIFIER}?${query.toString()}`
+  public async deleteIdentifier(_userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    const path = ManagementIdentifiersRoutes.DELETE_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, identifierId)
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
-  public async deleteIdentifierPassword(userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
-    const query = new URLSearchParams({
-      [UserApiPaths.USER_ID]: userId,
-      [UserApiPaths.USER_IDENTIFIER_ID]: identifierId
-    })
-    const path = `${ManagementIdentifiersRoutes.DELETE_IDENTIFIER_PASSWORD}?${query.toString()}`
+  public async deleteIdentifierPassword(_userId: UserId, identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    const path = ManagementIdentifiersRoutes.DELETE_IDENTIFIER_PASSWORD.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, identifierId)
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 }

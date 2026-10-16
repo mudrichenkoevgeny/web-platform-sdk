@@ -6,6 +6,7 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ManagementSessionRepositoryImpl } from '@/repository/session/management-session-repository-impl'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
+import { SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementSessionRepositoryImpl', () => {
@@ -33,26 +34,27 @@ describe('ManagementSessionRepositoryImpl', () => {
   })
 
   it('delegates getSessions and maps paged items to domain models', async () => {
-    const result = await repository.getSessions(1, 10)
-    expect(mockApi.getSessions).toHaveBeenCalledWith(
-      1,
-      10,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined
-    )
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userIds: [],
+      userRoles: [],
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
+    const result = await repository.getSessions(params)
+    expect(mockApi.getSessions).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
   })
 

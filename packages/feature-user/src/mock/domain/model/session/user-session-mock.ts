@@ -54,6 +54,7 @@ export const userSessionSummaryMock = (
   overrides?: Partial<UserSessionSummary>
 ): UserSessionSummary => ({
   id: toUserSessionIdOrThrow('sess_123'),
+  userId: toUserIdOrThrow('usr_123'),
   clientDeviceInfo: {
     clientType: ClientType.WEB,
     language: 'en',

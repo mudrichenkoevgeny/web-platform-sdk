@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultFailure, appResultSuccess, isSuccess, toErrorIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
+  SortOrder,
   toUserSessionSummary,
   toUserSessionIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -71,15 +72,49 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   })
 
   it('delegates getSessions and caches payload on network success', async () => {
-    const result = await repository.getSessions(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
+    const result = await repository.getSessions(params)
     expect(mockApi.getSessions).toHaveBeenCalled()
     expect(mockUserStorage.updateUserSessionsPayloadList).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('falls back to cache in getSessions on network error', async () => {
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
     vi.mocked(mockApi.getSessions).mockResolvedValueOnce(appResultFailure(dummyError))
-    const result = await repository.getSessions(1, 10)
+    const result = await repository.getSessions(params)
     expect(mockUserStorage.getUserSessionsList).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
@@ -122,10 +157,7 @@ describe('SelfManagementSessionRepositoryImpl', () => {
 
   it('delegates reauthenticateSession', async () => {
     const result = await repository.reauthenticateSession('mfa_1', '123456')
-    expect(mockApi.reauthenticateSession).toHaveBeenCalledWith({
-      mfa_token: 'mfa_1',
-      totp_code: '123456'
-    })
+    expect(mockApi.reauthenticateSession).toHaveBeenCalledWith('mfa_1', '123456')
     expect(isSuccess(result)).toBe(true)
   })
 })

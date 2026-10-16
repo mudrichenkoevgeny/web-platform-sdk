@@ -7,6 +7,7 @@ import type {
   LoginByPhoneRequest,
   OtpConfirmationPayload,
   SendConfirmationToPhoneRequest,
+  UserAuthProvider,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenLoginRoutes } from '@mudrichenkoevgeny/shared-foundation'
@@ -22,7 +23,8 @@ export class FetchOpenLoginApi implements OpenLoginApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async loginByEmail(request: LoginByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByEmail(email: string, password: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: LoginByEmailRequest = { email, password }
     return callResult(() =>
       this.client.request<AuthDataPayload>(OpenLoginRoutes.LOGIN_BY_EMAIL, {
         method: 'POST',
@@ -32,7 +34,11 @@ export class FetchOpenLoginApi implements OpenLoginApi {
     )
   }
 
-  public async loginByPhone(request: LoginByPhoneRequest): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: LoginByPhoneRequest = {
+      phone_number: phoneNumber,
+      confirmation_code: confirmationCode
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(OpenLoginRoutes.LOGIN_BY_PHONE, {
         method: 'POST',
@@ -43,8 +49,13 @@ export class FetchOpenLoginApi implements OpenLoginApi {
   }
 
   public async loginByExternalAuthProvider(
-    request: LoginByExternalAuthProviderRequest
+    authProvider: UserAuthProvider,
+    externalProviderToken: string
   ): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: LoginByExternalAuthProviderRequest = {
+      auth_provider: authProvider,
+      external_provider_token: externalProviderToken
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(OpenLoginRoutes.LOGIN_BY_EXTERNAL_AUTH_PROVIDER, {
         method: 'POST',
@@ -54,7 +65,11 @@ export class FetchOpenLoginApi implements OpenLoginApi {
     )
   }
 
-  public async loginByTotp(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(OpenLoginRoutes.LOGIN_BY_TOTP, {
         method: 'POST',
@@ -64,7 +79,11 @@ export class FetchOpenLoginApi implements OpenLoginApi {
     )
   }
 
-  public async loginByTotpRecoveryCode(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(OpenLoginRoutes.LOGIN_BY_TOTP_RECOVERY_CODE, {
         method: 'POST',
@@ -75,8 +94,9 @@ export class FetchOpenLoginApi implements OpenLoginApi {
   }
 
   public async sendLoginConfirmationToPhone(
-    request: SendConfirmationToPhoneRequest
+    phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
+    const request: SendConfirmationToPhoneRequest = { phone_number: phoneNumber }
     return callResult(() =>
       this.client.request<OtpConfirmationPayload>(OpenLoginRoutes.SEND_LOGIN_CONFIRMATION_TO_PHONE, {
         method: 'POST',

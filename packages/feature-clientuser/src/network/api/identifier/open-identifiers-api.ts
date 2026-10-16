@@ -1,14 +1,8 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AddUserIdentifierEmailRequest,
-  AddUserIdentifierExternalAuthProviderRequest,
-  AddUserIdentifierPhoneRequest,
-  EmailPasswordChangeRequest,
   OtpConfirmationPayload,
   PagedResult,
   SelfIdentifierListParams,
-  SendConfirmationToEmailRequest,
-  SendConfirmationToPhoneRequest,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
   UserIdentifierSummaryPayload
@@ -45,58 +39,68 @@ export interface OpenIdentifiersApi {
   /**
    * Starts linking a new email identifier to the account.
    *
-   * @param request - Email linkage payload from the shared contract
+   * @param email - Target email
+   * @param password - Account password
+   * @param confirmationCode - Confirmation code
    * @returns Created or pending identifier row, or a mapped failure
    */
   addUserIdentifierEmail(
-    request: AddUserIdentifierEmailRequest
+    email: string,
+    password: string,
+    confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Starts linking a new phone identifier to the account.
    *
-   * @param request - Phone linkage payload from the shared contract
+   * @param phoneNumber - Target phone number
+   * @param confirmationCode - Confirmation code
    * @returns Created or pending identifier row, or a mapped failure
    */
   addUserIdentifierPhone(
-    request: AddUserIdentifierPhoneRequest
+    phoneNumber: string,
+    confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Starts linking an external auth provider identity to the account.
    *
-   * @param request - Provider linkage payload from the shared contract
+   * @param authProvider - Provider type
+   * @param externalProviderToken - OAuth token
    * @returns Created or pending identifier row, or a mapped failure
    */
   addUserIdentifierExternalAuthProvider(
-    request: AddUserIdentifierExternalAuthProviderRequest
+    authProvider: string,
+    externalProviderToken: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>>
 
   /**
    * Sends a confirmation message for adding an email identifier.
    *
-   * @param request - Target email and template parameters
+   * @param email - Target email
    * @returns Confirmation dispatch result, or a mapped failure
    */
   sendAddEmailIdentifierConfirmation(
-    request: SendConfirmationToEmailRequest
+    email: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>>
 
   /**
    * Sends a confirmation message for adding a phone identifier.
    *
-   * @param request - Target phone and channel details
+   * @param phoneNumber - Target phone number
    * @returns Confirmation dispatch result, or a mapped failure
    */
   sendAddPhoneIdentifierConfirmation(
-    request: SendConfirmationToPhoneRequest
+    phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>>
 
   /**
-   * Changes the password for the signed-in user.
+   * Changes the password for the target email identifier.
    *
-   * @param request - Current and new password payload from the shared contract
+   * @param userIdentifierId - Unique user identifier ID
+   * @param oldPassword - Current password
+   * @param newPassword - New password
    * @returns Void result or a mapped failure
    */
-  emailChangePassword(request: EmailPasswordChangeRequest): Promise<AppResult<void, AppError>>
+  emailChangePassword(userIdentifierId: UserIdentifierId, oldPassword: string, newPassword: string): Promise<AppResult<void, AppError>>
 }

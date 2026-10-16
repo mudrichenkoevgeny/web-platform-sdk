@@ -1,11 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from '@tanstack/react-router'
-import { AppType, type UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuthNavigation, ManagementMainNavigation, ManagementSelfUserNavigation, type UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
-  ManagementLoginRootScreen,
-  type ManagementLoginRootStoreDependencies
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import {
   MfaChallengeDialog,
   type MfaChallengeRequest
@@ -18,25 +14,21 @@ export function MainScreen(): React.JSX.Element {
   const navigate = useNavigate()
   const location = useLocation()
   const [isAuthorized, setIsAuthorized] = useState(false)
-  const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
 
   const activeTab: MainTabKey = useMemo(() => {
-    if (location.pathname.startsWith('/management/profile')) {
-      return 'profile'
+    if (location.pathname.startsWith(ManagementSelfUserNavigation.Main.route)) {
+      return 'user'
     }
-    if (location.pathname.startsWith('/management')) {
-      return 'settings'
-    }
-    return 'home'
+    return 'management'
   }, [location.pathname])
 
   useEffect(() => {
     return appComponent.managementUserComponent.selfManagementUserRepository.observeCurrentUser((user: UserPrivate | null) => {
       const authorized = user !== null
       setIsAuthorized(authorized)
-      if (!authorized && location.pathname !== '/management/login' && !location.pathname.startsWith('/management/login/')) {
-        void navigate({ to: '/management/login', replace: true })
+      if (!authorized && location.pathname !== ManagementAuthNavigation.Main.ROUTE && !location.pathname.startsWith(ManagementAuthNavigation.Main.ROUTE)) {
+        void navigate({ to: ManagementAuthNavigation.Main.ROUTE, replace: true })
       }
     })
   }, [appComponent, location.pathname, navigate])
@@ -49,43 +41,15 @@ export function MainScreen(): React.JSX.Element {
 
   const destinations = useMemo(() => getDestinations(isAuthorized), [isAuthorized])
 
-  const loginDependencies: ManagementLoginRootStoreDependencies = useMemo(
-    () => ({
-      appType: AppType.MANAGEMENT,
-      getOpenGlobalSettingsUseCase: appComponent.settingsComponent.getOpenGlobalSettingsUseCase,
-      getAvailableUserAuthProvidersUseCase: appComponent.managementUserComponent.getAvailableUserAuthProvidersUseCase,
-      loginByEmailUseCase: appComponent.managementUserComponent.loginByEmailUseCase,
-      resetPasswordRepository: appComponent.managementUserComponent.selfManagementResetPasswordRepository,
-      sendResetPasswordConfirmationToEmailUseCase: appComponent.managementUserComponent.sendResetPasswordConfirmationToEmailUseCase,
-      resetEmailPasswordUseCase: appComponent.managementUserComponent.resetEmailPasswordUseCase,
-      validatePasswordUseCase: appComponent.securityComponent.validatePasswordUseCase,
-      loginByTotpUseCase: appComponent.managementUserComponent.loginByTotpUseCase,
-      loginByTotpRecoveryCodeUseCase: appComponent.managementUserComponent.loginByTotpRecoveryCodeUseCase,
-      restoreUserUseCase: appComponent.managementUserComponent.restoreUserUseCase,
-      logoutUseCase: appComponent.managementUserComponent.logoutUseCase,
-      getUserIdentifiersUseCase: appComponent.managementUserComponent.getUserIdentifiersUseCase,
-      sendUnlockEmailConfirmationUseCase: appComponent.managementUserComponent.sendUnlockEmailConfirmationUseCase,
-      sendUnlockPhoneConfirmationUseCase: appComponent.managementUserComponent.sendUnlockPhoneConfirmationUseCase,
-      unlockByEmailUseCase: appComponent.managementUserComponent.unlockByEmailUseCase,
-      unlockByPhoneUseCase: appComponent.managementUserComponent.unlockByPhoneUseCase,
-      externalLauncher: appComponent.commonComponent.externalLauncher,
-      onDismiss: () => setIsLoginOpen(false),
-      onFinished: () => setIsLoginOpen(false)
-    }),
-    [appComponent]
-  )
-
   const handleTabClick = (tabKey: MainTabKey) => {
     if (!isAuthorized) {
-      void navigate({ to: '/management/login', replace: true })
+      void navigate({ to: ManagementAuthNavigation.Main.ROUTE, replace: true })
       return
     }
-    if (tabKey === 'home') {
-      void navigate({ to: '/', replace: true })
-    } else if (tabKey === 'profile') {
-      void navigate({ to: '/management/profile', replace: true })
-    } else if (tabKey === 'settings') {
-      void navigate({ to: '/management', replace: true })
+    if (tabKey === 'management') {
+      void navigate({ to: ManagementMainNavigation.Main.route, replace: true })
+    } else if (tabKey === 'user') {
+      void navigate({ to: ManagementSelfUserNavigation.Main.route, replace: true })
     }
   }
 
@@ -118,14 +82,6 @@ export function MainScreen(): React.JSX.Element {
       <main className="flex-1 h-full overflow-auto relative">
         <Outlet />
       </main>
-
-      {isLoginOpen && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card text-card-foreground border border-border rounded-xl shadow-lg w-full max-w-lg overflow-hidden relative p-4">
-            <ManagementLoginRootScreen dependencies={loginDependencies} />
-          </div>
-        </div>
-      )}
 
       {mfaRequest && (
         <MfaChallengeDialog

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ManagementUserRepositoryImpl } from '@/repository/user/management-user-repository-impl'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
+import { SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementUserRepositoryImpl', () => {
@@ -44,21 +45,22 @@ describe('ManagementUserRepositoryImpl', () => {
   })
 
   it('delegates getUsers to API and maps paged result', async () => {
-    const result = await repository.getUsers(1, 10)
-    expect(mockApi.getUsers).toHaveBeenCalledWith(
-      1,
-      10,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined
-    )
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userRoles: [],
+      accountStatuses: [],
+      accountStatusesOnRestore: [],
+      accountLockoutTypes: [],
+      authorityLevelFrom: null,
+      authorityLevelTo: null,
+      isTotpEnabled: null,
+      permissionCodes: []
+    }
+    const result = await repository.getUsers(params)
+    expect(mockApi.getUsers).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
   })
 

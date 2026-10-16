@@ -33,10 +33,7 @@ export class UserSecurityRepositoryImpl implements UserSecurityRepository {
 
   /** Finalizes and enables TOTP multifactor authentication using verification code. */
   public async enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodes, AppError>> {
-    const result = await this.userSecurityApi.enableTotp({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.userSecurityApi.enableTotp(mfaToken, code)
     const mapped = mapSuccess(result, (payload) => toTotpRecoveryCodes(payload))
 
     if (isSuccess(mapped)) {

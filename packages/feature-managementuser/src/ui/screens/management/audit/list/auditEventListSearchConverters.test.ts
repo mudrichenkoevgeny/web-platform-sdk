@@ -1,21 +1,29 @@
 import { describe, it, expect } from 'vitest'
-import { AuditFilterValues } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditFilterValues, managementAuditEventListParamsSchema, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { searchParamsToListingStates, listingStatesToSearchParams } from './auditEventListSearchConverters'
-import type { AuditEventListSearchParams } from './auditEventListSearchSchema'
 
 describe('auditEventListSearchConverters', () => {
-  it('converts AuditEventListSearchParams to ListingOptionsState', () => {
-    const params: AuditEventListSearchParams = {
+  it('converts ManagementAuditEventListParams to ListingOptionsState', () => {
+    const params = managementAuditEventListParamsSchema.parse({
+      pageNumber: 1,
+      pageSize: 20,
+      sortBy: 'created_at',
+      sortOrder: SortOrder.DESC,
       actorIds: ['user-123'],
-      sortBy: 'CREATED_AT',
-      sortOrder: 'DESC'
-    }
+      actorTypes: [],
+      actorUserRoles: [],
+      actions: [],
+      resources: [],
+      resourceIds: [],
+      statuses: [],
+      messages: []
+    })
 
     const result = searchParamsToListingStates(params)
 
     expect(result.sortState).toEqual({
-      optionId: 'CREATED_AT',
+      optionId: 'created_at',
       isAscending: false
     })
 
@@ -26,9 +34,9 @@ describe('auditEventListSearchConverters', () => {
     })
   })
 
-  it('converts ListingOptionsState to AuditEventListSearchParams', () => {
+  it('converts ListingOptionsState to ManagementAuditEventListParams', () => {
     const sortState: ListingSortState = {
-      optionId: 'CREATED_AT',
+      optionId: 'created_at',
       isAscending: true
     }
 
@@ -39,18 +47,16 @@ describe('auditEventListSearchConverters', () => {
       },
       [AuditFilterValues.AuditEventFilterValues.STATUS]: {
         type: 'choice',
-        selectedIds: new Set(['SUCCESS'])
+        selectedIds: new Set(['success'])
       }
     }
 
     const result = listingStatesToSearchParams(sortState, filterStates)
 
-    expect(result).toEqual({
-      sortBy: 'CREATED_AT',
-      sortOrder: 'ASC',
-      actorIds: ['user-456'],
-      statuses: ['SUCCESS']
-    })
+    expect(result.sortBy).toBe('created_at')
+    expect(result.sortOrder).toBe(SortOrder.ASC)
+    expect(result.actorIds).toEqual(['user-456'])
+    expect(result.statuses).toEqual(['success'])
   })
 
   it('handles empty inputs gracefully', () => {
@@ -58,7 +64,5 @@ describe('auditEventListSearchConverters', () => {
       sortState: null,
       filterStates: {}
     })
-
-    expect(listingStatesToSearchParams(null, {})).toEqual({})
   })
 })

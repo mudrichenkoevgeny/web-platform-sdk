@@ -29,10 +29,7 @@ export class OpenUserSecurityRepositoryImpl implements UserSecurityRepository {
   }
 
   public async enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodes, AppError>> {
-    const result = await this.userSecurityApi.enableTotp({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.userSecurityApi.enableTotp(mfaToken, code)
     const mapped = mapSuccess(result, (totpRecoveryCodesPayload) => toTotpRecoveryCodes(totpRecoveryCodesPayload))
     if (isSuccess(mapped)) {
       await this.updateTotpStatusInStorage(true)

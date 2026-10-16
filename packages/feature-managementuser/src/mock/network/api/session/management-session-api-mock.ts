@@ -1,15 +1,12 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
+  ManagementGlobalSessionListParams,
+  ManagementUserSessionListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
-  UserRole,
   UserSessionPrivatePayload,
-  UserSessionSummaryPayload,
-  UserSortValues
+  UserSessionSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
 
@@ -27,23 +24,7 @@ export class ManagementSessionApiMock implements ManagementSessionApi {
   public deleteAllUserSessionsResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
 
   public async getSessions(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserSessionSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userIds?: string[] | null,
-    _userRoles?: UserRole[] | null,
-    _identifiers?: string[] | null,
-    _identifierIds?: string[] | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _clientTypes?: ClientType[] | null,
-    _userAgents?: string[] | null,
-    _ipAddresses?: string[] | null,
-    _languages?: string[] | null,
-    _deviceIds?: string[] | null,
-    _deviceNames?: string[] | null,
-    _appVersions?: string[] | null,
-    _operationSystemVersions?: string[] | null
+    _params?: ManagementGlobalSessionListParams | ManagementUserSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
     return this.getSessionsResult
   }

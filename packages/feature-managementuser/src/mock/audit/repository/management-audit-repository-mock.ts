@@ -2,6 +2,7 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
+  AuditEventId,
   AuditEventPrivate,
   AuditEventSortBy,
   AuditEventSummary,
@@ -41,7 +42,7 @@ export class ManagementAuditRepositoryMock implements ManagementAuditRepository 
     return this.getAuditEventsResult
   }
 
-  public async getAuditEvent(_eventId: string): Promise<AppResult<AuditEventPrivate, AppError>> {
+  public async getAuditEvent(_eventId: AuditEventId): Promise<AppResult<AuditEventPrivate, AppError>> {
     return this.getAuditEventResult
   }
 }

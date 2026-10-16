@@ -25,7 +25,7 @@ export class OpenUnlockRepositoryImpl implements UnlockRepository {
       ConfirmationType.UNLOCK_EMAIL,
       email,
       async () => {
-        const result = await this.openUnlockApi.sendUnlockEmailConfirmation({ email })
+        const result = await this.openUnlockApi.sendUnlockEmailConfirmation(email)
         return mapSuccess(result, (payload) => toOtpConfirmation(payload))
       }
     )
@@ -36,10 +36,7 @@ export class OpenUnlockRepositoryImpl implements UnlockRepository {
   }
 
   public async unlockByEmail(email: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
-    return this.openUnlockApi.unlockByEmail({
-      email,
-      confirmation_code: confirmationCode
-    })
+    return this.openUnlockApi.unlockByEmail(email, confirmationCode)
   }
 
   public async sendUnlockPhoneConfirmation(phoneNumber: string): Promise<AppResult<OtpConfirmation, AppError>> {
@@ -47,7 +44,7 @@ export class OpenUnlockRepositoryImpl implements UnlockRepository {
       ConfirmationType.UNLOCK_PHONE,
       phoneNumber,
       async () => {
-        const result = await this.openUnlockApi.sendUnlockPhoneConfirmation({ phone_number: phoneNumber })
+        const result = await this.openUnlockApi.sendUnlockPhoneConfirmation(phoneNumber)
         return mapSuccess(result, (payload) => toOtpConfirmation(payload))
       }
     )
@@ -58,19 +55,13 @@ export class OpenUnlockRepositoryImpl implements UnlockRepository {
   }
 
   public async unlockByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
-    return this.openUnlockApi.unlockByPhone({
-      phone_number: phoneNumber,
-      confirmation_code: confirmationCode
-    })
+    return this.openUnlockApi.unlockByPhone(phoneNumber, confirmationCode)
   }
 
   public async unlockByExternalAuthProvider(
     authProvider: string,
     externalProviderToken: string
   ): Promise<AppResult<void, AppError>> {
-    return this.openUnlockApi.unlockByExternalAuthProvider({
-      auth_provider: authProvider,
-      external_provider_token: externalProviderToken
-    })
+    return this.openUnlockApi.unlockByExternalAuthProvider(authProvider, externalProviderToken)
   }
 }

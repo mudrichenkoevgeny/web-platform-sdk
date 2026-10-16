@@ -1,20 +1,12 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AddUserIdentifierEmailRequest,
-  AddUserIdentifierExternalAuthProviderRequest,
-  AddUserIdentifierPhoneRequest,
-  EmailPasswordChangeRequest,
   OtpConfirmationPayload,
   PagedResult,
-  SendConfirmationToEmailRequest,
-  SendConfirmationToPhoneRequest,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
 
@@ -45,12 +37,7 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
   }
 
   public async getUserIdentifiers(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _identifiers?: string[] | null
+    _params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getUserIdentifiersResult
   }
@@ -62,37 +49,43 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
   }
 
   public async addUserIdentifierEmail(
-    _request: AddUserIdentifierEmailRequest
+    _email: string,
+    _password: string,
+    _confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierEmailResult
   }
 
   public async addUserIdentifierPhone(
-    _request: AddUserIdentifierPhoneRequest
+    _phoneNumber: string,
+    _confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierPhoneResult
   }
 
   public async addUserIdentifierExternalAuthProvider(
-    _request: AddUserIdentifierExternalAuthProviderRequest
+    _authProvider: string,
+    _externalProviderToken: string
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     return this.addUserIdentifierExternalAuthProviderResult
   }
 
   public async sendAddEmailIdentifierConfirmation(
-    _request: SendConfirmationToEmailRequest
+    _email: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     return this.sendAddEmailIdentifierConfirmationResult
   }
 
   public async sendAddPhoneIdentifierConfirmation(
-    _request: SendConfirmationToPhoneRequest
+    _phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     return this.sendAddPhoneIdentifierConfirmationResult
   }
 
   public async emailChangePassword(
-    _request: EmailPasswordChangeRequest
+    _userIdentifierId: UserIdentifierId,
+    _oldPassword: string,
+    _newPassword: string
   ): Promise<AppResult<void, AppError>> {
     return this.emailChangePasswordResult
   }

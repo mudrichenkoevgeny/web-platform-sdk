@@ -57,34 +57,31 @@ describe('OpenLoginRepositoryImpl', () => {
 
   it('delegates loginByEmail and maps response', async () => {
     const result = await repository.loginByEmail('test@example.com', 'secret')
-    expect(mockApi.loginByEmail).toHaveBeenCalledWith({ email: 'test@example.com', password: 'secret' })
+    expect(mockApi.loginByEmail).toHaveBeenCalledWith('test@example.com', 'secret')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates loginByPhone and maps response', async () => {
     const result = await repository.loginByPhone('+1234567890', '123456')
-    expect(mockApi.loginByPhone).toHaveBeenCalledWith({ phone_number: '+1234567890', confirmation_code: '123456' })
+    expect(mockApi.loginByPhone).toHaveBeenCalledWith('+1234567890', '123456')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates loginByExternalAuthProvider and maps response', async () => {
     const result = await repository.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
-    expect(mockApi.loginByExternalAuthProvider).toHaveBeenCalledWith({
-      auth_provider: UserAuthProvider.GOOGLE,
-      external_provider_token: 'token_xyz'
-    })
+    expect(mockApi.loginByExternalAuthProvider).toHaveBeenCalledWith(UserAuthProvider.GOOGLE, 'token_xyz')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates loginByTotp and maps response', async () => {
     const result = await repository.loginByTotp('mfa_123', '654321')
-    expect(mockApi.loginByTotp).toHaveBeenCalledWith({ mfa_token: 'mfa_123', totp_code: '654321' })
+    expect(mockApi.loginByTotp).toHaveBeenCalledWith('mfa_123', '654321')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates loginByTotpRecoveryCode and maps response', async () => {
     const result = await repository.loginByTotpRecoveryCode('mfa_123', 'rec_123')
-    expect(mockApi.loginByTotpRecoveryCode).toHaveBeenCalledWith({ mfa_token: 'mfa_123', totp_code: 'rec_123' })
+    expect(mockApi.loginByTotpRecoveryCode).toHaveBeenCalledWith('mfa_123', 'rec_123')
     expect(isSuccess(result)).toBe(true)
   })
 

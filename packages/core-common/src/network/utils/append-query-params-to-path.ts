@@ -14,7 +14,7 @@ export interface NavigationScreenParams {
  */
 export const appendQueryParamsToPath = (
   basePath: string,
-  params?: NavigationScreenParams | Record<string, string[]> | Map<string, string[]> | Record<string, unknown> | null
+  params?: NavigationScreenParams | Record<string, string[]> | Map<string, string[]> | Record<string, unknown> | object | null
 ): string => {
   if (!params) return basePath
 

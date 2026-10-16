@@ -30,10 +30,10 @@ export interface SelfManagementIdentifierRepository {
   /**
    * Updates the management account password using current credentials.
    *
-   * @param email - User email address
+   * @param userIdentifierId - Unique identifier ID
    * @param oldPassword - Current password
    * @param newPassword - New password
    * @returns Void result or a mapped failure
    */
-  emailChangePassword(email: string, oldPassword: string, newPassword: string): Promise<AppResult<void, AppError>>
+  emailChangePassword(userIdentifierId: UserIdentifierId, oldPassword: string, newPassword: string): Promise<AppResult<void, AppError>>
 }

@@ -3,12 +3,10 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   EmailPasswordChangeRequest,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
 
@@ -31,17 +29,13 @@ export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifie
   }
 
   public async getUserIdentifiers(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _identifiers?: string[] | null
+    _params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getUserIdentifiersResult
   }
 
   public async emailChangePassword(
+    _userIdentifierId: UserIdentifierId,
     _request: EmailPasswordChangeRequest
   ): Promise<AppResult<void, AppError>> {
     return this.emailChangePasswordResult

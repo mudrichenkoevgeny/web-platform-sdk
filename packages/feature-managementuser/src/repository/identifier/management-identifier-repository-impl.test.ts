@@ -3,7 +3,7 @@ import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk
 import { ManagementIdentifierRepositoryImpl } from '@/repository/identifier/management-identifier-repository-impl'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 import { userIdentifierPrivatePayloadMock, userIdentifierSummaryPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { toUserIdentifierIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, toUserIdentifierIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementIdentifierRepositoryImpl', () => {
   let mockApi: ManagementIdentifierApi
@@ -30,8 +30,17 @@ describe('ManagementIdentifierRepositoryImpl', () => {
   })
 
   it('delegates getIdentifiers and maps paged items to domain models', async () => {
-    const result = await repository.getIdentifiers(1, 10)
-    expect(mockApi.getIdentifiers).toHaveBeenCalledWith(1, 10, undefined, undefined, undefined, undefined, undefined)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userIds: [],
+      userAuthProviders: [],
+      identifiers: []
+    }
+    const result = await repository.getIdentifiers(params)
+    expect(mockApi.getIdentifiers).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
   })
 

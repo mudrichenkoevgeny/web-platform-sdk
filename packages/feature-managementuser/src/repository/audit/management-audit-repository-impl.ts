@@ -1,18 +1,14 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AuditActorType,
+  AuditEventId,
   AuditEventPrivate,
-  AuditEventSortBy,
   AuditEventSummary,
-  AuditStatus,
   CompositeAuditActionTypeParser,
   CompositeAuditMetadataKeyParser,
   CompositeAuditResourceTypeParser,
   ManagementAuditEventListParams,
-  PagedResult,
-  SortOrder,
-  UserRole
+  PagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toAuditEventPrivate, toAuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
@@ -38,33 +34,9 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
   ) {}
 
   public async getAuditEvents(
-    params?: ManagementAuditEventListParams | number | null,
-    pageSize?: number | null,
-    sortBy?: AuditEventSortBy | null,
-    sortOrder?: SortOrder | null,
-    actorIds?: string[] | null,
-    actorTypes?: AuditActorType[] | null,
-    actorUserRoles?: UserRole[] | null,
-    actions?: string[] | null,
-    resources?: string[] | null,
-    resourceIds?: string[] | null,
-    statuses?: AuditStatus[] | null,
-    messages?: string[] | null
+    params?: ManagementAuditEventListParams | null
   ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>> {
-    const result = await this.managementAuditApi.getAuditEvents(
-      params as ManagementAuditEventListParams,
-      pageSize,
-      sortBy,
-      sortOrder,
-      actorIds,
-      actorTypes,
-      actorUserRoles,
-      actions,
-      resources,
-      resourceIds,
-      statuses,
-      messages
-    )
+    const result = await this.managementAuditApi.getAuditEvents(params)
     return mapSuccess(result, (pagedPayload) => ({
       ...pagedPayload,
       items: pagedPayload.items.map((payload) =>
@@ -77,7 +49,7 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     }))
   }
 
-  public async getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>> {
+  public async getAuditEvent(eventId: AuditEventId): Promise<AppResult<AuditEventPrivate, AppError>> {
     const result = await this.managementAuditApi.getAuditEvent(eventId)
     return mapSuccess(result, (payload) =>
       toAuditEventPrivate(
@@ -89,4 +61,3 @@ export class ManagementAuditRepositoryImpl implements ManagementAuditRepository 
     )
   }
 }
-

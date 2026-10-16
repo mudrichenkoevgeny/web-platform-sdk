@@ -38,7 +38,7 @@ describe('OpenUserSecurityRepositoryImpl', () => {
 
   it('enables TOTP and updates storage', async () => {
     const result = await repository.enableTotp('mfa1', '123456')
-    expect(mockApi.enableTotp).toHaveBeenCalledWith({ mfa_token: 'mfa1', totp_code: '123456' })
+    expect(mockApi.enableTotp).toHaveBeenCalledWith('mfa1', '123456')
     expect(mockStorage.updateCurrentUser).toHaveBeenCalledWith(expect.objectContaining({ isTotpEnabled: true }))
     expect(isSuccess(result)).toBe(true)
   })

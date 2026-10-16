@@ -1,16 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { LoginByTotpMode, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-by-totp-recovery-code-use-case'
 import type { LoginByTotpUseCase } from '@/usecase/auth/login/login-by-totp-use-case'
 import { FieldValidator } from '@/validator/field-validator'
-
-export enum LoginByTotpMode {
-  TOTP = 'TOTP',
-  RECOVERY_CODE = 'RECOVERY_CODE'
-}
 
 export type LoginByTotpScreenState =
   | {

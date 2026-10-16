@@ -2,7 +2,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   AuthDataPayload,
   OtpConfirmationPayload,
-  RegisterByEmailRequest,
+  RegistrationByEmailRequest,
   SendConfirmationToEmailRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -14,7 +14,7 @@ export interface RegistrationApi {
    * @param request - Registration payload from the shared contract
    * @returns Session tokens and related auth payload, or a mapped failure
    */
-  registerByEmail(request: RegisterByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>>
+  registerByEmail(request: RegistrationByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>>
 
   /**
    * Sends a registration confirmation message to the user email.

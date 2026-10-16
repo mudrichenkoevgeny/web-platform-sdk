@@ -1,7 +1,9 @@
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
   CoreBackButton,
+  CoreButton,
   CoreErrorText,
   CoreIcon,
   CoreScreenTitleText,
@@ -21,6 +23,10 @@ import type { FeatureManagementUserStrings } from '@/locales/index'
 import { UserItem } from '@/ui/components/user/item/UserItem'
 import { getGlobalUserListingOptionsConfig } from '@/ui/screens/management/user/global-list/global-user-list-options-config'
 import {
+  searchParamsToListingStates,
+  listingStatesToSearchParams
+} from '@/ui/screens/management/user/global-list/globalUserListSearchConverters'
+import {
   GlobalUserListProvider,
   useGlobalUserListStore
 } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
@@ -28,10 +34,11 @@ import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/us
 
 export const GlobalUserListTestTags = {
   BACK_BUTTON: 'GlobalUserList_BackButton',
-  CREATE_USER_BUTTON: 'GlobalUserList_CreateUserButton',
   TITLE: 'GlobalUserList_Title',
   FILTER_BUTTON: 'GlobalUserList_FilterButton',
   REFRESH_BUTTON: 'GlobalUserList_RefreshButton',
+  CREATE_BUTTON: 'GlobalUserList_CreateButton',
+  CREATE_USER_BUTTON: 'GlobalUserList_CreateButton',
   USER_LIST: 'GlobalUserList_List',
   GLOBAL_ERROR_TEXT: 'GlobalUserList_GlobalErrorText',
   ACTION_ERROR_TEXT: 'GlobalUserList_ActionErrorText'
@@ -40,6 +47,7 @@ export const GlobalUserListTestTags = {
 const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useGlobalUserListStore((s) => s.dependencies)
   const screenState = useGlobalUserListStore((s) => s.screenState)
   const onRefresh = useGlobalUserListStore((s) => s.onRefresh)
   const onLoadNextPage = useGlobalUserListStore((s) => s.onLoadNextPage)
@@ -47,10 +55,38 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   const onCreateUserClick = useGlobalUserListStore((s) => s.onCreateUserClick)
   const onBackClick = useGlobalUserListStore((s) => s.onBackClick)
   const onToggleFilterPanel = useGlobalUserListStore((s) => s.onToggleFilterPanel)
-  const onSortChanged = useGlobalUserListStore((s) => s.onSortChanged)
-  const onFilterChanged = useGlobalUserListStore((s) => s.onFilterChanged)
-  const onApplyFilters = useGlobalUserListStore((s) => s.onApplyFilters)
   const errorParser = useAppErrorParser()
+
+  const [draftSortState, setDraftSortState] = useState<ListingSortState | null>(
+    () => searchParamsToListingStates(deps.searchParams).sortState
+  )
+  const [draftFilterStates, setDraftFilterStates] = useState<Record<string, ListingFilterState>>(
+    () => searchParamsToListingStates(deps.searchParams).filterStates
+  )
+
+  useEffect(() => {
+    const { sortState, filterStates } = searchParamsToListingStates(deps.searchParams)
+    setDraftSortState(sortState)
+    setDraftFilterStates(filterStates)
+  }, [deps.searchParams])
+
+  const handleFilterChanged = (filterId: string, filterState: ListingFilterState | null) => {
+    setDraftFilterStates((prev) => {
+      const next = { ...prev }
+      if (filterState === null) {
+        delete next[filterId]
+      } else {
+        next[filterId] = filterState
+      }
+      return next
+    })
+  }
+
+  const handleApplyFilters = () => {
+    const newSearchParams = listingStatesToSearchParams(draftSortState, draftFilterStates)
+    deps.onSearchParamsChanged?.(newSearchParams)
+    onToggleFilterPanel()
+  }
 
   const isContent = screenState.status === 'content'
   const pagingState = isContent ? screenState.paging : undefined
@@ -72,7 +108,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.users_management_title}
+        title={strings.users_management}
         strings={strings}
       />
     )
@@ -80,8 +116,6 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 
   const {
     paging,
-    sortState,
-    filterStates,
     isFilterPanelExpanded,
     actionError
   } = screenState
@@ -94,19 +128,10 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <CoreBackButton data-testid={GlobalUserListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={GlobalUserListTestTags.TITLE}
-          text={strings.users_management_title}
+          text={strings.users_management}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            data-testid={GlobalUserListTestTags.CREATE_USER_BUTTON}
-            aria-label={strings.create_user}
-            onClick={onCreateUserClick}
-            className="p-2 rounded-lg border border-border bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <CoreIcon src={icons.add} size={20} className="text-primary-foreground" />
-          </button>
           <button
             type="button"
             data-testid={GlobalUserListTestTags.FILTER_BUTTON}
@@ -128,6 +153,15 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         </div>
       </div>
 
+      <div className="w-full flex items-center justify-end mb-4">
+        <CoreButton
+          data-testid={GlobalUserListTestTags.CREATE_BUTTON}
+          label={strings.create_user}
+          onClick={onCreateUserClick}
+          className="w-auto"
+        />
+      </div>
+
       <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalUserListTestTags.USER_LIST}>
         {actionError && (
           <CoreErrorText
@@ -140,11 +174,11 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           <div className="w-full mb-2">
             <ListingOptionsPanel
               config={optionsConfig}
-              sortState={sortState}
-              filterStates={filterStates}
-              onSortChanged={onSortChanged}
-              onFilterChanged={onFilterChanged}
-              onApplyClick={onApplyFilters}
+              sortState={draftSortState}
+              filterStates={draftFilterStates}
+              onSortChanged={setDraftSortState}
+              onFilterChanged={handleFilterChanged}
+              onApplyClick={handleApplyFilters}
             />
           </div>
         )}
@@ -161,12 +195,14 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
             />
 
             {paging.items.map((user) => (
-              <UserItem
-                key={user.id}
-                user={user}
-                onClick={() => onUserClick(user.id)}
-                strings={strings}
-              />
+              user.id ? (
+                <UserItem
+                  key={user.id}
+                  user={user}
+                  onClick={() => onUserClick(user.id!)}
+                  strings={strings}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (
@@ -193,11 +229,19 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
 const GlobalUserListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings
 }) => {
+  const deps = useGlobalUserListStore((s) => s.dependencies)
   const initScreen = useGlobalUserListStore((s) => s.initScreen)
+  const onSearchParamsUpdated = useGlobalUserListStore((s) => s.onSearchParamsUpdated)
+  const isMounted = React.useRef(false)
 
   useEffect(() => {
-    initScreen()
-  }, [initScreen])
+    if (!isMounted.current) {
+      isMounted.current = true
+      initScreen(deps.searchParams)
+    } else {
+      onSearchParamsUpdated(deps.searchParams)
+    }
+  }, [deps.searchParams, initScreen, onSearchParamsUpdated])
 
   return <GlobalUserListContent strings={strings} />
 }

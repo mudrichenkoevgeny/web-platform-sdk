@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
-import { ManagementUsersRoutes, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUsersRoutes, SortOrder, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchManagementUserApi', () => {
@@ -34,7 +34,21 @@ describe('FetchManagementUserApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getUsers(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userRoles: [],
+      accountStatuses: [],
+      accountStatusesOnRestore: [],
+      accountLockoutTypes: [],
+      authorityLevelFrom: null,
+      authorityLevelTo: null,
+      isTotpEnabled: null,
+      permissionCodes: []
+    }
+    const result = await api.getUsers(params)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementUsersRoutes.GET_USERS)

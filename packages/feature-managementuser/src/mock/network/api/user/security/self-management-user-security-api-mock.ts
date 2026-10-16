@@ -2,8 +2,7 @@ import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-s
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   TotpRecoveryCodesPayload,
-  TotpSetupPayload,
-  VerifyTotpPayload
+  TotpSetupPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSecurityApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -19,7 +18,7 @@ export class SelfManagementUserSecurityApiMock implements UserSecurityApi {
     return this.setupTotpResult
   }
 
-  public async enableTotp(_request: VerifyTotpPayload): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
+  public async enableTotp(_mfaToken: string, _code: string): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
     return this.enableTotpResult
   }
 

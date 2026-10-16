@@ -31,12 +31,11 @@ describe('FetchOpenUserSecurityApi', () => {
     const dummyPayload = { codes: ['c1'] } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { mfa_token: 'mfa1', totp_code: '123456' }
-    const result = await api.enableTotp(request)
+    const result = await api.enableTotp('mfa1', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserSecurityRoutes.ENABLE_TOTP,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa1', totp_code: '123456' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })

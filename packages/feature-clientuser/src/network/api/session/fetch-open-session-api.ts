@@ -1,7 +1,7 @@
 import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  DeletedSessionsPayload,
+  DeletedSessions,
   PagedResult,
   SelfSessionListParams,
   UserSessionId,
@@ -10,8 +10,10 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
+  deletedSessionsPayloadSchema,
   OpenSessionRoutes,
   pagedResultSchema,
+  toDeletedSessions,
   UserApiPaths,
   userSessionPrivatePayloadSchema,
   userSessionSummaryPayloadSchema
@@ -59,19 +61,25 @@ export class FetchOpenSessionApi implements SessionApi {
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
-  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessionsPayload, AppError>> {
-    return callResult(() =>
-      this.client.request<DeletedSessionsPayload>(OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
+  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>> {
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
         method: 'DELETE'
       })
-    )
+      const payload = deletedSessionsPayloadSchema.parse(raw)
+      return toDeletedSessions(payload)
+    })
   }
 
-  public async reauthenticateSession(request: VerifyTotpPayload): Promise<AppResult<void, AppError>> {
+  public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
+    const payload: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<void>(OpenSessionRoutes.REAUTHENTICATE_SESSION, {
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify(payload)
       })
     )
   }

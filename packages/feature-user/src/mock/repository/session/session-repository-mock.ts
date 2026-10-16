@@ -1,14 +1,11 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type {
-  ClientType,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfSessionListParams,
   UserSessionId,
   UserSessionPrivate,
-  UserSessionSummary,
-  UserSortValues
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
 import { userSessionPrivateMock, userSessionSummaryMock } from '@/mock/domain/model/session/user-session-mock'
@@ -40,21 +37,7 @@ export class SessionRepositoryMock implements SessionRepository {
   public lastCode: string | null = null
 
   public async getSessions(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserSessionSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _identifiers?: string[] | null,
-    _identifierIds?: string[] | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _clientTypes?: ClientType[] | null,
-    _userAgents?: string[] | null,
-    _ipAddresses?: string[] | null,
-    _languages?: string[] | null,
-    _deviceIds?: string[] | null,
-    _deviceNames?: string[] | null,
-    _appVersions?: string[] | null,
-    _operationSystemVersions?: string[] | null
+    _params?: SelfSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.getSessionsResultProvider()
   }

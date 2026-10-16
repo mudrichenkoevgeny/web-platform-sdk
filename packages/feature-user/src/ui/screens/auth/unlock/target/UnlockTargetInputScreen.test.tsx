@@ -43,7 +43,7 @@ describe('UnlockTargetInputScreen', () => {
     await user.click(submitBtn)
 
     expect(deps.sendUnlockEmailConfirmationUseCase.execute).toHaveBeenCalledWith('user@example.com')
-    expect(deps.onNavigateToOtp).toHaveBeenCalledWith('user@example.com', 30)
+    expect(deps.onNavigateToOtp).toHaveBeenCalledWith('user@example.com', 30, 'email')
   })
 
   it('renders phone input for PHONE method and triggers send code on submit', async () => {
@@ -65,6 +65,6 @@ describe('UnlockTargetInputScreen', () => {
     await user.click(submitBtn)
 
     expect(deps.sendUnlockPhoneConfirmationUseCase.execute).toHaveBeenCalledWith('+1234567890')
-    expect(deps.onNavigateToOtp).toHaveBeenCalledWith('+1234567890', 30)
+    expect(deps.onNavigateToOtp).toHaveBeenCalledWith('+1234567890', 30, 'phone')
   })
 })

@@ -21,9 +21,8 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async sendUnlockEmailConfirmation(
-    request: SendConfirmationToEmailRequest
-  ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
+  public async sendUnlockEmailConfirmation(email: string): Promise<AppResult<OtpConfirmationPayload, AppError>> {
+    const request: SendConfirmationToEmailRequest = { email }
     return callResult(() =>
       this.client.request<OtpConfirmationPayload>(SelfManagementUnlockRoutes.SEND_UNLOCK_EMAIL_CONFIRMATION, {
         method: 'POST',
@@ -33,7 +32,11 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
     )
   }
 
-  public async unlockByEmail(request: UnlockByEmailConfirmationRequest): Promise<AppResult<void, AppError>> {
+  public async unlockByEmail(email: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
+    const request: UnlockByEmailConfirmationRequest = {
+      email,
+      confirmation_code: confirmationCode
+    }
     return callResult(() =>
       this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_EMAIL, {
         method: 'POST',
@@ -43,9 +46,8 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
     )
   }
 
-  public async sendUnlockPhoneConfirmation(
-    request: SendConfirmationToPhoneRequest
-  ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
+  public async sendUnlockPhoneConfirmation(phoneNumber: string): Promise<AppResult<OtpConfirmationPayload, AppError>> {
+    const request: SendConfirmationToPhoneRequest = { phone_number: phoneNumber }
     return callResult(() =>
       this.client.request<OtpConfirmationPayload>(SelfManagementUnlockRoutes.SEND_UNLOCK_PHONE_CONFIRMATION, {
         method: 'POST',
@@ -55,7 +57,11 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
     )
   }
 
-  public async unlockByPhone(request: UnlockByPhoneConfirmationRequest): Promise<AppResult<void, AppError>> {
+  public async unlockByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
+    const request: UnlockByPhoneConfirmationRequest = {
+      phone_number: phoneNumber,
+      confirmation_code: confirmationCode
+    }
     return callResult(() =>
       this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_PHONE, {
         method: 'POST',
@@ -66,8 +72,13 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
   }
 
   public async unlockByExternalAuthProvider(
-    request: UnlockByExternalAuthProviderRequest
+    authProvider: string,
+    externalProviderToken: string
   ): Promise<AppResult<void, AppError>> {
+    const request: UnlockByExternalAuthProviderRequest = {
+      auth_provider: authProvider,
+      external_provider_token: externalProviderToken
+    }
     return callResult(() =>
       this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER, {
         method: 'POST',

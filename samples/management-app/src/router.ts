@@ -5,8 +5,7 @@ export const router = createRouter({
   routeTree,
   context: {
     appComponent: undefined!,
-    managementDeps: undefined!,
-    loginDependencies: undefined!
+    managementDeps: undefined!
   }
 })
 

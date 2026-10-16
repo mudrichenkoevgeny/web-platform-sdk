@@ -178,7 +178,7 @@ class SelfManagementIdentifierRepositoryAdapter implements IdentifierRepository 
   }
 
   public emailChangePassword(...args: Parameters<IdentifierRepository['emailChangePassword']>): ReturnType<IdentifierRepository['emailChangePassword']> {
-    return this.repo.emailChangePassword(...args)
+    return this.repo.emailChangePassword(args[0], args[1], args[2])
   }
 
   public getRemainingEmailConfirmationDelayInSeconds(): ReturnType<IdentifierRepository['getRemainingEmailConfirmationDelayInSeconds']> {

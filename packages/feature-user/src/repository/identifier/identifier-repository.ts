@@ -39,8 +39,8 @@ export interface IdentifierRepository {
   /** Triggers a confirmation challenge for phone association. */
   sendAddPhoneIdentifierConfirmation(phoneNumber: string): Promise<AppResult<OtpConfirmation, AppError>>
 
-  /** Updates account password using current credentials. */
-  emailChangePassword(email: string, oldPassword: string, newPassword: string): Promise<AppResult<void, AppError>>
+  /** Updates account password using current credentials for the given identifier. */
+  emailChangePassword(userIdentifierId: UserIdentifierId, oldPassword: string, newPassword: string): Promise<AppResult<void, AppError>>
 
   /** Returns remaining cooldown for email confirmation requests. */
   getRemainingEmailConfirmationDelayInSeconds(email: string): number

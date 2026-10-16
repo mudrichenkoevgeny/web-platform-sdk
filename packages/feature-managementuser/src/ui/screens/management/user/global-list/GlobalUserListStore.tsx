@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, SortOrder, UserAccountStatus, UserFilterValues, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSummary, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementUserListParams, UserSummary, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
   canLoadMorePages,
@@ -25,8 +25,6 @@ export type GlobalUserListScreenState =
   | {
       status: 'content'
       paging: PaginationState<UserSummary>
-      sortState: ListingSortState | null
-      filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
       actionLoading: boolean
       actionError: AppError | null
@@ -37,20 +35,21 @@ export interface GlobalUserListStoreDependencies {
   onNavigateToUserDetail: (userId: UserId) => void
   onNavigateToCreateUser: () => void
   onBack: () => void
+  searchParams?: ManagementUserListParams
+  onSearchParamsChanged?: (params: ManagementUserListParams) => void
 }
 
 export interface GlobalUserListStoreState {
+  dependencies: GlobalUserListStoreDependencies
   screenState: GlobalUserListScreenState
-  initScreen: () => Promise<void>
+  initScreen: (searchParams?: ManagementUserListParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementUserListParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
+  onToggleFilterPanel: () => void
   onUserClick: (userId: UserId) => void
   onCreateUserClick: () => void
   onBackClick: () => void
-  onToggleFilterPanel: () => void
-  onSortChanged: (sortState: ListingSortState) => Promise<void>
-  onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => void
-  onApplyFilters: () => Promise<void>
 }
 
 export type GlobalUserListStore = ReturnType<typeof createGlobalUserListStore>
@@ -68,8 +67,7 @@ export const createGlobalUserListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    sortState: ListingSortState | null,
-    filterStates: Record<string, ListingFilterState>
+    overrideParams?: ManagementUserListParams
   ) => {
     if (isFetching) {
       return
@@ -77,49 +75,14 @@ export const createGlobalUserListStore = (
     isFetching = true
 
     try {
-      const sortOrder = sortState ? (sortState.isAscending ? SortOrder.ASC : SortOrder.DESC) : null
-      const sortBy = sortState?.optionId
-        ? (Object.values(UserSortValues.UserSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserSortBy | undefined ?? null)
-        : null
-
-      const roleFilter = filterStates[UserFilterValues.UserFilterValues.ROLE]
-      const statusFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_STATUS]
-      const lockoutFilter = filterStates[UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE]
-      const totpFilter = filterStates[UserFilterValues.UserFilterValues.IS_TOTP_ENABLED]
-      const fromFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM]
-      const toFilter = filterStates[UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO]
-
-      const roles = roleFilter?.type === 'choice'
-        ? Array.from(roleFilter.selectedIds).filter((id): id is UserRole =>
-            Object.values(UserRole).includes(id as UserRole)
-          )
-        : undefined
-      const accountStatuses = statusFilter?.type === 'choice'
-        ? Array.from(statusFilter.selectedIds).filter((id): id is UserAccountStatus =>
-            Object.values(UserAccountStatus).includes(id as UserAccountStatus)
-          )
-        : undefined
-      const accountLockoutTypes = lockoutFilter?.type === 'choice'
-        ? Array.from(lockoutFilter.selectedIds).filter((id): id is AccountLockoutType =>
-            Object.values(AccountLockoutType).includes(id as AccountLockoutType)
-          )
-        : undefined
-      const isTotpEnabled = totpFilter?.type === 'boolean' ? totpFilter.value : undefined
-      const authorityLevelFrom = fromFilter?.type === 'number' ? fromFilter.value : (fromFilter?.type === 'text' && fromFilter.value ? parseInt(fromFilter.value, 10) : undefined)
-      const authorityLevelTo = toFilter?.type === 'number' ? toFilter.value : (toFilter?.type === 'text' && toFilter.value ? parseInt(toFilter.value, 10) : undefined)
-
-      const result = await deps.getUsersUseCase.execute({
-        pageNumber,
-        pageSize: 20,
-        sortBy,
-        sortOrder,
-        roles,
-        accountStatuses,
-        accountLockoutTypes,
-        isTotpEnabled,
-        authorityLevelFrom,
-        authorityLevelTo
-      })
+      const activeDeps = get().dependencies
+      const searchParams = overrideParams ?? activeDeps.searchParams
+      const result = await activeDeps.getUsersUseCase.execute(
+        managementUserListParamsSchema.parse({
+          ...searchParams,
+          pageNumber
+        })
+      )
 
       if (isSuccess(result)) {
         const current = get().screenState
@@ -130,8 +93,7 @@ export const createGlobalUserListStore = (
           set({
             screenState: {
               ...current,
-              paging: nextPaging,
-              actionLoading: false
+              paging: nextPaging
             }
           })
         } else {
@@ -139,8 +101,6 @@ export const createGlobalUserListStore = (
             screenState: {
               status: 'content',
               paging: nextPaging,
-              sortState,
-              filterStates,
               isFilterPanelExpanded: false,
               actionLoading: false,
               actionError: null
@@ -153,7 +113,6 @@ export const createGlobalUserListStore = (
           set({
             screenState: {
               ...current,
-              actionLoading: false,
               actionError: result.error
             }
           })
@@ -172,15 +131,29 @@ export const createGlobalUserListStore = (
   }
 
   return createStore<GlobalUserListStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async () => {
+    initScreen: async (searchParams?: ManagementUserListParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, null, {})
+      await fetchPage(set, get, 1, searchParams)
+    },
+
+    onSearchParamsUpdated: async (searchParams?: ManagementUserListParams) => {
+      set({
+        screenState: {
+          status: 'content',
+          paging: createInitialPaginationState<UserSummary>(),
+          isFilterPanelExpanded: false,
+          actionLoading: false,
+          actionError: null
+        }
+      })
+      await fetchPage(set, get, 1, searchParams)
     },
 
     onLoadNextPage: async () => {
@@ -192,34 +165,12 @@ export const createGlobalUserListStore = (
       const nextPaging = createNextPageLoadingPaginationState(current.paging)
       set({ screenState: { ...current, paging: nextPaging } })
 
-      await fetchPage(
-        set,
-        get,
-        getNextPageNumber(current.paging),
-        current.sortState,
-        current.filterStates
-      )
+      await fetchPage(set, get, getNextPageNumber(current.paging))
     },
 
     onRefresh: async () => {
-      const current = get().screenState
-      const sortState = current.status === 'content' ? current.sortState : null
-      const filterStates = current.status === 'content' ? current.filterStates : {}
-
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, sortState, filterStates)
-    },
-
-    onUserClick: (userId: UserId) => {
-      deps.onNavigateToUserDetail(userId)
-    },
-
-    onCreateUserClick: () => {
-      deps.onNavigateToCreateUser()
-    },
-
-    onBackClick: () => {
-      deps.onBack()
+      await fetchPage(set, get, 1)
     },
 
     onToggleFilterPanel: () => {
@@ -234,59 +185,16 @@ export const createGlobalUserListStore = (
       }
     },
 
-    onSortChanged: async (sortState: ListingSortState) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          sortState,
-          paging: createInitialPaginationState<UserSummary>()
-        }
-      })
-
-      await fetchPage(set, get, 1, sortState, current.filterStates)
+    onUserClick: (userId: UserId) => {
+      deps.onNavigateToUserDetail(userId)
     },
 
-    onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      const nextFilters = { ...current.filterStates }
-      if (filterState === null) {
-        delete nextFilters[filterId]
-      } else {
-        nextFilters[filterId] = filterState
-      }
-
-      set({
-        screenState: {
-          ...current,
-          filterStates: nextFilters
-        }
-      })
+    onCreateUserClick: () => {
+      deps.onNavigateToCreateUser()
     },
 
-    onApplyFilters: async () => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          isFilterPanelExpanded: false,
-          paging: createInitialPaginationState<UserSummary>()
-        }
-      })
-
-      await fetchPage(set, get, 1, current.sortState, current.filterStates)
+    onBackClick: () => {
+      deps.onBack()
     }
   }))
 }
@@ -305,6 +213,10 @@ export const GlobalUserListProvider: React.FC<GlobalUserListProviderProps> = ({
   children
 }) => {
   const [store] = useState(() => createGlobalUserListStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <GlobalUserListContext.Provider value={store}>

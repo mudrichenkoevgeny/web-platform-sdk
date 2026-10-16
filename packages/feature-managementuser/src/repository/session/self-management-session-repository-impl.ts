@@ -1,12 +1,13 @@
 import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  PagedResult,
   SelfSessionListParams,
   UserSessionId,
   UserSessionPrivate,
   UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserSessionPrivate, toUserSessionSummary, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserSessionPrivate, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository, AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -100,14 +101,12 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.deleteAllOtherSessions()
       if (networkResult.success) {
-        const deletedSessionIdsSet = new Set(
-          networkResult.data.deleted_session_ids.map((id) => toUserSessionIdOrThrow(id))
-        )
+        const deletedSessionIdsSet = new Set(networkResult.data.deletedSessionIds)
         if (deletedSessionIdsSet.size > 0) {
           const cachedList = await this.userStorage.getUserSessionsList()
           const idsToRemove = cachedList.items
             .map((item) => item.id)
-            .filter((id) => deletedSessionIdsSet.has(id))
+            .filter((id): id is UserSessionId => id != null && deletedSessionIdsSet.has(id))
 
           if (idsToRemove.length > 0) {
             await this.userStorage.removeUserSessions(idsToRemove)
@@ -119,9 +118,6 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
   }
 
   public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
-    return this.selfManagementSessionApi.reauthenticateSession({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    return this.selfManagementSessionApi.reauthenticateSession(mfaToken, code)
   }
 }

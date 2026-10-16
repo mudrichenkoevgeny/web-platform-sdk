@@ -1,7 +1,7 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  DeletedSessionsPayload,
+  DeletedSessions,
   PagedResult,
   UserSessionId,
   UserSessionPrivatePayload,
@@ -9,6 +9,7 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionApi } from '@/network/api/session/session-api'
+
 /**
  * Mock implementation of {@link SessionApi}.
  */
@@ -23,7 +24,7 @@ export class SessionApiMock implements SessionApi {
   public getSessionResult: AppResult<UserSessionPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public logoutResult: AppResult<void, AppError> = appResultSuccess(undefined)
   public deleteSessionResult: AppResult<void, AppError> = appResultSuccess(undefined)
-  public deleteAllOtherSessionsResult: AppResult<DeletedSessionsPayload, AppError> = appResultSuccess({ deleted_session_ids: [] })
+  public deleteAllOtherSessionsResult: AppResult<DeletedSessions, AppError> = appResultSuccess({ deletedSessionIds: [] })
   public reauthenticateSessionResult: AppResult<void, AppError> = appResultSuccess(undefined)
 
   public lastRequestedSessionId: UserSessionId | null = null
@@ -53,13 +54,13 @@ export class SessionApiMock implements SessionApi {
   }
 
   /** Mocks all other sessions deletion. */
-  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessionsPayload, AppError>> {
+  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>> {
     return this.deleteAllOtherSessionsResult
   }
 
   /** Mocks session re-authentication. */
-  public async reauthenticateSession(request: VerifyTotpPayload): Promise<AppResult<void, AppError>> {
-    this.lastReauthenticateRequest = request
+  public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
+    this.lastReauthenticateRequest = { mfa_token: mfaToken, totp_code: code }
     return this.reauthenticateSessionResult
   }
 }

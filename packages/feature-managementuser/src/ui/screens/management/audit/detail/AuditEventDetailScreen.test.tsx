@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { toAuditEventIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventDetailScreen, AuditEventDetailTestTags } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
@@ -13,7 +13,7 @@ describe('AuditEventDetailScreen', () => {
   const otherUserId = toUserIdOrThrow('usr_other_456')
 
   const createMockDeps = (overrides?: Partial<AuditEventDetailStoreDependencies>): AuditEventDetailStoreDependencies => ({
-    eventId: auditEventMock().id,
+    eventId: auditEventMock().id ?? toAuditEventIdOrThrow('evt_1'),
     getAuditEventUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(auditEventMock()))
     },

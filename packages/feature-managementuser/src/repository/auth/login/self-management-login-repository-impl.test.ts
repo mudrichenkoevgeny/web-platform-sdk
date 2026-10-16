@@ -47,7 +47,7 @@ describe('SelfManagementLoginRepositoryImpl', () => {
 
   it('delegates loginByEmail and maps response', async () => {
     const result = await repository.loginByEmail('admin@example.com', 'secret')
-    expect(mockApi.loginByEmail).toHaveBeenCalledWith({ email: 'admin@example.com', password: 'secret' })
+    expect(mockApi.loginByEmail).toHaveBeenCalledWith('admin@example.com', 'secret')
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -63,13 +63,13 @@ describe('SelfManagementLoginRepositoryImpl', () => {
 
   it('delegates loginByTotp and maps response', async () => {
     const result = await repository.loginByTotp('mfa_123', '654321')
-    expect(mockApi.loginByTotp).toHaveBeenCalledWith({ mfa_token: 'mfa_123', totp_code: '654321' })
+    expect(mockApi.loginByTotp).toHaveBeenCalledWith('mfa_123', '654321')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates loginByTotpRecoveryCode and maps response', async () => {
     const result = await repository.loginByTotpRecoveryCode('mfa_123', 'rec_123')
-    expect(mockApi.loginByTotpRecoveryCode).toHaveBeenCalledWith({ mfa_token: 'mfa_123', totp_code: 'rec_123' })
+    expect(mockApi.loginByTotpRecoveryCode).toHaveBeenCalledWith('mfa_123', 'rec_123')
     expect(isSuccess(result)).toBe(true)
   })
 

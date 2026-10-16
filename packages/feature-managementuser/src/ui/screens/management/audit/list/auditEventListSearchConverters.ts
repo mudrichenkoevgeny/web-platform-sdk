@@ -1,15 +1,16 @@
-import { AuditFilterValues } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditFilterValues, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AuditEventListSearchParams } from './auditEventListSearchSchema'
+import type { AuditEventListSearchParams } from '@/ui/screens/management/audit/list/auditEventListSearchSchema'
 
-export interface ListingOptionsState {
+export interface AuditEventListingOptionsState {
   sortState: ListingSortState | null
   filterStates: Record<string, ListingFilterState>
 }
 
 export const searchParamsToListingStates = (
-  params?: AuditEventListSearchParams
-): ListingOptionsState => {
+  params?: ManagementAuditEventListParams | AuditEventListSearchParams
+): AuditEventListingOptionsState => {
   if (!params) {
     return { sortState: null, filterStates: {} }
   }
@@ -17,7 +18,7 @@ export const searchParamsToListingStates = (
   const sortState: ListingSortState | null = params.sortBy
     ? {
         optionId: params.sortBy,
-        isAscending: params.sortOrder === 'ASC'
+        isAscending: params.sortOrder === SortOrder.ASC
       }
     : null
 
@@ -85,12 +86,25 @@ export const searchParamsToListingStates = (
 export const listingStatesToSearchParams = (
   sortState: ListingSortState | null,
   filterStates: Record<string, ListingFilterState>
-): AuditEventListSearchParams => {
-  const params: AuditEventListSearchParams = {}
+): ManagementAuditEventListParams => {
+  const params: ManagementAuditEventListParams = {
+    pageNumber: 1,
+    pageSize: 20,
+    sortBy: 'created_at',
+    sortOrder: SortOrder.DESC,
+    actorIds: [],
+    actorTypes: [],
+    actorUserRoles: [],
+    actions: [],
+    resources: [],
+    resourceIds: [],
+    statuses: [],
+    messages: []
+  }
 
   if (sortState) {
-    params.sortBy = sortState.optionId
-    params.sortOrder = sortState.isAscending ? 'ASC' : 'DESC'
+    params.sortBy = sortState.optionId as NonNullable<ManagementAuditEventListParams['sortBy']>
+    params.sortOrder = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
   const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
@@ -100,7 +114,7 @@ export const listingStatesToSearchParams = (
 
   const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
   if (actorTypeFilter?.type === 'choice' && actorTypeFilter.selectedIds.size > 0) {
-    params.actorTypes = Array.from(actorTypeFilter.selectedIds)
+    params.actorTypes = Array.from(actorTypeFilter.selectedIds) as NonNullable<ManagementAuditEventListParams['actorTypes']>
   }
 
   const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
@@ -125,7 +139,7 @@ export const listingStatesToSearchParams = (
 
   const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
   if (statusFilter?.type === 'choice' && statusFilter.selectedIds.size > 0) {
-    params.statuses = Array.from(statusFilter.selectedIds)
+    params.statuses = Array.from(statusFilter.selectedIds) as NonNullable<ManagementAuditEventListParams['statuses']>
   }
 
   const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]

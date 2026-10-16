@@ -2,12 +2,10 @@ import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-commo
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type {
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
@@ -51,12 +49,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   }
 
   public async getUserIdentifiers(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _identifiers?: string[] | null
+    _params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     return this.getUserIdentifiersResultProvider()
   }
@@ -106,11 +99,10 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   }
 
   public async emailChangePassword(
-    email: string,
+    _userIdentifierId: UserIdentifierId,
     oldPassword: string,
     newPassword: string
   ): Promise<AppResult<void, AppError>> {
-    this.lastEmail = email
     this.lastOldPassword = oldPassword
     this.lastNewPassword = newPassword
     return this.emailChangePasswordResultProvider()

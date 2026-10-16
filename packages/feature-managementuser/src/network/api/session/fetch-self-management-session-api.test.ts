@@ -67,7 +67,7 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
-    const dummyPayload = { deletedCount: 2 } as any
+    const dummyPayload = { deleted_session_ids: ['sess_2'] }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
     const result = await api.deleteAllOtherSessions()
@@ -82,12 +82,11 @@ describe('FetchSelfManagementSessionApi', () => {
   it('dispatches reauthenticateSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { mfa_token: 'mfa123', totp_code: '123456' }
-    const result = await api.reauthenticateSession(request)
+    const result = await api.reauthenticateSession('mfa123', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.REAUTHENTICATE_SESSION,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa123', totp_code: '123456' }) })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })

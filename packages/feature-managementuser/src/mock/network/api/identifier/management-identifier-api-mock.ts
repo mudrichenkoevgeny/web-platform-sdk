@@ -1,13 +1,12 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  ManagementGlobalIdentifierListParams,
+  ManagementUserIdentifierListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
   UserIdentifierPrivatePayload,
-  UserIdentifierSummaryPayload,
-  UserSortValues
+  UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 
@@ -25,13 +24,7 @@ export class ManagementIdentifierApiMock implements ManagementIdentifierApi {
   public deleteIdentifierPasswordResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
 
   public async getIdentifiers(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userIds?: string[] | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _identifiers?: string[] | null
+    _params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
     return this.getIdentifiersResult
   }

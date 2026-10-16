@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { AuditActorType, AuditEventSortBy, AuditStatus, SortOrder, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { managementAuditEventListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuditEventId, AuditEventSummary, ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -75,46 +75,13 @@ export const createAuditEventListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const params = overrideParams ?? activeDeps.searchParams
-
-      let result
-      if (params && typeof params === 'object' && ('toQueryMap' in params || 'actorIds' in params)) {
-        result = await activeDeps.getAuditEventsUseCase.execute(params as ManagementAuditEventListParams)
-      } else {
-        const sortOrder = params?.sortOrder === 'ASC' ? SortOrder.ASC : params?.sortOrder === 'DESC' ? SortOrder.DESC : null
-        const sortBy = params?.sortBy ? (params.sortBy as AuditEventSortBy) : null
-
-        const actorTypes = params?.actorTypes?.filter((id): id is AuditActorType =>
-          Object.values(AuditActorType).includes(id as AuditActorType)
-        )
-        const actorUserRoles = params?.actorUserRoles?.filter((id): id is UserRole =>
-          Object.values(UserRole).includes(id as UserRole)
-        )
-        const statuses = params?.statuses?.filter((id): id is AuditStatus =>
-          Object.values(AuditStatus).includes(id as AuditStatus)
-        )
-
-        const actorIds = params?.actorIds
-        const actions = params?.actions
-        const resources = params?.resources
-        const resourceIds = params?.resourceIds
-        const messages = params?.messages
-
-        result = await activeDeps.getAuditEventsUseCase.execute({
-          pageNumber,
-          pageSize: 20,
-          sortBy,
-          sortOrder,
-          actorIds,
-          actorTypes,
-          actorUserRoles,
-          actions,
-          resources,
-          resourceIds,
-          statuses,
-          messages
+      const searchParams = overrideParams ?? activeDeps.searchParams
+      const result = await activeDeps.getAuditEventsUseCase.execute(
+        managementAuditEventListParamsSchema.parse({
+          ...searchParams,
+          pageNumber
         })
-      }
+      )
 
       if (isSuccess(result)) {
         const current = get().screenState

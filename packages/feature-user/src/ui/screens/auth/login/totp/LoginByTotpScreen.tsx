@@ -12,11 +12,11 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { LoginByTotpMode } from '@mudrichenkoevgeny/shared-foundation'
 import { enUserStrings } from '@/locales/index'
 import type { FeatureUserStrings } from '@/locales/index'
 import { FieldValidator } from '@/validator/field-validator'
 import {
-  LoginByTotpMode,
   LoginByTotpProvider,
   useLoginByTotpStore
 } from '@/ui/screens/auth/login/totp/login-by-totp-store'

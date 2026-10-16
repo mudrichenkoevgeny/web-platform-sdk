@@ -36,6 +36,7 @@ export const userIdentifierSummaryMock = (
   overrides?: Partial<UserIdentifierSummary>
 ): UserIdentifierSummary => ({
   id: toUserIdentifierIdOrThrow('223e4567-e89b-12d3-a456-426614174001'),
+  userId: toUserIdOrThrow('123e4567-e89b-12d3-a456-426614174000'),
   userAuthProvider: UserAuthProvider.EMAIL,
   identifier: 'user@example.com',
   displayName: 'user@example.com',

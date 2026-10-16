@@ -3,7 +3,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   AuthDataPayload,
   OtpConfirmationPayload,
-  RegisterByEmailRequest,
+  RegistrationByEmailRequest,
   SendConfirmationToEmailRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { RegistrationApi } from '@/network/api/auth/registration/registration-api'
@@ -15,11 +15,11 @@ export class OpenRegistrationApiMock implements RegistrationApi {
   public registerByEmailResult: AppResult<AuthDataPayload, AppError> = appResultFailure(CommonError.unknown())
   public sendRegistrationConfirmationToEmailResult: AppResult<OtpConfirmationPayload, AppError> = appResultFailure(CommonError.unknown())
 
-  public lastRegisterByEmailRequest: RegisterByEmailRequest | null = null
+  public lastRegistrationByEmailRequest: RegistrationByEmailRequest | null = null
   public lastSendRegistrationConfirmationToEmailRequest: SendConfirmationToEmailRequest | null = null
 
-  public async registerByEmail(request: RegisterByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastRegisterByEmailRequest = request
+  public async registerByEmail(request: RegistrationByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastRegistrationByEmailRequest = request
     return this.registerByEmailResult
   }
 

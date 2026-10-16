@@ -4,7 +4,7 @@ import type { ClientAppStrings } from '@/locales/en/strings'
 export const ruClientAppStrings: ClientAppStrings = {
   app_name: 'Тестовое приложение',
   nav_home: 'Главная',
-  nav_profile: 'Профиль',
+  nav_user: 'Пользователь',
   btn_back_to_home: 'На главную',
   home_screen_title: 'Главный экран'
 }

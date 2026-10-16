@@ -17,18 +17,18 @@ export class SelfManagementLoginApiMock implements SelfManagementLoginApi {
   public lastLoginByTotpRequest: VerifyTotpPayload | null = null
   public lastLoginByTotpRecoveryCodeRequest: VerifyTotpPayload | null = null
 
-  public async loginByEmail(request: LoginByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByEmailRequest = request
+  public async loginByEmail(email: string, password: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByEmailRequest = { email, password }
     return this.loginByEmailResult
   }
 
-  public async loginByTotp(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByTotpRequest = request
+  public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByTotpRequest = { mfa_token: mfaToken, totp_code: code }
     return this.loginByTotpResult
   }
 
-  public async loginByTotpRecoveryCode(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByTotpRecoveryCodeRequest = request
+  public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByTotpRecoveryCodeRequest = { mfa_token: mfaToken, totp_code: code }
     return this.loginByTotpRecoveryCodeResult
   }
 }

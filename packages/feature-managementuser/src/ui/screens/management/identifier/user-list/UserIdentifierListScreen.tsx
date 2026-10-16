@@ -110,12 +110,14 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
             />
 
             {paging.items.map((identifier) => (
-              <IdentifierItem
-                key={identifier.id}
-                identifier={identifier}
-                onClick={() => onIdentifierClick(identifier.id)}
-                isCurrentIdentifier={false}
-              />
+              identifier.id ? (
+                <IdentifierItem
+                  key={identifier.id}
+                  identifier={identifier}
+                  onClick={() => onIdentifierClick(identifier.id!)}
+                  isCurrentIdentifier={false}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (

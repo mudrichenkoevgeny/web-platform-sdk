@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { SortOrder } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserSessionSummary, UserSessionId, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { managementUserSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementUserSessionListParams, UserSessionSummary, UserSessionId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -38,11 +38,15 @@ export interface UserSessionListStoreDependencies {
   managementDeleteAllUserSessionsUseCase: ManagementDeleteAllUserSessionsUseCase
   onNavigateToSessionDetail?: (session: UserSessionSummary) => void
   onBack: () => void
+  searchParams?: ManagementUserSessionListParams
+  onSearchParamsChanged?: (params: ManagementUserSessionListParams) => void
 }
 
 export interface UserSessionListStoreState {
+  dependencies: UserSessionListStoreDependencies
   screenState: UserSessionListScreenState
-  initScreen: () => Promise<void>
+  initScreen: (searchParams?: ManagementUserSessionListParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementUserSessionListParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onSessionClick: (session: UserSessionSummary) => void
@@ -63,20 +67,28 @@ export const createUserSessionListStore = (
 ) => {
   let isFetching = false
 
-  const fetchPage = async (set: SetState, get: GetState, pageNumber: number) => {
+  const fetchPage = async (
+    set: SetState,
+    get: GetState,
+    pageNumber: number,
+    overrideParams?: ManagementUserSessionListParams
+  ) => {
     if (isFetching) {
       return
     }
     isFetching = true
 
     try {
-      const userIds = deps.userId ? [deps.userId] : undefined
-      const result = await deps.managementGetSessionsUseCase.execute({
-        pageNumber,
-        pageSize: 20,
-        userIds,
-        sortOrder: SortOrder.DESC
-      })
+      const activeDeps = get().dependencies
+      const searchParams = overrideParams ?? activeDeps.searchParams
+      const userIds = activeDeps.userId ? [activeDeps.userId] : []
+      const result = await activeDeps.managementGetSessionsUseCase.execute(
+        managementUserSessionListParamsSchema.parse({
+          userIds,
+          ...searchParams,
+          pageNumber
+        })
+      )
 
       if (isSuccess(result)) {
         const current = get().screenState
@@ -126,15 +138,28 @@ export const createUserSessionListStore = (
   }
 
   return createStore<UserSessionListStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async () => {
+    initScreen: async (searchParams?: ManagementUserSessionListParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1)
+      await fetchPage(set, get, 1, searchParams)
+    },
+
+    onSearchParamsUpdated: async (searchParams?: ManagementUserSessionListParams) => {
+      set({
+        screenState: {
+          status: 'content',
+          paging: createInitialPaginationState<UserSessionSummary>(),
+          actionLoading: false,
+          actionError: null
+        }
+      })
+      await fetchPage(set, get, 1, searchParams)
     },
 
     onLoadNextPage: async () => {
@@ -235,6 +260,10 @@ export const UserSessionListProvider: React.FC<UserSessionListProviderProps> = (
   children
 }) => {
   const [store] = useState(() => createUserSessionListStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <UserSessionListContext.Provider value={store}>

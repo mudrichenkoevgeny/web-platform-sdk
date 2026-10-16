@@ -17,7 +17,7 @@ export class SelfManagementLoginRepositoryImpl implements LoginRepository {
   public constructor(private readonly selfManagementLoginApi: SelfManagementLoginApi) {}
 
   public async loginByEmail(email: string, password: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.selfManagementLoginApi.loginByEmail({ email, password })
+    const result = await this.selfManagementLoginApi.loginByEmail(email, password)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
@@ -36,18 +36,12 @@ export class SelfManagementLoginRepositoryImpl implements LoginRepository {
   }
 
   public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.selfManagementLoginApi.loginByTotp({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.selfManagementLoginApi.loginByTotp(mfaToken, code)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
   public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.selfManagementLoginApi.loginByTotpRecoveryCode({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.selfManagementLoginApi.loginByTotpRecoveryCode(mfaToken, code)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 

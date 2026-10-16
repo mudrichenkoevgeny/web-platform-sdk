@@ -25,11 +25,15 @@ export class FetchOpenUserSecurityApi implements UserSecurityApi {
     )
   }
 
-  public async enableTotp(request: VerifyTotpPayload): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
+  public async enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
+    const payload: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<TotpRecoveryCodesPayload>(OpenUserSecurityRoutes.ENABLE_TOTP, {
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify(payload)
       })
     )
   }

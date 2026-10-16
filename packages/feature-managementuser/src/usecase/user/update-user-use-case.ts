@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UpdateUserRequest, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
+import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementUserRepository, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 /** Updates profile details, status, or permissions for a specific user administratively. */
 export class UpdateUserUseCase {
@@ -15,10 +15,10 @@ export class UpdateUserUseCase {
    * Executes the use case.
    *
    * @param userId - Unique account identifier to update
-   * @param request - Patch payload containing fields to change
+   * @param params - Domain parameters containing fields to change
    * @returns Void result or a mapped failure
    */
-  public async execute(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
-    return this.managementUserRepository.updateUser(userId, request)
+  public async execute(userId: UserId, params: UpdateUserParams): Promise<AppResult<void, AppError>> {
+    return this.managementUserRepository.updateUser(userId, params)
   }
 }

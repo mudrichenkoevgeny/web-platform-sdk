@@ -71,7 +71,7 @@ export interface FeatureUserStrings extends CoreCommonStrings {
   readonly use_totp: string
   readonly password: string
 
-  readonly profile: string
+  readonly user: string
   readonly logout: string
   readonly totp_main: string
   readonly sessions: string
@@ -265,7 +265,7 @@ export const enUserStrings: FeatureUserStrings = {
   use_totp: 'Use TOTP',
   password: 'Password',
 
-  profile: 'Profile',
+  user: 'User',
   logout: 'Logout',
   totp_main: 'TOTP',
   sessions: 'Sessions',

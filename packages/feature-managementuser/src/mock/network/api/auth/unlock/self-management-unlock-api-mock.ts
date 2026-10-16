@@ -25,37 +25,40 @@ export class SelfManagementUnlockApiMock implements SelfManagementUnlockApi {
   public lastUnlockByExternalAuthProviderRequest: UnlockByExternalAuthProviderRequest | null = null
 
   public async sendUnlockEmailConfirmation(
-    request: SendConfirmationToEmailRequest
+    email: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
-    this.lastSendUnlockEmailConfirmationRequest = request
+    this.lastSendUnlockEmailConfirmationRequest = { email }
     return this.sendUnlockEmailConfirmationResult
   }
 
   public async unlockByEmail(
-    request: UnlockByEmailConfirmationRequest
+    email: string,
+    confirmationCode: string
   ): Promise<AppResult<void, AppError>> {
-    this.lastUnlockByEmailRequest = request
+    this.lastUnlockByEmailRequest = { email, confirmation_code: confirmationCode }
     return this.unlockByEmailResult
   }
 
   public async sendUnlockPhoneConfirmation(
-    request: SendConfirmationToPhoneRequest
+    phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
-    this.lastSendUnlockPhoneConfirmationRequest = request
+    this.lastSendUnlockPhoneConfirmationRequest = { phone_number: phoneNumber }
     return this.sendUnlockPhoneConfirmationResult
   }
 
   public async unlockByPhone(
-    request: UnlockByPhoneConfirmationRequest
+    phoneNumber: string,
+    confirmationCode: string
   ): Promise<AppResult<void, AppError>> {
-    this.lastUnlockByPhoneRequest = request
+    this.lastUnlockByPhoneRequest = { phone_number: phoneNumber, confirmation_code: confirmationCode }
     return this.unlockByPhoneResult
   }
 
   public async unlockByExternalAuthProvider(
-    request: UnlockByExternalAuthProviderRequest
+    authProvider: string,
+    externalProviderToken: string
   ): Promise<AppResult<void, AppError>> {
-    this.lastUnlockByExternalAuthProviderRequest = request
+    this.lastUnlockByExternalAuthProviderRequest = { auth_provider: authProvider, external_provider_token: externalProviderToken }
     return this.unlockByExternalAuthProviderResult
   }
 }

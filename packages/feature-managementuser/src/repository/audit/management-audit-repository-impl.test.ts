@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ManagementAuditRepositoryImpl } from '@/repository/audit/management-audit-repository-impl'
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
+import { managementAuditEventListParamsSchema, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementAuditRepositoryImpl', () => {
   let mockApi: ManagementAuditApi
@@ -62,21 +63,9 @@ describe('ManagementAuditRepositoryImpl', () => {
   })
 
   it('delegates getAuditEvents and maps paged items to domain events', async () => {
-    const result = await repository.getAuditEvents(1, 10)
-    expect(mockApi.getAuditEvents).toHaveBeenCalledWith(
-      1,
-      10,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined
-    )
+    const params = managementAuditEventListParamsSchema.parse({ pageNumber: 1, pageSize: 10 })
+    const result = await repository.getAuditEvents(params)
+    expect(mockApi.getAuditEvents).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
     expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
     expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledWith('CREATE_USER')
@@ -85,8 +74,9 @@ describe('ManagementAuditRepositoryImpl', () => {
   })
 
   it('delegates getAuditEvent and maps response to domain event using toAuditEventPrivate', async () => {
-    const result = await repository.getAuditEvent('evt_1')
-    expect(mockApi.getAuditEvent).toHaveBeenCalledWith('evt_1')
+    const id = toAuditEventIdOrThrow('evt_1')
+    const result = await repository.getAuditEvent(id)
+    expect(mockApi.getAuditEvent).toHaveBeenCalledWith(id)
     expect(isSuccess(result)).toBe(true)
     expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledWith('CREATE_USER')
     expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledWith('USER')

@@ -1,4 +1,5 @@
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
   CoreBackButton,
@@ -21,6 +22,10 @@ import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { getGlobalSessionListingOptionsConfig } from '@/ui/screens/management/session/global-list/global-session-list-options-config'
 import {
+  searchParamsToListingStates,
+  listingStatesToSearchParams
+} from '@/ui/screens/management/session/global-list/globalSessionListSearchConverters'
+import {
   GlobalSessionListProvider,
   useGlobalSessionListStore
 } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
@@ -39,16 +44,46 @@ export const GlobalSessionListTestTags = {
 const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useGlobalSessionListStore((s) => s.dependencies)
   const screenState = useGlobalSessionListStore((s) => s.screenState)
   const onRefresh = useGlobalSessionListStore((s) => s.onRefresh)
   const onLoadNextPage = useGlobalSessionListStore((s) => s.onLoadNextPage)
   const onSessionClick = useGlobalSessionListStore((s) => s.onSessionClick)
+  const onDeleteSessionClick = useGlobalSessionListStore((s) => s.onDeleteSessionClick)
   const onBackClick = useGlobalSessionListStore((s) => s.onBackClick)
   const onToggleFilterPanel = useGlobalSessionListStore((s) => s.onToggleFilterPanel)
-  const onSortChanged = useGlobalSessionListStore((s) => s.onSortChanged)
-  const onFilterChanged = useGlobalSessionListStore((s) => s.onFilterChanged)
-  const onApplyFilters = useGlobalSessionListStore((s) => s.onApplyFilters)
   const errorParser = useAppErrorParser()
+
+  const [draftSortState, setDraftSortState] = useState<ListingSortState | null>(
+    () => searchParamsToListingStates(deps.searchParams).sortState
+  )
+  const [draftFilterStates, setDraftFilterStates] = useState<Record<string, ListingFilterState>>(
+    () => searchParamsToListingStates(deps.searchParams).filterStates
+  )
+
+  useEffect(() => {
+    const { sortState, filterStates } = searchParamsToListingStates(deps.searchParams)
+    setDraftSortState(sortState)
+    setDraftFilterStates(filterStates)
+  }, [deps.searchParams])
+
+  const handleFilterChanged = (filterId: string, filterState: ListingFilterState | null) => {
+    setDraftFilterStates((prev) => {
+      const next = { ...prev }
+      if (filterState === null) {
+        delete next[filterId]
+      } else {
+        next[filterId] = filterState
+      }
+      return next
+    })
+  }
+
+  const handleApplyFilters = () => {
+    const newSearchParams = listingStatesToSearchParams(draftSortState, draftFilterStates)
+    deps.onSearchParamsChanged?.(newSearchParams)
+    onToggleFilterPanel()
+  }
 
   const isContent = screenState.status === 'content'
   const pagingState = isContent ? screenState.paging : undefined
@@ -78,10 +113,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
 
   const {
     paging,
-    sortState,
-    filterStates,
     isFilterPanelExpanded,
-    actionLoading,
     actionError
   } = screenState
 
@@ -130,11 +162,11 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
           <div className="w-full mb-2">
             <ListingOptionsPanel
               config={optionsConfig}
-              sortState={sortState}
-              filterStates={filterStates}
-              onSortChanged={onSortChanged}
-              onFilterChanged={onFilterChanged}
-              onApplyClick={onApplyFilters}
+              sortState={draftSortState}
+              filterStates={draftFilterStates}
+              onSortChanged={setDraftSortState}
+              onFilterChanged={handleFilterChanged}
+              onApplyClick={handleApplyFilters}
             />
           </div>
         )}
@@ -151,13 +183,15 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
             />
 
             {paging.items.map((session) => (
-              <SessionItem
-                key={session.id}
-                session={session}
-                enabled={!actionLoading}
-                onSessionClick={() => onSessionClick(session)}
-                strings={strings}
-              />
+              session.id ? (
+                <SessionItem
+                  key={session.id}
+                  session={session}
+                  onSessionClick={() => onSessionClick(session)}
+                  onRevokeClick={() => onDeleteSessionClick(session.userId, session.id!)}
+                  isCurrentSession={false}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (
@@ -184,11 +218,19 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
 const GlobalSessionListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings
 }) => {
+  const deps = useGlobalSessionListStore((s) => s.dependencies)
   const initScreen = useGlobalSessionListStore((s) => s.initScreen)
+  const onSearchParamsUpdated = useGlobalSessionListStore((s) => s.onSearchParamsUpdated)
+  const isMounted = React.useRef(false)
 
   useEffect(() => {
-    initScreen()
-  }, [initScreen])
+    if (!isMounted.current) {
+      isMounted.current = true
+      initScreen(deps.searchParams)
+    } else {
+      onSearchParamsUpdated(deps.searchParams)
+    }
+  }, [deps.searchParams, initScreen, onSearchParamsUpdated])
 
   return <GlobalSessionListContent strings={strings} />
 }

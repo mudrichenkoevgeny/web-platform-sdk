@@ -11,11 +11,14 @@ import type {
 import {
   ManagementUsersRoutes,
   pagedResultSchema,
+  UserAccountStatus,
   UserApiPaths,
   userPrivatePayloadSchema,
+  UserRole,
   userSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
+import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 /** {@link ManagementUserApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementUserApi implements ManagementUserApi {
@@ -26,11 +29,19 @@ export class FetchManagementUserApi implements ManagementUserApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivatePayload, AppError>> {
+  public async createUser(params: CreateUserParams): Promise<AppResult<UserPrivatePayload, AppError>> {
+    const payload: CreateByEmailRequest = {
+      email: params.email,
+      password: params.password ?? null,
+      role: UserRole.CLIENT_USER,
+      account_status: params.status ?? UserAccountStatus.ACTIVE,
+      authority_level: params.authorityLevel ?? 0,
+      permission_codes: []
+    }
     return callResult(async () => {
       const raw = await this.client.request<unknown>(ManagementUsersRoutes.CREATE_USER, {
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify(payload)
       })
       return userPrivatePayloadSchema.parse(raw)
     })
@@ -50,28 +61,32 @@ export class FetchManagementUserApi implements ManagementUserApi {
   }
 
   public async getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>> {
-    const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUsersRoutes.GET_USER}?${query.toString()}`
+    const path = ManagementUsersRoutes.GET_USER.replace(`{${UserApiPaths.USER_ID}}`, userId)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return userPrivatePayloadSchema.parse(raw)
     })
   }
 
-  public async updateUser(userId: string, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
-    const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUsersRoutes.UPDATE_USER}?${query.toString()}`
+  public async updateUser(userId: string, params: UpdateUserParams): Promise<AppResult<void, AppError>> {
+    const path = ManagementUsersRoutes.UPDATE_USER.replace(`{${UserApiPaths.USER_ID}}`, userId)
+    const payload: UpdateUserRequest = {
+      account_status: params.accountStatus ?? null,
+      authority_level: params.authorityLevel ?? null,
+      permission_codes: params.permissionCodes ?? null,
+      account_lockout_type: params.accountLockoutType ?? null,
+      temporary_lockout_until: params.temporaryLockoutUntil ?? null
+    }
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'PATCH',
-        body: JSON.stringify(request)
+        body: JSON.stringify(payload)
       })
     )
   }
 
   public async deleteUser(userId: string): Promise<AppResult<void, AppError>> {
-    const query = new URLSearchParams({ [UserApiPaths.USER_ID]: userId })
-    const path = `${ManagementUsersRoutes.DELETE_USER}?${query.toString()}`
+    const path = ManagementUsersRoutes.DELETE_USER.replace(`{${UserApiPaths.USER_ID}}`, userId)
     return callResult(() =>
       this.client.request<void>(path, {
         method: 'DELETE'

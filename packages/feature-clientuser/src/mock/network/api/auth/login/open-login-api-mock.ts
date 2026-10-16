@@ -7,6 +7,7 @@ import type {
   LoginByPhoneRequest,
   OtpConfirmationPayload,
   SendConfirmationToPhoneRequest,
+  UserAuthProvider,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenLoginApi } from '@/network/api/auth/login/open-login-api'
@@ -29,37 +30,38 @@ export class OpenLoginApiMock implements OpenLoginApi {
   public lastLoginByTotpRecoveryCodeRequest: VerifyTotpPayload | null = null
   public lastSendLoginConfirmationToPhoneRequest: SendConfirmationToPhoneRequest | null = null
 
-  public async loginByEmail(request: LoginByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByEmailRequest = request
+  public async loginByEmail(email: string, password: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByEmailRequest = { email, password }
     return this.loginByEmailResult
   }
 
-  public async loginByPhone(request: LoginByPhoneRequest): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByPhoneRequest = request
+  public async loginByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByPhoneRequest = { phone_number: phoneNumber, confirmation_code: confirmationCode }
     return this.loginByPhoneResult
   }
 
   public async loginByExternalAuthProvider(
-    request: LoginByExternalAuthProviderRequest
+    authProvider: UserAuthProvider,
+    externalProviderToken: string
   ): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByExternalAuthProviderRequest = request
+    this.lastLoginByExternalAuthProviderRequest = { auth_provider: authProvider, external_provider_token: externalProviderToken }
     return this.loginByExternalAuthProviderResult
   }
 
-  public async loginByTotp(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByTotpRequest = request
+  public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByTotpRequest = { mfa_token: mfaToken, totp_code: code }
     return this.loginByTotpResult
   }
 
-  public async loginByTotpRecoveryCode(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByTotpRecoveryCodeRequest = request
+  public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    this.lastLoginByTotpRecoveryCodeRequest = { mfa_token: mfaToken, totp_code: code }
     return this.loginByTotpRecoveryCodeResult
   }
 
   public async sendLoginConfirmationToPhone(
-    request: SendConfirmationToPhoneRequest
+    phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
-    this.lastSendLoginConfirmationToPhoneRequest = request
+    this.lastSendLoginConfirmationToPhoneRequest = { phone_number: phoneNumber }
     return this.sendLoginConfirmationToPhoneResult
   }
 }

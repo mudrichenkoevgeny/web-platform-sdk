@@ -11,6 +11,5 @@ export * from './repository/user/user-repository-mock.js'
 
 export * from './ui/screen/auth/login/phone/login-by-phone-component-mock.js'
 export * from './ui/screen/auth/registration/email/registration-by-email-component-mock.js'
-export * from './ui/screen/auth/login/root/client-login-root-component-mock.js'
 
 export * from './di/client-user-component-mock.js'

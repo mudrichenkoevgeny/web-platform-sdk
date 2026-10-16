@@ -3,10 +3,10 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   AuthDataPayload,
   OtpConfirmationPayload,
-  RegisterByEmailRequest,
+  RegistrationByEmailRequest,
   SendConfirmationToEmailRequest
 } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenRegisterRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenRegistrationRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { RegistrationApi } from '@/network/api/auth/registration/registration-api'
 
@@ -19,9 +19,9 @@ export class FetchRegistrationApi implements RegistrationApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async registerByEmail(request: RegisterByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async registerByEmail(request: RegistrationByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
     return callResult(() =>
-      this.client.request<AuthDataPayload>(OpenRegisterRoutes.REGISTER_BY_EMAIL, {
+      this.client.request<AuthDataPayload>(OpenRegistrationRoutes.REGISTRATION_BY_EMAIL, {
         method: 'POST',
         body: JSON.stringify(request),
         ...markAsPublic()
@@ -33,7 +33,7 @@ export class FetchRegistrationApi implements RegistrationApi {
     request: SendConfirmationToEmailRequest
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     return callResult(() =>
-      this.client.request<OtpConfirmationPayload>(OpenRegisterRoutes.SEND_REGISTER_CONFIRMATION_TO_EMAIL, {
+      this.client.request<OtpConfirmationPayload>(OpenRegistrationRoutes.SEND_REGISTRATION_CONFIRMATION_TO_EMAIL, {
         method: 'POST',
         body: JSON.stringify(request),
         ...markAsPublic()

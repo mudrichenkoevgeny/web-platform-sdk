@@ -32,7 +32,6 @@ export * from './repository/user/security/management-user-security-repository-mo
 export * from './repository/user/management-user-repository-mock.js'
 export * from './repository/user/self-management-user-repository-mock.js'
 
-export * from './ui/screen/auth/login/root/management-login-root-component-mock.js'
 export * from './ui/screen/management/settings/auth/edit-auth-settings-component-mock.js'
 export * from './ui/screen/management/settings/global/edit-global-settings-component-mock.js'
 export * from './ui/screen/management/settings/security/edit-security-settings-component-mock.js'

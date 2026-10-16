@@ -1,23 +1,41 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  CreateByEmailRequest,
+  AccountLockoutType,
   ManagementUserListParams,
   PagedResult,
-  UpdateUserRequest,
+  PermissionCode,
+  UserAccountStatus,
   UserId,
   UserPrivate,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
+
+/** Parameters for creating a user account administratively. */
+export interface CreateUserParams {
+  email: string
+  password?: string | null
+  status?: UserAccountStatus | null
+  authorityLevel?: number | null
+}
+
+/** Parameters for updating a user account administratively. */
+export interface UpdateUserParams {
+  accountStatus?: UserAccountStatus | null
+  authorityLevel?: number | null
+  permissionCodes?: PermissionCode[] | null
+  accountLockoutType?: AccountLockoutType | null
+  temporaryLockoutUntil?: number | null
+}
 
 /** Administrative repository providing staff and administrators full control over creating, fetching, filtering, updating, and removing user accounts across the system. */
 export interface ManagementUserRepository {
   /**
    * Creates a new user account.
    *
-   * @param request - Payload details for creating an account via email
+   * @param params - Domain parameters for creating an account
    * @returns Detailed information of the newly created user domain model, or a mapped failure
    */
-  createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>>
+  createUser(params: CreateUserParams): Promise<AppResult<UserPrivate, AppError>>
 
   /**
    * Returns a paginated and filtered list of users based on search criteria.
@@ -41,10 +59,10 @@ export interface ManagementUserRepository {
    * Updates profile details, status, or permissions for a specific user.
    *
    * @param userId - Unique account identifier to update
-   * @param request - Patch payload containing fields to change
+   * @param params - Patch domain parameters containing fields to change
    * @returns Void result or a mapped failure
    */
-  updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>>
+  updateUser(userId: UserId, params: UpdateUserParams): Promise<AppResult<void, AppError>>
 
   /**
    * Completely deletes a specified user account.

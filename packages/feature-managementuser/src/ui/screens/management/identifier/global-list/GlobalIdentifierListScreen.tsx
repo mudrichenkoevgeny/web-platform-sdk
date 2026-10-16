@@ -1,4 +1,5 @@
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
   CoreBackButton,
@@ -21,6 +22,10 @@ import { enManagementUserStrings } from '@/locales/index'
 import type { FeatureManagementUserStrings } from '@/locales/index'
 import { getGlobalIdentifierListingOptionsConfig } from '@/ui/screens/management/identifier/global-list/global-identifier-list-options-config'
 import {
+  searchParamsToListingStates,
+  listingStatesToSearchParams
+} from '@/ui/screens/management/identifier/global-list/globalIdentifierListSearchConverters'
+import {
   GlobalIdentifierListProvider,
   useGlobalIdentifierListStore
 } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
@@ -39,16 +44,45 @@ export const GlobalIdentifierListTestTags = {
 const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useGlobalIdentifierListStore((s) => s.dependencies)
   const screenState = useGlobalIdentifierListStore((s) => s.screenState)
   const onRefresh = useGlobalIdentifierListStore((s) => s.onRefresh)
   const onLoadNextPage = useGlobalIdentifierListStore((s) => s.onLoadNextPage)
   const onIdentifierClick = useGlobalIdentifierListStore((s) => s.onIdentifierClick)
   const onBackClick = useGlobalIdentifierListStore((s) => s.onBackClick)
   const onToggleFilterPanel = useGlobalIdentifierListStore((s) => s.onToggleFilterPanel)
-  const onSortChanged = useGlobalIdentifierListStore((s) => s.onSortChanged)
-  const onFilterChanged = useGlobalIdentifierListStore((s) => s.onFilterChanged)
-  const onApplyFilters = useGlobalIdentifierListStore((s) => s.onApplyFilters)
   const errorParser = useAppErrorParser()
+
+  const [draftSortState, setDraftSortState] = useState<ListingSortState | null>(
+    () => searchParamsToListingStates(deps.searchParams).sortState
+  )
+  const [draftFilterStates, setDraftFilterStates] = useState<Record<string, ListingFilterState>>(
+    () => searchParamsToListingStates(deps.searchParams).filterStates
+  )
+
+  useEffect(() => {
+    const { sortState, filterStates } = searchParamsToListingStates(deps.searchParams)
+    setDraftSortState(sortState)
+    setDraftFilterStates(filterStates)
+  }, [deps.searchParams])
+
+  const handleFilterChanged = (filterId: string, filterState: ListingFilterState | null) => {
+    setDraftFilterStates((prev) => {
+      const next = { ...prev }
+      if (filterState === null) {
+        delete next[filterId]
+      } else {
+        next[filterId] = filterState
+      }
+      return next
+    })
+  }
+
+  const handleApplyFilters = () => {
+    const newSearchParams = listingStatesToSearchParams(draftSortState, draftFilterStates)
+    deps.onSearchParamsChanged?.(newSearchParams)
+    onToggleFilterPanel()
+  }
 
   const isContent = screenState.status === 'content'
   const pagingState = isContent ? screenState.paging : undefined
@@ -78,8 +112,6 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
 
   const {
     paging,
-    sortState,
-    filterStates,
     isFilterPanelExpanded,
     actionError
   } = screenState
@@ -129,11 +161,11 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
           <div className="w-full mb-2">
             <ListingOptionsPanel
               config={optionsConfig}
-              sortState={sortState}
-              filterStates={filterStates}
-              onSortChanged={onSortChanged}
-              onFilterChanged={onFilterChanged}
-              onApplyClick={onApplyFilters}
+              sortState={draftSortState}
+              filterStates={draftFilterStates}
+              onSortChanged={setDraftSortState}
+              onFilterChanged={handleFilterChanged}
+              onApplyClick={handleApplyFilters}
             />
           </div>
         )}
@@ -150,12 +182,14 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
             />
 
             {paging.items.map((identifier) => (
-              <IdentifierItem
-                key={identifier.id}
-                identifier={identifier}
-                onClick={() => onIdentifierClick(identifier.id)}
-                isCurrentIdentifier={false}
-              />
+              identifier.id ? (
+                <IdentifierItem
+                  key={identifier.id}
+                  identifier={identifier}
+                  onClick={() => onIdentifierClick(identifier.id!)}
+                  isCurrentIdentifier={false}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (
@@ -182,11 +216,19 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
 const GlobalIdentifierListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings
 }) => {
+  const deps = useGlobalIdentifierListStore((s) => s.dependencies)
   const initScreen = useGlobalIdentifierListStore((s) => s.initScreen)
+  const onSearchParamsUpdated = useGlobalIdentifierListStore((s) => s.onSearchParamsUpdated)
+  const isMounted = React.useRef(false)
 
   useEffect(() => {
-    initScreen()
-  }, [initScreen])
+    if (!isMounted.current) {
+      isMounted.current = true
+      initScreen(deps.searchParams)
+    } else {
+      onSearchParamsUpdated(deps.searchParams)
+    }
+  }, [deps.searchParams, initScreen, onSearchParamsUpdated])
 
   return <GlobalIdentifierListContent strings={strings} />
 }

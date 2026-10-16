@@ -2,7 +2,7 @@ import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevg
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   ClientType,
-  DeletedSessionsPayload,
+  DeletedSessions,
   PagedResult,
   SelfSessionListParams,
   SortOrder,
@@ -14,15 +14,27 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
+  deletedSessionsPayloadSchema,
   ListingParamNames,
   pagedResultSchema,
   SelfManagementSessionRoutes,
+  toDeletedSessions,
   UserApiPaths,
   UserFilterValues,
   userSessionPrivatePayloadSchema,
   userSessionSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+
+function extractEnumValue(val: unknown): string {
+  if (typeof val === 'object' && val !== null && 'value' in val) {
+    const rawVal = (val as { value: unknown }).value
+    if (typeof rawVal === 'string') {
+      return rawVal
+    }
+  }
+  return String(val)
+}
 
 /** Self-management {@link SessionApi} implementation backed by {@link HttpClient}. */
 export class FetchSelfManagementSessionApi implements SessionApi {
@@ -65,8 +77,8 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     const pageNumber = typeof params === 'number' ? params : null
     if (pageNumber != null) query.append(ListingParamNames.PAGE_NUMBER, String(pageNumber))
     if (pageSize != null) query.append(ListingParamNames.PAGE_SIZE, String(pageSize))
-    if (sortBy != null) query.append(ListingParamNames.SORT_BY, String(sortBy.value ?? sortBy))
-    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, String(sortOrder.value ?? sortOrder))
+    if (sortBy != null) query.append(ListingParamNames.SORT_BY, extractEnumValue(sortBy))
+    if (sortOrder != null) query.append(ListingParamNames.SORT_ORDER, extractEnumValue(sortOrder))
     if (identifiers) {
       identifiers.forEach((identifier) =>
         query.append(UserFilterValues.UserSessionFilterValues.IDENTIFIER, identifier)
@@ -79,12 +91,12 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     }
     if (userAuthProviders) {
       userAuthProviders.forEach((provider) =>
-        query.append(UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER, String(provider.value ?? provider))
+        query.append(UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER, extractEnumValue(provider))
       )
     }
     if (clientTypes) {
       clientTypes.forEach((type) =>
-        query.append(UserFilterValues.UserSessionFilterValues.CLIENT_TYPE, String(type.value ?? type))
+        query.append(UserFilterValues.UserSessionFilterValues.CLIENT_TYPE, extractEnumValue(type))
       )
     }
     if (userAgents) {
@@ -153,19 +165,25 @@ export class FetchSelfManagementSessionApi implements SessionApi {
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
-  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessionsPayload, AppError>> {
-    return callResult(() =>
-      this.client.request<DeletedSessionsPayload>(SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
+  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>> {
+    return callResult(async () => {
+      const raw = await this.client.request<unknown>(SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
         method: 'DELETE'
       })
-    )
+      const payload = deletedSessionsPayloadSchema.parse(raw)
+      return toDeletedSessions(payload)
+    })
   }
 
-  public async reauthenticateSession(request: VerifyTotpPayload): Promise<AppResult<void, AppError>> {
+  public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
+    const payload: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<void>(SelfManagementSessionRoutes.REAUTHENTICATE_SESSION, {
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify(payload)
       })
     )
   }

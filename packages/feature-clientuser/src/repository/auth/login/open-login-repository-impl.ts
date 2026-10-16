@@ -21,15 +21,12 @@ export class OpenLoginRepositoryImpl implements LoginRepository {
   ) {}
 
   public async loginByEmail(email: string, password: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByEmail({ email, password })
+    const result = await this.openLoginApi.loginByEmail(email, password)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
   public async loginByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByPhone({
-      phone_number: phoneNumber,
-      confirmation_code: confirmationCode
-    })
+    const result = await this.openLoginApi.loginByPhone(phoneNumber, confirmationCode)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
@@ -37,26 +34,17 @@ export class OpenLoginRepositoryImpl implements LoginRepository {
     authProvider: UserAuthProvider,
     externalProviderToken: string
   ): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByExternalAuthProvider({
-      auth_provider: authProvider,
-      external_provider_token: externalProviderToken
-    })
+    const result = await this.openLoginApi.loginByExternalAuthProvider(authProvider, externalProviderToken)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
   public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByTotp({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.openLoginApi.loginByTotp(mfaToken, code)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
   public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByTotpRecoveryCode({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    const result = await this.openLoginApi.loginByTotpRecoveryCode(mfaToken, code)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 
@@ -65,7 +53,7 @@ export class OpenLoginRepositoryImpl implements LoginRepository {
       ConfirmationType.LOGIN_PHONE,
       phoneNumber,
       async () => {
-        const result = await this.openLoginApi.sendLoginConfirmationToPhone({ phone_number: phoneNumber })
+        const result = await this.openLoginApi.sendLoginConfirmationToPhone(phoneNumber)
         return mapSuccess(result, (response) => toOtpConfirmation(response))
       }
     )

@@ -108,10 +108,8 @@ export const createCreateUserStore = (
       const result = await deps.createUserUseCase.execute({
         email: current.email.trim(),
         password: current.password.trim() || null,
-        role: current.role,
-        account_status: current.status,
-        authority_level: authLevel,
-        permission_codes: []
+        status: current.status,
+        authorityLevel: authLevel
       })
 
       if (isSuccess(result)) {

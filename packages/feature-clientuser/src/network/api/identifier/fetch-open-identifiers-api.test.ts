@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenIdentifiersApi } from '@/network/api/identifier/fetch-open-identifiers-api'
-import { OpenIdentifierRoutes, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenIdentifierRoutes, selfIdentifierListParamsSchema, SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchOpenIdentifiersApi', () => {
@@ -33,7 +33,16 @@ describe('FetchOpenIdentifiersApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getUserIdentifiers(1, 10)
+    const result = await api.getUserIdentifiers(
+      selfIdentifierListParamsSchema.parse({
+        pageNumber: 1,
+        pageSize: 10,
+        sortBy: 'created_at',
+        sortOrder: SortOrder.DESC,
+        userAuthProviders: [],
+        identifiers: []
+      })
+    )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(OpenIdentifierRoutes.GET_IDENTIFIERS)
@@ -58,12 +67,11 @@ describe('FetchOpenIdentifiersApi', () => {
     const dummyPayload = { id: 'ident_1' } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { email: 'user@example.com', password: 'secret', confirmation_code: '123456' }
-    const result = await api.addUserIdentifierEmail(request)
+    const result = await api.addUserIdentifierEmail('user@example.com', 'secret', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_EMAIL,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: 'user@example.com', password: 'secret', confirmation_code: '123456' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -72,12 +80,11 @@ describe('FetchOpenIdentifiersApi', () => {
     const dummyPayload = { id: 'ident_2' } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { phone_number: '+1234567890', confirmation_code: '123456' }
-    const result = await api.addUserIdentifierPhone(request)
+    const result = await api.addUserIdentifierPhone('+1234567890', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_PHONE,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ phone_number: '+1234567890', confirmation_code: '123456' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -86,12 +93,11 @@ describe('FetchOpenIdentifiersApi', () => {
     const dummyPayload = { id: 'ident_3' } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { auth_provider: 'GOOGLE', external_provider_token: 'token123' } as any
-    const result = await api.addUserIdentifierExternalAuthProvider(request)
+    const result = await api.addUserIdentifierExternalAuthProvider('GOOGLE', 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_EXTERNAL_AUTH_PROVIDER,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -100,12 +106,11 @@ describe('FetchOpenIdentifiersApi', () => {
     const dummyPayload = { retryAfterSeconds: 60 } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { email: 'user@example.com' }
-    const result = await api.sendAddEmailIdentifierConfirmation(request)
+    const result = await api.sendAddEmailIdentifierConfirmation('user@example.com')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.SEND_ADD_EMAIL_IDENTIFIER_CONFIRMATION,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: 'user@example.com' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -114,12 +119,11 @@ describe('FetchOpenIdentifiersApi', () => {
     const dummyPayload = { retryAfterSeconds: 60 } as any
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const request = { phone_number: '+1234567890' } as any
-    const result = await api.sendAddPhoneIdentifierConfirmation(request)
+    const result = await api.sendAddPhoneIdentifierConfirmation('+1234567890')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.SEND_ADD_PHONE_IDENTIFIER_CONFIRMATION,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ phone_number: '+1234567890' }) })
     )
     expect(result).toEqual({ success: true, data: dummyPayload })
   })
@@ -127,12 +131,12 @@ describe('FetchOpenIdentifiersApi', () => {
   it('dispatches emailChangePassword request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { email: 'user@example.com', old_password: 'old', new_password: 'new' }
-    const result = await api.emailChangePassword(request)
+    const identifierId = toUserIdentifierIdOrThrow('ident-123')
+    const result = await api.emailChangePassword(identifierId, 'old', 'new')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
+      OpenIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD.replace('{user_identifier_id}', identifierId),
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ old_password: 'old', new_password: 'new' }) })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })

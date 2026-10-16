@@ -1,17 +1,15 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  CreateByEmailRequest,
   ManagementUserListParams,
   PagedResult,
-  UpdateUserRequest,
   UserId,
   UserPrivate,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { toUserPrivate, toUserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
-import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
+import type { CreateUserParams, ManagementUserRepository, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 /**
  * Implementation of {@link ManagementUserRepository}.
@@ -24,8 +22,8 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
    */
   public constructor(private readonly managementUserApi: ManagementUserApi) {}
 
-  public async createUser(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>> {
-    const result = await this.managementUserApi.createUser(request)
+  public async createUser(params: CreateUserParams): Promise<AppResult<UserPrivate, AppError>> {
+    const result = await this.managementUserApi.createUser(params)
     return mapSuccess(result, (payload) => toUserPrivate(payload))
   }
 
@@ -44,8 +42,8 @@ export class ManagementUserRepositoryImpl implements ManagementUserRepository {
     return mapSuccess(result, (payload) => toUserPrivate(payload))
   }
 
-  public async updateUser(userId: UserId, request: UpdateUserRequest): Promise<AppResult<void, AppError>> {
-    return this.managementUserApi.updateUser(userId, request)
+  public async updateUser(userId: UserId, params: UpdateUserParams): Promise<AppResult<void, AppError>> {
+    return this.managementUserApi.updateUser(userId, params)
   }
 
   public async deleteUser(userId: UserId): Promise<AppResult<void, AppError>> {

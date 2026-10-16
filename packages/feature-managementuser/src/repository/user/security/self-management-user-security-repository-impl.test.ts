@@ -49,10 +49,7 @@ describe('SelfManagementUserSecurityRepositoryImpl', () => {
 
   it('delegates enableTotp and updates TOTP status in storage', async () => {
     const result = await repository.enableTotp('mfaToken', '123456')
-    expect(mockApi.enableTotp).toHaveBeenCalledWith({
-      mfa_token: 'mfaToken',
-      totp_code: '123456'
-    })
+    expect(mockApi.enableTotp).toHaveBeenCalledWith('mfaToken', '123456')
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith({
       ...dummyUser,
       isTotpEnabled: true

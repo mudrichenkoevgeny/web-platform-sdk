@@ -2,7 +2,7 @@ import React from 'react'
 import { icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { enManagementAppStrings } from '@/locales/index'
 
-export type MainTabKey = 'home' | 'profile' | 'settings'
+export type MainTabKey = 'management' | 'user'
 
 export interface MainScreenDestination {
   key: MainTabKey
@@ -11,33 +11,26 @@ export interface MainScreenDestination {
 }
 
 export const mainScreenDestinations: Record<MainTabKey, MainScreenDestination> = {
-  home: {
-    key: 'home',
-    label: enManagementAppStrings.nav_home,
+  management: {
+    key: 'management',
+    label: enManagementAppStrings.nav_management,
     Icon: icons.home
   },
-  profile: {
-    key: 'profile',
-    label: enManagementAppStrings.nav_profile,
+  user: {
+    key: 'user',
+    label: enManagementAppStrings.nav_user,
     Icon: icons.profile
-  },
-  settings: {
-    key: 'settings',
-    label: enManagementAppStrings.nav_settings,
-    Icon: icons.settings
   }
 }
 
 export function getDestinations(isAuthorized: boolean): MainScreenDestination[] {
   if (isAuthorized) {
     return [
-      mainScreenDestinations.home,
-      mainScreenDestinations.profile,
-      mainScreenDestinations.settings
+      mainScreenDestinations.management,
+      mainScreenDestinations.user
     ]
   }
   return [
-    mainScreenDestinations.home,
-    mainScreenDestinations.profile
+    mainScreenDestinations.management
   ]
 }

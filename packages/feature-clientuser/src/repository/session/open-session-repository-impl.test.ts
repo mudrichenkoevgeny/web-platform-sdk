@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSessionRepositoryImpl } from '@/repository/session/open-session-repository-impl'
 import type { AuthStorage, SessionApi, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
@@ -63,17 +63,51 @@ describe('OpenSessionRepositoryImpl', () => {
   })
 
   it('delegates getSessions and updates storage on success', async () => {
-    const result = await repository.getSessions(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
+    const result = await repository.getSessions(params)
     expect(mockApi.getSessions).toHaveBeenCalled()
     expect(mockUserStorage.updateUserSessionsPayloadList).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('falls back to cached sessions when network fails', async () => {
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
     vi.mocked(mockApi.getSessions).mockResolvedValue(appResultFailure(CommonError.unknown()))
     vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({ items: [{ id: 'sess_cached' } as any], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
 
-    const result = await repository.getSessions(1, 10)
+    const result = await repository.getSessions(params)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -117,7 +151,7 @@ describe('OpenSessionRepositoryImpl', () => {
 
   it('delegates reauthenticateSession', async () => {
     const result = await repository.reauthenticateSession('mfa123', '654321')
-    expect(mockApi.reauthenticateSession).toHaveBeenCalledWith({ mfa_token: 'mfa123', totp_code: '654321' })
+    expect(mockApi.reauthenticateSession).toHaveBeenCalledWith('mfa123', '654321')
     expect(isSuccess(result)).toBe(true)
   })
 })

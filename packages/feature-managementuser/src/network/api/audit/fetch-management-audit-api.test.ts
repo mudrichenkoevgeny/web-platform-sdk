@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
-import { ManagementAuditRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditRoutes, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementAuditApi', () => {
   let mockHttpClient: HttpClient
@@ -19,7 +19,21 @@ describe('FetchManagementAuditApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getAuditEvents(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      actorIds: [],
+      actorTypes: [],
+      actorUserRoles: [],
+      actions: [],
+      resources: [],
+      resourceIds: [],
+      statuses: [],
+      messages: []
+    }
+    const result = await api.getAuditEvents(params)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementAuditRoutes.GET_AUDIT_EVENTS)

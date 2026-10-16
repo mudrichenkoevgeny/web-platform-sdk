@@ -72,7 +72,7 @@ export const ruUserStrings: FeatureUserStrings = {
   use_totp: 'Использовать TOTP',
   password: 'Пароль',
 
-  profile: 'Профиль',
+  user: 'Пользователь',
   logout: 'Выйти',
   totp_main: 'TOTP',
   sessions: 'Сеансы',

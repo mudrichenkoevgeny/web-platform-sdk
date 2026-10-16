@@ -1,11 +1,12 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   TotpRecoveryCodesPayload,
   TotpSetupPayload,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserSecurityApi } from '@/network/api/user/security/user-security-api'
+
 /**
  * Mock implementation of {@link UserSecurityApi}.
  */
@@ -24,8 +25,8 @@ export class UserSecurityApiMock implements UserSecurityApi {
   }
 
   /** Mocks enabling TOTP. */
-  public async enableTotp(request: VerifyTotpPayload): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
-    this.lastEnableTotpRequest = request
+  public async enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodesPayload, AppError>> {
+    this.lastEnableTotpRequest = { mfa_token: mfaToken, totp_code: code }
     return this.enableTotpResult
   }
 

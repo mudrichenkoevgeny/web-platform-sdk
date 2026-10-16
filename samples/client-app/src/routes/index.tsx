@@ -1,6 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { HomeScreen } from '@/ui/screen/home/HomeScreen'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
 export const Route = createFileRoute('/')({
-  component: HomeScreen
+  beforeLoad: () => {
+    throw redirect({ to: ClientUserNavigation.Main.route })
+  }
 })

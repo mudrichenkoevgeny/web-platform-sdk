@@ -1,12 +1,11 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  DeletedSessionsPayload,
+  DeletedSessions,
   PagedResult,
   SelfSessionListParams,
   UserSessionId,
   UserSessionPrivatePayload,
-  UserSessionSummaryPayload,
-  VerifyTotpPayload
+  UserSessionSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Session listing, logout, and per-session revocation for the authenticated user. */
@@ -47,15 +46,16 @@ export interface SessionApi {
   /**
    * Deletes all sessions except the current active session.
    *
-   * @returns Deleted sessions summary or mapped failure
+   * @returns Deleted sessions domain model or mapped failure
    */
-  deleteAllOtherSessions(): Promise<AppResult<DeletedSessionsPayload, AppError>>
+  deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>>
 
   /**
    * Performs re-authentication via TOTP for current session.
    *
-   * @param request - Verification payload containing TOTP code
+   * @param mfaToken - MFA token string
+   * @param code - TOTP code
    * @returns Success indicator or mapped failure
    */
-  reauthenticateSession(request: VerifyTotpPayload): Promise<AppResult<void, AppError>>
+  reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>>
 }

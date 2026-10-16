@@ -1,5 +1,6 @@
 import type { GetUserIdentifiersListParams, GetUserSessionsListParams } from '@/storage/user/user-storage'
 import {
+  ListingDefaultValues,
   pagedResultSchema,
   SortOrder,
   toUserIdentifierSummary,
@@ -128,7 +129,7 @@ export class EncryptedUserStorage implements UserStorage {
 
     const allItems = await this.getAllUserIdentifiersInternal()
     if (allItems.length === 0) {
-      return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
+      return { items: [], totalCount: 0, pageNumber: ListingDefaultValues.PAGE_NUMBER, pageSize: ListingDefaultValues.PAGE_SIZE, totalPages: 0 }
     }
 
     const filteredItems = allItems.filter((item) => {
@@ -138,11 +139,11 @@ export class EncryptedUserStorage implements UserStorage {
     })
 
     const totalCount = filteredItems.length
-    const requestedPage = pageNumber ?? 1
-    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = pageNumber ?? ListingDefaultValues.PAGE_NUMBER
+    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : ListingDefaultValues.PAGE_SIZE)
 
     if (requestedSize <= 0) {
-      return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
+      return { items: [], totalCount: 0, pageNumber: ListingDefaultValues.PAGE_NUMBER, pageSize: ListingDefaultValues.PAGE_SIZE, totalPages: 0 }
     }
 
     const totalPages = Math.ceil(totalCount / requestedSize)
@@ -294,7 +295,7 @@ export class EncryptedUserStorage implements UserStorage {
 
     const allItems = await this.getAllUserSessionsInternal()
     if (allItems.length === 0) {
-      return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
+      return { items: [], totalCount: 0, pageNumber: ListingDefaultValues.PAGE_NUMBER, pageSize: ListingDefaultValues.PAGE_SIZE, totalPages: 0 }
     }
 
     const filteredItems = allItems.filter((item) => {
@@ -318,11 +319,11 @@ export class EncryptedUserStorage implements UserStorage {
     }
 
     const totalCount = filteredItems.length
-    const requestedPage = pageNumber ?? 1
-    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : 20)
+    const requestedPage = pageNumber ?? ListingDefaultValues.PAGE_NUMBER
+    const requestedSize = pageSize ?? (totalCount > 0 ? totalCount : ListingDefaultValues.PAGE_SIZE)
 
     if (requestedSize <= 0) {
-      return { items: [], totalCount: 0, pageNumber: 1, pageSize: 20, totalPages: 0 }
+      return { items: [], totalCount: 0, pageNumber: ListingDefaultValues.PAGE_NUMBER, pageSize: ListingDefaultValues.PAGE_SIZE, totalPages: 0 }
     }
 
     const totalPages = Math.ceil(totalCount / requestedSize)
@@ -421,7 +422,7 @@ export class EncryptedUserStorage implements UserStorage {
   public async removeUserSessions(sessionIds: UserSessionId[]): Promise<void> {
     const allItems = await this.getAllUserSessionsInternal()
     const targetSet = new Set(sessionIds)
-    const newItems = allItems.filter((item) => !targetSet.has(item.id))
+    const newItems = allItems.filter((item) => item.id != null && !targetSet.has(item.id))
 
     if (newItems.length === allItems.length) {
       return

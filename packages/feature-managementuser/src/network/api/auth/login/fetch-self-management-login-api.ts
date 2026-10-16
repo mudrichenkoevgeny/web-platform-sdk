@@ -18,7 +18,8 @@ export class FetchSelfManagementLoginApi implements SelfManagementLoginApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async loginByEmail(request: LoginByEmailRequest): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByEmail(email: string, password: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: LoginByEmailRequest = { email, password }
     return callResult(() =>
       this.client.request<AuthDataPayload>(SelfManagementLoginRoutes.LOGIN_BY_EMAIL, {
         method: 'POST',
@@ -28,7 +29,11 @@ export class FetchSelfManagementLoginApi implements SelfManagementLoginApi {
     )
   }
 
-  public async loginByTotp(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByTotp(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(SelfManagementLoginRoutes.LOGIN_BY_TOTP, {
         method: 'POST',
@@ -38,7 +43,11 @@ export class FetchSelfManagementLoginApi implements SelfManagementLoginApi {
     )
   }
 
-  public async loginByTotpRecoveryCode(request: VerifyTotpPayload): Promise<AppResult<AuthDataPayload, AppError>> {
+  public async loginByTotpRecoveryCode(mfaToken: string, code: string): Promise<AppResult<AuthDataPayload, AppError>> {
+    const request: VerifyTotpPayload = {
+      mfa_token: mfaToken,
+      totp_code: code
+    }
     return callResult(() =>
       this.client.request<AuthDataPayload>(SelfManagementLoginRoutes.LOGIN_BY_TOTP_RECOVERY_CODE, {
         method: 'POST',

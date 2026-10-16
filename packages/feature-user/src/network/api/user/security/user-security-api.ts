@@ -1,8 +1,7 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   TotpRecoveryCodesPayload,
-  TotpSetupPayload,
-  VerifyTotpPayload
+  TotpSetupPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Self-service security management for the authenticated user, including TOTP and recovery codes configuration. */
@@ -17,10 +16,11 @@ export interface UserSecurityApi {
   /**
    * Finalizes and enables TOTP activation by verifying the initial token code.
    *
-   * @param request - Verification payload containing current TOTP code
+   * @param mfaToken - MFA challenge token
+   * @param code - TOTP verification code
    * @returns Initial set of generated backup recovery codes, or a mapped failure
    */
-  enableTotp(request: VerifyTotpPayload): Promise<AppResult<TotpRecoveryCodesPayload, AppError>>
+  enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodesPayload, AppError>>
 
   /**
    * Disables TOTP and invalidates all associated backup recovery codes for the account.

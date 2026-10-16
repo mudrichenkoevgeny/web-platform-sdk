@@ -1,6 +1,7 @@
 import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  AuditEventId,
   AuditEventPrivatePayload,
   AuditEventSummaryPayload,
   ManagementAuditEventDetailParams,
@@ -39,7 +40,7 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
   }
 
   public async getAuditEvent(
-    params: ManagementAuditEventDetailParams | string
+    params: ManagementAuditEventDetailParams | AuditEventId | string
   ): Promise<AppResult<AuditEventPrivatePayload, AppError>> {
     const eventId = typeof params === 'string' ? params : params.eventId
     if (!eventId) {
@@ -48,7 +49,12 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
       })
     }
     const basePath = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
-    const path = appendQueryParamsToPath(basePath, typeof params === 'string' ? null : params)
+    let queryParams: Record<string, unknown> | null = null
+    if (typeof params !== 'string' && params) {
+      const { eventId: _ignored, ...rest } = params
+      queryParams = rest
+    }
+    const path = appendQueryParamsToPath(basePath, queryParams)
     return callResult(async () => {
       const raw = await this.client.request<unknown>(path)
       return auditEventPrivatePayloadSchema.parse(raw)

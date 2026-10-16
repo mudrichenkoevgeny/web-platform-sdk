@@ -22,5 +22,8 @@
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vitest": "catalog:"
+  },
+  "dependencies": {
+    "@mudrichenkoevgeny/shared-foundation": "^0.0.55"
   }
 }

@@ -3,7 +3,6 @@ import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-co
 import type { ConfirmationRepository } from '@/repository/confirmation/confirmation-repository'
 import type { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/user-error'
-import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 /**
  * In-memory implementation of {@link ConfirmationRepository} that records block-until timestamps.
  */
@@ -33,12 +32,12 @@ export class ConfirmationRepositoryImpl implements ConfirmationRepository {
 
     const result = await action()
 
-    if (isSuccess(result)) {
-      const data = result.data as unknown as OtpConfirmation | null
-      if (data && typeof data.retryAfterSeconds === 'number' && data.retryAfterSeconds > 0) {
+    if (isSuccess(result) && result.data && typeof result.data === 'object' && 'retryAfterSeconds' in result.data) {
+      const retryAfterSeconds = (result.data as { retryAfterSeconds?: unknown }).retryAfterSeconds
+      if (typeof retryAfterSeconds === 'number' && retryAfterSeconds > 0) {
         const key = `${type}:${identifier}`
         const now = this.clock()
-        this.blockedUntilMap.set(key, now + data.retryAfterSeconds * 1000)
+        this.blockedUntilMap.set(key, now + retryAfterSeconds * 1000)
       }
     }
 

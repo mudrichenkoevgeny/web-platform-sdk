@@ -41,10 +41,7 @@ export class SelfManagementUserSecurityRepositoryImpl implements UserSecurityRep
 
   public async enableTotp(mfaToken: string, code: string): Promise<AppResult<TotpRecoveryCodes, AppError>> {
     return this.mutex.runExclusive(async () => {
-      const result = await this.userSecurityApi.enableTotp({
-        mfa_token: mfaToken,
-        totp_code: code
-      })
+      const result = await this.userSecurityApi.enableTotp(mfaToken, code)
       const mapped = mapSuccess(result, (payload) => toTotpRecoveryCodes(payload))
       if (isSuccess(mapped)) {
         await this.updateTotpStatusInStorage(true)

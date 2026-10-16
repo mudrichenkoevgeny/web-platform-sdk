@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import type { UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { managementUserIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementUserIdentifierListParams, UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -33,11 +34,15 @@ export interface UserIdentifierListStoreDependencies {
   managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
   onIdentifierSelect?: (identifierId: string) => void
   onBack: () => void
+  searchParams?: ManagementUserIdentifierListParams
+  onSearchParamsChanged?: (params: ManagementUserIdentifierListParams) => void
 }
 
 export interface UserIdentifierListStoreState {
+  dependencies: UserIdentifierListStoreDependencies
   screenState: UserIdentifierListScreenState
-  initScreen: () => Promise<void>
+  initScreen: (searchParams?: ManagementUserIdentifierListParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementUserIdentifierListParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onIdentifierClick: (identifierId: string) => void
@@ -56,18 +61,27 @@ export const createUserIdentifierListStore = (
 ) => {
   let isFetching = false
 
-  const fetchPage = async (set: SetState, get: GetState, pageNumber: number) => {
+  const fetchPage = async (
+    set: SetState,
+    get: GetState,
+    pageNumber: number,
+    overrideParams?: ManagementUserIdentifierListParams
+  ) => {
     if (isFetching) {
       return
     }
     isFetching = true
 
     try {
-      const result = await deps.managementGetIdentifiersUseCase.execute({
-        pageNumber,
-        pageSize: 20,
-        userIds: [deps.userId]
-      })
+      const activeDeps = get().dependencies
+      const searchParams = overrideParams ?? activeDeps.searchParams
+      const result = await activeDeps.managementGetIdentifiersUseCase.execute(
+        managementUserIdentifierListParamsSchema.parse({
+          userIds: [activeDeps.userId],
+          ...searchParams,
+          pageNumber
+        })
+      )
 
       if (isSuccess(result)) {
         const current = get().screenState
@@ -115,15 +129,28 @@ export const createUserIdentifierListStore = (
   }
 
   return createStore<UserIdentifierListStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async () => {
+    initScreen: async (searchParams?: ManagementUserIdentifierListParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1)
+      await fetchPage(set, get, 1, searchParams)
+    },
+
+    onSearchParamsUpdated: async (searchParams?: ManagementUserIdentifierListParams) => {
+      set({
+        screenState: {
+          status: 'content',
+          paging: createInitialPaginationState<UserIdentifierSummary>(),
+          actionLoading: false,
+          actionError: null
+        }
+      })
+      await fetchPage(set, get, 1, searchParams)
     },
 
     onLoadNextPage: async () => {
@@ -186,6 +213,10 @@ export const UserIdentifierListProvider: React.FC<UserIdentifierListProviderProp
   children
 }) => {
   const [store] = useState(() => createUserIdentifierListStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <UserIdentifierListContext.Provider value={store}>

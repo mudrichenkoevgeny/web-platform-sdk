@@ -49,4 +49,22 @@ describe('appendQueryParamsToPath', () => {
     }
     expect(appendQueryParamsToPath('/api/test', params)).toBe('/api/test?valid=ok')
   })
+
+  it('omits query string when toQueryMap returns an empty map for default values (clean URLs)', () => {
+    const mockParams: NavigationScreenParams = {
+      toQueryMap: () => new Map<string, string[]>()
+    }
+    expect(appendQueryParamsToPath('/api/test', mockParams)).toBe('/api/test')
+  })
+
+  it('supports Record with scalar primitive values', () => {
+    const params = {
+      pageNumber: 1,
+      sortBy: 'created_at',
+      isTotpEnabled: true
+    }
+    expect(appendQueryParamsToPath('/api/test', params)).toBe(
+      '/api/test?pageNumber=1&sortBy=created_at&isTotpEnabled=true'
+    )
+  })
 })

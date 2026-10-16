@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, toUserIdOrNull, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
 import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
@@ -102,8 +102,19 @@ export const createUserDetailStore = (
       isFetching = true
 
       try {
+        const validUserId = toUserIdOrNull(deps.userId)
+        if (!validUserId) {
+          set({
+            screenState: {
+              status: 'error',
+              error: CommonError.unknown()
+            }
+          })
+          return
+        }
+
         set({ screenState: { status: 'loading' } })
-        const result = await deps.getUserUseCase.execute(deps.userId)
+        const result = await deps.getUserUseCase.execute(validUserId)
 
         if (isSuccess(result)) {
           const user = result.data
@@ -189,11 +200,11 @@ export const createUserDetailStore = (
         : current.user.temporaryLockoutUntil
 
       const result = await deps.updateUserUseCase.execute(deps.userId, {
-        account_status: current.accountStatusInput,
-        authority_level: authLevel,
-        permission_codes: null,
-        account_lockout_type: current.lockoutTypeInput,
-        temporary_lockout_until: tempLockout
+        accountStatus: current.accountStatusInput,
+        authorityLevel: authLevel,
+        permissionCodes: null,
+        accountLockoutType: current.lockoutTypeInput,
+        temporaryLockoutUntil: tempLockout
       })
 
       if (isSuccess(result)) {

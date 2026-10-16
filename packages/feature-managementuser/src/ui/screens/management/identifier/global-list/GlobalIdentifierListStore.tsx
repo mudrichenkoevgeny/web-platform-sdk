@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { SortOrder, UserAuthProvider, UserFilterValues, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
-import type { AppError, ListingFilterState, ListingSortState, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { managementGlobalIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementGlobalIdentifierListParams, UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
   canLoadMorePages,
@@ -26,8 +26,6 @@ export type GlobalIdentifierListScreenState =
   | {
       status: 'content'
       paging: PaginationState<UserIdentifierSummary>
-      sortState: ListingSortState | null
-      filterStates: Record<string, ListingFilterState>
       isFilterPanelExpanded: boolean
       actionLoading: boolean
       actionError: AppError | null
@@ -38,17 +36,18 @@ export interface GlobalIdentifierListStoreDependencies {
   managementDeleteIdentifierUseCase: ManagementDeleteIdentifierUseCase
   onNavigateToIdentifierDetail: (identifierId: UserIdentifierId) => void
   onBack: () => void
+  searchParams?: ManagementGlobalIdentifierListParams
+  onSearchParamsChanged?: (params: ManagementGlobalIdentifierListParams) => void
 }
 
 export interface GlobalIdentifierListStoreState {
+  dependencies: GlobalIdentifierListStoreDependencies
   screenState: GlobalIdentifierListScreenState
-  initScreen: () => Promise<void>
+  initScreen: (searchParams?: ManagementGlobalIdentifierListParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: ManagementGlobalIdentifierListParams) => Promise<void>
   onLoadNextPage: () => Promise<void>
   onRefresh: () => Promise<void>
   onToggleFilterPanel: () => void
-  onSortChanged: (sortState: ListingSortState | null) => void
-  onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => void
-  onApplyFilters: () => void
   onIdentifierClick: (identifierId: UserIdentifierId) => void
   onDeleteIdentifierClick: (userId: UserId, identifierId: UserIdentifierId) => Promise<void>
   onBackClick: () => void
@@ -69,8 +68,7 @@ export const createGlobalIdentifierListStore = (
     set: SetState,
     get: GetState,
     pageNumber: number,
-    sortState: ListingSortState | null,
-    filterStates: Record<string, ListingFilterState>
+    overrideParams?: ManagementGlobalIdentifierListParams
   ) => {
     if (isFetching) {
       return
@@ -78,32 +76,14 @@ export const createGlobalIdentifierListStore = (
     isFetching = true
 
     try {
-      const sortOrder = sortState ? (sortState.isAscending ? SortOrder.ASC : SortOrder.DESC) : null
-      const sortBy = sortState?.optionId
-        ? (Object.values(UserSortValues.UserIdentifierSortBy).find((v) => v === sortState.optionId) as UserSortValues.UserIdentifierSortBy | undefined ?? null)
-        : null
-
-      const providerFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER]
-      const userIdFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.USER_ID]
-      const identifierFilter = filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER]
-
-      const userAuthProviders = providerFilter?.type === 'choice'
-        ? Array.from(providerFilter.selectedIds).filter((id): id is UserAuthProvider =>
-            Object.values(UserAuthProvider).includes(id as UserAuthProvider)
-          )
-        : undefined
-      const userIds = userIdFilter?.type === 'text' && userIdFilter.value.trim() ? [userIdFilter.value.trim()] : undefined
-      const identifiers = identifierFilter?.type === 'text' && identifierFilter.value.trim() ? [identifierFilter.value.trim()] : undefined
-
-      const result = await deps.managementGetIdentifiersUseCase.execute({
-        pageNumber,
-        pageSize: 20,
-        sortBy,
-        sortOrder,
-        userAuthProviders,
-        userIds,
-        identifiers
-      })
+      const activeDeps = get().dependencies
+      const searchParams = overrideParams ?? activeDeps.searchParams
+      const result = await activeDeps.managementGetIdentifiersUseCase.execute(
+        managementGlobalIdentifierListParamsSchema.parse({
+          ...searchParams,
+          pageNumber
+        })
+      )
 
       if (isSuccess(result)) {
         const current = get().screenState
@@ -122,8 +102,6 @@ export const createGlobalIdentifierListStore = (
             screenState: {
               status: 'content',
               paging: nextPaging,
-              sortState,
-              filterStates,
               isFilterPanelExpanded: false,
               actionLoading: false,
               actionError: null
@@ -154,15 +132,29 @@ export const createGlobalIdentifierListStore = (
   }
 
   return createStore<GlobalIdentifierListStoreState>()((set, get) => ({
+    dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async () => {
+    initScreen: async (searchParams?: ManagementGlobalIdentifierListParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
       }
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, null, {})
+      await fetchPage(set, get, 1, searchParams)
+    },
+
+    onSearchParamsUpdated: async (searchParams?: ManagementGlobalIdentifierListParams) => {
+      set({
+        screenState: {
+          status: 'content',
+          paging: createInitialPaginationState<UserIdentifierSummary>(),
+          isFilterPanelExpanded: false,
+          actionLoading: false,
+          actionError: null
+        }
+      })
+      await fetchPage(set, get, 1, searchParams)
     },
 
     onLoadNextPage: async () => {
@@ -174,92 +166,24 @@ export const createGlobalIdentifierListStore = (
       const nextPaging = createNextPageLoadingPaginationState(current.paging)
       set({ screenState: { ...current, paging: nextPaging } })
 
-      await fetchPage(
-        set,
-        get,
-        getNextPageNumber(current.paging),
-        current.sortState,
-        current.filterStates
-      )
+      await fetchPage(set, get, getNextPageNumber(current.paging))
     },
 
     onRefresh: async () => {
-      const current = get().screenState
-      const sortState = current.status === 'content' ? current.sortState : null
-      const filterStates = current.status === 'content' ? current.filterStates : {}
       set({ screenState: { status: 'loading' } })
-      await fetchPage(set, get, 1, sortState, filterStates)
+      await fetchPage(set, get, 1)
     },
 
     onToggleFilterPanel: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          isFilterPanelExpanded: !current.isFilterPanelExpanded
-        }
-      })
-    },
-
-    onSortChanged: (sortState: ListingSortState | null) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          sortState
-        }
-      })
-    },
-
-    onFilterChanged: (filterId: string, filterState: ListingFilterState | null) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      if (filterState === null) {
-        const { [filterId]: _, ...restFilters } = current.filterStates
+      if (current.status === 'content') {
         set({
           screenState: {
             ...current,
-            filterStates: restFilters
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            ...current,
-            filterStates: {
-              ...current.filterStates,
-              [filterId]: filterState
-            }
+            isFilterPanelExpanded: !current.isFilterPanelExpanded
           }
         })
       }
-    },
-
-    onApplyFilters: async () => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      set({
-        screenState: {
-          ...current,
-          paging: createInitialPaginationState<UserIdentifierSummary>()
-        }
-      })
-
-      await fetchPage(set, get, 1, current.sortState, current.filterStates)
     },
 
     onIdentifierClick: (identifierId: UserIdentifierId) => {
@@ -331,6 +255,10 @@ export const GlobalIdentifierListProvider: React.FC<GlobalIdentifierListProvider
   children
 }) => {
   const [store] = useState(() => createGlobalIdentifierListStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <GlobalIdentifierListContext.Provider value={store}>

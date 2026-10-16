@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
+  toAuditEventIdOrNull,
   toUserIdentifierIdOrNull,
   toUserSessionIdOrNull,
   toUserIdOrNull
@@ -12,9 +13,9 @@ import type {
   UserSessionId,
   UserId
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 
 export type AuditEventDetailScreenState =
   | {
@@ -70,9 +71,20 @@ export const createAuditEventDetailStore = (
       isFetching = true
 
       try {
-        set({ screenState: { status: 'loading' } })
         const activeDeps = get().dependencies
-        const result = await activeDeps.getAuditEventUseCase.execute(activeDeps.eventId)
+        const validEventId = toAuditEventIdOrNull(activeDeps.eventId)
+        if (!validEventId) {
+          set({
+            screenState: {
+              status: 'error',
+              error: CommonError.unknown()
+            }
+          })
+          return
+        }
+
+        set({ screenState: { status: 'loading' } })
+        const result = await activeDeps.getAuditEventUseCase.execute(validEventId)
 
         if (isSuccess(result)) {
           set({

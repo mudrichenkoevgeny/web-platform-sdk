@@ -177,7 +177,7 @@ export class UserStorageMock implements UserStorage {
   public async removeUserSessions(sessionIds: UserSessionId[]): Promise<void> {
     this.lastRemovedSessionsList = sessionIds
     const set = new Set(sessionIds)
-    const items = this.sessionsPagedResult.items.filter((item) => !set.has(item.id))
+    const items = this.sessionsPagedResult.items.filter((item) => item.id != null && !set.has(item.id))
     this.sessionsPagedResult = {
       items,
       totalCount: items.length,

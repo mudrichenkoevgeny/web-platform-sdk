@@ -52,9 +52,16 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
     })
   }
 
-  public async emailChangePassword(request: EmailPasswordChangeRequest): Promise<AppResult<void, AppError>> {
+  public async emailChangePassword(
+    userIdentifierId: UserIdentifierId,
+    request: EmailPasswordChangeRequest
+  ): Promise<AppResult<void, AppError>> {
+    const path = SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD.replace(
+      `{${UserApiPaths.USER_IDENTIFIER_ID}}`,
+      userIdentifierId
+    )
     return callResult(() =>
-      this.client.request<void>(SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD, {
+      this.client.request<void>(path, {
         method: 'POST',
         body: JSON.stringify(request)
       })

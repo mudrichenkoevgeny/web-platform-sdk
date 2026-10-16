@@ -127,14 +127,16 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
             />
 
             {paging.items.map((session) => (
-              <SessionItem
-                key={session.id}
-                session={session}
-                enabled={!actionLoading}
-                onRevokeClick={() => onDeleteSessionClick(session.id)}
-                onSessionClick={() => onSessionClick(session)}
-                strings={strings}
-              />
+              session.id ? (
+                <SessionItem
+                  key={session.id}
+                  session={session}
+                  enabled={!actionLoading}
+                  onRevokeClick={() => onDeleteSessionClick(session.id!)}
+                  onSessionClick={() => onSessionClick(session)}
+                  strings={strings}
+                />
+              ) : null
             ))}
 
             {paging.pageNumber < paging.totalPages && (

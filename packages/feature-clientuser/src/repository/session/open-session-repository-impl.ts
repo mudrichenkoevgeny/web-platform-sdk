@@ -82,12 +82,12 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
   public async deleteAllOtherSessions(): Promise<AppResult<void, AppError>> {
     const networkResult = await this.sessionApi.deleteAllOtherSessions()
     if (isSuccess(networkResult)) {
-      const deletedSessionIdsSet = new Set(networkResult.data.deleted_session_ids)
+      const deletedSessionIdsSet = new Set(networkResult.data.deletedSessionIds)
       if (deletedSessionIdsSet.size > 0) {
         const cachedList = await this.userStorage.getUserSessionsList()
         const idsToRemove = cachedList.items
           .map((item) => item.id)
-          .filter((id) => deletedSessionIdsSet.has(id))
+          .filter((id): id is UserSessionId => id != null && deletedSessionIdsSet.has(id))
 
         if (idsToRemove.length > 0) {
           await this.userStorage.removeUserSessions(idsToRemove)
@@ -98,9 +98,6 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
   }
 
   public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
-    return this.sessionApi.reauthenticateSession({
-      mfa_token: mfaToken,
-      totp_code: code
-    })
+    return this.sessionApi.reauthenticateSession(mfaToken, code)
   }
 }

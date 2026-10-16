@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventDetailScreen } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 
 const createMockDeps = (): AuditEventDetailStoreDependencies => ({
-  eventId: auditEventMock().id,
+  eventId: auditEventMock().id ?? toAuditEventIdOrThrow('evt_1'),
   getAuditEventUseCase: {
     execute: async () => appResultSuccess(auditEventMock())
   } as any,

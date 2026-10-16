@@ -61,7 +61,8 @@ describe('LoginByTotpScreen', () => {
   })
 
   it('toggles mode to recovery code when toggle button is clicked', async () => {
-    const deps = createMockDeps()
+    const onModeChange = vi.fn()
+    const deps = { ...createMockDeps(), onModeChange }
     const user = userEvent.setup()
 
     render(
@@ -73,6 +74,6 @@ describe('LoginByTotpScreen', () => {
     const toggleBtn = screen.getByRole('button', { name: enUserStrings.use_recovery_code })
     await user.click(toggleBtn)
 
-    expect(screen.getByText(enUserStrings.login_by_recovery_code)).toBeDefined()
+    expect(onModeChange).toHaveBeenCalledWith('recovery_code')
   })
 })

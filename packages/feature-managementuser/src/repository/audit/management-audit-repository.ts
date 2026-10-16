@@ -1,6 +1,7 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditActorType,
+  AuditEventId,
   AuditEventPrivate,
   AuditEventSortBy,
   AuditEventSummary,
@@ -39,9 +40,8 @@ export interface ManagementAuditRepository {
   /**
    * Retrieves specific domain audit event details by ID.
    *
-   * @param eventId - Unique audit event identifier string
+   * @param eventId - Unique audit event identifier
    * @returns Domain audit event private details, or a failure
    */
-  getAuditEvent(eventId: string): Promise<AppResult<AuditEventPrivate, AppError>>
+  getAuditEvent(eventId: AuditEventId): Promise<AppResult<AuditEventPrivate, AppError>>
 }
-

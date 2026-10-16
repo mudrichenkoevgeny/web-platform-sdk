@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchRegistrationApi } from '@/network/api/auth/registration/fetch-registration-api'
-import { OpenRegisterRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenRegistrationRoutes } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchRegistrationApi', () => {
   let mockHttpClient: HttpClient
@@ -22,7 +22,7 @@ describe('FetchRegistrationApi', () => {
     const result = await api.registerByEmail(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenRegisterRoutes.REGISTER_BY_EMAIL,
+      OpenRegistrationRoutes.REGISTRATION_BY_EMAIL,
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify(request)
@@ -39,7 +39,7 @@ describe('FetchRegistrationApi', () => {
     const result = await api.sendRegistrationConfirmationToEmail(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenRegisterRoutes.SEND_REGISTER_CONFIRMATION_TO_EMAIL,
+      OpenRegistrationRoutes.SEND_REGISTRATION_CONFIRMATION_TO_EMAIL,
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify(request)

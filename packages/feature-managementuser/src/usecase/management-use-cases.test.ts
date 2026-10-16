@@ -3,6 +3,7 @@ import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mud
 import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuditRepositoryMock } from '@/mock/audit/repository/management-audit-repository-mock'
 import { ManagementUserRepositoryMock } from '@/mock/repository/user/management-user-repository-mock'
@@ -32,7 +33,7 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementUserRepositoryMock()
       const useCase = new GetUsersUseCase(repo)
 
-      const result = await useCase.execute({ pageNumber: 1, pageSize: 10 })
+      const result = await useCase.execute(managementUserListParamsSchema.parse({ pageNumber: 1, pageSize: 10 }))
       expect(isSuccess(result)).toBe(true)
     })
   })

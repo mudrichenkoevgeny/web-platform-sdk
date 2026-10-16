@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenIdentifierRepositoryImpl } from '@/repository/identifier/open-identifier-repository-impl'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
 import type { ConfirmationRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -56,8 +56,16 @@ describe('OpenIdentifierRepositoryImpl', () => {
   })
 
   it('delegates getUserIdentifiers and maps paged items', async () => {
-    const result = await repository.getUserIdentifiers(1, 10)
-    expect(mockApi.getUserIdentifiers).toHaveBeenCalledWith(1, 10, undefined, undefined, undefined, undefined)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userAuthProviders: [],
+      identifiers: []
+    }
+    const result = await repository.getUserIdentifiers(params)
+    expect(mockApi.getUserIdentifiers).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -103,8 +111,9 @@ describe('OpenIdentifierRepositoryImpl', () => {
   })
 
   it('delegates emailChangePassword request', async () => {
-    const result = await repository.emailChangePassword('user@example.com', 'old', 'new')
-    expect(mockApi.emailChangePassword).toHaveBeenCalledWith({ email: 'user@example.com', old_password: 'old', new_password: 'new' })
+    const identifierId = 'ident-123' as any
+    const result = await repository.emailChangePassword(identifierId, 'old', 'new')
+    expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, { old_password: 'old', new_password: 'new' })
     expect(isSuccess(result)).toBe(true)
   })
 

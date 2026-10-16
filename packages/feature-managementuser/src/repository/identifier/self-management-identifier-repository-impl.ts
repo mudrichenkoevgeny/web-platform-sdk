@@ -38,12 +38,11 @@ export class SelfManagementIdentifierRepositoryImpl implements SelfManagementIde
   }
 
   public async emailChangePassword(
-    email: string,
+    userIdentifierId: UserIdentifierId,
     oldPassword: string,
     newPassword: string
   ): Promise<AppResult<void, AppError>> {
-    return this.selfManagementIdentifiersApi.emailChangePassword({
-      email,
+    return this.selfManagementIdentifiersApi.emailChangePassword(userIdentifierId, {
       old_password: oldPassword,
       new_password: newPassword
     })

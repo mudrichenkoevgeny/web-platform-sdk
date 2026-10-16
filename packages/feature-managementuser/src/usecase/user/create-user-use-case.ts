@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { CreateByEmailRequest, UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserRepository } from '@/repository/user/management-user-repository'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { CreateUserParams, ManagementUserRepository } from '@/repository/user/management-user-repository'
 
 /** Administratively creates a new user account. */
 export class CreateUserUseCase {
@@ -14,10 +14,10 @@ export class CreateUserUseCase {
   /**
    * Executes the use case.
    *
-   * @param request - Payload details for creating an account via email
+   * @param params - Domain parameters for creating an account
    * @returns Detailed information of the newly created user domain model, or a mapped failure
    */
-  public async execute(request: CreateByEmailRequest): Promise<AppResult<UserPrivate, AppError>> {
-    return this.managementUserRepository.createUser(request)
+  public async execute(params: CreateUserParams): Promise<AppResult<UserPrivate, AppError>> {
+    return this.managementUserRepository.createUser(params)
   }
 }

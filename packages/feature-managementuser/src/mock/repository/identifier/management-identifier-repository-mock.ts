@@ -1,14 +1,13 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  ManagementGlobalIdentifierListParams,
+  ManagementUserIdentifierListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
   UserIdentifierId,
   UserIdentifierPrivate,
-  UserIdentifierSummary,
-  UserSortValues
+  UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPrivateMock, userIdentifierSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
@@ -41,13 +40,7 @@ export class ManagementIdentifierRepositoryMock implements ManagementIdentifierR
   public lastIdentifierId: UserIdentifierId | null = null
 
   public async getIdentifiers(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserIdentifierSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userIds?: string[] | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _identifiers?: string[] | null
+    _params?: ManagementGlobalIdentifierListParams | ManagementUserIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> {
     return this.getIdentifiersResultProvider()
   }

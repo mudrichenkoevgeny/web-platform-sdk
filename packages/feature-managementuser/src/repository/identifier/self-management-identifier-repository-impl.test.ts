@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SelfManagementIdentifierRepositoryImpl } from '@/repository/identifier/self-management-identifier-repository-impl'
 import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
-import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, type UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('SelfManagementIdentifierRepositoryImpl', () => {
   let mockApi: SelfManagementIdentifiersApi
@@ -43,15 +43,23 @@ describe('SelfManagementIdentifierRepositoryImpl', () => {
   })
 
   it('delegates getUserIdentifiers and maps paged items', async () => {
-    const result = await repository.getUserIdentifiers(1, 10)
-    expect(mockApi.getUserIdentifiers).toHaveBeenCalledWith(1, 10, undefined, undefined, undefined, undefined)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userAuthProviders: [],
+      identifiers: []
+    }
+    const result = await repository.getUserIdentifiers(params)
+    expect(mockApi.getUserIdentifiers).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates emailChangePassword', async () => {
-    const result = await repository.emailChangePassword('test@example.com', 'oldPass', 'newPass')
-    expect(mockApi.emailChangePassword).toHaveBeenCalledWith({
-      email: 'test@example.com',
+    const identifierId = 'id_1' as UserIdentifierId
+    const result = await repository.emailChangePassword(identifierId, 'oldPass', 'newPass')
+    expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, {
       old_password: 'oldPass',
       new_password: 'newPass'
     })

@@ -1,5 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  AuditEventId,
   AuditEventPrivatePayload,
   AuditEventSummaryPayload,
   ManagementAuditEventDetailParams,
@@ -22,10 +23,10 @@ export interface ManagementAuditApi {
   /**
    * Retrieves specific audit event details by ID or detail params.
    *
-   * @param params - Audit event detail parameters or unique event ID string
+   * @param params - Audit event detail parameters or unique event ID
    * @returns Audit event private payload, or a failure
    */
   getAuditEvent(
-    params: ManagementAuditEventDetailParams | string
+    params: ManagementAuditEventDetailParams | AuditEventId | string
   ): Promise<AppResult<AuditEventPrivatePayload, AppError>>
 }

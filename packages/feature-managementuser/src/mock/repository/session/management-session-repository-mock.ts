@@ -1,15 +1,12 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  ClientType,
+  ManagementGlobalSessionListParams,
+  ManagementUserSessionListParams,
   PagedResult,
-  SortOrder,
-  UserAuthProvider,
   UserId,
-  UserRole,
   UserSessionPrivate,
-  UserSessionSummary,
-  UserSortValues
+  UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { userSessionPrivateMock, userSessionSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementSessionRepository } from '@/repository/session/management-session-repository'
@@ -40,23 +37,7 @@ export class ManagementSessionRepositoryMock implements ManagementSessionReposit
   public lastSessionId: string | null = null
 
   public async getSessions(
-    _pageNumber?: number | null,
-    _pageSize?: number | null,
-    _sortBy?: UserSortValues.UserSessionSortBy | null,
-    _sortOrder?: SortOrder | null,
-    _userIds?: string[] | null,
-    _userRoles?: UserRole[] | null,
-    _identifiers?: string[] | null,
-    _identifierIds?: string[] | null,
-    _userAuthProviders?: UserAuthProvider[] | null,
-    _clientTypes?: ClientType[] | null,
-    _userAgents?: string[] | null,
-    _ipAddresses?: string[] | null,
-    _languages?: string[] | null,
-    _deviceIds?: string[] | null,
-    _deviceNames?: string[] | null,
-    _appVersions?: string[] | null,
-    _operationSystemVersions?: string[] | null
+    _params?: ManagementGlobalSessionListParams | ManagementUserSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.getSessionsResultProvider()
   }

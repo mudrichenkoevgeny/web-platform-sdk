@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementIdentifiersApi } from '@/network/api/identifier/fetch-self-management-identifiers-api'
-import { SelfManagementIdentifierRoutes, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementIdentifierRoutes, SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('FetchSelfManagementIdentifiersApi', () => {
@@ -33,7 +33,15 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
     vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
 
-    const result = await api.getUserIdentifiers(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: SortOrder.DESC,
+      userAuthProviders: [],
+      identifiers: []
+    }
+    const result = await api.getUserIdentifiers(params)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementIdentifierRoutes.GET_IDENTIFIERS)
@@ -44,11 +52,12 @@ describe('FetchSelfManagementIdentifiersApi', () => {
   it('dispatches emailChangePassword request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { email: 'admin@example.com', old_password: 'old', new_password: 'new' }
-    const result = await api.emailChangePassword(request)
+    const identifierId = toUserIdentifierIdOrThrow('ident_1')
+    const request = { old_password: 'old', new_password: 'new' }
+    const result = await api.emailChangePassword(identifierId, request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD,
+      SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD.replace('{user_identifier_id}', 'ident_1'),
       expect.objectContaining({ method: 'POST', body: JSON.stringify(request) })
     )
     expect(result).toEqual({ success: true, data: undefined })
