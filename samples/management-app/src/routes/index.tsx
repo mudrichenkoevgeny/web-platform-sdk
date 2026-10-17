@@ -5,6 +5,7 @@ import {
   ManagementUsersNavigation
 } from '@mudrichenkoevgeny/shared-foundation'
 
+/** Route configuration for main administrative dashboard screen. */
 export const Route = createFileRoute('/')({
   component: function MainManagementRoute() {
     const navigate = Route.useNavigate()

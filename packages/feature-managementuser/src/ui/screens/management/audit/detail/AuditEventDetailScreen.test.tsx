@@ -66,8 +66,7 @@ describe('AuditEventDetailScreen', () => {
     const resourceRow = await screen.findByTestId(AuditEventDetailTestTags.RESOURCE_ROW)
     await user.click(resourceRow)
 
-    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
-    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+    expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(currentUserId)
   })
 
   it('navigates to user detail when clicking resource representing another user', async () => {
@@ -93,10 +92,9 @@ describe('AuditEventDetailScreen', () => {
     await user.click(resourceRow)
 
     expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(otherUserId)
-    expect(deps.onNavigateToProfile).not.toHaveBeenCalled()
   })
 
-  it('navigates to profile when clicking subject representing current user actor', async () => {
+  it('navigates to user detail when clicking subject representing current user actor', async () => {
     const mockEvent = auditEventMock({
       actorType: 'user',
       actorId: currentUserId
@@ -118,8 +116,7 @@ describe('AuditEventDetailScreen', () => {
     const subjectRow = await screen.findByTestId(AuditEventDetailTestTags.SUBJECT_ROW)
     await user.click(subjectRow)
 
-    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
-    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+    expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(currentUserId)
   })
 
   it('navigates to user detail when clicking subject representing another user actor', async () => {

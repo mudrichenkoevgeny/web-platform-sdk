@@ -4,8 +4,9 @@ import { ManagementSelfUserNavigation, selfSessionListParamsSchema } from '@mudr
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user session list screen. */
 export const Route = createFileRoute('/user/sessions/')({
-  validateSearch: (rawSearch) => parseSearchParams(selfSessionListParamsSchema, rawSearch as Record<string, unknown>),
+  validateSearch: (rawSearch) => parseSearchParams(selfSessionListParamsSchema, rawSearch),
   component: function SelfSessionListRoute() {
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()

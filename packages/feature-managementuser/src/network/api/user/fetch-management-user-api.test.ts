@@ -1,38 +1,38 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
 import { ManagementUsersRoutes, SortOrder, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { pagedResultPayloadMock } from '@/mock'
+import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 describe('FetchManagementUserApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchManagementUserApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
     api = new FetchManagementUserApi(mockHttpClient)
   })
 
   it('dispatches createUser request', async () => {
-    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
-    const request = { email: 'user@example.com', password: 'secret' } as any
-    const result = await api.createUser(request)
+    const createUserParams: CreateUserParams = { email: 'user@example.com', password: 'secret' }
+    const result = await api.createUser(createUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.CREATE_USER,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockPayload })
   })
 
   it('dispatches getUsers request with query params', async () => {
-    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
-    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPayload = pagedResultPayloadMock()
+    const expectedUserListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -53,12 +53,12 @@ describe('FetchManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(ManagementUsersRoutes.GET_USERS)
     )
-    expect(result).toEqual({ success: true, data: expectedData })
+    expect(result).toEqual({ success: true, data: expectedUserListPagedResult })
   })
 
   it('dispatches getUser request', async () => {
-    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.getUser(userId)
@@ -66,25 +66,26 @@ describe('FetchManagementUserApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('/management/users/usr_1')
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockPayload })
   })
 
   it('dispatches updateUser request', async () => {
-    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
+    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
     const userId = toUserIdOrThrow('usr_1')
-    const request = { authority_level: 10 } as any
-    const result = await api.updateUser(userId, request)
+    const updateUserParams: UpdateUserParams = { authorityLevel: 10 }
+    const result = await api.updateUser(userId, updateUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining('/management/users/usr_1'),
       expect.objectContaining({ method: 'PATCH' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(result).toEqual({ success: true, data: mockPayload })
   })
 
   it('dispatches deleteUser request', async () => {
-    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
+    mockHttpClient.request.mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteUser(userId)

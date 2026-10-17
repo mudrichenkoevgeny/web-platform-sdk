@@ -4,8 +4,9 @@ import { AppType, ManagementSelfUserNavigation, selfIdentifierListParamsSchema }
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user identifier list screen. */
 export const Route = createFileRoute('/user/identifiers/')({
-  validateSearch: (rawSearch) => parseSearchParams(selfIdentifierListParamsSchema, rawSearch as Record<string, unknown>),
+  validateSearch: (rawSearch) => parseSearchParams(selfIdentifierListParamsSchema, rawSearch),
   component: function SelfIdentifierListRoute() {
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()

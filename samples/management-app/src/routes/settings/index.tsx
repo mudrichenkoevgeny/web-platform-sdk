@@ -8,6 +8,7 @@ import { CoreBackButton, CoreButton, CoreScreenTitleText } from '@mudrichenkoevg
 import { enManagementAppStrings } from '@/locales/index'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for administrative settings main hub screen. */
 export const Route = createFileRoute('/settings/')({
   component: function ManagementSettingsRoute() {
     const navigate = Route.useNavigate()

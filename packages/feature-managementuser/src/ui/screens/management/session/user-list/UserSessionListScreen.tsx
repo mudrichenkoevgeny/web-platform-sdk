@@ -25,6 +25,7 @@ import {
 } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 
+/** Automation test tags for {@link UserSessionListScreen}. */
 export const UserSessionListTestTags = {
   BACK_BUTTON: 'UserSessionList_BackButton',
   TITLE: 'UserSessionList_Title',
@@ -38,6 +39,7 @@ export const UserSessionListTestTags = {
 const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useUserSessionListStore((s) => s.dependencies)
   const screenState = useUserSessionListStore((s) => s.screenState)
   const onRefresh = useUserSessionListStore((s) => s.onRefresh)
   const onLoadNextPage = useUserSessionListStore((s) => s.onLoadNextPage)
@@ -89,7 +91,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
           data-testid={UserSessionListTestTags.REFRESH_BUTTON}
           aria-label={strings.refresh}
           onClick={onRefresh}
-          className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+          className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
         </button>
@@ -110,7 +112,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
               data-testid={UserSessionListTestTags.REVOKE_ALL_BUTTON}
               label={strings.revoke_all_sessions}
               onClick={onDeleteAllSessionsClick}
-              disabled={actionLoading}
+              disabled={actionLoading || (deps.currentUserId != null && deps.userId === deps.currentUserId)}
               className="bg-error hover:bg-error/90 text-error-foreground"
             />
           </div>
@@ -134,6 +136,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
                   enabled={!actionLoading}
                   onRevokeClick={() => onDeleteSessionClick(session.id!)}
                   onSessionClick={() => onSessionClick(session)}
+                  isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
                   strings={strings}
                 />
               ) : null
@@ -172,11 +175,15 @@ const UserSessionListController: React.FC<{ strings?: FeatureManagementUserStrin
   return <UserSessionListContent strings={strings} />
 }
 
+/** Props for {@link UserSessionListScreen}. */
 export interface UserSessionListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies required by store. */
   dependencies: UserSessionListStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureManagementUserStrings
 }
 
+/** Administrative screen component displaying paginated active sessions for a target user account. */
 export const UserSessionListScreen = forwardRef<HTMLDivElement, UserSessionListScreenProps>(
   ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
     return (

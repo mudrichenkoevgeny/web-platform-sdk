@@ -4,6 +4,7 @@ import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for global user session list screen. */
 export const Route = createFileRoute('/sessions/')({
   validateSearch: (rawSearch) => parseSearchParams(globalSessionListSearchSchema, rawSearch),
   component: function GlobalSessionListRoute() {
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/sessions/')({
         dependencies={{
           managementGetSessionsUseCase: managementDeps.managementGetSessionsUseCase,
           managementDeleteSessionUseCase: managementDeps.managementDeleteSessionUseCase,
+          currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),

@@ -1,6 +1,7 @@
 export * from './audit/domain/model/event/audit-event-mock.js'
 export * from './audit/network/model/event/audit-event-payload-mock.js'
 export * from './audit/repository/management-audit-repository-mock.js'
+export * from './network/paged-result-payload-mock.js'
 
 export * from './network/api/auth/login/self-management-login-api-mock.js'
 export * from './network/api/auth/reset-password/self-management-reset-password-api-mock.js'

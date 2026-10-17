@@ -4,6 +4,7 @@ import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for global user identifier list screen. */
 export const Route = createFileRoute('/identifiers/')({
   validateSearch: (rawSearch) => parseSearchParams(globalIdentifierListSearchSchema, rawSearch),
   component: function GlobalIdentifierListRoute() {
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/identifiers/')({
         dependencies={{
           managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase,
           managementDeleteIdentifierUseCase: managementDeps.managementDeleteIdentifierUseCase,
+          currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),

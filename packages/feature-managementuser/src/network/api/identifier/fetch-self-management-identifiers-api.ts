@@ -9,9 +9,10 @@ import type {
   UserIdentifierSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
+  pagedResultSchema,
+  SelfIdentifierListParamsParser,
   SelfManagementIdentifierRoutes,
   UserApiPaths,
-  pagedResultSchema,
   userIdentifierPrivatePayloadSchema,
   userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -34,21 +35,22 @@ export class FetchSelfManagementIdentifiersApi implements SelfManagementIdentifi
       userIdentifierId
     )
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return userIdentifierPrivatePayloadSchema.parse(raw)
+      const userIdentifierResponse = await this.client.request<unknown>(path)
+      return userIdentifierPrivatePayloadSchema.parse(userIdentifierResponse)
     })
   }
 
   public async getUserIdentifiers(
     params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
+    const queryMap = SelfIdentifierListParamsParser.toQueryMap(params)
     const path = appendQueryParamsToPath(
       SelfManagementIdentifierRoutes.GET_IDENTIFIERS,
-      params
+      queryMap
     )
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
+      const userIdentifierListResponse = await this.client.request<unknown>(path)
+      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(userIdentifierListResponse)
     })
   }
 

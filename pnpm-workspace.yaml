@@ -7,7 +7,7 @@ allowBuilds:
 
 catalog:
   # '@mudrichenkoevgeny/shared-foundation': '^0.0.55'
-  '@mudrichenkoevgeny/shared-foundation': 'file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.65.tgz'
+  '@mudrichenkoevgeny/shared-foundation': 'file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.67.tgz'
   '@tanstack/react-router': '^1.111.0'
   '@tanstack/router-plugin': '^1.111.0'
   '@testing-library/react': '^16.0.0'

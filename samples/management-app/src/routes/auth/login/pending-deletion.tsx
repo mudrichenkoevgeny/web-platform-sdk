@@ -3,6 +3,7 @@ import { ManagementAuthNavigation, ManagementMainNavigation } from '@mudrichenko
 import { PendingDeletionScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for pending account deletion recovery screen. */
 export const Route = createFileRoute('/auth/login/pending-deletion')({
   beforeLoad: () => {
     // Auth guard is handled at RootContent level

@@ -17,6 +17,7 @@ import type {
 import {
   OpenIdentifierRoutes,
   pagedResultSchema,
+  SelfIdentifierListParamsParser,
   UserApiPaths,
   userIdentifierPrivatePayloadSchema,
   userIdentifierSummaryPayloadSchema
@@ -37,21 +38,22 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
   ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
     const path = OpenIdentifierRoutes.GET_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, userIdentifierId)
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return userIdentifierPrivatePayloadSchema.parse(raw)
+      const userIdentifierResponse = await this.client.request<unknown>(path)
+      return userIdentifierPrivatePayloadSchema.parse(userIdentifierResponse)
     })
   }
 
   public async getUserIdentifiers(
     params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
+    const queryMap = SelfIdentifierListParamsParser.toQueryMap(params)
     const path = appendQueryParamsToPath(
       OpenIdentifierRoutes.GET_IDENTIFIERS,
-      params
+      queryMap
     )
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(raw)
+      const userIdentifierListResponse = await this.client.request<unknown>(path)
+      return pagedResultSchema(userIdentifierSummaryPayloadSchema).parse(userIdentifierListResponse)
     })
   }
 

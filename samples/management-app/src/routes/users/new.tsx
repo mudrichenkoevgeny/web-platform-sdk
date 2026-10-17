@@ -4,6 +4,7 @@ import { ManagementUsersNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for create new user account screen. */
 export const Route = createFileRoute('/users/new')({
   component: function CreateUserRoute() {
     const { managementDeps } = Route.useRouteContext()

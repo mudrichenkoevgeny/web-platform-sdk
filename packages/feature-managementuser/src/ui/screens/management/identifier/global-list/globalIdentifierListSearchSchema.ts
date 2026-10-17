@@ -8,9 +8,9 @@ export const globalIdentifierListSearchSchema = z.object({
   page_size: numberParam,
   sort_by: z.string().optional(),
   sort_order: z.enum(['asc', 'desc']).optional(),
-  user_auth_providers: stringArrayParam,
-  user_ids: stringArrayParam,
-  identifiers: stringArrayParam
+  user_auth_provider: stringArrayParam,
+  user_id: stringArrayParam,
+  identifier: stringArrayParam
 })
 
 export type GlobalIdentifierListSearchParams = z.infer<typeof globalIdentifierListSearchSchema>

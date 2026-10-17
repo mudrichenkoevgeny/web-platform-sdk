@@ -107,7 +107,7 @@ describe('SessionDetailScreen', () => {
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('navigates to profile when clicking user for session matching currentUserId', async () => {
+  it('navigates to user detail when clicking user for session matching currentUserId', async () => {
     const deps = createMockDeps(false)
     deps.currentUserId = mockSession.userId
     const user = userEvent.setup()
@@ -119,7 +119,6 @@ describe('SessionDetailScreen', () => {
     )
 
     await user.click(screen.getByTestId(SessionDetailTestTags.USER_ROW))
-    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
-    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+    expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(mockSession.userId)
   })
 })

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ManagementAuthNavigation, ManagementMainNavigation, type AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginWelcomeScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
+/** Route configuration for login options welcome screen. */
 export const Route = createFileRoute('/auth/login/')({
   beforeLoad: () => {
     // Auth guard is handled at RootContent level

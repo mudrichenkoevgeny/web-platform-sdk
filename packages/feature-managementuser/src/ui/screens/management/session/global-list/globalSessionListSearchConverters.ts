@@ -3,11 +3,20 @@ import type { ManagementGlobalSessionListParams } from '@mudrichenkoevgeny/share
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GlobalSessionListSearchParams } from '@/ui/screens/management/session/global-list/globalSessionListSearchSchema'
 
+/** State representation of global session list sorting and filtering options. */
 export interface GlobalSessionListingOptionsState {
+  /** Selected sorting option state. */
   sortState: ListingSortState | null
+  /** Map of filter identifiers to their current filter states. */
   filterStates: Record<string, ListingFilterState>
 }
 
+/**
+ * Converts global session list search parameters into listing option states.
+ *
+ * @param params - Search parameters in snake_case (URL) or camelCase (internal) format
+ * @returns Parsed listing options state containing sort and filter states
+ */
 export const searchParamsToListingStates = (
   params?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams
 ): GlobalSessionListingOptionsState => {
@@ -15,13 +24,20 @@ export const searchParamsToListingStates = (
     return { sortState: null, filterStates: {} }
   }
 
-  const p = params as ManagementGlobalSessionListParams & GlobalSessionListSearchParams
-  const sortBy = 'sort_by' in params ? params.sort_by : p.sortBy
-  const sortOrder = 'sort_order' in params ? params.sort_order : p.sortOrder
-  const userAuthProviders = 'user_auth_providers' in params ? params.user_auth_providers : p.userAuthProviders
-  const clientTypes = 'client_types' in params ? params.client_types : p.clientTypes
-  const identifiers = 'identifiers' in params ? params.identifiers : p.identifiers
-  const ipAddresses = 'ip_addresses' in params ? params.ip_addresses : p.ipAddresses
+  const sortBy = 'sort_by' in params ? params.sort_by : ('sortBy' in params ? params.sortBy : undefined)
+  const sortOrder = 'sort_order' in params ? params.sort_order : ('sortOrder' in params ? params.sortOrder : undefined)
+  const userAuthProviders = 'user_auth_provider' in params
+    ? params.user_auth_provider
+    : ('user_auth_providers' in params ? params.user_auth_providers : ('userAuthProviders' in params ? params.userAuthProviders : undefined))
+  const clientTypes = 'client_type' in params
+    ? params.client_type
+    : ('client_types' in params ? params.client_types : ('clientTypes' in params ? params.clientTypes : undefined))
+  const identifiers = 'identifier' in params
+    ? params.identifier
+    : ('identifiers' in params ? params.identifiers : undefined)
+  const ipAddresses = 'ip_address' in params
+    ? params.ip_address
+    : ('ip_addresses' in params ? params.ip_addresses : ('ipAddresses' in params ? params.ipAddresses : undefined))
 
   const sortState: ListingSortState | null = sortBy
     ? {
@@ -63,43 +79,50 @@ export const searchParamsToListingStates = (
   return { sortState, filterStates }
 }
 
+/**
+ * Converts listing option states back into global session search parameter format.
+ *
+ * @param sortState - Current sorting state
+ * @param filterStates - Map of current filter states
+ * @returns Search parameter object suitable for URL parameter validation
+ */
 export const listingStatesToSearchParams = (
   sortState: ListingSortState | null,
   filterStates: Record<string, ListingFilterState>
 ): GlobalSessionListSearchParams => {
-  const params: GlobalSessionListSearchParams = {
+  const searchParams: GlobalSessionListSearchParams = {
     sort_by: 'created_at',
     sort_order: SortOrder.DESC,
-    user_auth_providers: [],
-    client_types: [],
-    identifiers: [],
-    ip_addresses: []
+    user_auth_provider: [],
+    client_type: [],
+    identifier: [],
+    ip_address: []
   }
 
   if (sortState) {
-    params.sort_by = sortState.optionId
-    params.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
+    searchParams.sort_by = sortState.optionId
+    searchParams.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
   const providerFilter = filterStates[UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER]
   if (providerFilter?.type === 'choice' && providerFilter.selectedIds.size > 0) {
-    params.user_auth_providers = Array.from(providerFilter.selectedIds)
+    searchParams.user_auth_provider = Array.from(providerFilter.selectedIds)
   }
 
   const clientTypeFilter = filterStates[UserFilterValues.UserSessionFilterValues.CLIENT_TYPE]
   if (clientTypeFilter?.type === 'choice' && clientTypeFilter.selectedIds.size > 0) {
-    params.client_types = Array.from(clientTypeFilter.selectedIds)
+    searchParams.client_type = Array.from(clientTypeFilter.selectedIds)
   }
 
   const identifierFilter = filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER]
   if (identifierFilter?.type === 'text' && identifierFilter.value.trim()) {
-    params.identifiers = [identifierFilter.value.trim()]
+    searchParams.identifier = [identifierFilter.value.trim()]
   }
 
   const ipFilter = filterStates[UserFilterValues.UserSessionFilterValues.IP_ADDRESS]
   if (ipFilter?.type === 'text' && ipFilter.value.trim()) {
-    params.ip_addresses = [ipFilter.value.trim()]
+    searchParams.ip_address = [ipFilter.value.trim()]
   }
 
-  return params
+  return searchParams
 }

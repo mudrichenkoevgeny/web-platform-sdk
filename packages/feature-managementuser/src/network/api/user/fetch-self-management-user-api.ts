@@ -15,8 +15,8 @@ export class FetchSelfManagementUserApi implements SelfManagementUserApi {
 
   public async getUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(SelfManagementUserRoutes.GET_USER)
-      return userPrivatePayloadSchema.parse(raw)
+      const userResponse = await this.client.request<unknown>(SelfManagementUserRoutes.GET_USER)
+      return userPrivatePayloadSchema.parse(userResponse)
     })
   }
 }

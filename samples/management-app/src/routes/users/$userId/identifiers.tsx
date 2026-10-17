@@ -1,10 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UserIdentifierListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { managementUserIdentifierListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  globalIdentifierListSearchSchema,
+  UserIdentifierListScreen
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for user-specific identifier list screen. */
 export const Route = createFileRoute('/users/$userId/identifiers')({
-  validateSearch: (rawSearch) => managementUserIdentifierListParamsSchema.parse(rawSearch),
+  validateSearch: (rawSearch) => parseSearchParams(globalIdentifierListSearchSchema, rawSearch),
   component: function UserIdentifierListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const { userId } = Route.useParams()
@@ -21,6 +26,7 @@ export const Route = createFileRoute('/users/$userId/identifiers')({
         dependencies={{
           userId: toUserIdOrThrow(userId),
           managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase,
+          currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),

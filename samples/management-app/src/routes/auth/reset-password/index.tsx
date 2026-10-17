@@ -3,6 +3,7 @@ import { ManagementAuthNavigation, ManagementMainNavigation } from '@mudrichenko
 import { ResetEmailPasswordScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for email password reset screen. */
 export const Route = createFileRoute('/auth/reset-password/')({
   beforeLoad: () => {
     // Auth guard is handled at RootContent level

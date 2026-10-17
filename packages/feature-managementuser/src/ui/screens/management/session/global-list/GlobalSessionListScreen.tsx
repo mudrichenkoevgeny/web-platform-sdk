@@ -31,6 +31,7 @@ import {
 } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 
+/** Automation test tags for {@link GlobalSessionListScreen}. */
 export const GlobalSessionListTestTags = {
   BACK_BUTTON: 'GlobalSessionList_BackButton',
   TITLE: 'GlobalSessionList_Title',
@@ -189,7 +190,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
                   session={session}
                   onSessionClick={() => onSessionClick(session)}
                   onRevokeClick={() => onDeleteSessionClick(session.userId, session.id!)}
-                  isCurrentSession={false}
+                  isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
                 />
               ) : null
             ))}
@@ -235,11 +236,15 @@ const GlobalSessionListController: React.FC<{ strings?: FeatureManagementUserStr
   return <GlobalSessionListContent strings={strings} />
 }
 
+/** Props for {@link GlobalSessionListScreen}. */
 export interface GlobalSessionListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies injected into screen store. */
   dependencies: GlobalSessionListStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureManagementUserStrings
 }
 
+/** Screen displaying a paginated global list of user sessions across all accounts. */
 export const GlobalSessionListScreen = forwardRef<HTMLDivElement, GlobalSessionListScreenProps>(
   ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
     return (

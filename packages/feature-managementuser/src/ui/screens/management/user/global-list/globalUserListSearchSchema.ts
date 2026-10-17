@@ -9,9 +9,9 @@ export const globalUserListSearchSchema = z.object({
   page_size: numberParam,
   sort_by: z.string().optional(),
   sort_order: z.enum(['asc', 'desc']).optional(),
-  user_roles: stringArrayParam,
-  account_statuses: stringArrayParam,
-  account_lockout_types: stringArrayParam,
+  user_role: stringArrayParam,
+  account_status: stringArrayParam,
+  account_lockout_type: stringArrayParam,
   authority_level_from: numberParam,
   authority_level_to: numberParam,
   is_totp_enabled: booleanParam

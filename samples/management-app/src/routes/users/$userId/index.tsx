@@ -3,6 +3,7 @@ import { UserDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-ma
 import { ManagementUsersNavigation, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for user detail screen. */
 export const Route = createFileRoute('/users/$userId/')({
   component: function UserDetailRoute() {
     const { managementDeps } = Route.useRouteContext()
@@ -18,17 +19,18 @@ export const Route = createFileRoute('/users/$userId/')({
       <UserDetailScreen
         dependencies={{
           userId: toUserIdOrThrow(userId),
+          currentUserId: managementDeps.currentUserId,
           getUserUseCase: managementDeps.getUserUseCase,
           updateUserUseCase: managementDeps.updateUserUseCase,
           deleteUserUseCase: managementDeps.deleteUserUseCase,
           managementDisableTotpUseCase: managementDeps.managementDisableTotpUseCase,
           onNavigateToSessions: (uid) =>
-            navigate({ to: '/users/$userId/sessions', params: { userId: uid }, search: (prev: Record<string, unknown>) => prev }),
+            navigate({ to: '/users/$userId/sessions', params: { userId: uid }, search: {} }),
           onNavigateToIdentifiers: (uid) =>
-            navigate({ to: '/users/$userId/identifiers', params: { userId: uid }, search: (prev: Record<string, unknown>) => prev }),
+            navigate({ to: '/users/$userId/identifiers', params: { userId: uid }, search: {} }),
           onNavigateToAuditEvents: (uid) =>
-            navigate({ to: '/audit/events', search: (prev: Record<string, unknown>) => ({ ...prev, actor_ids: [uid] }) }),
-          onBack: () => navigateUp({ to: ManagementUsersNavigation.UserList.ROUTE, search: (prev: Record<string, unknown>) => prev })
+            navigate({ to: '/audit/events', search: (prev) => ({ ...prev, actor_id: [uid] }) }),
+          onBack: () => navigateUp({ to: ManagementUsersNavigation.UserList.ROUTE, search: (prev) => prev })
         }}
       />
     )

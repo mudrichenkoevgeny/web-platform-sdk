@@ -52,4 +52,23 @@ describe('GlobalUserListScreen', () => {
     expect(await screen.findByTestId(GlobalUserListTestTags.TITLE)).toBeDefined()
     expect(deps.getUsersUseCase.execute).toHaveBeenCalledTimes(1)
   })
+
+  it('navigates to profile when clicking own user card', async () => {
+    const mockUser = userDetailsMock()
+    const deps = createMockDeps()
+    deps.currentUserId = mockUser.id
+    deps.onNavigateToProfile = vi.fn()
+
+    render(
+      <ComponentTestHarness>
+        <GlobalUserListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    const userCard = await screen.findByTestId(`UserItem_${mockUser.id}`)
+    userCard.click()
+
+    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
+    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+  })
 })

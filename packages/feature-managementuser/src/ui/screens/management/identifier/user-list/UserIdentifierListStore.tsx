@@ -1,8 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { managementUserIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementUserIdentifierListParams, UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  ManagementUserIdentifierListParamsParser,
+  managementUserIdentifierListParamsSchema
+} from '@mudrichenkoevgeny/shared-foundation'
+import type {
+  ManagementUserIdentifierListParams,
+  UserIdentifierSummary,
+  UserIdentifierId,
+  UserId
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -14,47 +22,88 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/management-get-identifiers-use-case'
 
+function isRecord(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null
+}
+
+/** Discriminated union representing active screen state for {@link UserIdentifierListScreen}. */
 export type UserIdentifierListScreenState =
   | {
+      /** Loading state while user identifiers list is initially fetched. */
       status: 'loading'
     }
   | {
+      /** Error state when loading user identifiers list failed. */
       status: 'error'
+      /** Error instance describing the failure. */
       error: AppError
     }
   | {
+      /** Content state containing paginated user identifier items. */
       status: 'content'
+      /** Pagination state wrapping loaded user identifier summaries. */
       paging: PaginationState<UserIdentifierSummary>
+      /** Indicates whether a background action is currently loading. */
       actionLoading: boolean
+      /** Action error instance if a background operation failed. */
       actionError: AppError | null
     }
 
+/** External dependencies required by {@link createUserIdentifierListStore}. */
 export interface UserIdentifierListStoreDependencies {
+  /** Target user ID whose identifiers are displayed. */
   userId: UserId
+  /** Optional active session identifier ID. */
+  currentIdentifierId?: UserIdentifierId | null
+  /** Optional currently authenticated user ID. */
+  currentUserId?: UserId | null
+  /** Administrative use case for fetching user identifiers. */
   managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
+  /** Optional navigation callback when an identifier item is selected. */
   onIdentifierSelect?: (identifierId: string) => void
+  /** Navigation callback to return to previous screen. */
   onBack: () => void
+  /** Optional initial search parameters. */
   searchParams?: ManagementUserIdentifierListParams
+  /** Optional callback when search parameters change. */
   onSearchParamsChanged?: (params: ManagementUserIdentifierListParams) => void
 }
 
+/** State and actions managed by {@link UserIdentifierListStore}. */
 export interface UserIdentifierListStoreState {
+  /** Dependencies injected into store. */
   dependencies: UserIdentifierListStoreDependencies
+  /** Current screen UI state. */
   screenState: UserIdentifierListScreenState
+  /** Initializes screen state by loading first page of identifiers. */
   initScreen: (searchParams?: ManagementUserIdentifierListParams) => Promise<void>
+  /** Updates search parameters and reloads list from first page. */
   onSearchParamsUpdated: (searchParams?: ManagementUserIdentifierListParams) => Promise<void>
+  /** Fetches next page of user identifiers when infinite scrolling. */
   onLoadNextPage: () => Promise<void>
+  /** Refreshes user identifiers list from first page. */
   onRefresh: () => Promise<void>
+  /** Callback triggered when an identifier card is clicked. */
   onIdentifierClick: (identifierId: string) => void
+  /** Callback triggered when an identifier item is deleted. */
   onIdentifierDeleted: (identifierId: UserIdentifierId) => void
+  /** Callback triggered when back button is clicked. */
   onBackClick: () => void
 }
 
+/** Type alias for Zustand store instance returned by {@link createUserIdentifierListStore}. */
 export type UserIdentifierListStore = ReturnType<typeof createUserIdentifierListStore>
 
 type SetState = StoreApi<UserIdentifierListStoreState>['setState']
 type GetState = StoreApi<UserIdentifierListStoreState>['getState']
 
+/**
+ * Creates a reactive Zustand store instance for user identifier list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createUserIdentifierListStore = (
   deps: UserIdentifierListStoreDependencies,
   initialState?: UserIdentifierListScreenState
@@ -74,19 +123,25 @@ export const createUserIdentifierListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const searchParams = overrideParams ?? activeDeps.searchParams
-      const result = await activeDeps.managementGetIdentifiersUseCase.execute(
+      const rawParams = overrideParams ?? activeDeps.searchParams
+      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const parsedParams = ManagementUserIdentifierListParamsParser.parse({
+        userId: activeDeps.userId,
+        ...searchRecord
+      })
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
+
+      const userIdentifiersResult = await activeDeps.managementGetIdentifiersUseCase.execute(
         managementUserIdentifierListParamsSchema.parse({
-          userIds: [activeDeps.userId],
-          ...searchParams,
-          pageNumber
+          ...parsedParams,
+          pageNumber: effectivePageNumber
         })
       )
 
-      if (isSuccess(result)) {
+      if (isSuccess(userIdentifiersResult)) {
         const current = get().screenState
         const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
-        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+        const nextPaging = appendResultToPaginationState(currentPaging, userIdentifiersResult.data)
 
         if (current.status === 'content') {
           set({
@@ -111,14 +166,14 @@ export const createUserIdentifierListStore = (
           set({
             screenState: {
               ...current,
-              actionError: result.error
+              actionError: userIdentifiersResult.error
             }
           })
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: userIdentifiersResult.error
             }
           })
         }
@@ -138,7 +193,8 @@ export const createUserIdentifierListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      const startPage = searchParams?.pageNumber ?? 1
+      const parsedParams = isRecord(searchParams) ? ManagementUserIdentifierListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
@@ -151,7 +207,8 @@ export const createUserIdentifierListStore = (
           actionError: null
         }
       })
-      const startPage = searchParams?.pageNumber ?? 1
+      const parsedParams = isRecord(searchParams) ? ManagementUserIdentifierListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
@@ -203,12 +260,17 @@ export const createUserIdentifierListStore = (
 
 const UserIdentifierListContext = createContext<UserIdentifierListStore | null>(null)
 
+/** Props for {@link UserIdentifierListProvider}. */
 export interface UserIdentifierListProviderProps {
+  /** Injected dependencies. */
   dependencies: UserIdentifierListStoreDependencies
+  /** Optional initial state override. */
   initialState?: UserIdentifierListScreenState
+  /** React child nodes. */
   children: React.ReactNode
 }
 
+/** Context provider wrapping React components with user identifier list store state. */
 export const UserIdentifierListProvider: React.FC<UserIdentifierListProviderProps> = ({
   dependencies,
   initialState,
@@ -227,6 +289,12 @@ export const UserIdentifierListProvider: React.FC<UserIdentifierListProviderProp
   )
 }
 
+/**
+ * Custom React hook for selecting reactive state from {@link UserIdentifierListStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
 export const useUserIdentifierListStore = <T,>(
   selector: (state: UserIdentifierListStoreState) => T
 ): T => {

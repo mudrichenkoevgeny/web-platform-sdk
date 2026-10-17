@@ -3,6 +3,7 @@ import { AppType, ManagementAuthNavigation, ManagementMainNavigation, type Accou
 import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for login by email screen. */
 export const Route = createFileRoute('/auth/login/email')({
   beforeLoad: () => {
     // Auth guard is handled at RootContent level for management app

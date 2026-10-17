@@ -4,6 +4,7 @@ import { ManagementSelfUserNavigation, selfSessionListParamsSchema, toUserSessio
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user session detail screen. */
 export const Route = createFileRoute('/user/sessions/$sessionId')({
   component: function UserSessionDetailRoute() {
     const { appComponent } = Route.useRouteContext()
@@ -27,7 +28,7 @@ export const Route = createFileRoute('/user/sessions/$sessionId')({
           onBack: () =>
             navigateUp({
               to: ManagementSelfUserNavigation.SessionList.ROUTE,
-              search: (raw) => cleanSearchParams(selfSessionListParamsSchema.parse(raw) as Record<string, unknown>)
+              search: (raw) => cleanSearchParams(selfSessionListParamsSchema.parse(raw))
             })
         }}
       />

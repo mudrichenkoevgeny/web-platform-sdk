@@ -4,6 +4,7 @@ import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for global audit event list screen. */
 export const Route = createFileRoute('/audit/events/')({
   validateSearch: (rawSearch) => parseSearchParams(auditEventListSearchSchema, rawSearch),
   component: function AuditEventsRoute() {

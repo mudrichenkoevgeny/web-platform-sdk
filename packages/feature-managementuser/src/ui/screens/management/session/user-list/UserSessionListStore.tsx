@@ -16,51 +16,92 @@ import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/m
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
 import type { ManagementGetSessionsUseCase } from '@/usecase/session/management-get-sessions-use-case'
 
+/** Discriminated union representing screen states for user-specific session list view. */
 export type UserSessionListScreenState =
   | {
+      /** Loading state while user sessions list is being loaded initially. */
       status: 'loading'
     }
   | {
+      /** Error state when loading user sessions list failed. */
       status: 'error'
+      /** Error instance describing the failure. */
       error: AppError
     }
   | {
+      /** Content state containing paginated user sessions. */
       status: 'content'
+      /** Current pagination state for user session items. */
       paging: PaginationState<UserSessionSummary>
+      /** Whether a background session deletion action is currently loading. */
       actionLoading: boolean
+      /** Action error instance if deletion action failed. */
       actionError: AppError | null
     }
 
+/** External dependencies required by {@link createUserSessionListStore}. */
 export interface UserSessionListStoreDependencies {
+  /** Optional target user ID whose sessions are listed. */
   userId?: UserId | null
+  /** Optional current session ID. */
+  currentSessionId?: UserSessionId | null
+  /** Optional current user ID. */
+  currentUserId?: UserId | null
+  /** Use case for fetching user sessions. */
   managementGetSessionsUseCase: ManagementGetSessionsUseCase
+  /** Use case for deleting a user session. */
   managementDeleteSessionUseCase: ManagementDeleteSessionUseCase
+  /** Use case for deleting all user sessions. */
   managementDeleteAllUserSessionsUseCase: ManagementDeleteAllUserSessionsUseCase
+  /** Navigation callback to open session detail. */
   onNavigateToSessionDetail?: (session: UserSessionSummary) => void
+  /** Navigation callback to return to previous screen. */
   onBack: () => void
+  /** Optional initial search parameters. */
   searchParams?: ManagementUserSessionListParams
+  /** Optional callback when search parameters change. */
   onSearchParamsChanged?: (params: ManagementUserSessionListParams) => void
 }
 
+/** Reactive store state and action interface for user-specific session list screen. */
 export interface UserSessionListStoreState {
+  /** Dependencies injected into store. */
   dependencies: UserSessionListStoreDependencies
+  /** Current screen UI state. */
   screenState: UserSessionListScreenState
+  /** Initializes screen state by fetching first page of user sessions. */
   initScreen: (searchParams?: ManagementUserSessionListParams) => Promise<void>
+  /** Updates search parameters and reloads user sessions list from first page. */
   onSearchParamsUpdated: (searchParams?: ManagementUserSessionListParams) => Promise<void>
+  /** Fetches next page of user sessions when scrolling. */
   onLoadNextPage: () => Promise<void>
+  /** Refreshes user sessions list from first page. */
   onRefresh: () => Promise<void>
+  /** Handles click on session item. */
   onSessionClick: (session: UserSessionSummary) => void
+  /** Handles deletion of a specific user session. */
   onDeleteSessionClick: (sessionId: string) => Promise<void>
+  /** Handles deletion of all sessions for target user. */
   onDeleteAllSessionsClick: () => Promise<void>
+  /** Handles external session revocation event. */
   onSessionRevoked: (sessionId: UserSessionId) => void
+  /** Handles back navigation button click. */
   onBackClick: () => void
 }
 
+/** Type alias for Zustand store instance returned by {@link createUserSessionListStore}. */
 export type UserSessionListStore = ReturnType<typeof createUserSessionListStore>
 
 type SetState = StoreApi<UserSessionListStoreState>['setState']
 type GetState = StoreApi<UserSessionListStoreState>['getState']
 
+/**
+ * Creates a reactive Zustand store instance for user-specific session list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createUserSessionListStore = (
   deps: UserSessionListStoreDependencies,
   initialState?: UserSessionListScreenState
@@ -81,19 +122,18 @@ export const createUserSessionListStore = (
     try {
       const activeDeps = get().dependencies
       const searchParams = overrideParams ?? activeDeps.searchParams
-      const userIds = activeDeps.userId ? [activeDeps.userId] : []
-      const result = await activeDeps.managementGetSessionsUseCase.execute(
+      const sessionsResult = await activeDeps.managementGetSessionsUseCase.execute(
         managementUserSessionListParamsSchema.parse({
-          userIds,
+          userId: activeDeps.userId,
           ...searchParams,
           pageNumber
         })
       )
 
-      if (isSuccess(result)) {
+      if (isSuccess(sessionsResult)) {
         const current = get().screenState
         const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSessionSummary>()
-        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+        const nextPaging = appendResultToPaginationState(currentPaging, sessionsResult.data)
 
         if (current.status === 'content') {
           set({
@@ -120,14 +160,14 @@ export const createUserSessionListStore = (
             screenState: {
               ...current,
               actionLoading: false,
-              actionError: result.error
+              actionError: sessionsResult.error
             }
           })
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: sessionsResult.error
             }
           })
         }
@@ -193,13 +233,13 @@ export const createUserSessionListStore = (
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
 
-      const result = await deps.managementDeleteSessionUseCase.execute(deps.userId, sessionId)
-      if (isSuccess(result)) {
+      const deleteSessionResult = await deps.managementDeleteSessionUseCase.execute(deps.userId, sessionId)
+      if (isSuccess(deleteSessionResult)) {
         await fetchPage(set, get, 1)
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
-          set({ screenState: { ...updated, actionLoading: false, actionError: result.error } })
+          set({ screenState: { ...updated, actionLoading: false, actionError: deleteSessionResult.error } })
         }
       }
     },
@@ -212,13 +252,13 @@ export const createUserSessionListStore = (
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
 
-      const result = await deps.managementDeleteAllUserSessionsUseCase.execute(deps.userId)
-      if (isSuccess(result)) {
+      const deleteAllSessionsResult = await deps.managementDeleteAllUserSessionsUseCase.execute(deps.userId)
+      if (isSuccess(deleteAllSessionsResult)) {
         await fetchPage(set, get, 1)
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
-          set({ screenState: { ...updated, actionLoading: false, actionError: result.error } })
+          set({ screenState: { ...updated, actionLoading: false, actionError: deleteAllSessionsResult.error } })
         }
       }
     },
@@ -250,12 +290,17 @@ export const createUserSessionListStore = (
 
 const UserSessionListContext = createContext<UserSessionListStore | null>(null)
 
+/** Props for {@link UserSessionListProvider}. */
 export interface UserSessionListProviderProps {
+  /** Injected dependencies. */
   dependencies: UserSessionListStoreDependencies
+  /** Optional initial state override. */
   initialState?: UserSessionListScreenState
+  /** React child nodes. */
   children: React.ReactNode
 }
 
+/** Context provider wrapping React components with user session list store state. */
 export const UserSessionListProvider: React.FC<UserSessionListProviderProps> = ({
   dependencies,
   initialState,
@@ -274,6 +319,12 @@ export const UserSessionListProvider: React.FC<UserSessionListProviderProps> = (
   )
 }
 
+/**
+ * Custom React hook for selecting reactive state from {@link UserSessionListStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
 export const useUserSessionListStore = <T,>(
   selector: (state: UserSessionListStoreState) => T
 ): T => {

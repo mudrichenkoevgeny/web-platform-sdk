@@ -10,13 +10,16 @@ export function coerceSearchNumbers(raw: Record<string, unknown>): Record<string
     return {}
   }
   const result: Record<string, unknown> = { ...raw }
-  for (const key of Object.keys(result)) {
-    const val = result[key]
+  for (const [key, val] of Object.entries(result)) {
     if (typeof val === 'string' && /^\d+$/.test(val.trim())) {
       result[key] = parseInt(val.trim(), 10)
     }
   }
   return result
+}
+
+function isRecord(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val)
 }
 
 /**
@@ -26,25 +29,26 @@ export function coerceSearchNumbers(raw: Record<string, unknown>): Record<string
  * @param params - Search parameter object returned from Zod schema parse
  * @returns Cleaned search parameter object without empty array properties or default pagination
  */
-export function cleanSearchParams<T extends object>(params: T): T {
-  const result: Record<string, unknown> = {}
-  for (const key of Object.keys(params)) {
-    const val = (params as Record<string, unknown>)[key]
+export function cleanSearchParams<T extends Record<string, unknown>>(params: T): T {
+  const result: T = { ...params }
+  for (const [key, val] of Object.entries(params)) {
     if (Array.isArray(val)) {
-      if (val.length > 0) {
-        result[key] = val
+      if (val.length === 0) {
+        delete result[key]
       }
-    } else if (key === 'pageNumber' && val === 1) {
-      // Omit default pageNumber = 1 from URL query
-      continue
-    } else if (key === 'pageSize' && val === 20) {
-      // Omit default pageSize = 20 from URL query
-      continue
-    } else if (val !== null && val !== undefined) {
-      result[key] = val
+    } else if ((key === 'pageNumber' || key === 'page_number') && val === 1) {
+      delete result[key]
+    } else if ((key === 'pageSize' || key === 'page_size') && val === 20) {
+      delete result[key]
+    } else if ((key === 'sortOrder' || key === 'sort_order') && val === 'desc') {
+      delete result[key]
+    } else if ((key === 'sortBy' || key === 'sort_by') && val === 'created_at') {
+      delete result[key]
+    } else if (val === null || val === undefined || val === '') {
+      delete result[key]
     }
   }
-  return result as T
+  return result
 }
 
 /**
@@ -60,5 +64,8 @@ export function parseSearchParams<T>(
 ): T {
   const coerced = coerceSearchNumbers(rawSearch)
   const parsed = schema.parse(coerced)
-  return cleanSearchParams(parsed as object) as T
+  if (isRecord(parsed)) {
+    return cleanSearchParams(parsed)
+  }
+  return parsed
 }

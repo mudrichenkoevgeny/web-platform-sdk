@@ -3,6 +3,7 @@ import { EditGlobalSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-fe
 import { ManagementSettingsNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for administrative global settings screen. */
 export const Route = createFileRoute('/settings/global')({
   component: function EditGlobalSettingsRoute() {
     const { managementDeps } = Route.useRouteContext()

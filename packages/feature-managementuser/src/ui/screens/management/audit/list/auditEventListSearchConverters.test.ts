@@ -55,8 +55,8 @@ describe('auditEventListSearchConverters', () => {
 
     expect(result.sort_by).toBe('created_at')
     expect(result.sort_order).toBe(SortOrder.ASC)
-    expect(result.actor_ids).toEqual(['user-456'])
-    expect(result.statuses).toEqual(['success'])
+    expect(result.actor_id).toEqual(['user-456'])
+    expect(result.status).toEqual(['success'])
   })
 
   it('handles empty inputs gracefully', () => {

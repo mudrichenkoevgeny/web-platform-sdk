@@ -24,6 +24,7 @@ import {
 } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
+/** Automation test tags for {@link UserIdentifierListScreen}. */
 export const UserIdentifierListTestTags = {
   BACK_BUTTON: 'UserIdentifiers_BackButton',
   TITLE: 'UserIdentifiers_Title',
@@ -36,6 +37,7 @@ export const UserIdentifierListTestTags = {
 const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
   strings = enManagementUserStrings
 }) => {
+  const deps = useUserIdentifierListStore((s) => s.dependencies)
   const screenState = useUserIdentifierListStore((s) => s.screenState)
   const onRefresh = useUserIdentifierListStore((s) => s.onRefresh)
   const onLoadNextPage = useUserIdentifierListStore((s) => s.onLoadNextPage)
@@ -115,7 +117,7 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
                   key={identifier.id}
                   identifier={identifier}
                   onClick={() => onIdentifierClick(identifier.id!)}
-                  isCurrentIdentifier={false}
+                  isCurrentIdentifier={(deps.currentUserId != null && identifier.userId === deps.currentUserId) || (deps.currentIdentifierId != null && identifier.id === deps.currentIdentifierId)}
                 />
               ) : null
             ))}
@@ -153,11 +155,15 @@ const UserIdentifierListController: React.FC<{ strings?: FeatureManagementUserSt
   return <UserIdentifierListContent strings={strings} />
 }
 
+/** Props for {@link UserIdentifierListScreen}. */
 export interface UserIdentifierListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies injected into screen store. */
   dependencies: UserIdentifierListStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureManagementUserStrings
 }
 
+/** Screen displaying a paginated list of user identifiers for a specific target user. */
 export const UserIdentifierListScreen = forwardRef<HTMLDivElement, UserIdentifierListScreenProps>(
   ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
     return (

@@ -3,6 +3,7 @@ import { TotpRecoveryCodesScreen } from '@mudrichenkoevgeny/web-platform-sdk-fea
 import { ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user TOTP MFA recovery codes screen. */
 export const Route = createFileRoute('/user/totp/recovery')({
   component: function TotpRecoveryCodesRoute() {
     const { appComponent } = Route.useRouteContext()

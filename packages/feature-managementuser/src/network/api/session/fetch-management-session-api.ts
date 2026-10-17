@@ -9,13 +9,21 @@ import type {
   UserSessionSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
+  ManagementGlobalSessionListParamsParser,
   ManagementSessionsRoutes,
+  ManagementUserSessionListParamsParser,
   pagedResultSchema,
   UserApiPaths,
   userSessionPrivatePayloadSchema,
   userSessionSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
+
+function isUserSpecificSessionParams(
+  params: ManagementGlobalSessionListParams | ManagementUserSessionListParams | null | undefined
+): params is ManagementUserSessionListParams {
+  return typeof params === 'object' && params !== null && 'userId' in params && typeof params.userId === 'string' && params.userId.length > 0
+}
 
 /** {@link ManagementSessionApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementSessionApi implements ManagementSessionApi {
@@ -29,26 +37,29 @@ export class FetchManagementSessionApi implements ManagementSessionApi {
   public async getSessions(
     params?: ManagementGlobalSessionListParams | ManagementUserSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
-    const route = params && 'userId' in params && params.userId
-      ? ManagementSessionsRoutes.GET_USER_SESSIONS.replace(`{${UserApiPaths.USER_ID}}`, params.userId)
-      : ManagementSessionsRoutes.GET_SESSIONS
-    let queryParams: Record<string, unknown> | null = null
-    if (params) {
-      const { userId: _ignored, ...rest } = params as Record<string, unknown>
-      queryParams = rest
+    let route: string
+    let queryMap: Record<string, unknown> | null = null
+
+    if (isUserSpecificSessionParams(params)) {
+      route = ManagementSessionsRoutes.GET_USER_SESSIONS.replace(`{${UserApiPaths.USER_ID}}`, params.userId)
+      queryMap = ManagementUserSessionListParamsParser.toQueryMap(params)
+    } else {
+      route = ManagementSessionsRoutes.GET_SESSIONS
+      queryMap = ManagementGlobalSessionListParamsParser.toQueryMap(params)
     }
-    const path = appendQueryParamsToPath(route, queryParams)
+
+    const path = appendQueryParamsToPath(route, queryMap)
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(raw)
+      const userSessionListResponse = await this.client.request<unknown>(path)
+      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(userSessionListResponse)
     })
   }
 
   public async getSession(sessionId: string): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     const path = ManagementSessionsRoutes.GET_SESSION.replace(`{${UserApiPaths.SESSION_ID}}`, sessionId)
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return userSessionPrivatePayloadSchema.parse(raw)
+      const userSessionResponse = await this.client.request<unknown>(path)
+      return userSessionPrivatePayloadSchema.parse(userSessionResponse)
     })
   }
 

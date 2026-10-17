@@ -13,6 +13,7 @@ import {
   deletedSessionsPayloadSchema,
   OpenSessionRoutes,
   pagedResultSchema,
+  SelfSessionListParamsParser,
   toDeletedSessions,
   UserApiPaths,
   userSessionPrivatePayloadSchema,
@@ -32,21 +33,22 @@ export class FetchOpenSessionApi implements SessionApi {
   public async getSessions(
     params?: SelfSessionListParams | null
   ): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
+    const queryMap = SelfSessionListParamsParser.toQueryMap(params)
     const path = appendQueryParamsToPath(
       OpenSessionRoutes.GET_SESSIONS,
-      params
+      queryMap
     )
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(raw)
+      const sessionListResponse = await this.client.request<unknown>(path)
+      return pagedResultSchema(userSessionSummaryPayloadSchema).parse(sessionListResponse)
     })
   }
 
   public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
     const path = OpenSessionRoutes.GET_SESSION.replace(`{${UserApiPaths.SESSION_ID}}`, userSessionId)
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return userSessionPrivatePayloadSchema.parse(raw)
+      const sessionResponse = await this.client.request<unknown>(path)
+      return userSessionPrivatePayloadSchema.parse(sessionResponse)
     })
   }
 
@@ -63,10 +65,10 @@ export class FetchOpenSessionApi implements SessionApi {
 
   public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
+      const deletedSessionsResponse = await this.client.request<unknown>(OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS, {
         method: 'DELETE'
       })
-      const payload = deletedSessionsPayloadSchema.parse(raw)
+      const payload = deletedSessionsPayloadSchema.parse(deletedSessionsResponse)
       return toDeletedSessions(payload)
     })
   }

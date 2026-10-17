@@ -4,6 +4,7 @@ import { ManagementSelfUserNavigation, selfIdentifierListParamsSchema, toUserIde
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user identifier detail screen. */
 export const Route = createFileRoute('/user/identifiers/$identifierId')({
   component: function UserIdentifierDetailRoute() {
     const { appComponent } = Route.useRouteContext()
@@ -25,7 +26,7 @@ export const Route = createFileRoute('/user/identifiers/$identifierId')({
           onBack: () =>
             navigateUp({
               to: ManagementSelfUserNavigation.IdentifierList.ROUTE,
-              search: (raw) => cleanSearchParams(selfIdentifierListParamsSchema.parse(raw) as Record<string, unknown>)
+              search: (raw) => cleanSearchParams(selfIdentifierListParamsSchema.parse(raw))
             })
         }}
       />

@@ -15,26 +15,26 @@ export class FetchOpenUserApi implements OpenUserApi {
 
   public async getUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(OpenUserRoutes.GET_USER)
-      return userPrivatePayloadSchema.parse(raw)
+      const userResponse = await this.client.request<unknown>(OpenUserRoutes.GET_USER)
+      return userPrivatePayloadSchema.parse(userResponse)
     })
   }
 
   public async scheduleUserDeletion(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(OpenUserRoutes.SCHEDULE_DELETION, {
+      const userResponse = await this.client.request<unknown>(OpenUserRoutes.SCHEDULE_DELETION, {
         method: 'DELETE'
       })
-      return userPrivatePayloadSchema.parse(raw)
+      return userPrivatePayloadSchema.parse(userResponse)
     })
   }
 
   public async restoreUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(OpenUserRoutes.RESTORE_USER, {
+      const userResponse = await this.client.request<unknown>(OpenUserRoutes.RESTORE_USER, {
         method: 'POST'
       })
-      return userPrivatePayloadSchema.parse(raw)
+      return userPrivatePayloadSchema.parse(userResponse)
     })
   }
 }

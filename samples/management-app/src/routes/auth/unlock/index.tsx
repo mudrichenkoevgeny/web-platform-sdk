@@ -9,6 +9,7 @@ const searchSchema = z.object({
   lockoutUntil: z.number().optional()
 })
 
+/** Route configuration for account unlock options screen. */
 export const Route = createFileRoute('/auth/unlock/')({
   validateSearch: searchSchema,
   beforeLoad: () => {

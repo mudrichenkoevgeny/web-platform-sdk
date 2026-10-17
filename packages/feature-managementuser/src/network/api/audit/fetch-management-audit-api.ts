@@ -1,4 +1,4 @@
-import { appendQueryParamsToPath, callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath, appResultFailure, callResult, CommonError, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuditEventId,
@@ -12,6 +12,7 @@ import {
   AuditApiPaths,
   auditEventPrivatePayloadSchema,
   auditEventSummaryPayloadSchema,
+  ManagementAuditEventListParamsParser,
   ManagementAuditRoutes,
   pagedResultSchema
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -29,13 +30,14 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
   public async getAuditEvents(
     params?: ManagementAuditEventListParams | null
   ): Promise<AppResult<PagedResult<AuditEventSummaryPayload>, AppError>> {
+    const queryMap = ManagementAuditEventListParamsParser.toQueryMap(params)
     const path = appendQueryParamsToPath(
       ManagementAuditRoutes.GET_AUDIT_EVENTS,
-      params
+      queryMap
     )
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return pagedResultSchema(auditEventSummaryPayloadSchema).parse(raw)
+      const auditEventListResponse = await this.client.request<unknown>(path)
+      return pagedResultSchema(auditEventSummaryPayloadSchema).parse(auditEventListResponse)
     })
   }
 
@@ -44,9 +46,7 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
   ): Promise<AppResult<AuditEventPrivatePayload, AppError>> {
     const eventId = typeof params === 'string' ? params : params.eventId
     if (!eventId) {
-      return callResult(async () => {
-        throw new Error('Event ID is required')
-      })
+      return appResultFailure(CommonError.contractViolation(new Error('Event ID is required')))
     }
     const basePath = ManagementAuditRoutes.GET_AUDIT_EVENT.replace(`{${AuditApiPaths.EVENT_ID}}`, eventId)
     let queryParams: Record<string, unknown> | null = null
@@ -56,8 +56,8 @@ export class FetchManagementAuditApi implements ManagementAuditApi {
     }
     const path = appendQueryParamsToPath(basePath, queryParams)
     return callResult(async () => {
-      const raw = await this.client.request<unknown>(path)
-      return auditEventPrivatePayloadSchema.parse(raw)
+      const auditEventResponse = await this.client.request<unknown>(path)
+      return auditEventPrivatePayloadSchema.parse(auditEventResponse)
     })
   }
 }

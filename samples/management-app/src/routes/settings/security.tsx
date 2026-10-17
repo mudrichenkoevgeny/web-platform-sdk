@@ -3,6 +3,7 @@ import { EditSecuritySettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-
 import { ManagementSecurityNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for administrative security settings screen. */
 export const Route = createFileRoute('/settings/security')({
   component: function EditSecuritySettingsRoute() {
     const { managementDeps } = Route.useRouteContext()

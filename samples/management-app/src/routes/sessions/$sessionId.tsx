@@ -5,9 +5,10 @@ import { globalSessionListSearchSchema } from '@mudrichenkoevgeny/web-platform-s
 import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for global user session detail screen. */
 export const Route = createFileRoute('/sessions/$sessionId')({
   component: function SessionDetailRoute() {
-    const { managementDeps } = Route.useRouteContext()
+    const { appComponent, managementDeps } = Route.useRouteContext()
     const { sessionId } = Route.useParams()
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
@@ -21,10 +22,21 @@ export const Route = createFileRoute('/sessions/$sessionId')({
         dependencies={{
           sessionId: toUserSessionIdOrThrow(sessionId),
           getSessionUseCase: {
-            execute: (id) =>
-              managementDeps.managementGetSessionUseCase
-                ? managementDeps.managementGetSessionUseCase.execute(id)
-                : Promise.resolve(appResultFailure(CommonError.unknown()))
+            execute: async (id) => {
+              if (!managementDeps.managementGetSessionUseCase) {
+                return appResultFailure(CommonError.unknown())
+              }
+              const sessionResult = await managementDeps.managementGetSessionUseCase.execute(id)
+              if (
+                isSuccess(sessionResult) &&
+                appComponent &&
+                managementDeps.currentUserId != null &&
+                sessionResult.data.userId === managementDeps.currentUserId
+              ) {
+                return appComponent.managementUserComponent.getSessionUseCase.execute(id)
+              }
+              return sessionResult
+            }
           },
           deleteSessionUseCase: {
             execute: async (targetSessionId) => {
@@ -32,14 +44,23 @@ export const Route = createFileRoute('/sessions/$sessionId')({
                 return appResultFailure(CommonError.unknown())
               }
 
-              const sessionRes = await managementDeps.managementGetSessionUseCase.execute(targetSessionId)
-              if (!isSuccess(sessionRes)) {
-                return sessionRes
+              const sessionResult = await managementDeps.managementGetSessionUseCase.execute(targetSessionId)
+              if (!isSuccess(sessionResult)) {
+                return sessionResult
               }
 
-              return managementDeps.managementDeleteSessionUseCase.execute(sessionRes.data.userId, targetSessionId)
+              if (
+                appComponent &&
+                managementDeps.currentUserId != null &&
+                sessionResult.data.userId === managementDeps.currentUserId
+              ) {
+                return appComponent.managementUserComponent.deleteSessionUseCase.execute(targetSessionId)
+              }
+
+              return managementDeps.managementDeleteSessionUseCase.execute(sessionResult.data.userId, targetSessionId)
             }
           },
+          authStorage: appComponent?.managementUserComponent.authStorage,
           currentUserId: managementDeps.currentUserId,
           onNavigateToIdentifierDetail: (identifierId) =>
             navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),

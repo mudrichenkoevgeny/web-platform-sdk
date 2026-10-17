@@ -1,23 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementIdentifiersApi } from '@/network/api/identifier/fetch-self-management-identifiers-api'
 import { SelfManagementIdentifierRoutes, SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { userIdentifierPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { pagedResultPayloadMock } from '@/mock'
 
 describe('FetchSelfManagementIdentifiersApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchSelfManagementIdentifiersApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
     api = new FetchSelfManagementIdentifiersApi(mockHttpClient)
   })
 
   it('dispatches getUserIdentifier request', async () => {
-    const dummyPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
     const id = toUserIdentifierIdOrThrow('ident_1')
     const result = await api.getUserIdentifier(id)
@@ -25,13 +24,13 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementIdentifierRoutes.GET_IDENTIFIER.replace('{user_identifier_id}', 'ident_1')
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockPayload })
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
-    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
-    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPayload = pagedResultPayloadMock()
+    const expectedIdentifierListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    mockHttpClient.request.mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -46,11 +45,11 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       expect.stringContaining(SelfManagementIdentifierRoutes.GET_IDENTIFIERS)
     )
-    expect(result).toEqual({ success: true, data: expectedData })
+    expect(result).toEqual({ success: true, data: expectedIdentifierListPagedResult })
   })
 
   it('dispatches emailChangePassword request', async () => {
-    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
+    mockHttpClient.request.mockResolvedValue(undefined)
 
     const identifierId = toUserIdentifierIdOrThrow('ident_1')
     const request = { old_password: 'old', new_password: 'new' }

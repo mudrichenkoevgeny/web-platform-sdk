@@ -7,6 +7,7 @@ import {
 import { ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for self user TOTP MFA main management screen. */
 export const Route = createFileRoute('/user/totp/')({
   validateSearch: totpMainSearchSchema,
   component: function TotpMainRoute() {

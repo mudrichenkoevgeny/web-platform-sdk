@@ -7,14 +7,14 @@ const stringArrayParam = z
 export const auditEventListSearchSchema = z.object({
   page_number: z.number().optional(),
   page_size: z.number().optional(),
-  actor_ids: stringArrayParam,
-  actor_types: stringArrayParam,
-  actor_user_roles: stringArrayParam,
-  actions: stringArrayParam,
-  resources: stringArrayParam,
-  resource_ids: stringArrayParam,
-  statuses: stringArrayParam,
-  messages: stringArrayParam,
+  actor_id: stringArrayParam,
+  actor_type: stringArrayParam,
+  actor_user_role: stringArrayParam,
+  action: stringArrayParam,
+  resource: stringArrayParam,
+  resource_id: stringArrayParam,
+  status: stringArrayParam,
+  message: stringArrayParam,
   sort_by: z.string().optional(),
   sort_order: z.enum(['asc', 'desc']).optional()
 })

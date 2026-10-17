@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUserListParamsParser, managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserListParams, UserSummary, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -15,49 +15,92 @@ import {
 import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
 import type { GlobalUserListSearchParams } from '@/ui/screens/management/user/global-list/globalUserListSearchSchema'
 
+function isRecord(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null
+}
+
+/** Discriminated union representing screen states for the global user list view. */
 export type GlobalUserListScreenState =
   | {
+      /** Loading state while user list is being loaded initially. */
       status: 'loading'
     }
   | {
+      /** Error state when loading user list failed. */
       status: 'error'
+      /** Error instance describing the failure. */
       error: AppError
     }
   | {
+      /** Content state containing paginated user summaries. */
       status: 'content'
+      /** Current pagination state for user items. */
       paging: PaginationState<UserSummary>
+      /** Whether the filter panel drawer is expanded. */
       isFilterPanelExpanded: boolean
+      /** Whether a background user action is currently loading. */
       actionLoading: boolean
+      /** Action error instance if action failed. */
       actionError: AppError | null
     }
 
+/** External dependencies required by {@link createGlobalUserListStore}. */
 export interface GlobalUserListStoreDependencies {
+  /** Use case for loading paginated global users. */
   getUsersUseCase: GetUsersUseCase
+  /** Optional currently logged in user ID. */
+  currentUserId?: UserId | null
+  /** Navigation callback to open user detail screen. */
   onNavigateToUserDetail: (userId: UserId) => void
+  /** Optional navigation callback to current user profile. */
+  onNavigateToProfile?: () => void
+  /** Navigation callback to open user creation screen. */
   onNavigateToCreateUser: () => void
+  /** Navigation callback to return to previous screen. */
   onBack: () => void
+  /** Optional initial search parameters. */
   searchParams?: ManagementUserListParams | GlobalUserListSearchParams
+  /** Optional callback when search parameters change. */
   onSearchParamsChanged?: (params: ManagementUserListParams | GlobalUserListSearchParams) => void
 }
 
+/** Reactive store state and action interface for global user list screen. */
 export interface GlobalUserListStoreState {
+  /** Dependencies injected into store. */
   dependencies: GlobalUserListStoreDependencies
+  /** Current screen UI state. */
   screenState: GlobalUserListScreenState
+  /** Initializes screen state by fetching first page of users. */
   initScreen: (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => Promise<void>
+  /** Updates search parameters and reloads users list from first page. */
   onSearchParamsUpdated: (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => Promise<void>
+  /** Fetches next page of users when scrolling. */
   onLoadNextPage: () => Promise<void>
+  /** Refreshes users list from first page. */
   onRefresh: () => Promise<void>
+  /** Toggles filter panel expansion state. */
   onToggleFilterPanel: () => void
+  /** Handles click on user item. */
   onUserClick: (userId: UserId) => void
+  /** Handles create user button click. */
   onCreateUserClick: () => void
+  /** Handles back navigation button click. */
   onBackClick: () => void
 }
 
+/** Type alias for Zustand store instance returned by {@link createGlobalUserListStore}. */
 export type GlobalUserListStore = ReturnType<typeof createGlobalUserListStore>
 
 type SetState = StoreApi<GlobalUserListStoreState>['setState']
 type GetState = StoreApi<GlobalUserListStoreState>['getState']
 
+/**
+ * Creates a reactive Zustand store instance for global user list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createGlobalUserListStore = (
   deps: GlobalUserListStoreDependencies,
   initialState?: GlobalUserListScreenState
@@ -77,33 +120,22 @@ export const createGlobalUserListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+      const rawParams = overrideParams ?? activeDeps.searchParams
+      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const parsedParams = ManagementUserListParamsParser.parse(searchRecord)
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const mappedParams: Partial<ManagementUserListParams> = { ...(rawParams as Partial<ManagementUserListParams>) }
-      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementUserListParams['sortBy']
-      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementUserListParams['sortOrder']
-      if ('user_roles' in rawParams && rawParams.user_roles) mappedParams.userRoles = rawParams.user_roles as ManagementUserListParams['userRoles']
-      if ('account_statuses' in rawParams && rawParams.account_statuses) mappedParams.accountStatuses = rawParams.account_statuses as ManagementUserListParams['accountStatuses']
-      if ('account_lockout_types' in rawParams && rawParams.account_lockout_types) mappedParams.accountLockoutTypes = rawParams.account_lockout_types as ManagementUserListParams['accountLockoutTypes']
-      if ('authority_level_from' in rawParams) mappedParams.authorityLevelFrom = rawParams.authority_level_from
-      if ('authority_level_to' in rawParams) mappedParams.authorityLevelTo = rawParams.authority_level_to
-      if ('is_totp_enabled' in rawParams) mappedParams.isTotpEnabled = rawParams.is_totp_enabled
-      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
-      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
-
-      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
-
-      const result = await activeDeps.getUsersUseCase.execute(
+      const usersResult = await activeDeps.getUsersUseCase.execute(
         managementUserListParamsSchema.parse({
-          ...mappedParams,
+          ...parsedParams,
           pageNumber: effectivePageNumber
         })
       )
 
-      if (isSuccess(result)) {
+      if (isSuccess(usersResult)) {
         const current = get().screenState
         const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSummary>()
-        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+        const nextPaging = appendResultToPaginationState(currentPaging, usersResult.data)
 
         if (current.status === 'content') {
           set({
@@ -129,14 +161,14 @@ export const createGlobalUserListStore = (
           set({
             screenState: {
               ...current,
-              actionError: result.error
+              actionError: usersResult.error
             }
           })
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: usersResult.error
             }
           })
         }
@@ -150,17 +182,18 @@ export const createGlobalUserListStore = (
     dependencies: deps,
     screenState: initialState ?? { status: 'loading' },
 
-    initScreen: async (searchParams?: ManagementUserListParams) => {
+    initScreen: async (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => {
       const current = get().screenState
       if (isFetching || current.status === 'content') {
         return
       }
       set({ screenState: { status: 'loading' } })
-      const startPage = searchParams?.pageNumber ?? 1
+      const parsedParams = isRecord(searchParams) ? ManagementUserListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
-    onSearchParamsUpdated: async (searchParams?: ManagementUserListParams) => {
+    onSearchParamsUpdated: async (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => {
       set({
         screenState: {
           status: 'content',
@@ -170,7 +203,8 @@ export const createGlobalUserListStore = (
           actionError: null
         }
       })
-      const startPage = searchParams?.pageNumber ?? 1
+      const parsedParams = isRecord(searchParams) ? ManagementUserListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
@@ -204,27 +238,32 @@ export const createGlobalUserListStore = (
     },
 
     onUserClick: (userId: UserId) => {
-      deps.onNavigateToUserDetail(userId)
+      get().dependencies.onNavigateToUserDetail(userId)
     },
 
     onCreateUserClick: () => {
-      deps.onNavigateToCreateUser()
+      get().dependencies.onNavigateToCreateUser()
     },
 
     onBackClick: () => {
-      deps.onBack()
+      get().dependencies.onBack()
     }
   }))
 }
 
 const GlobalUserListContext = createContext<GlobalUserListStore | null>(null)
 
+/** Props for {@link GlobalUserListProvider}. */
 export interface GlobalUserListProviderProps {
+  /** Injected dependencies. */
   dependencies: GlobalUserListStoreDependencies
+  /** Optional initial state override. */
   initialState?: GlobalUserListScreenState
+  /** React child nodes. */
   children: React.ReactNode
 }
 
+/** Context provider wrapping React components with global user list store state. */
 export const GlobalUserListProvider: React.FC<GlobalUserListProviderProps> = ({
   dependencies,
   initialState,
@@ -243,6 +282,12 @@ export const GlobalUserListProvider: React.FC<GlobalUserListProviderProps> = ({
   )
 }
 
+/**
+ * Custom React hook for selecting reactive state from {@link GlobalUserListStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
 export const useGlobalUserListStore = <T,>(
   selector: (state: GlobalUserListStoreState) => T
 ): T => {

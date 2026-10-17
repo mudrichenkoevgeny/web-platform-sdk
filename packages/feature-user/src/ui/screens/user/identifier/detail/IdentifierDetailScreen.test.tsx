@@ -117,7 +117,7 @@ describe('IdentifierDetailScreen', () => {
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('navigates to profile when clicking user for identifier matching currentUserId', async () => {
+  it('navigates to user detail when clicking user for identifier matching currentUserId', async () => {
     const deps = createMockDeps(false)
     deps.currentUserId = mockIdentifier.userId
     const user = userEvent.setup()
@@ -129,7 +129,26 @@ describe('IdentifierDetailScreen', () => {
     )
 
     await user.click(screen.getByTestId(IdentifierDetailTestTags.USER_ROW))
-    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
-    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+    expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(mockIdentifier.userId)
+  })
+
+  it('detects own identifier when fetching via getUserIdentifierUseCase and currentUserId matches', async () => {
+    const deps: IdentifierDetailStoreDependencies = {
+      identifierId: mockIdentifier.id,
+      currentUserId: mockIdentifier.userId,
+      getUserIdentifierUseCase: {
+        execute: vi.fn().mockResolvedValue(appResultSuccess(mockIdentifier))
+      },
+      onBack: vi.fn()
+    }
+
+    render(
+      <ComponentTestHarness>
+        <IdentifierDetailScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    expect(await screen.findByTestId(IdentifierDetailTestTags.TITLE)).not.toBeNull()
+    expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).toBeNull()
   })
 })

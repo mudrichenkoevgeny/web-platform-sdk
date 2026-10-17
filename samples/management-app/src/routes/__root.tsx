@@ -8,6 +8,7 @@ export interface RouterDIContext {
   managementDeps: ManagementRootStoreDependencies
 }
 
+/** Root route configuration for management application. */
 export const Route = createRootRouteWithContext<RouterDIContext>()({
   component: MainScreen
 })

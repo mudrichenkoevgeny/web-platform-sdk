@@ -14,63 +14,118 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   return isNaN(parsed) ? defaultValue : parsed
 }
 
+/** Discriminated union representing active screen state for user detail screen. */
 export type UserDetailScreenState =
   | {
+      /** Loading state while user details are being loaded initially. */
       status: 'loading'
     }
   | {
+      /** Error state when loading user details failed. */
       status: 'error'
+      /** Error instance describing the failure. */
       error: AppError
     }
   | {
+      /** Content state containing user detail data and editable inputs. */
       status: 'content'
+      /** Private user domain model. */
       user: UserPrivate
+      /** Whether target user is the currently logged in user. */
+      isSelfUser: boolean
+      /** Input string value for authority level field. */
       authorityLevelInput: string
+      /** Selected account status input value. */
       accountStatusInput: UserAccountStatus
+      /** Selected account lockout type input value. */
       lockoutTypeInput: AccountLockoutType
+      /** Input string value for temporary lockout until timestamp. */
       temporaryLockoutUntilInput: string
+      /** Whether an update action is currently saving. */
       isSaving: boolean
+      /** Update error instance if saving failed. */
       saveError: AppError | null
+      /** Whether user deletion is currently in progress. */
       isDeleting: boolean
+      /** Deletion error instance if delete operation failed. */
       deleteError: AppError | null
+      /** Whether TOTP disabling is currently in progress. */
       isDisablingTotp: boolean
+      /** TOTP disabling error instance if operation failed. */
       disableTotpError: AppError | null
+      /** Whether user delete confirmation modal dialog is visible. */
       isDeleteConfirmationVisible: boolean
     }
 
+/** External dependencies required by {@link createUserDetailStore}. */
 export interface UserDetailStoreDependencies {
+  /** Target user ID. */
   userId: UserId
+  /** Optional currently authenticated user ID. */
+  currentUserId?: UserId | null
+  /** Use case for loading user details. */
   getUserUseCase: GetUserUseCase
+  /** Use case for updating user settings. */
   updateUserUseCase: UpdateUserUseCase
+  /** Use case for deleting user account. */
   deleteUserUseCase: DeleteUserUseCase
+  /** Use case for disabling TOTP MFA. */
   managementDisableTotpUseCase: ManagementDisableTotpUseCase
+  /** Navigation callback to open user sessions list. */
   onNavigateToSessions: (userId: UserId) => void
+  /** Navigation callback to open user identifiers list. */
   onNavigateToIdentifiers: (userId: UserId) => void
+  /** Navigation callback to open user audit events list. */
   onNavigateToAuditEvents: (userId: UserId) => void
+  /** Navigation callback to return to previous screen. */
   onBack: () => void
 }
 
+/** Reactive store state and action interface for user detail screen. */
 export interface UserDetailStoreState {
+  /** Current screen UI state. */
   screenState: UserDetailScreenState
+  /** Initializes screen state by loading user details. */
   initScreen: () => Promise<void>
+  /** Handles authority level input value change. */
   onAuthorityLevelChanged: (value: string) => void
+  /** Handles account status select option change. */
   onAccountStatusChanged: (value: UserAccountStatus) => void
+  /** Handles lockout type select option change. */
   onLockoutTypeChanged: (value: AccountLockoutType) => void
+  /** Handles temporary lockout until input value change. */
   onTemporaryLockoutUntilChanged: (value: string) => void
+  /** Submits updated user settings. */
   onUpdateClick: () => Promise<void>
+  /** Opens delete confirmation modal dialog. */
   onDeleteClick: () => void
+  /** Confirms and submits user account deletion. */
   onConfirmDeleteClick: () => Promise<void>
+  /** Dismisses delete confirmation modal dialog. */
   onDismissDeleteDialog: () => void
+  /** Submits request to disable TOTP MFA for target user. */
   onDisableTotpClick: () => Promise<void>
+  /** Opens user sessions screen. */
   onSessionsClick: () => void
+  /** Opens user identifiers screen. */
   onIdentifiersClick: () => void
+  /** Opens user audit events screen. */
   onAuditEventsClick: () => void
+  /** Retries loading user details after failure. */
   onRetry: () => Promise<void>
+  /** Handles back navigation button click. */
   onBackClick: () => void
 }
 
+/** Type alias for Zustand store instance returned by {@link createUserDetailStore}. */
 export type UserDetailStore = ReturnType<typeof createUserDetailStore>
 
+/**
+ * Checks whether the current screen state has unsaved user detail changes.
+ *
+ * @param state - Current content screen state
+ * @returns True if input values differ from original user data
+ */
 export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { status: 'content' }>): boolean => {
   const initialAuthLevel = state.user.authorityLevel.toString()
   const currentAuthLevel = state.authorityLevelInput.trim() || '0'
@@ -85,6 +140,13 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
   )
 }
 
+/**
+ * Factory function creating a Zustand store instance for user detail screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createUserDetailStore = (
   deps: UserDetailStoreDependencies,
   initialState?: UserDetailScreenState
@@ -114,14 +176,16 @@ export const createUserDetailStore = (
         }
 
         set({ screenState: { status: 'loading' } })
-        const result = await deps.getUserUseCase.execute(validUserId)
+        const userResult = await deps.getUserUseCase.execute(validUserId)
 
-        if (isSuccess(result)) {
-          const user = result.data
+        if (isSuccess(userResult)) {
+          const user = userResult.data
+          const isSelfUser = deps.currentUserId != null && user.id === deps.currentUserId
           set({
             screenState: {
               status: 'content',
               user,
+              isSelfUser,
               authorityLevelInput: String(user.authorityLevel),
               accountStatusInput: user.accountStatus,
               lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
@@ -139,7 +203,7 @@ export const createUserDetailStore = (
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: userResult.error
             }
           })
         }
@@ -199,7 +263,7 @@ export const createUserDetailStore = (
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
         : current.user.temporaryLockoutUntil
 
-      const result = await deps.updateUserUseCase.execute(deps.userId, {
+      const updateUserResult = await deps.updateUserUseCase.execute(deps.userId, {
         accountStatus: current.accountStatusInput,
         authorityLevel: authLevel,
         permissionCodes: null,
@@ -207,12 +271,12 @@ export const createUserDetailStore = (
         temporaryLockoutUntil: tempLockout
       })
 
-      if (isSuccess(result)) {
+      if (isSuccess(updateUserResult)) {
         await get().initScreen()
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
-          set({ screenState: { ...updated, isSaving: false, saveError: result.error } })
+          set({ screenState: { ...updated, isSaving: false, saveError: updateUserResult.error } })
         }
       }
     },
@@ -232,20 +296,20 @@ export const createUserDetailStore = (
 
       set({ screenState: { ...current, isDeleteConfirmationVisible: false, isDeleting: true, deleteError: null } })
 
-      const result = await deps.deleteUserUseCase.execute(deps.userId)
-      if (isSuccess(result)) {
+      const deleteUserResult = await deps.deleteUserUseCase.execute(deps.userId)
+      if (isSuccess(deleteUserResult)) {
         deps.onBack()
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
-          set({ screenState: { ...updated, isDeleting: false, deleteError: result.error } })
+          set({ screenState: { ...updated, isDeleting: false, deleteError: deleteUserResult.error } })
         }
       }
     },
 
     onDismissDeleteDialog: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status !== 'content') {
         set({ screenState: { ...current, isDeleteConfirmationVisible: false } })
       }
     },
@@ -258,13 +322,13 @@ export const createUserDetailStore = (
 
       set({ screenState: { ...current, isDisablingTotp: true, disableTotpError: null } })
 
-      const result = await deps.managementDisableTotpUseCase.execute(deps.userId)
-      if (isSuccess(result)) {
+      const disableTotpResult = await deps.managementDisableTotpUseCase.execute(deps.userId)
+      if (isSuccess(disableTotpResult)) {
         await get().initScreen()
       } else {
         const updated = get().screenState
         if (updated.status === 'content') {
-          set({ screenState: { ...updated, isDisablingTotp: false, disableTotpError: result.error } })
+          set({ screenState: { ...updated, isDisablingTotp: false, disableTotpError: disableTotpResult.error } })
         }
       }
     },
@@ -293,12 +357,17 @@ export const createUserDetailStore = (
 
 const UserDetailContext = createContext<UserDetailStore | null>(null)
 
+/** Props for {@link UserDetailProvider}. */
 export interface UserDetailProviderProps {
+  /** Injected dependencies. */
   dependencies: UserDetailStoreDependencies
+  /** Optional initial state override. */
   initialState?: UserDetailScreenState
+  /** React child nodes. */
   children: React.ReactNode
 }
 
+/** Context provider wrapping React components with user detail store state. */
 export const UserDetailProvider: React.FC<UserDetailProviderProps> = ({
   dependencies,
   initialState,
@@ -313,6 +382,12 @@ export const UserDetailProvider: React.FC<UserDetailProviderProps> = ({
   )
 }
 
+/**
+ * Custom React hook for selecting reactive state from {@link UserDetailStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
 export const useUserDetailStore = <T,>(
   selector: (state: UserDetailStoreState) => T
 ): T => {

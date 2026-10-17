@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { managementAuditEventListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditEventListParamsParser, managementAuditEventListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuditEventId, AuditEventSummary, ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -15,47 +15,84 @@ import {
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
 import type { AuditEventListSearchParams } from './auditEventListSearchSchema'
 
+function isRecord(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null
+}
+
+/** Discriminated union representing screen states for the audit event list view. */
 export type AuditEventListScreenState =
   | {
+      /** Loading state while audit events list is being loaded initially. */
       status: 'loading'
     }
   | {
+      /** Error state when loading audit events list failed. */
       status: 'error'
+      /** Error instance describing the failure. */
       error: AppError
     }
   | {
+      /** Content state containing paginated audit events. */
       status: 'content'
+      /** Current pagination state for audit event items. */
       paging: PaginationState<AuditEventSummary>
+      /** Whether the filter panel drawer is expanded. */
       isFilterPanelExpanded: boolean
+      /** Whether a background action is currently loading. */
       actionLoading: boolean
+      /** Action error instance if an action failed. */
       actionError: AppError | null
     }
 
+/** External dependencies required by {@link createAuditEventListStore}. */
 export interface AuditEventListStoreDependencies {
+  /** Use case for loading paginated audit events. */
   getAuditEventsUseCase: GetAuditEventsUseCase
+  /** Navigation callback to open audit event detail screen. */
   onNavigateToEventDetail: (eventId: AuditEventId) => void
+  /** Navigation callback to return to previous screen. */
   onBack: () => void
+  /** Optional initial search parameters. */
   searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams
+  /** Optional callback when search parameters change. */
   onSearchParamsChanged?: (params: ManagementAuditEventListParams | AuditEventListSearchParams) => void
 }
 
+/** Reactive store state and action interface for audit event list screen. */
 export interface AuditEventListStoreState {
+  /** Dependencies injected into store. */
   dependencies: AuditEventListStoreDependencies
+  /** Current screen UI state. */
   screenState: AuditEventListScreenState
+  /** Initializes screen state by fetching first page of audit events. */
   initScreen: (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => Promise<void>
+  /** Updates search parameters and reloads audit events list from first page. */
   onSearchParamsUpdated: (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => Promise<void>
+  /** Fetches next page of audit events when scrolling. */
   onLoadNextPage: () => Promise<void>
+  /** Refreshes audit events list from first page. */
   onRefresh: () => Promise<void>
+  /** Handles click on audit event item. */
   onEventClick: (eventId: AuditEventId) => void
+  /** Handles back navigation button click. */
   onBackClick: () => void
+  /** Toggles filter panel expansion state. */
   onToggleFilterPanel: () => void
 }
 
+/** Type alias for Zustand store instance returned by {@link createAuditEventListStore}. */
 export type AuditEventListStore = ReturnType<typeof createAuditEventListStore>
 
 type SetState = StoreApi<AuditEventListStoreState>['setState']
 type GetState = StoreApi<AuditEventListStoreState>['getState']
 
+/**
+ * Creates a reactive Zustand store instance for audit event list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createAuditEventListStore = (
   deps: AuditEventListStoreDependencies,
   initialState?: AuditEventListScreenState
@@ -75,35 +112,22 @@ export const createAuditEventListStore = (
 
     try {
       const activeDeps = get().dependencies
-      const rawParams = overrideParams ?? activeDeps.searchParams ?? {}
+      const rawParams = overrideParams ?? activeDeps.searchParams
+      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const parsedParams = ManagementAuditEventListParamsParser.parse(searchRecord)
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const mappedParams: Partial<ManagementAuditEventListParams> = { ...(rawParams as Partial<ManagementAuditEventListParams>) }
-      if ('sort_by' in rawParams && rawParams.sort_by) mappedParams.sortBy = rawParams.sort_by as ManagementAuditEventListParams['sortBy']
-      if ('sort_order' in rawParams && rawParams.sort_order) mappedParams.sortOrder = rawParams.sort_order as ManagementAuditEventListParams['sortOrder']
-      if ('actor_ids' in rawParams) mappedParams.actorIds = rawParams.actor_ids
-      if ('actor_types' in rawParams && rawParams.actor_types) mappedParams.actorTypes = rawParams.actor_types as ManagementAuditEventListParams['actorTypes']
-      if ('actor_user_roles' in rawParams) mappedParams.actorUserRoles = rawParams.actor_user_roles
-      if ('actions' in rawParams) mappedParams.actions = rawParams.actions
-      if ('resources' in rawParams) mappedParams.resources = rawParams.resources
-      if ('resource_ids' in rawParams) mappedParams.resourceIds = rawParams.resource_ids
-      if ('statuses' in rawParams && rawParams.statuses) mappedParams.statuses = rawParams.statuses as ManagementAuditEventListParams['statuses']
-      if ('messages' in rawParams) mappedParams.messages = rawParams.messages
-      if ('page_number' in rawParams) mappedParams.pageNumber = rawParams.page_number
-      if ('page_size' in rawParams) mappedParams.pageSize = rawParams.page_size
-
-      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (mappedParams.pageNumber ?? pageNumber)
-
-      const result = await activeDeps.getAuditEventsUseCase.execute(
+      const auditEventsResult = await activeDeps.getAuditEventsUseCase.execute(
         managementAuditEventListParamsSchema.parse({
-          ...mappedParams,
+          ...parsedParams,
           pageNumber: effectivePageNumber
         })
       )
 
-      if (isSuccess(result)) {
+      if (isSuccess(auditEventsResult)) {
         const current = get().screenState
         const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEventSummary>()
-        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+        const nextPaging = appendResultToPaginationState(currentPaging, auditEventsResult.data)
 
         if (current.status === 'content') {
           set({
@@ -129,14 +153,14 @@ export const createAuditEventListStore = (
           set({
             screenState: {
               ...current,
-              actionError: result.error
+              actionError: auditEventsResult.error
             }
           })
         } else {
           set({
             screenState: {
               status: 'error',
-              error: result.error
+              error: auditEventsResult.error
             }
           })
         }
@@ -156,7 +180,8 @@ export const createAuditEventListStore = (
         return
       }
       set({ screenState: { status: 'loading' } })
-      const startPage = searchParams ? ('page_number' in searchParams ? searchParams.page_number : (searchParams as ManagementAuditEventListParams).pageNumber) ?? 1 : 1
+      const parsedParams = isRecord(searchParams) ? ManagementAuditEventListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
@@ -170,7 +195,8 @@ export const createAuditEventListStore = (
           actionError: null
         }
       })
-      const startPage = searchParams ? ('page_number' in searchParams ? searchParams.page_number : (searchParams as ManagementAuditEventListParams).pageNumber) ?? 1 : 1
+      const parsedParams = isRecord(searchParams) ? ManagementAuditEventListParamsParser.parse(searchParams) : undefined
+      const startPage = parsedParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
@@ -215,12 +241,17 @@ export const createAuditEventListStore = (
 
 const AuditEventListContext = createContext<AuditEventListStore | null>(null)
 
+/** Props for {@link AuditEventListProvider}. */
 export interface AuditEventListProviderProps {
+  /** Injected dependencies. */
   dependencies: AuditEventListStoreDependencies
+  /** Optional initial state override. */
   initialState?: AuditEventListScreenState
+  /** React child nodes. */
   children: React.ReactNode
 }
 
+/** Context provider wrapping React components with audit event list store state. */
 export const AuditEventListProvider: React.FC<AuditEventListProviderProps> = ({
   dependencies,
   initialState,
@@ -239,6 +270,12 @@ export const AuditEventListProvider: React.FC<AuditEventListProviderProps> = ({
   )
 }
 
+/**
+ * Custom React hook for selecting reactive state from {@link AuditEventListStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
 export const useAuditEventListStore = <T,>(
   selector: (state: AuditEventListStoreState) => T
 ): T => {
@@ -248,4 +285,3 @@ export const useAuditEventListStore = <T,>(
   }
   return useStore(store, selector)
 }
-

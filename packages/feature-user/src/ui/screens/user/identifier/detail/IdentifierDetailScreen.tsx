@@ -20,9 +20,7 @@ import {
 } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
 
-/**
- * Automation test tags for {@link IdentifierDetailScreen}.
- */
+/** Automation test tags for {@link IdentifierDetailScreen}. */
 export const IdentifierDetailTestTags = {
   TITLE: 'identifier_detail_title',
   BACK_BUTTON: 'identifier_detail_back_button',
@@ -55,7 +53,7 @@ const DetailRow: React.FC<{
       }}
       className={cn(
         'w-full flex items-center justify-between py-2 border-b border-border/50 text-xs',
-        isClickable ? 'cursor-pointer hover:bg-accent/40 rounded px-2 transition-colors' : ''
+        isClickable ? 'cursor-pointer hover:bg-accent/40 rounded px-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary' : ''
       )}
       data-testid={testTag}
     >
@@ -207,7 +205,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               type="button"
               label={strings.change_password}
               onClick={onChangePasswordClick}
-              disabled={actionLoading}
+              disabled={actionLoading || isCurrentIdentifier}
               data-testid={IdentifierDetailTestTags.CHANGE_PASSWORD_BUTTON}
             />
           )}
@@ -217,22 +215,20 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               type="button"
               label={strings.identifier_delete_password_button}
               onClick={onDeletePasswordClick}
-              disabled={actionLoading}
+              disabled={actionLoading || isCurrentIdentifier}
               className="bg-error hover:bg-error/90 text-error-foreground"
               data-testid={IdentifierDetailTestTags.DELETE_PASSWORD_BUTTON}
             />
           )}
 
-          {!isCurrentIdentifier && (
-            <CoreButton
-              type="button"
-              label={strings.identifier_delete_button}
-              onClick={onDeleteIdentifierRequested}
-              disabled={actionLoading}
-              className="bg-error hover:bg-error/90 text-error-foreground"
-              data-testid={IdentifierDetailTestTags.DELETE_BUTTON}
-            />
-          )}
+          <CoreButton
+            type="button"
+            label={strings.identifier_delete_button}
+            onClick={onDeleteIdentifierRequested}
+            disabled={actionLoading || isCurrentIdentifier}
+            className="bg-error hover:bg-error/90 text-error-foreground"
+            data-testid={IdentifierDetailTestTags.DELETE_BUTTON}
+          />
 
           {actionError && !isChangePasswordDialogVisible && (
             <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
@@ -336,17 +332,15 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-/**
- * Props for {@link IdentifierDetailScreen}.
- */
+/** Props for {@link IdentifierDetailScreen}. */
 export interface IdentifierDetailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Injected dependencies. */
   dependencies: IdentifierDetailStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component displaying detailed information for a single user identifier (email/phone/OAuth).
- */
+/** Screen component displaying detailed information for a single user identifier (email/phone/OAuth). */
 export const IdentifierDetailScreen = forwardRef<HTMLDivElement, IdentifierDetailScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (

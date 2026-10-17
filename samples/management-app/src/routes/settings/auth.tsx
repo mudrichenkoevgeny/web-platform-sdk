@@ -3,6 +3,7 @@ import { EditAuthSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-feat
 import { ManagementAuthSettingsNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for administrative auth settings screen. */
 export const Route = createFileRoute('/settings/auth')({
   component: function EditAuthSettingsRoute() {
     const { managementDeps } = Route.useRouteContext()

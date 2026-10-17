@@ -187,7 +187,7 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
                   key={identifier.id}
                   identifier={identifier}
                   onClick={() => onIdentifierClick(identifier.id!)}
-                  isCurrentIdentifier={false}
+                  isCurrentIdentifier={(deps.currentUserId != null && identifier.userId === deps.currentUserId) || (deps.currentIdentifierId != null && identifier.id === deps.currentIdentifierId)}
                 />
               ) : null
             ))}

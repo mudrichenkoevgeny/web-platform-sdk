@@ -5,9 +5,10 @@ import { globalIdentifierListSearchSchema } from '@mudrichenkoevgeny/web-platfor
 import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for global user identifier detail screen. */
 export const Route = createFileRoute('/identifiers/$identifierId')({
   component: function IdentifierDetailRoute() {
-    const { managementDeps } = Route.useRouteContext()
+    const { appComponent, managementDeps } = Route.useRouteContext()
     const { identifierId } = Route.useParams()
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
@@ -21,10 +22,21 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
         dependencies={{
           identifierId: toUserIdentifierIdOrThrow(identifierId),
           getUserIdentifierUseCase: {
-            execute: (id) =>
-              managementDeps.managementGetIdentifierUseCase
-                ? managementDeps.managementGetIdentifierUseCase.execute(id)
-                : Promise.resolve(appResultFailure(CommonError.unknown()))
+            execute: async (id) => {
+              if (!managementDeps.managementGetIdentifierUseCase) {
+                return appResultFailure(CommonError.unknown())
+              }
+              const identifierResult = await managementDeps.managementGetIdentifierUseCase.execute(id)
+              if (
+                isSuccess(identifierResult) &&
+                appComponent &&
+                managementDeps.currentUserId != null &&
+                identifierResult.data.userId === managementDeps.currentUserId
+              ) {
+                return appComponent.managementUserComponent.getUserIdentifierUseCase.execute(id)
+              }
+              return identifierResult
+            }
           },
           deleteUserIdentifierUseCase: {
             execute: async (id) => {
@@ -32,12 +44,16 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
                 return appResultFailure(CommonError.unknown())
               }
 
-              const idRes = await managementDeps.managementGetIdentifierUseCase.execute(id)
-              if (!isSuccess(idRes)) {
-                return idRes
+              const identifierResult = await managementDeps.managementGetIdentifierUseCase.execute(id)
+              if (!isSuccess(identifierResult)) {
+                return identifierResult
               }
 
-              return managementDeps.managementDeleteIdentifierUseCase.execute(idRes.data.userId, id)
+              if (managementDeps.currentUserId != null && identifierResult.data.userId === managementDeps.currentUserId) {
+                return appResultFailure(CommonError.lifecycle('Cannot delete own identifier'))
+              }
+
+              return managementDeps.managementDeleteIdentifierUseCase.execute(identifierResult.data.userId, id)
             }
           },
           deletePasswordUseCase: {
@@ -46,14 +62,16 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
                 return appResultFailure(CommonError.unknown())
               }
 
-              const idRes = await managementDeps.managementGetIdentifierUseCase.execute(id)
-              if (!isSuccess(idRes)) {
-                return idRes
+              const identifierResult = await managementDeps.managementGetIdentifierUseCase.execute(id)
+              if (!isSuccess(identifierResult)) {
+                return identifierResult
               }
 
-              return managementDeps.managementDeleteIdentifierPasswordUseCase.execute(idRes.data.userId, id)
+              return managementDeps.managementDeleteIdentifierPasswordUseCase.execute(identifierResult.data.userId, id)
             }
           },
+          emailChangePasswordUseCase: appComponent?.managementUserComponent.emailChangePasswordUseCase,
+          authStorage: appComponent?.managementUserComponent.authStorage,
           currentUserId: managementDeps.currentUserId,
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),

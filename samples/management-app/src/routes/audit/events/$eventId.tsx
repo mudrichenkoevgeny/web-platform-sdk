@@ -4,6 +4,7 @@ import { ManagementAuditNavigation, ManagementSelfUserNavigation, toAuditEventId
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for audit event detail screen. */
 export const Route = createFileRoute('/audit/events/$eventId')({
   component: function AuditEventDetailRoute() {
     const { managementDeps } = Route.useRouteContext()

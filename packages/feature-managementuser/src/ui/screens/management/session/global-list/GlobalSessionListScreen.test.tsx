@@ -55,4 +55,20 @@ describe('GlobalSessionListScreen', () => {
     expect(await screen.findByTestId(GlobalSessionListTestTags.TITLE)).toBeDefined()
     expect(deps.managementGetSessionsUseCase.execute).toHaveBeenCalledTimes(1)
   })
+
+  it('hides revoke button for session matching currentSessionId', async () => {
+    const mockSession = userSessionMock()
+    const deps = createMockDeps()
+    deps.currentSessionId = mockSession.id
+
+    render(
+      <ComponentTestHarness>
+        <GlobalSessionListScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    const sessionCard = await screen.findByTestId(`SessionItem_${mockSession.id}`)
+    expect(sessionCard).toBeDefined()
+    expect(screen.queryByRole('button', { name: enManagementUserStrings.session_revoke })).toBeNull()
+  })
 })

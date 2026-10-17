@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
+import { z } from 'zod'
 import { AccountLockoutType, UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
@@ -22,6 +23,7 @@ import {
 } from '@/ui/screens/management/user/detail/UserDetailStore'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
 
+/** Automation test tags for {@link UserDetailScreen}. */
 export const UserDetailTestTags = {
   BACK_BUTTON: 'UserDetail_BackButton',
   TITLE: 'UserDetail_Title',
@@ -45,6 +47,16 @@ export const UserDetailTestTags = {
   CONFIRM_DELETE_DESC: 'UserDetail_ConfirmDeleteDesc',
   CANCEL_DELETE_BUTTON: 'UserDetail_CancelDeleteButton',
   CONFIRM_DELETE_BUTTON: 'UserDetail_ConfirmDeleteButton'
+}
+
+const parseUserAccountStatus = (value: unknown): UserAccountStatus | null => {
+  const parseResult = z.nativeEnum(UserAccountStatus).safeParse(value)
+  return parseResult.success ? parseResult.data : null
+}
+
+const parseAccountLockoutType = (value: unknown): AccountLockoutType | null => {
+  const parseResult = z.nativeEnum(AccountLockoutType).safeParse(value)
+  return parseResult.success ? parseResult.data : null
 }
 
 const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureManagementUserStrings): string => {
@@ -132,6 +144,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
   const {
     user,
+    isSelfUser,
     authorityLevelInput,
     accountStatusInput,
     lockoutTypeInput,
@@ -165,7 +178,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
         <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${strings.user_id(user.id ?? '')}`} />
-        <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role as UserRole, strings)}`}</p>
+        <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role, strings)}`}</p>
         <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.totp_enabled_label(user.isTotpEnabled ? strings.ui_common_yes : strings.ui_common_no)}</p>
 
         {user.isTotpEnabled && (
@@ -175,7 +188,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
               data-testid={UserDetailTestTags.DISABLE_TOTP_BUTTON}
               label={isDisablingTotp ? strings.disabling_totp : strings.disable_totp}
               onClick={onDisableTotpClick}
-              disabled={isSaving || isDeleting || isDisablingTotp}
+              disabled={isSelfUser || isSaving || isDeleting || isDisablingTotp}
             />
             {disableTotpError && (
               <CoreErrorText data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT} text={errorParser.parse(disableTotpError) ?? ''} />
@@ -227,8 +240,13 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             id={statusSelectId}
             data-testid={UserDetailTestTags.ACCOUNT_STATUS_SELECT}
             value={accountStatusInput}
-            onChange={(e) => onAccountStatusChanged(e.target.value as UserAccountStatus)}
-            disabled={isSaving || isDeleting}
+            onChange={(e) => {
+              const status = parseUserAccountStatus(e.target.value)
+              if (status) {
+                onAccountStatusChanged(status)
+              }
+            }}
+            disabled={isSelfUser || isSaving || isDeleting}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {Object.values(UserAccountStatus).map((status) => (
@@ -245,7 +263,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           value={authorityLevelInput}
           onChange={(e) => onAuthorityLevelChanged(e.target.value)}
           label={strings.authority_level}
-          disabled={isSaving || isDeleting}
+          disabled={isSelfUser || isSaving || isDeleting}
         />
 
         <div className="flex flex-col gap-1">
@@ -256,8 +274,13 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             id={lockoutTypeId}
             data-testid={UserDetailTestTags.LOCKOUT_TYPE_SELECT}
             value={lockoutTypeInput}
-            onChange={(e) => onLockoutTypeChanged(e.target.value as AccountLockoutType)}
-            disabled={isSaving || isDeleting}
+            onChange={(e) => {
+              const lockoutType = parseAccountLockoutType(e.target.value)
+              if (lockoutType) {
+                onLockoutTypeChanged(lockoutType)
+              }
+            }}
+            disabled={isSelfUser || isSaving || isDeleting}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {Object.values(AccountLockoutType).map((type) => (
@@ -274,7 +297,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           value={temporaryLockoutUntilInput}
           onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
           label={strings.ui_common_lockout_until}
-          disabled={isSaving || isDeleting}
+          disabled={isSelfUser || isSaving || isDeleting}
         />
 
         <div className="flex flex-col gap-2 pt-2">
@@ -283,7 +306,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             data-testid={UserDetailTestTags.UPDATE_BUTTON}
             label={isSaving ? strings.saving : strings.update_user}
             onClick={onUpdateClick}
-            disabled={!hasChanges || isSaving || isDeleting}
+            disabled={isSelfUser || !hasChanges || isSaving || isDeleting}
           />
           {saveError && (
             <CoreErrorText data-testid={UserDetailTestTags.SAVE_ERROR_TEXT} text={errorParser.parse(saveError) ?? ''} />
@@ -294,7 +317,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
             data-testid={UserDetailTestTags.DELETE_BUTTON}
             label={strings.delete_user}
             onClick={onDeleteClick}
-            disabled={isSaving || isDeleting}
+            disabled={isSelfUser || isSaving || isDeleting}
             className="bg-error hover:bg-error/90 text-error-foreground"
           />
           {deleteError && (
@@ -314,7 +337,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
                 data-testid={UserDetailTestTags.CANCEL_DELETE_BUTTON}
                 onClick={onDismissDeleteDialog}
                 disabled={isDeleting}
-                className="px-4 py-2 text-sm rounded-md border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors"
+                className="px-4 py-2 text-sm rounded-md border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {strings.dialog_cancel}
               </button>
@@ -323,7 +346,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
                 data-testid={UserDetailTestTags.CONFIRM_DELETE_BUTTON}
                 onClick={onConfirmDeleteClick}
                 disabled={isDeleting}
-                className="px-4 py-2 text-sm rounded-md bg-error text-error-foreground hover:bg-error/90 transition-colors"
+                className="px-4 py-2 text-sm rounded-md bg-error text-error-foreground hover:bg-error/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {strings.dialog_confirm}
               </button>
@@ -347,11 +370,15 @@ const UserDetailController: React.FC<{ strings?: FeatureManagementUserStrings }>
   return <UserDetailContent strings={strings} />
 }
 
+/** Props for {@link UserDetailScreen}. */
 export interface UserDetailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies required by store. */
   dependencies: UserDetailStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureManagementUserStrings
 }
 
+/** Administrative screen component displaying detailed information and management actions for a single user account. */
 export const UserDetailScreen = forwardRef<HTMLDivElement, UserDetailScreenProps>(
   ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
     return (

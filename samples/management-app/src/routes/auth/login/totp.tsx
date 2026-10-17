@@ -8,6 +8,7 @@ const searchSchema = z.object({
   mfaToken: z.string().optional()
 })
 
+/** Route configuration for TOTP MFA login screen. */
 export const Route = createFileRoute('/auth/login/totp')({
   validateSearch: searchSchema,
   beforeLoad: () => {

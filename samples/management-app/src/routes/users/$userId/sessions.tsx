@@ -1,10 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UserSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { managementUserSessionListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  globalSessionListSearchSchema,
+  UserSessionListScreen
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for user-specific session list screen. */
 export const Route = createFileRoute('/users/$userId/sessions')({
-  validateSearch: (rawSearch) => managementUserSessionListParamsSchema.parse(rawSearch),
+  validateSearch: (rawSearch) => parseSearchParams(globalSessionListSearchSchema, rawSearch),
   component: function UserSessionListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const { userId } = Route.useParams()
@@ -23,6 +28,7 @@ export const Route = createFileRoute('/users/$userId/sessions')({
           managementGetSessionsUseCase: managementDeps.managementGetSessionsUseCase,
           managementDeleteSessionUseCase: managementDeps.managementDeleteSessionUseCase,
           managementDeleteAllUserSessionsUseCase: managementDeps.managementDeleteAllUserSessionsUseCase,
+          currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),

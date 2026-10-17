@@ -21,9 +21,7 @@ import {
 } from '@/ui/screens/user/session/detail/session-detail-store'
 import type { SessionDetailStoreDependencies } from "@/ui/screens/user/session/detail/session-detail-store";
 
-/**
- * Automation test tags for {@link SessionDetailScreen}.
- */
+/** Automation test tags for {@link SessionDetailScreen}. */
 export const SessionDetailTestTags = {
   TITLE: 'SessionDetail_Title',
   BACK_BUTTON: 'SessionDetail_BackButton',
@@ -140,7 +138,7 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               onUserClick()
             }
           }}
-          className="p-4 bg-card text-card-foreground border border-border rounded-xl shadow-sm cursor-pointer hover:bg-accent/40 transition-colors flex flex-col gap-1"
+          className="p-4 bg-card text-card-foreground border border-border rounded-xl shadow-sm cursor-pointer hover:bg-accent/40 transition-colors focus:outline-none focus:ring-2 focus:ring-primary flex flex-col gap-1"
           data-testid={SessionDetailTestTags.USER_ROW}
         >
           <span className="text-xs text-muted-foreground font-medium">
@@ -164,7 +162,7 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               onIdentifierClick()
             }
           }}
-          className="p-4 bg-card text-card-foreground border border-border rounded-xl shadow-sm cursor-pointer hover:bg-accent/40 transition-colors flex items-center gap-3"
+          className="p-4 bg-card text-card-foreground border border-border rounded-xl shadow-sm cursor-pointer hover:bg-accent/40 transition-colors focus:outline-none focus:ring-2 focus:ring-primary flex items-center gap-3"
         >
           <CoreIcon src={IconComponent} size={24} />
           <div className="flex flex-col">
@@ -223,41 +221,37 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           </div>
         </div>
 
-        {!isCurrentSession && (
-          <div className="w-full pt-2 flex flex-col gap-2">
-            <CoreButton
-              type="button"
-              label={strings.session_revoke}
-              onClick={onRevokeSessionClick}
-              disabled={actionLoading}
-              className="bg-error hover:bg-error/90 text-error-foreground"
-              data-testid={SessionDetailTestTags.REVOKE_BUTTON}
-            />
+        <div className="w-full pt-2 flex flex-col gap-2">
+          <CoreButton
+            type="button"
+            label={strings.session_revoke}
+            onClick={onRevokeSessionClick}
+            disabled={actionLoading || isCurrentSession}
+            className="bg-error hover:bg-error/90 text-error-foreground"
+            data-testid={SessionDetailTestTags.REVOKE_BUTTON}
+          />
 
-            {actionError && (
-              <CoreErrorText
-                text={errorParser.parse(actionError) ?? ''}
-                data-testid={SessionDetailTestTags.ACTION_ERROR_TEXT}
-              />
-            )}
-          </div>
-        )}
+          {actionError && (
+            <CoreErrorText
+              text={errorParser.parse(actionError) ?? ''}
+              data-testid={SessionDetailTestTags.ACTION_ERROR_TEXT}
+            />
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
-/**
- * Props for {@link SessionDetailScreen}.
- */
+/** Props for {@link SessionDetailScreen}. */
 export interface SessionDetailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies required by store. */
   dependencies: SessionDetailStoreDependencies
+  /** Optional localized strings override. */
   strings?: FeatureUserStrings
 }
 
-/**
- * Screen component displaying detailed information about a single active user session.
- */
+/** Screen component displaying detailed information about a single active user session. */
 export const SessionDetailScreen = forwardRef<HTMLDivElement, SessionDetailScreenProps>(
   ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
     return (
