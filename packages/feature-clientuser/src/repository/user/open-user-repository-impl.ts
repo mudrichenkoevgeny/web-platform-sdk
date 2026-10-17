@@ -24,9 +24,9 @@ export class OpenUserRepositoryImpl implements UserRepository {
   /**
    * Constructs a new {@link OpenUserRepositoryImpl}.
    *
-   * @param userStorage - Local source for user profile stream and persistence
+   * @param userStorage - Local source for user data stream and persistence
    * @param authStorage - Source for auth token clearance
-   * @param openUserApi - User HTTP API for profile and account management
+   * @param openUserApi - User HTTP API for user and account management
    * @param webSocketService - Optional source of push updates for user changes
    * @param logger - Optional diagnostic logger
    */

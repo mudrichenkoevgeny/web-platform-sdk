@@ -125,7 +125,7 @@ export interface ClientUserComponentConfig {
   openAuthSettingsApi?: OpenAuthSettingsApi
   /** Optional mock override for identifiers API. */
   openIdentifiersApi?: OpenIdentifiersApi
-  /** Optional mock override for user profile API. */
+  /** Optional mock override for user API. */
   openUserApi?: OpenUserApi
   /** Optional mock override for user configuration API. */
   openUserConfigurationApi?: OpenUserConfigurationApi

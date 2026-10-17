@@ -2,7 +2,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserRepository, UpdateUserParams } from '@/repository/user/management-user-repository'
 
-/** Updates profile details, status, or permissions for a specific user administratively. */
+/** Updates user details, status, or permissions for a specific user administratively. */
 export class UpdateUserUseCase {
   /**
    * Constructs a new {@link UpdateUserUseCase}.

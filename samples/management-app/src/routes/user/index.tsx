@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { AppType, ManagementAuthNavigation, ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
-/** Route configuration for self user profile main dashboard screen. */
+/** Route configuration for self user main dashboard screen. */
 export const Route = createFileRoute('/user/')({
   component: function MainUserRoute() {
     const { appComponent } = Route.useRouteContext()

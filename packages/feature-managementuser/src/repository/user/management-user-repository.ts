@@ -52,12 +52,12 @@ export interface ManagementUserRepository {
    * Retrieves full management-level details of a specific user.
    *
    * @param userId - Unique account identifier
-   * @returns Detailed profile information of the target user domain model, or a mapped failure
+   * @returns Detailed information of the target user domain model, or a mapped failure
    */
   getUser(userId: UserId): Promise<AppResult<UserPrivate, AppError>>
 
   /**
-   * Updates profile details, status, or permissions for a specific user.
+   * Updates user details, status, or permissions for a specific user.
    *
    * @param userId - Unique account identifier to update
    * @param params - Patch domain parameters containing fields to change

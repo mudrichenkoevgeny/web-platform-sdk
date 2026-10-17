@@ -33,7 +33,7 @@ describe('IdentifierDetailScreen', () => {
     deletePassword: vi.fn().mockResolvedValue(undefined),
     onIdentifierDeleted: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
-    onNavigateToProfile: vi.fn(),
+    onNavigateToUserMain: vi.fn(),
     onBack: vi.fn()
   })
 

@@ -20,7 +20,7 @@ const createMockDeps = (): TotpRecoveryCodesStoreDependencies => ({
 })
 
 const meta: Meta<typeof TotpRecoveryCodesScreen> = {
-  title: 'Feature/User/Profile/TOTP/Recovery/TotpRecoveryCodesScreen',
+  title: 'Feature/User/Main/TOTP/Recovery/TotpRecoveryCodesScreen',
   component: TotpRecoveryCodesScreen,
   decorators: [
     (Story) => (

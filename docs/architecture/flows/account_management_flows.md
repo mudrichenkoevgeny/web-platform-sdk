@@ -1,13 +1,13 @@
-# Account & Profile Management Flows
+# Account & User Management Flows
 
-This document describes profile updates, active session management, identifier (email/phone) linking, and account deletion and restoration workflows in `web-platform-sdk`.
+This document describes user account updates, active session management, identifier (email/phone) linking, and account deletion and restoration workflows in `web-platform-sdk`.
 
 ---
 
-## 1. Profile Management Architecture
+## 1. User Management Architecture
 
-Profile management is centralized in `ProfileRootContainer` (`feature-user`). The component uses React state/Zustand navigation machines to host:
-- `MainProfileScreen`: Overview of profile details, account status, security settings, and navigation hub.
+User management is centralized in `UserRootContainer` (`feature-user`). The component uses React state/Zustand navigation machines to host:
+- `MainUserScreen`: Overview of user details, account status, security settings, and navigation hub.
 - `SelfSessionListScreen`: Active sessions list with remote revocation controls.
 - `SelfIdentifierListScreen`: Identifiers list (emails, phone numbers, Google accounts) with add/remove capabilities.
 - `TotpMainScreen`: TOTP 2FA setup and recovery code management.
@@ -91,7 +91,7 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     actor User
-    participant UI as ProfileScreen / PendingDeletionScreen
+    participant UI as MainUserScreen / PendingDeletionScreen
     participant UC as ScheduleUserDeletionUseCase / RestoreUserUseCase
     participant Repo as UserRepository
     participant API as OpenUserApi

@@ -40,12 +40,12 @@ const createMockDeps = (isCurrent = false): SessionDetailStoreDependencies => ({
   onSessionRevoked: () => {},
   onNavigateToIdentifierDetail: () => {},
   onNavigateToUserDetail: () => {},
-  onNavigateToProfile: () => {},
+  onNavigateToUserMain: () => {},
   onBack: () => {}
 })
 
 const meta: Meta<typeof SessionDetailScreen> = {
-  title: 'Feature/User/Profile/Session/Detail/SessionDetailScreen',
+  title: 'Feature/User/Main/Session/Detail/SessionDetailScreen',
   component: SessionDetailScreen,
   decorators: [
     (Story) => (

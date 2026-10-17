@@ -15,7 +15,7 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
- * Observer listener signature for current user profile changes.
+ * Observer listener signature for current user changes.
  */
 export type UserChangeListener = (user: UserPrivate | null) => void
 
@@ -30,7 +30,7 @@ export type UserIdentifiersListChangeListener = (result: PagedResult<UserIdentif
 export type UserSessionsListChangeListener = (result: PagedResult<UserSessionSummary>) => void
 
 /**
- * Persists user-scoped profile data (current user snapshot, identifiers, sessions) for offline and UI use.
+ * Persists user-scoped data (current user snapshot, identifiers, sessions) for offline and UI use.
  */
 
 export interface GetUserIdentifiersListParams {

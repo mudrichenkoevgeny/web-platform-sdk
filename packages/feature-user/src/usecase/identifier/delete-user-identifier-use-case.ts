@@ -2,7 +2,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 
-/** Removes an existing identifier from current user profile. */
+/** Removes an existing identifier from current user account. */
 export class DeleteUserIdentifierUseCase {
   /**
    * Constructs a new {@link DeleteUserIdentifierUseCase}.

@@ -17,7 +17,7 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 
 ### 2. Encrypted Token Storage & Auto-Refresh
 - **`AuthStorage` / `EncryptedAuthStorage`:** WebCrypto AES-GCM encrypted persistence for JWT access and refresh tokens.
-- **`UserStorage` / `EncryptedUserStorage`:** Encrypted local cache for current user session state and profile info.
+- **`UserStorage` / `EncryptedUserStorage`:** Encrypted local cache for current user session state and user details.
 - **`AuthHttpClientConfigPlugin`:** Native HTTP interceptor injecting Authorization Bearer headers and handling automatic token refresh cycles on `401 Unauthorized`.
 
 ### 3. MFA Step-Up & Challenge Handling
@@ -39,14 +39,14 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 - **Authentication Screens & Schemas:**
   - `LoginWelcomeScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (`loginByTotpSearchSchema`), `PendingDeletionScreen`, `ResetEmailPasswordScreen`.
   - `UnlockMethodSelectionScreen`, `UnlockTargetInputScreen` (`unlockTargetSearchSchema`), `UnlockOtpScreen` (`unlockOtpSearchSchema`, `accountUnlockSearchSchema`), `UnlockSuccessScreen`.
-- **Profile & Account Management Screens:**
-  - `MainProfileScreen` (user overview & navigation hub).
+- **User & Account Management Screens:**
+  - `MainUserScreen` (user overview & navigation hub).
   - `TotpMainScreen`, `TotpRecoveryCodesScreen` (2FA configuration).
   - `SelfSessionListScreen`, `SessionDetailScreen` (active sessions).
   - `SelfIdentifierListScreen`, `IdentifierDetailScreen` (linked identity methods).
 
 ### 7. Real-Time Sync & Error Handling
-- **`UserWebSocketMessageHandler`:** Listens for real-time WebSocket session termination and profile change broadcasts.
+- **`UserWebSocketMessageHandler`:** Listens for real-time WebSocket session termination and user change broadcasts.
 - **`UserError` / `UserErrorParser`:** Specialized error modeling and parsing for user domain errors (`ClientUserErrorCodes`).
 
 ---
@@ -57,14 +57,14 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 | :--- | :--- |
 | `src/di/` | `UserStorageModule` for initializing storage components. |
 | `src/auth/` | `UserAuthServices`, `GoogleAuthService`, `WebGoogleAuthService`, and disabled fallbacks. |
-| `src/storage/` | `AuthStorage` (tokens), `UserStorage` (profiles), and WebCrypto AES-GCM implementations. |
+| `src/storage/` | `AuthStorage` (tokens), `UserStorage` (user details), and WebCrypto AES-GCM implementations. |
 | `src/network/` | REST APIs (`SessionApi`, `UserSecurityApi`), `AuthHttpClientConfigPlugin`, `MfaStepUpHttpClientConfigPlugin`, and `UserWebSocketMessageHandler`. |
 | `src/repository/` | Repositories for Auth, Session, User, Identifier, and Confirmation key throttlers. |
 | `src/usecase/` | Atomic use cases grouped into `auth/`, `session/`, `user/`, and `identifier/`. |
 | `src/error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
 | `src/validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
 | `src/ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
-| `src/ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and Profile. |
+| `src/ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and User screens. |
 | `src/locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
 | `src/mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
 
@@ -98,13 +98,13 @@ commonComponent.webSocketService.updateWebSocketMessageHandlers([
 ])
 ```
 
-### 3. Rendering User Profile Screen
+### 3. Rendering User Main Screen
 
 ```tsx
-import { MainProfileScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
-export function UserProfilePage() {
-  return <MainProfileScreen dependencies={dependencies} />
+export function UserMainPage() {
+  return <MainUserScreen dependencies={dependencies} />
 }
 ```
 

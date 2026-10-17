@@ -74,6 +74,6 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
   - Refreshes management user configuration upon startup.
 - **UI Architecture (`RootContent` & TanStack Router):**
   - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/management/audit-events`, `/management/users`, `/management/sessions`, `/management/settings/*`).
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/audit/events`, `/users`, `/sessions`, `/identifiers`, `/settings/*`, `/user`, `/auth/*`).
   - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects UseCases directly into route handlers.
   - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

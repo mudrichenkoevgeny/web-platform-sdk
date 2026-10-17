@@ -2,7 +2,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { UserRepository } from '@/repository/user/user-repository'
 import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
-/** Refreshes and returns current user profile details. */
+/** Refreshes and returns current user details. */
 export class GetUserUseCase {
   /**
    * Constructs a new {@link GetUserUseCase}.

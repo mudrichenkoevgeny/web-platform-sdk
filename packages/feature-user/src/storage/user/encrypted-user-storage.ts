@@ -48,7 +48,7 @@ export class EncryptedUserStorage implements UserStorage {
   public constructor(private readonly encryptedSettings: EncryptedSettings) {}
 
   /**
-   * Retrieves and deserializes the current cached user profile.
+   * Retrieves and deserializes the current cached user.
    *
    * @returns Deserialized user details or null if unreadable or absent
    */
@@ -73,9 +73,9 @@ export class EncryptedUserStorage implements UserStorage {
   }
 
   /**
-   * Observes updates to the cached current user profile.
+   * Observes updates to the cached current user.
    *
-   * @param listener - Callback function triggered on profile change
+   * @param listener - Callback function triggered on user change
    * @returns Unsubscribe function
    */
   public observeCurrentUser(listener: UserChangeListener): () => void {
@@ -87,7 +87,7 @@ export class EncryptedUserStorage implements UserStorage {
   }
 
   /**
-   * Serializes and persists active user profile details.
+   * Serializes and persists active user details.
    *
    * @param currentUser - Active user details snapshot
    */

@@ -23,8 +23,6 @@ export const Route = createFileRoute('/users/')({
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
-          onNavigateToProfile: () =>
-            void navigate({ to: '/user' }),
           onNavigateToCreateUser: () => void navigate({ to: '/users/new' }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })
         }}

@@ -18,7 +18,7 @@ export class UserSecurityRepositoryImpl implements UserSecurityRepository {
    * Constructs a new {@link UserSecurityRepositoryImpl}.
    *
    * @param userSecurityApi - Remote user security API
-   * @param userStorage - Local user profile storage
+   * @param userStorage - Local user storage
    */
   public constructor(
     private readonly userSecurityApi: UserSecurityApi,

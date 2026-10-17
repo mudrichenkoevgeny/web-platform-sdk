@@ -21,7 +21,7 @@ export interface IdentifierRepository {
     params?: SelfIdentifierListParams | null
   ): Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>>
 
-  /** Removes an existing identifier from user profile. */
+  /** Removes an existing identifier from user account. */
   deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 
   /** Associates a new email identifier with account. */

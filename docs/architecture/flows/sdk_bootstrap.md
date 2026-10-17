@@ -56,7 +56,7 @@ The host app initializes `EncryptedSettingsComponent`. In the web environment, t
 Feature components are constructed by passing `CommonComponent` dependencies down:
 - `SettingsComponent`: Global application settings management.
 - `SecurityComponent`: Backend password policies and validation.
-- `ClientUserComponent` / `ManagementUserComponent`: Authentication, token persistence (`EncryptedAuthStorage`), identity, and user profile management.
+- `ClientUserComponent` / `ManagementUserComponent`: Authentication, token persistence (`EncryptedAuthStorage`), identity, and user management.
 
 ### Step 4: System Wiring (`init()` Phase)
 Before invoking any network operations or UI rendering:

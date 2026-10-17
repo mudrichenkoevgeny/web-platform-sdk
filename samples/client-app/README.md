@@ -66,7 +66,7 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
 
 - **Root Wiring (`ClientAppComponent`):** Central DI container aggregating:
   - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
-  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user profile).
+  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user details).
 - **Initialization (`SyncDataUseCase`):**
   - Attaches `authHttpClientConfigPlugin` to the HTTP client.
   - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
@@ -74,6 +74,6 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
   - Refreshes user configuration upon startup.
 - **UI Architecture (`RootContent` & TanStack Router):**
   - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/profile`, `/profile/sessions/$sessionId`, `/profile/identifiers/$identifierId`, `/profile/totp/*`, `/login/*`).
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/user`, `/user/sessions/$sessionId`, `/user/identifiers/$identifierId`, `/user/totp/*`, `/auth/*`).
   - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
   - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

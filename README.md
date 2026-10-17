@@ -4,7 +4,7 @@ A modular **TypeScript / React** client SDK for Web applications. It provides a 
 
 [![npm](https://img.shields.io/npm/v/@mudrichenkoevgeny/web-platform-sdk-core-common)](https://www.npmjs.com/package/@mudrichenkoevgeny/web-platform-sdk-core-common)
 
-By pairing **React** UI components (Tailwind CSS + design tokens) with **Zustand** state machines, the SDK allows host applications to integrate complex authentication flows, user settings, profile management, and administrative control panels with minimal boilerplate.
+By pairing **React** UI components (Tailwind CSS + design tokens) with **Zustand** state machines, the SDK allows host applications to integrate complex authentication flows, user settings, user management, and administrative control panels with minimal boilerplate.
 
 ---
 
@@ -64,7 +64,7 @@ pnpm dev:client
 ```
 
 ### Management Sample App Development Server
-Runs local development server for Management sample app at `http://localhost:3003`:
+Runs local development server for Management sample app at `http://localhost:3001`:
 ```bash
 pnpm dev:management
 ```

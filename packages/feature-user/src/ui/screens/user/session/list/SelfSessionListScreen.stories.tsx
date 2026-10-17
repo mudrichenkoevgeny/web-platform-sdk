@@ -50,7 +50,7 @@ const createMockDeps = (): SelfSessionListStoreDependencies => ({
 })
 
 const meta: Meta<typeof SelfSessionListScreen> = {
-  title: 'Feature/User/Profile/Session/List/SelfSessionListScreen',
+  title: 'Feature/User/Main/Session/List/SelfSessionListScreen',
   component: SelfSessionListScreen,
   decorators: [
     (Story) => (

@@ -16,7 +16,7 @@ export class OpenUserSecurityRepositoryImpl implements UserSecurityRepository {
    * Constructs a new {@link OpenUserSecurityRepositoryImpl}.
    *
    * @param userSecurityApi - HTTP API client for TOTP and security settings
-   * @param userStorage - Local user profile storage
+   * @param userStorage - Local user storage
    */
   public constructor(
     private readonly userSecurityApi: UserSecurityApi,

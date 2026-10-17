@@ -21,7 +21,7 @@ export const Route = createFileRoute('/user/identifiers/$identifierId')({
           getUserIdentifierUseCase: appComponent.managementUserComponent.getUserIdentifierUseCase,
           deleteUserIdentifierUseCase: appComponent.managementUserComponent.deleteUserIdentifierUseCase,
           authStorage: appComponent.managementUserComponent.authStorage,
-          onNavigateToProfile: () => void navigate({ to: ManagementSelfUserNavigation.Main.route }),
+          onNavigateToUserMain: () => void navigate({ to: ManagementSelfUserNavigation.Main.route }),
           onNavigateToUserDetail: () => void navigate({ to: ManagementSelfUserNavigation.Main.route }),
           onBack: () =>
             navigateUp({

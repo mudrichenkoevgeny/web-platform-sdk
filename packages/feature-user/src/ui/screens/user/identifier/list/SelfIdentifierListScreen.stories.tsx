@@ -44,7 +44,7 @@ const createMockDeps = (): SelfIdentifierListStoreDependencies => ({
 })
 
 const meta: Meta<typeof SelfIdentifierListScreen> = {
-  title: 'Feature/User/Profile/Identifier/List/SelfIdentifierListScreen',
+  title: 'Feature/User/Main/Identifier/List/SelfIdentifierListScreen',
   component: SelfIdentifierListScreen,
   decorators: [
     (Story) => (

@@ -38,7 +38,7 @@ describe('EncryptedUserStorage', () => {
     expect(user).toBeNull()
   })
 
-  it('saves and retrieves current user profile', async () => {
+  it('saves and retrieves current user', async () => {
     await storage.updateCurrentUser(dummyUser)
 
     const retrieved = await storage.getCurrentUser()

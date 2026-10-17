@@ -29,7 +29,6 @@ import type { SelfManagementUserRepository } from '@/repository/user/self-manage
 export interface ManagementRootStoreDependencies {
   currentUserId?: UserId | null
   selfManagementUserRepository?: SelfManagementUserRepository
-  onNavigateToProfile?: () => void
   getManagementAuthSettingsUseCase: GetManagementAuthSettingsUseCase
   saveRemoteAuthSettingsUseCase: SaveRemoteAuthSettingsUseCase
   resetRemoteAuthSettingsUseCase: ResetRemoteAuthSettingsUseCase

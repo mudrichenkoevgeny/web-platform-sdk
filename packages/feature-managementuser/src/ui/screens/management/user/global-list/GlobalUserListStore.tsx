@@ -52,8 +52,6 @@ export interface GlobalUserListStoreDependencies {
   currentUserId?: UserId | null
   /** Navigation callback to open user detail screen. */
   onNavigateToUserDetail: (userId: UserId) => void
-  /** Optional navigation callback to current user profile. */
-  onNavigateToProfile?: () => void
   /** Navigation callback to open user creation screen. */
   onNavigateToCreateUser: () => void
   /** Navigation callback to return to previous screen. */

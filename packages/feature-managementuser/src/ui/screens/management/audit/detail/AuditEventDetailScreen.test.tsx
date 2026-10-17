@@ -18,7 +18,6 @@ describe('AuditEventDetailScreen', () => {
       execute: vi.fn().mockResolvedValue(appResultSuccess(auditEventMock()))
     },
     currentUserId,
-    onNavigateToProfile: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
     onBack: vi.fn(),
     ...overrides
@@ -44,7 +43,7 @@ describe('AuditEventDetailScreen', () => {
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('navigates to profile when clicking resource representing current user', async () => {
+  it('navigates to user main when clicking resource representing current user', async () => {
     const mockEvent = auditEventMock({
       resource: 'user',
       resourceId: currentUserId
@@ -142,6 +141,5 @@ describe('AuditEventDetailScreen', () => {
     await user.click(subjectRow)
 
     expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(otherUserId)
-    expect(deps.onNavigateToProfile).not.toHaveBeenCalled()
   })
 })

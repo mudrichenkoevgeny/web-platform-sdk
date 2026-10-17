@@ -11,6 +11,7 @@ describe('FetchManagementSessionApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
+    mockHttpClient.request = vi.fn() as any
     api = new FetchManagementSessionApi(mockHttpClient)
   })
 

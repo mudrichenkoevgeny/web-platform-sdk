@@ -53,11 +53,10 @@ describe('GlobalUserListScreen', () => {
     expect(deps.getUsersUseCase.execute).toHaveBeenCalledTimes(1)
   })
 
-  it('navigates to profile when clicking own user card', async () => {
+  it('navigates to user detail when clicking own user card', async () => {
     const mockUser = userDetailsMock()
     const deps = createMockDeps()
     deps.currentUserId = mockUser.id
-    deps.onNavigateToProfile = vi.fn()
 
     render(
       <ComponentTestHarness>
@@ -68,7 +67,6 @@ describe('GlobalUserListScreen', () => {
     const userCard = await screen.findByTestId(`UserItem_${mockUser.id}`)
     userCard.click()
 
-    expect(deps.onNavigateToProfile).toHaveBeenCalledTimes(1)
-    expect(deps.onNavigateToUserDetail).not.toHaveBeenCalled()
+    expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(mockUser.id)
   })
 })

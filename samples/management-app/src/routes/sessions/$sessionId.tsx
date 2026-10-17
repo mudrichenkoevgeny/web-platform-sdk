@@ -50,11 +50,10 @@ export const Route = createFileRoute('/sessions/$sessionId')({
               }
 
               if (
-                appComponent &&
                 managementDeps.currentUserId != null &&
                 sessionResult.data.userId === managementDeps.currentUserId
               ) {
-                return appComponent.managementUserComponent.deleteSessionUseCase.execute(targetSessionId)
+                return appResultFailure(CommonError.forbidden())
               }
 
               return managementDeps.managementDeleteSessionUseCase.execute(sessionResult.data.userId, targetSessionId)
@@ -66,7 +65,7 @@ export const Route = createFileRoute('/sessions/$sessionId')({
             navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
-          onNavigateToProfile: () => void navigate({ to: '/user' }),
+          onNavigateToUserMain: () => void navigate({ to: '/user' }),
           onBack: () => navigateUp({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE, search: (raw) => cleanSearchParams(globalSessionListSearchSchema.parse(raw)) })
         }}
       />

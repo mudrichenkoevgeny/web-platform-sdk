@@ -65,8 +65,8 @@ export interface IdentifierDetailStoreDependencies {
   onIdentifierDeleted?: (identifierId: UserIdentifierId) => void
   /** Navigation callback to user detail screen. */
   onNavigateToUserDetail?: (userId: UserId) => void
-  /** Navigation callback to user profile screen. */
-  onNavigateToProfile?: () => void
+  /** Navigation callback to user main screen. */
+  onNavigateToUserMain?: () => void
   /** Navigation callback to return to previous screen. */
   onBack: () => void
 }
@@ -408,7 +408,7 @@ export const createIdentifierDetailStore = (
       if (activeDeps.onNavigateToUserDetail) {
         activeDeps.onNavigateToUserDetail(current.identifier.userId)
       } else {
-        activeDeps.onNavigateToProfile?.()
+        activeDeps.onNavigateToUserMain?.()
       }
     }
   }))

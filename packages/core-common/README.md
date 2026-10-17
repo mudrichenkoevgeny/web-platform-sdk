@@ -117,7 +117,7 @@ import { AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 const result: AppResult<UserData, AppError> = await repository.getUser()
 
 if (result.isSuccess) {
-  console.log('User profile loaded:', result.value)
+  console.log('User loaded:', result.value)
 } else {
   console.error('Failed to load user:', result.error)
 }

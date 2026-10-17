@@ -28,12 +28,12 @@ const createMockDeps = (isCurrent = false): IdentifierDetailStoreDependencies =>
   },
   onIdentifierDeleted: () => {},
   onNavigateToUserDetail: () => {},
-  onNavigateToProfile: () => {},
+  onNavigateToUserMain: () => {},
   onBack: () => {}
 })
 
 const meta: Meta<typeof IdentifierDetailScreen> = {
-  title: 'Feature/User/Profile/Identifier/Detail/IdentifierDetailScreen',
+  title: 'Feature/User/Main/Identifier/Detail/IdentifierDetailScreen',
   component: IdentifierDetailScreen,
   decorators: [
     (Story) => (

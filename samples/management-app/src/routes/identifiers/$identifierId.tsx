@@ -75,7 +75,7 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
           currentUserId: managementDeps.currentUserId,
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
-          onNavigateToProfile: () => void navigate({ to: '/user' }),
+          onNavigateToUserMain: () => void navigate({ to: '/user' }),
           onBack: () => navigateUp({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE, search: (raw) => cleanSearchParams(globalIdentifierListSearchSchema.parse(raw)) })
         }}
       />

@@ -51,7 +51,6 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
   const managementDependencies: ManagementRootStoreDependencies = useMemo(
     () => ({
       currentUserId,
-      onNavigateToProfile: () => void router.navigate({ to: ManagementSelfUserNavigation.Main.route }),
       getManagementAuthSettingsUseCase: managementAppComponent.managementUserComponent.getManagementAuthSettingsUseCase,
       saveRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.saveRemoteAuthSettingsUseCase,
       resetRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.resetRemoteAuthSettingsUseCase,

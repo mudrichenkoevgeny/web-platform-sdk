@@ -34,7 +34,7 @@ const createMockDeps = (user = {
 })
 
 const meta: Meta<typeof TotpMainScreen> = {
-  title: 'Feature/User/Profile/TOTP/Main/TotpMainScreen',
+  title: 'Feature/User/Main/TOTP/Main/TotpMainScreen',
   component: TotpMainScreen,
   decorators: [
     (Story) => (

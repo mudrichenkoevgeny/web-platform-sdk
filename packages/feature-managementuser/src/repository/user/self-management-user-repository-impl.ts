@@ -38,9 +38,9 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
   /**
    * Constructs a new {@link SelfManagementUserRepositoryImpl}.
    *
-   * @param userStorage - Local source for user profile stream and persistence
+   * @param userStorage - Local source for user data stream and persistence
    * @param authStorage - Source for auth token clearance
-   * @param selfManagementUserApi - HTTP API for current user profile
+   * @param selfManagementUserApi - HTTP API for current user details
    * @param webSocketService - Optional source of push updates for user changes
    * @param logger - Optional diagnostic logger
    */

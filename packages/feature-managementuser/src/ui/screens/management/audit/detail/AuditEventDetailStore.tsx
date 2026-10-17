@@ -50,8 +50,6 @@ export interface AuditEventDetailStoreDependencies {
   onNavigateToSessionDetail?: (sessionId: UserSessionId) => void
   /** Optional navigation callback to identifier detail screen. */
   onNavigateToIdentifierDetail?: (identifierId: UserIdentifierId) => void
-  /** Optional navigation callback to current user profile. */
-  onNavigateToProfile?: () => void
   /** Navigation callback to return to previous screen. */
   onBack: () => void
 }

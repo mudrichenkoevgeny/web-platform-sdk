@@ -15,7 +15,7 @@ export class GetUserUseCase {
    * Executes the use case.
    *
    * @param userId - Unique account identifier
-   * @returns Detailed profile information of the target user domain model, or a mapped failure
+   * @returns Detailed information of the target user domain model, or a mapped failure
    */
   public async execute(userId: UserId): Promise<AppResult<UserPrivate, AppError>> {
     return this.managementUserRepository.getUser(userId)

@@ -38,7 +38,7 @@ export function MainScreen(): React.JSX.Element {
               'bg-primary text-primary-foreground'
             )}
           >
-            <CoreIcon src={icons.profile} className="w-5 h-5" />
+            <CoreIcon src={icons.user} className="w-5 h-5" />
             <span>{enClientAppStrings.nav_user}</span>
           </button>
         </div>

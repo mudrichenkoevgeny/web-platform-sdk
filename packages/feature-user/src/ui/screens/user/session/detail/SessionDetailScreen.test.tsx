@@ -44,7 +44,7 @@ describe('SessionDetailScreen', () => {
     onSessionRevoked: vi.fn(),
     onNavigateToIdentifierDetail: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
-    onNavigateToProfile: vi.fn(),
+    onNavigateToUserMain: vi.fn(),
     onBack: vi.fn()
   })
 
@@ -120,5 +120,33 @@ describe('SessionDetailScreen', () => {
 
     await user.click(screen.getByTestId(SessionDetailTestTags.USER_ROW))
     expect(deps.onNavigateToUserDetail).toHaveBeenCalledWith(mockSession.userId)
+  })
+
+  it('disables revoke button when session belongs to currentUserId', async () => {
+    const deps = createMockDeps(false)
+    deps.currentUserId = mockSession.userId
+
+    render(
+      <ComponentTestHarness>
+        <SessionDetailScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    const revokeBtn = await screen.findByTestId(SessionDetailTestTags.REVOKE_BUTTON)
+    expect(revokeBtn.getAttribute('disabled')).not.toBeNull()
+  })
+
+  it('enables revoke button when session belongs to another user', async () => {
+    const deps = createMockDeps(false)
+    deps.currentUserId = toUserIdOrThrow('usr_other_999')
+
+    render(
+      <ComponentTestHarness>
+        <SessionDetailScreen dependencies={deps} />
+      </ComponentTestHarness>
+    )
+
+    const revokeBtn = await screen.findByTestId(SessionDetailTestTags.REVOKE_BUTTON)
+    expect(revokeBtn.getAttribute('disabled')).toBeNull()
   })
 })

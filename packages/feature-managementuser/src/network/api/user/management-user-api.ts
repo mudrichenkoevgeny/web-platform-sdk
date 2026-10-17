@@ -31,12 +31,12 @@ export interface ManagementUserApi {
    * Retrieves full management-level details of a specific user.
    *
    * @param userId - Unique account identifier
-   * @returns Detailed profile information of the target user, or a mapped failure
+   * @returns Detailed information of the target user, or a mapped failure
    */
   getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>>
 
   /**
-   * Updates profile details, status, or permissions for a specific user.
+   * Updates user details, status, or permissions for a specific user.
    *
    * @param userId - Unique account identifier to update
    * @param params - Patch domain parameters containing fields to change

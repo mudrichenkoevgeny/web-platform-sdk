@@ -19,7 +19,7 @@ export const mainScreenDestinations: Record<MainTabKey, MainScreenDestination> =
   user: {
     key: 'user',
     label: enManagementAppStrings.nav_user,
-    Icon: icons.profile
+    Icon: icons.user
   }
 }
 

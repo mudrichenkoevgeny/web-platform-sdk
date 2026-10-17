@@ -61,7 +61,7 @@ pnpm --filter @mudrichenkoevgeny/web-platform-sdk-core-security run build
 The repository includes two sample web applications for testing SDK integrations locally:
 
 ### 1. Consumer Sample App (`sample-client-app`)
-Demonstrates consumer auth flows (Login, Registration, OTP, Profile management):
+Demonstrates consumer auth flows (Login, Registration, OTP, User management):
 
 - **From root:**
   ```bash

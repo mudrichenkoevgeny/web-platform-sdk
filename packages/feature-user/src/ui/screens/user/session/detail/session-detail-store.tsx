@@ -53,8 +53,8 @@ export interface SessionDetailStoreDependencies {
   onNavigateToIdentifierDetail?: (identifierId: UserIdentifierId) => void
   /** Navigation callback to user detail screen. */
   onNavigateToUserDetail?: (userId: UserId) => void
-  /** Navigation callback to user profile screen. */
-  onNavigateToProfile?: () => void
+  /** Navigation callback to user main screen. */
+  onNavigateToUserMain?: () => void
   /** Navigation callback to return to previous screen. */
   onBack: () => void
 }
@@ -114,7 +114,9 @@ export const createSessionDetailStore = (
 
         if (activeDeps.session) {
           const isSelfActiveSession =
-            activeDeps.isCurrentSession ?? (activeSessionId != null && activeDeps.session.id === activeSessionId)
+            activeDeps.isCurrentSession ??
+            ((activeSessionId != null && activeDeps.session.id === activeSessionId) ||
+              (activeDeps.currentUserId != null && activeDeps.session.userId === activeDeps.currentUserId))
 
           set({
             screenState: {
@@ -135,7 +137,9 @@ export const createSessionDetailStore = (
           if (isSuccess(sessionResult)) {
             const loadedSession = sessionResult.data
             const isSelfActiveSession =
-              activeDeps.isCurrentSession ?? (activeSessionId != null && loadedSession.id === activeSessionId)
+              activeDeps.isCurrentSession ??
+              ((activeSessionId != null && loadedSession.id === activeSessionId) ||
+                (activeDeps.currentUserId != null && loadedSession.userId === activeDeps.currentUserId))
 
             set({
               screenState: {
@@ -231,7 +235,7 @@ export const createSessionDetailStore = (
       if (activeDeps.onNavigateToUserDetail) {
         activeDeps.onNavigateToUserDetail(current.session.userId)
       } else {
-        activeDeps.onNavigateToProfile?.()
+        activeDeps.onNavigateToUserMain?.()
       }
     }
   }))

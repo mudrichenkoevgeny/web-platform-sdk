@@ -28,7 +28,6 @@ export const Route = createFileRoute('/audit/events/$eventId')({
             navigate({ to: '/sessions/$sessionId', params: { sessionId } }),
           onNavigateToIdentifierDetail: (identifierId) =>
             navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
-          onNavigateToProfile: () => void navigate({ to: ManagementSelfUserNavigation.Main.route }),
           onBack: () => navigateUp({ to: ManagementAuditNavigation.AuditEventList.ROUTE, search: (raw) => cleanSearchParams(auditEventListSearchSchema.parse(raw)) })
         }}
       />

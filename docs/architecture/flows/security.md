@@ -72,7 +72,7 @@ sequenceDiagram
 When an account enters `SECURITY_HOLD` due to failed attempt thresholds or suspicious logins, standard authentication is blocked until the recovery flow is completed:
 
 1. **Detection**: `LoginByEmailUseCase` or `LoginByPhoneUseCase` returns `UserAccountStatus.SECURITY_HOLD`.
-2. **Navigation**: Zustand router (`ClientLoginRootStore`) navigates to the `UnlockRootContainer` screen.
+2. **Navigation**: The application navigates to the unlock flow route (`ClientAuthNavigation.UnlockMethodSelection.ROUTE`, e.g. `/auth/unlock`).
 3. **Target Selection**: User chooses recovery delivery method (Email OTP or Phone SMS OTP) via `UnlockMethodSelectionScreen`.
 4. **Verification**: User enters the OTP code received via chosen delivery method in `UnlockOtpScreen`.
 5. **Account Restoration**: Upon successful OTP submission, account status transitions back to `ACTIVE`, issuing a fresh session token pair and redirecting to the main app dashboard.
