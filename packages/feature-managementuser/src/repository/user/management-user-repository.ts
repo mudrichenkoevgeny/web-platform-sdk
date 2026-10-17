@@ -7,6 +7,7 @@ import type {
   UserAccountStatus,
   UserId,
   UserPrivate,
+  UserRole,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 

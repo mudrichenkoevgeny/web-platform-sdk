@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
 import { ManagementAuditRoutes, SortOrder, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -10,14 +10,14 @@ describe('FetchManagementAuditApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchManagementAuditApi(mockHttpClient)
   })
 
   it('dispatches getAuditEvents request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedAuditEventsPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -43,7 +43,7 @@ describe('FetchManagementAuditApi', () => {
 
   it('formats actorIds into actor_id query parameter', async () => {
     const mockPayload = pagedResultPayloadMock()
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     await api.getAuditEvents({
       actorIds: ['usr_123']
@@ -56,7 +56,7 @@ describe('FetchManagementAuditApi', () => {
 
   it('dispatches getAuditEvent request', async () => {
     const mockPayload = auditEventPrivatePayloadMock({ id: toAuditEventIdOrThrow('550e8400-e29b-41d4-a716-446655440000') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getAuditEvent('550e8400-e29b-41d4-a716-446655440000')
 

@@ -309,7 +309,7 @@ export const createUserDetailStore = (
 
     onDismissDeleteDialog: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status === 'content') {
         set({ screenState: { ...current, isDeleteConfirmationVisible: false } })
       }
     },

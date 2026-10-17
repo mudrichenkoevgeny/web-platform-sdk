@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementSessionApi } from '@/network/api/session/fetch-management-session-api'
 import { ManagementSessionsRoutes, SortOrder, toUserIdOrThrow, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -11,14 +11,14 @@ describe('FetchManagementSessionApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchManagementSessionApi(mockHttpClient)
   })
 
   it('dispatches getSessions request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedSessionListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -50,7 +50,7 @@ describe('FetchManagementSessionApi', () => {
   it('dispatches getSessions request using GET_USER_SESSIONS route when userId param is provided', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedSessionListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       userId: toUserIdOrThrow('usr_1'),
@@ -67,7 +67,7 @@ describe('FetchManagementSessionApi', () => {
 
   it('dispatches getSession request', async () => {
     const mockPayload = userSessionPayloadMock({ id: toUserSessionIdOrThrow('sess_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getSession('sess_1')
 
@@ -78,7 +78,7 @@ describe('FetchManagementSessionApi', () => {
   })
 
   it('dispatches deleteSession request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteSession(userId, 'sess_1')
@@ -91,7 +91,7 @@ describe('FetchManagementSessionApi', () => {
   })
 
   it('dispatches deleteAllUserSessions request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteAllUserSessions(userId)

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
 import { ManagementIdentifiersRoutes, SortOrder, toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -11,14 +11,14 @@ describe('FetchManagementIdentifierApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchManagementIdentifierApi(mockHttpClient)
   })
 
   it('dispatches getIdentifiers request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedIdentifierListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -40,7 +40,7 @@ describe('FetchManagementIdentifierApi', () => {
   it('dispatches getIdentifiers request using GET_USER_IDENTIFIERS route when userId param is provided', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedIdentifierListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       userId: toUserIdOrThrow('usr_1'),
@@ -57,7 +57,7 @@ describe('FetchManagementIdentifierApi', () => {
 
   it('dispatches getIdentifier request', async () => {
     const mockPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getIdentifier(toUserIdentifierIdOrThrow('ident_1'))
 
@@ -68,7 +68,7 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches deleteIdentifier request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteIdentifier(userId, toUserIdentifierIdOrThrow('ident_1'))
@@ -81,7 +81,7 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches deleteIdentifierPassword request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteIdentifierPassword(userId, toUserIdentifierIdOrThrow('ident_1'))

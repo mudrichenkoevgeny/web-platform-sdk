@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementIdentifiersApi } from '@/network/api/identifier/fetch-self-management-identifiers-api'
 import { SelfManagementIdentifierRoutes, SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -11,13 +11,13 @@ describe('FetchSelfManagementIdentifiersApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchSelfManagementIdentifiersApi(mockHttpClient)
   })
 
   it('dispatches getUserIdentifier request', async () => {
     const mockPayload = userIdentifierPayloadMock({ id: toUserIdentifierIdOrThrow('ident_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const id = toUserIdentifierIdOrThrow('ident_1')
     const result = await api.getUserIdentifier(id)
@@ -31,7 +31,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
   it('dispatches getUserIdentifiers request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedIdentifierListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -50,7 +50,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
   })
 
   it('dispatches emailChangePassword request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const identifierId = toUserIdentifierIdOrThrow('ident_1')
     const request = { old_password: 'old', new_password: 'new' }

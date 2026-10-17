@@ -2,62 +2,37 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SortOrder, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSessionRepositoryImpl } from '@/repository/session/open-session-repository-impl'
-import type { AuthStorage, SessionApi, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { AuthStorageMock, SessionApiMock, UserStorageMock, userSessionPayloadMock, userSessionSummaryMock, userSessionSummaryPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenSessionRepositoryImpl', () => {
-  let mockApi: SessionApi
-  let mockUserStorage: UserStorage
-  let mockAuthStorage: AuthStorage
+  let mockApi: SessionApiMock
+  let mockUserStorage: UserStorageMock
+  let mockAuthStorage: AuthStorageMock
   let repository: OpenSessionRepositoryImpl
 
-  const dummySessionPayload = {
-    id: 'sess_1',
-    user_id: 'usr_1',
-    user_role: 'user',
-    identifier: 'user@example.com',
-    identifier_id: 'ident_1',
-    identifier_display_name: 'User',
-    identifier_auth_provider: 'email',
-    client_device_info: {
-      client_type: 'web',
-      language: 'en',
-      device_id: 'dev_1',
-      device_name: 'Chrome',
-      app_version: '1.0.0',
-      operation_system_version: 'macOS'
-    },
-    user_agent: 'Mozilla/5.0',
-    ip_address: '127.0.0.1',
-    expires_at: 10000,
-    last_accessed_at: 100,
-    last_reauthenticated_at: 50,
-    is_sensitive_values_masked: false,
-    created_at: 10,
-    updated_at: 20
-  } as any
-
   beforeEach(() => {
-    mockApi = {
-      getSessions: vi.fn().mockResolvedValue(appResultSuccess({ items: [dummySessionPayload], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })),
-      getSession: vi.fn().mockResolvedValue(appResultSuccess(dummySessionPayload)),
-      logout: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      deleteSession: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      deleteAllOtherSessions: vi.fn().mockResolvedValue(appResultSuccess({ deleted_session_ids: ['sess_2'] })),
-      reauthenticateSession: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as SessionApi
+    mockApi = new SessionApiMock()
+    mockApi.getSessionResult = appResultSuccess(userSessionPayloadMock())
+    mockApi.getSessionsResult = appResultSuccess({ items: [userSessionSummaryPayloadMock()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
+    mockApi.deleteAllOtherSessionsResult = appResultSuccess({ deletedSessionIds: [toUserSessionIdOrThrow('sess_2')] })
 
-    mockUserStorage = {
-      getUserSessionsList: vi.fn().mockResolvedValue({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }),
-      updateUserSessionsPayloadList: vi.fn().mockResolvedValue(undefined),
-      addUserSession: vi.fn().mockResolvedValue(undefined),
-      removeUserSession: vi.fn().mockResolvedValue(undefined),
-      removeUserSessions: vi.fn().mockResolvedValue(undefined),
-      clear: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockUserStorage = new UserStorageMock()
+    mockAuthStorage = new AuthStorageMock()
 
-    mockAuthStorage = {
-      clearTokens: vi.fn().mockResolvedValue(undefined)
-    } as unknown as AuthStorage
+    vi.spyOn(mockApi, 'getSessions')
+    vi.spyOn(mockApi, 'getSession')
+    vi.spyOn(mockApi, 'logout')
+    vi.spyOn(mockApi, 'deleteSession')
+    vi.spyOn(mockApi, 'deleteAllOtherSessions')
+    vi.spyOn(mockApi, 'reauthenticateSession')
+
+    vi.spyOn(mockUserStorage, 'getUserSessionsList')
+    vi.spyOn(mockUserStorage, 'updateUserSessionsPayloadList')
+    vi.spyOn(mockUserStorage, 'removeUserSession')
+    vi.spyOn(mockUserStorage, 'removeUserSessions')
+    vi.spyOn(mockUserStorage, 'clear')
+
+    vi.spyOn(mockAuthStorage, 'clearTokens')
 
     repository = new OpenSessionRepositoryImpl(mockApi, mockUserStorage, mockAuthStorage)
   })
@@ -80,10 +55,10 @@ describe('OpenSessionRepositoryImpl', () => {
       appVersions: [],
       osVersions: []
     }
-    const result = await repository.getSessions(params)
+    const sessionsResult = await repository.getSessions(params)
     expect(mockApi.getSessions).toHaveBeenCalled()
     expect(mockUserStorage.updateUserSessionsPayloadList).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(sessionsResult)).toBe(true)
   })
 
   it('falls back to cached sessions when network fails', async () => {
@@ -104,54 +79,54 @@ describe('OpenSessionRepositoryImpl', () => {
       appVersions: [],
       osVersions: []
     }
-    vi.mocked(mockApi.getSessions).mockResolvedValue(appResultFailure(CommonError.unknown()))
-    vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({ items: [{ id: 'sess_cached' } as any], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
+    mockApi.getSessionsResult = appResultFailure(CommonError.unknown())
+    vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({ items: [userSessionSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
 
-    const result = await repository.getSessions(params)
-    expect(isSuccess(result)).toBe(true)
+    const sessionsResult = await repository.getSessions(params)
+    expect(isSuccess(sessionsResult)).toBe(true)
   })
 
   it('delegates getSession and maps to domain model on success', async () => {
     const id = toUserSessionIdOrThrow('sess_1')
-    const result = await repository.getSession(id)
+    const sessionResult = await repository.getSession(id)
     expect(mockApi.getSession).toHaveBeenCalledWith(id)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(sessionResult)).toBe(true)
   })
 
   it('delegates logout and clears storages', async () => {
-    const result = await repository.logout()
+    const logoutResult = await repository.logout()
     expect(mockApi.logout).toHaveBeenCalled()
     expect(mockUserStorage.clear).toHaveBeenCalled()
     expect(mockAuthStorage.clearTokens).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(logoutResult)).toBe(true)
   })
 
   it('delegates deleteSession and removes from storage', async () => {
     const id = toUserSessionIdOrThrow('sess_1')
-    const result = await repository.deleteSession(id)
+    const deleteResult = await repository.deleteSession(id)
     expect(mockApi.deleteSession).toHaveBeenCalledWith(id)
     expect(mockUserStorage.removeUserSession).toHaveBeenCalledWith(id)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(deleteResult)).toBe(true)
   })
 
   it('delegates deleteAllOtherSessions and cleans up storage', async () => {
     vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({
-      items: [{ id: 'sess_2' } as any],
+      items: [userSessionSummaryMock({ id: toUserSessionIdOrThrow('sess_2') })],
       totalCount: 1,
       pageNumber: 1,
       pageSize: 10,
       totalPages: 1
     })
 
-    const result = await repository.deleteAllOtherSessions()
+    const deleteResult = await repository.deleteAllOtherSessions()
     expect(mockApi.deleteAllOtherSessions).toHaveBeenCalled()
-    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith(['sess_2'])
-    expect(isSuccess(result)).toBe(true)
+    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith([toUserSessionIdOrThrow('sess_2')])
+    expect(isSuccess(deleteResult)).toBe(true)
   })
 
   it('delegates reauthenticateSession', async () => {
-    const result = await repository.reauthenticateSession('mfa123', '654321')
+    const reauthResult = await repository.reauthenticateSession('mfa123', '654321')
     expect(mockApi.reauthenticateSession).toHaveBeenCalledWith('mfa123', '654321')
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(reauthResult)).toBe(true)
   })
 })

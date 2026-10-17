@@ -91,7 +91,7 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     )
   }
 
-  const { session, isCurrentSession, actionLoading, actionError } = screenState
+  const { session, isCurrentSession, isSelfUser, actionLoading, actionError } = screenState
   const notAvailableText = strings.not_available
   const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
 
@@ -222,14 +222,16 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         </div>
 
         <div className="w-full pt-2 flex flex-col gap-2">
-          <CoreButton
-            type="button"
-            label={strings.session_revoke}
-            onClick={onRevokeSessionClick}
-            disabled={actionLoading || isCurrentSession}
-            className="bg-error hover:bg-error/90 text-error-foreground"
-            data-testid={SessionDetailTestTags.REVOKE_BUTTON}
-          />
+          {!isCurrentSession && (
+            <CoreButton
+              type="button"
+              label={strings.session_revoke}
+              onClick={onRevokeSessionClick}
+              disabled={actionLoading || isSelfUser}
+              className="bg-error hover:bg-error/90 text-error-foreground"
+              data-testid={SessionDetailTestTags.REVOKE_BUTTON}
+            />
+          )}
 
           {actionError && (
             <CoreErrorText

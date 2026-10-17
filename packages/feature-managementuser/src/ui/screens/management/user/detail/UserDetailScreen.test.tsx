@@ -54,6 +54,9 @@ describe('UserDetailScreen', () => {
   it('disables control buttons when user is self (currentUserId matches userId)', async () => {
     const deps = createMockDeps()
     deps.currentUserId = deps.userId
+    deps.getUserUseCase = {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(userDetailsMock({ id: deps.userId })))
+    } as unknown as UserDetailStoreDependencies['getUserUseCase']
 
     render(
       <ComponentTestHarness>

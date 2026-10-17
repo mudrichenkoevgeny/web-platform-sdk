@@ -53,7 +53,7 @@ export const Route = createFileRoute('/sessions/$sessionId')({
                 managementDeps.currentUserId != null &&
                 sessionResult.data.userId === managementDeps.currentUserId
               ) {
-                return appResultFailure(CommonError.forbidden())
+                return appResultFailure(CommonError.lifecycle('Cannot delete current user session'))
               }
 
               return managementDeps.managementDeleteSessionUseCase.execute(sessionResult.data.userId, targetSessionId)

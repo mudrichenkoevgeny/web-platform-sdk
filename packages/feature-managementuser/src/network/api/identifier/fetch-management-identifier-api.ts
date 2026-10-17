@@ -42,7 +42,7 @@ export class FetchManagementIdentifierApi implements ManagementIdentifierApi {
     let queryMap: Record<string, unknown> | null = null
 
     if (isUserSpecificIdentifierParams(params)) {
-      route = ManagementIdentifiersRoutes.GET_USER_IDENTIFIERS.replace(`{${UserApiPaths.USER_ID}}`, params.userId)
+      route = ManagementIdentifiersRoutes.GET_USER_IDENTIFIERS.replace(`{${UserApiPaths.USER_ID}}`, params.userId ?? '')
       queryMap = ManagementUserIdentifierListParamsParser.toQueryMap(params)
     } else {
       route = ManagementIdentifiersRoutes.GET_IDENTIFIERS

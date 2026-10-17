@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { RouterProvider } from '@tanstack/react-router'
-import { ManagementSelfUserNavigation, type UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { type UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { SdkProvider, ThemeProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementRootStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import type { ManagementAppComponent } from '@/di/management-app-component'

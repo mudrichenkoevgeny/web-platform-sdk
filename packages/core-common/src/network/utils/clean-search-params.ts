@@ -29,8 +29,8 @@ function isRecord(val: unknown): val is Record<string, unknown> {
  * @param params - Search parameter object returned from Zod schema parse
  * @returns Cleaned search parameter object without empty array properties or default pagination
  */
-export function cleanSearchParams<T extends Record<string, unknown>>(params: T): T {
-  const result: T = { ...params }
+export function cleanSearchParams<T extends object>(params: T): T {
+  const result = { ...params } as T & Record<string, unknown>
   for (const [key, val] of Object.entries(params)) {
     if (Array.isArray(val)) {
       if (val.length === 0) {

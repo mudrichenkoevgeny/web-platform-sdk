@@ -2,6 +2,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   ManagementUserListParams,
   PagedResult,
+  UserId,
   UserPrivatePayload,
   UserSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -33,7 +34,7 @@ export interface ManagementUserApi {
    * @param userId - Unique account identifier
    * @returns Detailed information of the target user, or a mapped failure
    */
-  getUser(userId: string): Promise<AppResult<UserPrivatePayload, AppError>>
+  getUser(userId: UserId): Promise<AppResult<UserPrivatePayload, AppError>>
 
   /**
    * Updates user details, status, or permissions for a specific user.
@@ -42,7 +43,7 @@ export interface ManagementUserApi {
    * @param params - Patch domain parameters containing fields to change
    * @returns Void result or a mapped failure
    */
-  updateUser(userId: string, params: UpdateUserParams): Promise<AppResult<void, AppError>>
+  updateUser(userId: UserId, params: UpdateUserParams): Promise<AppResult<void, AppError>>
 
   /**
    * Completely deletes a specified user account.
@@ -50,5 +51,5 @@ export interface ManagementUserApi {
    * @param userId - Unique account identifier to remove
    * @returns Void result or a mapped failure
    */
-  deleteUser(userId: string): Promise<AppResult<void, AppError>>
+  deleteUser(userId: UserId): Promise<AppResult<void, AppError>>
 }

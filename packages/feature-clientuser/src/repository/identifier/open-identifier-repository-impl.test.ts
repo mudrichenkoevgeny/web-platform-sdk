@@ -79,21 +79,21 @@ describe('OpenIdentifierRepositoryImpl', () => {
 
   it('delegates addUserIdentifierEmail and updates storage', async () => {
     const result = await repository.addUserIdentifierEmail('user@example.com', 'secret', '123456')
-    expect(mockApi.addUserIdentifierEmail).toHaveBeenCalledWith({ email: 'user@example.com', password: 'secret', confirmation_code: '123456' })
+    expect(mockApi.addUserIdentifierEmail).toHaveBeenCalledWith('user@example.com', 'secret', '123456')
     expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates addUserIdentifierPhone and updates storage', async () => {
     const result = await repository.addUserIdentifierPhone('+1234567890', '123456')
-    expect(mockApi.addUserIdentifierPhone).toHaveBeenCalledWith({ phone_number: '+1234567890', confirmation_code: '123456' })
+    expect(mockApi.addUserIdentifierPhone).toHaveBeenCalledWith('+1234567890', '123456')
     expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates addUserIdentifierExternalAuthProvider and updates storage', async () => {
     const result = await repository.addUserIdentifierExternalAuthProvider('GOOGLE', 'token123')
-    expect(mockApi.addUserIdentifierExternalAuthProvider).toHaveBeenCalledWith({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
+    expect(mockApi.addUserIdentifierExternalAuthProvider).toHaveBeenCalledWith('GOOGLE', 'token123')
     expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
@@ -113,7 +113,7 @@ describe('OpenIdentifierRepositoryImpl', () => {
   it('delegates emailChangePassword request', async () => {
     const identifierId = 'ident-123' as any
     const result = await repository.emailChangePassword(identifierId, 'old', 'new')
-    expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, { old_password: 'old', new_password: 'new' })
+    expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, 'old', 'new')
     expect(isSuccess(result)).toBe(true)
   })
 

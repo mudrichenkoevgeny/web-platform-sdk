@@ -25,6 +25,8 @@ export type SessionDetailScreenState =
       session: UserSessionPrivate
       /** Whether this session is the active session. */
       isCurrentSession: boolean
+      /** Whether this session belongs to the current user. */
+      isSelfUser: boolean
       /** Whether a background revocation action is currently loading. */
       actionLoading: boolean
       /** Action error instance if revocation failed. */
@@ -115,14 +117,16 @@ export const createSessionDetailStore = (
         if (activeDeps.session) {
           const isSelfActiveSession =
             activeDeps.isCurrentSession ??
-            ((activeSessionId != null && activeDeps.session.id === activeSessionId) ||
-              (activeDeps.currentUserId != null && activeDeps.session.userId === activeDeps.currentUserId))
+            (activeSessionId != null && activeDeps.session.id === activeSessionId)
+          const isSelfUser =
+            activeDeps.currentUserId != null && activeDeps.session.userId === activeDeps.currentUserId
 
           set({
             screenState: {
               status: 'content',
               session: activeDeps.session,
               isCurrentSession: isSelfActiveSession,
+              isSelfUser,
               actionLoading: false,
               actionError: null
             }
@@ -138,14 +142,16 @@ export const createSessionDetailStore = (
             const loadedSession = sessionResult.data
             const isSelfActiveSession =
               activeDeps.isCurrentSession ??
-              ((activeSessionId != null && loadedSession.id === activeSessionId) ||
-                (activeDeps.currentUserId != null && loadedSession.userId === activeDeps.currentUserId))
+              (activeSessionId != null && loadedSession.id === activeSessionId)
+            const isSelfUser =
+              activeDeps.currentUserId != null && loadedSession.userId === activeDeps.currentUserId
 
             set({
               screenState: {
                 status: 'content',
                 session: loadedSession,
                 isCurrentSession: isSelfActiveSession,
+                isSelfUser,
                 actionLoading: false,
                 actionError: null
               }

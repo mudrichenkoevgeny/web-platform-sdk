@@ -26,12 +26,20 @@ export const searchParamsToListingStates = (
 
   const sortBy = 'sort_by' in params ? params.sort_by : ('sortBy' in params ? params.sortBy : undefined)
   const sortOrder = 'sort_order' in params ? params.sort_order : ('sortOrder' in params ? params.sortOrder : undefined)
-  const userAuthProviders = 'user_auth_provider' in params
+  const userAuthProvidersRaw = 'user_auth_provider' in params
     ? params.user_auth_provider
     : ('user_auth_providers' in params ? params.user_auth_providers : ('userAuthProviders' in params ? params.userAuthProviders : undefined))
-  const identifiers = 'identifier' in params
+  const identifiersRaw = 'identifier' in params
     ? params.identifier
     : ('identifiers' in params ? params.identifiers : undefined)
+
+  const userAuthProviders: readonly string[] = Array.isArray(userAuthProvidersRaw)
+    ? userAuthProvidersRaw.map(String)
+    : (typeof userAuthProvidersRaw === 'string' ? [userAuthProvidersRaw] : [])
+
+  const identifiers: readonly string[] = Array.isArray(identifiersRaw)
+    ? identifiersRaw.map(String)
+    : (typeof identifiersRaw === 'string' ? [identifiersRaw] : [])
 
   const sortState: ListingSortState | null = sortBy
     ? {
@@ -42,14 +50,14 @@ export const searchParamsToListingStates = (
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (userAuthProviders && userAuthProviders.length > 0) {
+  if (userAuthProviders.length > 0) {
     filterStates[UserFilterValues.UserIdentifierFilterValues.USER_AUTH_PROVIDER] = {
       type: 'choice',
       selectedIds: new Set(userAuthProviders)
     }
   }
 
-  if (identifiers && identifiers.length > 0) {
+  if (identifiers.length > 0) {
     filterStates[UserFilterValues.UserIdentifierFilterValues.IDENTIFIER] = {
       type: 'text',
       value: identifiers[0] ?? ''

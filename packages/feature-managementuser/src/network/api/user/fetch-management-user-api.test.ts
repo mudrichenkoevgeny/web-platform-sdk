@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
 import { ManagementUsersRoutes, SortOrder, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -12,13 +12,13 @@ describe('FetchManagementUserApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchManagementUserApi(mockHttpClient)
   })
 
   it('dispatches createUser request', async () => {
     const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const createUserParams: CreateUserParams = { email: 'user@example.com', password: 'secret' }
     const result = await api.createUser(createUserParams)
@@ -33,7 +33,7 @@ describe('FetchManagementUserApi', () => {
   it('dispatches getUsers request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedUserListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
       pageNumber: 1,
@@ -59,7 +59,7 @@ describe('FetchManagementUserApi', () => {
 
   it('dispatches getUser request', async () => {
     const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.getUser(userId)
@@ -71,8 +71,7 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches updateUser request', async () => {
-    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const updateUserParams: UpdateUserParams = { authorityLevel: 10 }
@@ -82,11 +81,11 @@ describe('FetchManagementUserApi', () => {
       expect.stringContaining('/management/users/usr_1'),
       expect.objectContaining({ method: 'PATCH' })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteUser request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow('usr_1')
     const result = await api.deleteUser(userId)

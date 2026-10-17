@@ -221,14 +221,16 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             />
           )}
 
-          <CoreButton
-            type="button"
-            label={strings.identifier_delete_button}
-            onClick={onDeleteIdentifierRequested}
-            disabled={actionLoading || isCurrentIdentifier}
-            className="bg-error hover:bg-error/90 text-error-foreground"
-            data-testid={IdentifierDetailTestTags.DELETE_BUTTON}
-          />
+          {!isCurrentIdentifier && (
+            <CoreButton
+              type="button"
+              label={strings.identifier_delete_button}
+              onClick={onDeleteIdentifierRequested}
+              disabled={actionLoading}
+              className="bg-error hover:bg-error/90 text-error-foreground"
+              data-testid={IdentifierDetailTestTags.DELETE_BUTTON}
+            />
+          )}
 
           {actionError && !isChangePasswordDialogVisible && (
             <CoreErrorText text={errorParser.parse(actionError) ?? ''} />

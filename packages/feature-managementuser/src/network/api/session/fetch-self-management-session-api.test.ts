@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
 import { SelfManagementSessionRoutes, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
@@ -11,14 +11,14 @@ describe('FetchSelfManagementSessionApi', () => {
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
-    mockHttpClient.request = vi.fn() as any
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchSelfManagementSessionApi(mockHttpClient)
   })
 
   it('dispatches getSessions request with query params', async () => {
     const mockPayload = pagedResultPayloadMock()
     const expectedSessionListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getSessions(1, 10)
 
@@ -30,7 +30,7 @@ describe('FetchSelfManagementSessionApi', () => {
 
   it('dispatches getSession request', async () => {
     const mockPayload = userSessionPayloadMock({ id: toUserSessionIdOrThrow('sess_1') })
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const id = toUserSessionIdOrThrow('sess_1')
     const result = await api.getSession(id)
@@ -42,7 +42,7 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches logout request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const result = await api.logout()
 
@@ -54,7 +54,7 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches deleteSession request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const id = toUserSessionIdOrThrow('sess_1')
     const result = await api.deleteSession(id)
@@ -68,7 +68,7 @@ describe('FetchSelfManagementSessionApi', () => {
 
   it('dispatches deleteAllOtherSessions request', async () => {
     const mockPayload = { deleted_session_ids: ['sess_2'] }
-    mockHttpClient.request.mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.deleteAllOtherSessions()
 
@@ -80,7 +80,7 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches reauthenticateSession request', async () => {
-    mockHttpClient.request.mockResolvedValue(undefined)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const result = await api.reauthenticateSession('mfa123', '123456')
 

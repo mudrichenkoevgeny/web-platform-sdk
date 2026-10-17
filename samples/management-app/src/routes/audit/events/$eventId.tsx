@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AuditEventDetailScreen, auditEventListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { ManagementAuditNavigation, ManagementSelfUserNavigation, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditNavigation, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 

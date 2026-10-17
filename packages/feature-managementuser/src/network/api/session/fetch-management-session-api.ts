@@ -41,7 +41,7 @@ export class FetchManagementSessionApi implements ManagementSessionApi {
     let queryMap: Record<string, unknown> | null = null
 
     if (isUserSpecificSessionParams(params)) {
-      route = ManagementSessionsRoutes.GET_USER_SESSIONS.replace(`{${UserApiPaths.USER_ID}}`, params.userId)
+      route = ManagementSessionsRoutes.GET_USER_SESSIONS.replace(`{${UserApiPaths.USER_ID}}`, params.userId ?? '')
       queryMap = ManagementUserSessionListParamsParser.toQueryMap(params)
     } else {
       route = ManagementSessionsRoutes.GET_SESSIONS

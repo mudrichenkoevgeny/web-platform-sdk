@@ -1,15 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  globalSessionListSearchSchema,
-  UserSessionListScreen
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { UserSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { managementUserSessionListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for user-specific session list screen. */
 export const Route = createFileRoute('/users/$userId/sessions')({
-  validateSearch: (rawSearch) => parseSearchParams(globalSessionListSearchSchema, rawSearch),
+  validateSearch: (rawSearch) => parseSearchParams(managementUserSessionListParamsSchema, rawSearch),
   component: function UserSessionListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const { userId } = Route.useParams()

@@ -71,22 +71,21 @@ export class FetchManagementUserApi implements ManagementUserApi {
     })
   }
 
-  public async updateUser(userId: UserId, params: UpdateUserParams): Promise<AppResult<UserPrivatePayload, AppError>> {
+  public async updateUser(userId: UserId, params: UpdateUserParams): Promise<AppResult<void, AppError>> {
     const path = ManagementUsersRoutes.UPDATE_USER.replace(`{${UserApiPaths.USER_ID}}`, userId)
     const payload: UpdateUserRequest = {
-      account_status: params.accountStatus,
-      authority_level: params.authorityLevel,
-      permission_codes: params.permissionCodes,
-      account_lockout_type: params.accountLockoutType,
-      temporary_lockout_until: params.temporaryLockoutUntil
+      account_status: params.accountStatus ?? null,
+      authority_level: params.authorityLevel ?? null,
+      permission_codes: params.permissionCodes ?? null,
+      account_lockout_type: params.accountLockoutType ?? null,
+      temporary_lockout_until: params.temporaryLockoutUntil ?? null
     }
-    return callResult(async () => {
-      const updateUserResponse = await this.client.request<unknown>(path, {
+    return callResult(() =>
+      this.client.request<void>(path, {
         method: 'PATCH',
         body: JSON.stringify(payload)
       })
-      return userPrivatePayloadSchema.parse(updateUserResponse)
-    })
+    )
   }
 
   public async deleteUser(userId: UserId): Promise<AppResult<void, AppError>> {

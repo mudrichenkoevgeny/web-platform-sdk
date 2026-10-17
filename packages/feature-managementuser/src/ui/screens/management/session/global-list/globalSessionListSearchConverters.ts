@@ -26,18 +26,34 @@ export const searchParamsToListingStates = (
 
   const sortBy = 'sort_by' in params ? params.sort_by : ('sortBy' in params ? params.sortBy : undefined)
   const sortOrder = 'sort_order' in params ? params.sort_order : ('sortOrder' in params ? params.sortOrder : undefined)
-  const userAuthProviders = 'user_auth_provider' in params
+  const userAuthProvidersRaw = 'user_auth_provider' in params
     ? params.user_auth_provider
     : ('user_auth_providers' in params ? params.user_auth_providers : ('userAuthProviders' in params ? params.userAuthProviders : undefined))
-  const clientTypes = 'client_type' in params
+  const clientTypesRaw = 'client_type' in params
     ? params.client_type
     : ('client_types' in params ? params.client_types : ('clientTypes' in params ? params.clientTypes : undefined))
-  const identifiers = 'identifier' in params
+  const identifiersRaw = 'identifier' in params
     ? params.identifier
     : ('identifiers' in params ? params.identifiers : undefined)
-  const ipAddresses = 'ip_address' in params
+  const ipAddressesRaw = 'ip_address' in params
     ? params.ip_address
     : ('ip_addresses' in params ? params.ip_addresses : ('ipAddresses' in params ? params.ipAddresses : undefined))
+
+  const userAuthProviders: readonly string[] = Array.isArray(userAuthProvidersRaw)
+    ? userAuthProvidersRaw.map(String)
+    : (typeof userAuthProvidersRaw === 'string' ? [userAuthProvidersRaw] : [])
+
+  const clientTypes: readonly string[] = Array.isArray(clientTypesRaw)
+    ? clientTypesRaw.map(String)
+    : (typeof clientTypesRaw === 'string' ? [clientTypesRaw] : [])
+
+  const identifiers: readonly string[] = Array.isArray(identifiersRaw)
+    ? identifiersRaw.map(String)
+    : (typeof identifiersRaw === 'string' ? [identifiersRaw] : [])
+
+  const ipAddresses: readonly string[] = Array.isArray(ipAddressesRaw)
+    ? ipAddressesRaw.map(String)
+    : (typeof ipAddressesRaw === 'string' ? [ipAddressesRaw] : [])
 
   const sortState: ListingSortState | null = sortBy
     ? {
@@ -48,28 +64,28 @@ export const searchParamsToListingStates = (
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (userAuthProviders && userAuthProviders.length > 0) {
+  if (userAuthProviders.length > 0) {
     filterStates[UserFilterValues.UserSessionFilterValues.USER_AUTH_PROVIDER] = {
       type: 'choice',
       selectedIds: new Set(userAuthProviders)
     }
   }
 
-  if (clientTypes && clientTypes.length > 0) {
+  if (clientTypes.length > 0) {
     filterStates[UserFilterValues.UserSessionFilterValues.CLIENT_TYPE] = {
       type: 'choice',
       selectedIds: new Set(clientTypes)
     }
   }
 
-  if (identifiers && identifiers.length > 0) {
+  if (identifiers.length > 0) {
     filterStates[UserFilterValues.UserSessionFilterValues.IDENTIFIER] = {
       type: 'text',
       value: identifiers[0] ?? ''
     }
   }
 
-  if (ipAddresses && ipAddresses.length > 0) {
+  if (ipAddresses.length > 0) {
     filterStates[UserFilterValues.UserSessionFilterValues.IP_ADDRESS] = {
       type: 'text',
       value: ipAddresses[0] ?? ''
