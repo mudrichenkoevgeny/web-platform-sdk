@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -13,16 +13,16 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   EditAuthSettingsProvider,
   useEditAuthSettingsStore
 } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
 import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
 
-const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useEditAuthSettingsStore((s) => s.screenState)
   const onRetry = useEditAuthSettingsStore((s) => s.onRetry)
@@ -68,8 +68,7 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.edit_auth_settings_title}
-        strings={strings}
+        title={strings.ui.editAuthSettingsTitle}
       />
     )
   }
@@ -122,7 +121,7 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
           disabled={isSaving}
         />
         <CoreScreenTitleText
-          text={strings.edit_auth_settings_title}
+          text={strings.ui.editAuthSettingsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -130,7 +129,7 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
 
       <div className="w-full flex-1 flex flex-col gap-6 mb-6">
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.enabled_auth_providers} />
+          <CoreTitleText text={strings.ui.enabledAuthProviders} />
           <div className="flex flex-col gap-2">
             {allProviders.map((provider) => {
               const inputId = `${providerBaseId}_${provider}`
@@ -162,97 +161,97 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={isRegistrationId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.is_registration_enabled}
+              {strings.ui.isRegistrationEnabled}
             </label>
           </div>
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.limits_and_expirations} />
+          <CoreTitleText text={strings.ui.limitsAndExpirations} />
 
           <CoreOutlinedTextField
             value={maxTotalIdentifiers}
             onChange={(e) => onMaxTotalIdentifiersChanged(e.target.value)}
-            label={strings.max_total_identifiers}
-            placeholder={strings.max_total_identifiers}
+            label={strings.ui.maxTotalIdentifiers}
+            placeholder={strings.ui.maxTotalIdentifiers}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={maxEmailIdentifiers}
             onChange={(e) => onMaxEmailIdentifiersChanged(e.target.value)}
-            label={strings.max_email_identifiers}
-            placeholder={strings.max_email_identifiers}
+            label={strings.ui.maxEmailIdentifiers}
+            placeholder={strings.ui.maxEmailIdentifiers}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={maxPhoneIdentifiers}
             onChange={(e) => onMaxPhoneIdentifiersChanged(e.target.value)}
-            label={strings.max_phone_identifiers}
-            placeholder={strings.max_phone_identifiers}
+            label={strings.ui.maxPhoneIdentifiers}
+            placeholder={strings.ui.maxPhoneIdentifiers}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={maxIdentifiersPerExternalProvider}
             onChange={(e) => onMaxIdentifiersPerExternalProviderChanged(e.target.value)}
-            label={strings.max_identifiers_per_external_provider}
-            placeholder={strings.max_identifiers_per_external_provider}
+            label={strings.ui.maxIdentifiersPerExternalProvider}
+            placeholder={strings.ui.maxIdentifiersPerExternalProvider}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={maxActiveSessionsForOpenUser}
             onChange={(e) => onMaxActiveSessionsForOpenUserChanged(e.target.value)}
-            label={strings.max_active_sessions_open}
-            placeholder={strings.max_active_sessions_open}
+            label={strings.ui.maxActiveSessionsOpen}
+            placeholder={strings.ui.maxActiveSessionsOpen}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={maxActiveSessionsForManagementUser}
             onChange={(e) => onMaxActiveSessionsForManagementUserChanged(e.target.value)}
-            label={strings.max_active_sessions_management}
-            placeholder={strings.max_active_sessions_management}
+            label={strings.ui.maxActiveSessionsManagement}
+            placeholder={strings.ui.maxActiveSessionsManagement}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accessTokenExpirationSeconds}
             onChange={(e) => onAccessTokenExpirationSecondsChanged(e.target.value)}
-            label={strings.access_token_expiration_seconds}
-            placeholder={strings.access_token_expiration_seconds}
+            label={strings.ui.accessTokenExpirationSeconds}
+            placeholder={strings.ui.accessTokenExpirationSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={refreshTokenExpirationSeconds}
             onChange={(e) => onRefreshTokenExpirationSecondsChanged(e.target.value)}
-            label={strings.refresh_token_expiration_seconds}
-            placeholder={strings.refresh_token_expiration_seconds}
+            label={strings.ui.refreshTokenExpirationSeconds}
+            placeholder={strings.ui.refreshTokenExpirationSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountDeletionGracePeriodSeconds}
             onChange={(e) => onAccountDeletionGracePeriodSecondsChanged(e.target.value)}
-            label={strings.account_deletion_delay_seconds}
-            placeholder={strings.account_deletion_delay_seconds}
+            label={strings.ui.accountDeletionDelaySeconds}
+            placeholder={strings.ui.accountDeletionDelaySeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountDeletionCheckIntervalSeconds}
             onChange={(e) => onAccountDeletionCheckIntervalSecondsChanged(e.target.value)}
-            label={strings.account_deletion_check_interval_seconds}
-            placeholder={strings.account_deletion_check_interval_seconds}
+            label={strings.ui.accountDeletionCheckIntervalSeconds}
+            placeholder={strings.ui.accountDeletionCheckIntervalSeconds}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.open_email_restriction_policy} />
+          <CoreTitleText text={strings.ui.openEmailRestrictionPolicy} />
 
           <div className="flex items-center gap-2">
             <input
@@ -264,15 +263,15 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={openBlacklistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.blacklist_enabled}
+              {strings.ui.blacklistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={openEmailBlacklist}
             onChange={(e) => onOpenEmailBlacklistChanged(e.target.value)}
-            label={strings.email_blacklist_placeholder}
-            placeholder={strings.email_blacklist_placeholder}
+            label={strings.ui.emailBlacklistPlaceholder}
+            placeholder={strings.ui.emailBlacklistPlaceholder}
             disabled={isSaving}
           />
 
@@ -286,21 +285,21 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={openWhitelistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.whitelist_enabled}
+              {strings.ui.whitelistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={openEmailWhitelist}
             onChange={(e) => onOpenEmailWhitelistChanged(e.target.value)}
-            label={strings.email_whitelist_placeholder}
-            placeholder={strings.email_whitelist_placeholder}
+            label={strings.ui.emailWhitelistPlaceholder}
+            placeholder={strings.ui.emailWhitelistPlaceholder}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.management_email_restriction_policy} />
+          <CoreTitleText text={strings.ui.managementEmailRestrictionPolicy} />
 
           <div className="flex items-center gap-2">
             <input
@@ -312,15 +311,15 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={managementBlacklistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.blacklist_enabled}
+              {strings.ui.blacklistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={managementEmailBlacklist}
             onChange={(e) => onManagementEmailBlacklistChanged(e.target.value)}
-            label={strings.email_blacklist_placeholder}
-            placeholder={strings.email_blacklist_placeholder}
+            label={strings.ui.emailBlacklistPlaceholder}
+            placeholder={strings.ui.emailBlacklistPlaceholder}
             disabled={isSaving}
           />
 
@@ -334,15 +333,15 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={managementWhitelistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.whitelist_enabled}
+              {strings.ui.whitelistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={managementEmailWhitelist}
             onChange={(e) => onManagementEmailWhitelistChanged(e.target.value)}
-            label={strings.email_whitelist_placeholder}
-            placeholder={strings.email_whitelist_placeholder}
+            label={strings.ui.emailWhitelistPlaceholder}
+            placeholder={strings.ui.emailWhitelistPlaceholder}
             disabled={isSaving}
           />
         </div>
@@ -362,13 +361,13 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
       <div className="w-full flex flex-col gap-2 pt-4 border-t border-border">
         <CoreButton
           type="submit"
-          label={isSaving ? strings.saving : strings.save}
+          label={isSaving ? strings.ui.saving : strings.ui.save}
           disabled={isSaving}
           onClick={onSaveClick}
         />
         <CoreTextButton
           type="button"
-          label={strings.reset_to_defaults}
+          label={strings.ui.resetToDefaults}
           disabled={isSaving}
           onClick={onResetClick}
         />
@@ -377,7 +376,7 @@ const EditAuthSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings
   )
 }
 
-const EditAuthSettingsController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const EditAuthSettingsController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useEditAuthSettingsStore((s) => s.initScreen)
@@ -391,11 +390,11 @@ const EditAuthSettingsController: React.FC<{ strings?: FeatureManagementUserStri
 
 export interface EditAuthSettingsScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: EditAuthSettingsStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const EditAuthSettingsScreen = forwardRef<HTMLDivElement, EditAuthSettingsScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <EditAuthSettingsProvider dependencies={dependencies}>

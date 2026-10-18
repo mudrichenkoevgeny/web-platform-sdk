@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { ResetEmailPasswordScreen } from '@/ui/screens/auth/reset-password/ResetEmailPasswordScreen'
 import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/reset-password/reset-email-password-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('ResetEmailPasswordScreen', () => {
   const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
@@ -38,9 +40,9 @@ describe('ResetEmailPasswordScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.reset_password)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.resetPassword)).toBeDefined()
 
-    const sendCodeBtn = screen.getByRole('button', { name: enUserStrings.send_code })
+    const sendCodeBtn = screen.getByRole('button', { name: userStrings.ui.sendCode })
     expect(sendCodeBtn.getAttribute('disabled')).not.toBeNull()
 
     const emailInput = screen.getByRole('textbox')
@@ -51,7 +53,7 @@ describe('ResetEmailPasswordScreen', () => {
     await user.click(sendCodeBtn)
 
     expect(deps.sendResetPasswordConfirmationToEmailUseCase.execute).toHaveBeenCalledWith('user@example.com')
-    expect(await screen.findByText(enUserStrings.enter_confirmation_code)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.enterConfirmationCode)).toBeDefined()
   })
 
   it('submits code and new password to complete reset on second step', async () => {
@@ -67,16 +69,16 @@ describe('ResetEmailPasswordScreen', () => {
     const emailInput = screen.getByRole('textbox')
     await user.type(emailInput, 'user@example.com')
 
-    const sendCodeBtn = screen.getByRole('button', { name: enUserStrings.send_code })
+    const sendCodeBtn = screen.getByRole('button', { name: userStrings.ui.sendCode })
     await user.click(sendCodeBtn)
 
-    const codeInput = await screen.findByPlaceholderText(enUserStrings.confirmation_code)
-    const passwordInput = screen.getByPlaceholderText(enUserStrings.new_password)
+    const codeInput = await screen.findByPlaceholderText(userStrings.ui.confirmationCode)
+    const passwordInput = screen.getByPlaceholderText(userStrings.ui.newPassword)
 
     await user.type(codeInput, '123456')
     await user.type(passwordInput, 'NewPassword123!')
 
-    const confirmBtn = screen.getByRole('button', { name: enUserStrings.confirm })
+    const confirmBtn = screen.getByRole('button', { name: userStrings.ui.confirm })
     await user.click(confirmBtn)
 
     expect(deps.resetEmailPasswordUseCase.execute).toHaveBeenCalledWith('user@example.com', 'NewPassword123!', '123456')

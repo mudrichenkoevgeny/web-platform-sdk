@@ -1,15 +1,16 @@
 import React, { forwardRef } from 'react'
+import { CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
 import { CoreBackButton } from '@/ui/components/button/back/CoreBackButton'
-import { enStrings } from '@/locales/en/strings'
-import type { CoreCommonStrings } from '@/locales/en/strings'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface PagingFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage?: number
   totalPages?: number
   onPageChange?: (page: number) => void
   totalCount?: number
-  strings?: CoreCommonStrings
+  strings?: CommonModuleStrings
 }
 
 export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
@@ -19,7 +20,7 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
       totalPages = 1,
       onPageChange,
       totalCount,
-      strings = enStrings,
+      strings = defaultCommonStrings,
       className,
       ...rest
     },
@@ -44,21 +45,21 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
             <CoreBackButton
               onClick={() => onPageChange(page - 1)}
               disabled={!hasPrevious}
-              ariaLabel={strings.ui_common_previous_page}
+              ariaLabel={strings.ui.previousPage}
             />
             <CoreBackButton
               onClick={() => onPageChange(page + 1)}
               disabled={!hasNext}
-              ariaLabel={strings.ui_common_next_page}
+              ariaLabel={strings.ui.nextPage}
               className="rotate-180"
             />
           </div>
         )}
 
         <div className="flex items-center gap-4 text-xs font-medium">
-          <span>{strings.ui_common_page_info(page, total)}</span>
+          <span>{strings.ui.pageInfo(page, total)}</span>
           {totalCount !== undefined && totalCount !== null && (
-            <span>{strings.ui_common_total_count(totalCount)}</span>
+            <span>{strings.ui.totalCount(totalCount)}</span>
           )}
         </div>
       </div>

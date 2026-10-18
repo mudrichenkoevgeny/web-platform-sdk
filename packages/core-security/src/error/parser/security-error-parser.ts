@@ -1,18 +1,19 @@
 import {
   SecurityErrorCodes,
   SecurityErrorArgs,
-  CommonErrorArgs
+  CommonErrorArgs,
+  SecurityModuleStrings
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientSecurityErrorCodes } from '@/error/naming/client-security-error-codes'
-import { enSecurityStrings } from '@/locales/index'
-import type { CoreSecurityStrings } from "@/locales/index";
+
+const defaultSecurityStrings = new SecurityModuleStrings()
 
 /**
  * AppErrorParser implementation for security-domain error codes.
  */
 export class SecurityErrorParser implements AppErrorParser {
-  private readonly getStrings: () => CoreSecurityStrings
+  private readonly getStrings: () => SecurityModuleStrings
 
   /**
    * Constructs a new {@link SecurityErrorParser}.
@@ -20,7 +21,7 @@ export class SecurityErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Core security strings dictionary or dynamic getter function returning current strings
    */
   public constructor(
-    stringsOrGetter: CoreSecurityStrings | (() => CoreSecurityStrings) = enSecurityStrings
+    stringsOrGetter: SecurityModuleStrings | (() => SecurityModuleStrings) = defaultSecurityStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -40,83 +41,70 @@ export class SecurityErrorParser implements AppErrorParser {
         return this.resolveLocalizedString(
           args,
           SecurityErrorArgs.MFA_TOKEN,
-          (mfaToken) => strings.error_security_mfa_confirmation_required_args(mfaToken),
-          strings.error_security_mfa_confirmation_required
+          (mfaToken) => strings.errors.mfaConfirmationRequired(mfaToken),
+          strings.errors.mfaConfirmationRequiredWithoutArgs
         )
 
       case SecurityErrorCodes.OTP_RETRY_TOO_SOON:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.RETRY_AFTER_SECONDS,
-          (seconds) => strings.error_security_otp_retry_too_soon_args(seconds),
-          strings.error_security_otp_retry_too_soon
+          (seconds) => strings.errors.otpRetryTooSoon(seconds),
+          strings.errors.otpRetryTooSoonWithoutArgs
         )
 
-      case SecurityErrorCodes.PASSWORD_TOO_WEAK: {
-        if (Object.keys(args).length === 0) {
-          return strings.error_security_password_too_weak
-        }
-        return strings.error_security_password_too_weak_args(
-          args[SecurityErrorArgs.PASSWORD_FAIL_TOO_SHORT] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_MIN_LENGTH] ?? '0',
-          args[SecurityErrorArgs.PASSWORD_FAIL_NO_LETTER] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_FAIL_NO_UPPERCASE] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_FAIL_NO_LOWERCASE] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_FAIL_NO_DIGIT] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_FAIL_NO_SPECIAL_CHAR] ?? 'false',
-          args[SecurityErrorArgs.PASSWORD_FAIL_TOO_COMMON] ?? 'false'
-        )
-      }
+      case SecurityErrorCodes.PASSWORD_TOO_WEAK:
+        return strings.errors.passwordTooWeak
 
       case SecurityErrorCodes.TOTP_ALREADY_ENABLED:
-        return strings.error_security_totp_already_enabled
+        return strings.errors.totpAlreadyEnabled
 
       case SecurityErrorCodes.TOTP_NOT_ENABLED:
-        return strings.error_security_totp_not_enabled
+        return strings.errors.totpNotEnabled
 
       case SecurityErrorCodes.MFA_TOKEN_EXPIRED:
-        return strings.error_security_mfa_token_expired
+        return strings.errors.mfaTokenExpired
 
       case SecurityErrorCodes.RECOVERY_CODE_ALREADY_USED:
-        return strings.error_security_recovery_code_used
+        return strings.errors.recoveryCodeUsed
 
       case SecurityErrorCodes.INVALID_TOTP_CODE:
-        return strings.error_security_invalid_totp_code
+        return strings.errors.invalidTotpCode
 
       case SecurityErrorCodes.INVALID_MFA_TOKEN:
-        return strings.error_security_invalid_mfa_token
+        return strings.errors.invalidMfaToken
 
       case SecurityErrorCodes.IP_NOT_ALLOWED:
-        return strings.error_security_ip_not_allowed
+        return strings.errors.ipNotAllowed
 
       case ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE:
-        return strings.error_security_password_policy_unavailable
+        return strings.errors.passwordPolicyUnavailable
 
       case ClientSecurityErrorCodes.PASSWORD_TOO_SHORT:
         return this.resolveLocalizedString(
           args,
           SecurityErrorArgs.PASSWORD_MIN_LENGTH,
-          (minLength) => strings.error_security_password_too_short_args(minLength),
-          strings.error_security_password_too_short
+          (minLength) => strings.errors.passwordTooShort(minLength),
+          strings.errors.passwordTooShortWithoutArgs
         )
 
       case ClientSecurityErrorCodes.PASSWORD_NO_LETTER:
-        return strings.error_security_password_no_letter
+        return strings.errors.passwordNoLetter
 
       case ClientSecurityErrorCodes.PASSWORD_NO_UPPERCASE:
-        return strings.error_security_password_no_uppercase
+        return strings.errors.passwordNoUppercase
 
       case ClientSecurityErrorCodes.PASSWORD_NO_LOWERCASE:
-        return strings.error_security_password_no_lowercase
+        return strings.errors.passwordNoLowercase
 
       case ClientSecurityErrorCodes.PASSWORD_NO_DIGIT:
-        return strings.error_security_password_no_digit
+        return strings.errors.passwordNoDigit
 
       case ClientSecurityErrorCodes.PASSWORD_NO_SPECIAL_CHAR:
-        return strings.error_security_password_no_special_char
+        return strings.errors.passwordNoSpecialChar
 
       case ClientSecurityErrorCodes.PASSWORD_TOO_COMMON:
-        return strings.error_security_password_too_common
+        return strings.errors.passwordTooCommon
 
       default:
         return null

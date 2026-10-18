@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
+import { UnlockMethod, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockOtpScreen } from '@/ui/screens/auth/unlock/otp/UnlockOtpScreen'
 import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UnlockOtpScreen', () => {
   const createMockDeps = (): UnlockOtpStoreDependencies => ({
@@ -40,7 +41,7 @@ describe('UnlockOtpScreen', () => {
 
     expect(screen.getByText('user@example.com')).toBeDefined()
 
-    const submitBtn = screen.getByRole('button', { name: enUserStrings.unlock_account })
+    const submitBtn = screen.getByRole('button', { name: userStrings.ui.unlockAccount })
     expect(submitBtn.getAttribute('disabled')).not.toBeNull()
 
     const input = screen.getByRole('textbox')
@@ -64,7 +65,7 @@ describe('UnlockOtpScreen', () => {
       </ComponentTestHarness>
     )
 
-    const resendBtn = screen.getByRole('button', { name: enUserStrings.resend_code })
+    const resendBtn = screen.getByRole('button', { name: userStrings.ui.resendCode })
     await user.click(resendBtn)
 
     expect(deps.sendUnlockEmailConfirmationUseCase.execute).toHaveBeenCalledWith('user@example.com')

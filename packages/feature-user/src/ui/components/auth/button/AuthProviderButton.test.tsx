@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('AuthProviderButton', () => {
   it('renders default SIGN_IN mode label for Email and handles click event', async () => {
@@ -18,7 +19,7 @@ describe('AuthProviderButton', () => {
       </ComponentTestHarness>
     )
 
-    const button = screen.getByRole('button', { name: enUserStrings.sign_in_with_email })
+    const button = screen.getByRole('button', { name: userStrings.ui.signInWithEmail })
     expect(button).toBeDefined()
 
     await user.click(button)
@@ -35,7 +36,7 @@ describe('AuthProviderButton', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByRole('button', { name: enUserStrings.identifier_add_phone })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.identifierAddPhone })).toBeDefined()
   })
 
   it('renders Google sign in button', () => {
@@ -45,7 +46,7 @@ describe('AuthProviderButton', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_google })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithGoogle })).toBeDefined()
   })
 
   it('renders Apple add identifier button', () => {
@@ -58,7 +59,7 @@ describe('AuthProviderButton', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByRole('button', { name: enUserStrings.identifier_add_apple })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.identifierAddApple })).toBeDefined()
   })
 
   it('does not trigger click when disabled', async () => {

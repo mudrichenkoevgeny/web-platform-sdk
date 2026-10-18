@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { PendingDeletionScreen } from '@/ui/screens/auth/login/pending-deletion/PendingDeletionScreen'
 import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('PendingDeletionScreen', () => {
   const createMockDeps = (): PendingDeletionStoreDependencies => ({
@@ -28,9 +30,9 @@ describe('PendingDeletionScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.account_pending_deletion_desc)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.accountPendingDeletionDesc)).toBeDefined()
 
-    const restoreButton = screen.getByRole('button', { name: enUserStrings.restore_account })
+    const restoreButton = screen.getByRole('button', { name: userStrings.ui.restoreAccount })
     await user.click(restoreButton)
 
     expect(deps.restoreUserUseCase.execute).toHaveBeenCalledTimes(1)
@@ -47,7 +49,7 @@ describe('PendingDeletionScreen', () => {
       </ComponentTestHarness>
     )
 
-    const logoutButton = screen.getByRole('button', { name: enUserStrings.logout })
+    const logoutButton = screen.getByRole('button', { name: userStrings.ui.logout })
     await user.click(logoutButton)
 
     expect(deps.logoutUseCase.execute).toHaveBeenCalledTimes(1)

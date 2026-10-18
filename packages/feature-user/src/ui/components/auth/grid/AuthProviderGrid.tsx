@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react'
-import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { FeatureUserStrings } from '@/locales/index'
 import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
 
 /**
@@ -23,7 +22,7 @@ export interface AuthProviderGridProps extends Omit<React.HTMLAttributes<HTMLDiv
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**

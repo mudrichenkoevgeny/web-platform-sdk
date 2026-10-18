@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -13,13 +13,14 @@ import {
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import {
   SessionDetailProvider,
   useSessionDetailStore
 } from '@/ui/screens/user/session/detail/session-detail-store'
 import type { SessionDetailStoreDependencies } from "@/ui/screens/user/session/detail/session-detail-store";
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link SessionDetailScreen}. */
 export const SessionDetailTestTags = {
@@ -58,8 +59,8 @@ function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentTyp
   }
 }
 
-const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const SessionDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useSessionDetailStore((s) => s.screenState)
   const initializeSession = useSessionDetailStore((s) => s.initializeSession)
@@ -85,19 +86,18 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.session_detail_title_session}
-        strings={strings}
+        title={strings.ui.sessionDetailTitleSession}
       />
     )
   }
 
   const { session, isCurrentSession, isSelfUser, actionLoading, actionError } = screenState
-  const notAvailableText = strings.not_available
+  const notAvailableText = defaultCommonStrings.ui.notAvailable
   const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
 
   const titleText = isCurrentSession
-    ? strings.session_detail_title_current_session
-    : strings.session_detail_title_session
+    ? strings.ui.sessionDetailTitleCurrentSession
+    : strings.ui.sessionDetailTitleSession
 
   const deviceName = session.clientDeviceInfo.deviceName ?? session.userAgent ?? notAvailableText
   const clientType = session.clientDeviceInfo.clientType ?? notAvailableText
@@ -142,13 +142,13 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           data-testid={SessionDetailTestTags.USER_ROW}
         >
           <span className="text-xs text-muted-foreground font-medium">
-            {strings.user_label}
+            {strings.ui.userLabel}
           </span>
           <span
             className="text-sm font-bold text-surface-foreground"
             data-testid={SessionDetailTestTags.USER_ID}
           >
-            {strings.user_id(session.userId)}
+            {session.userId}
           </span>
         </div>
 
@@ -176,47 +176,47 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               className="text-xs text-muted-foreground"
               data-testid={SessionDetailTestTags.AUTH_PROVIDER}
             >
-              {strings.session_detail_auth_provider}: {session.identifierAuthProvider}
+              {strings.ui.sessionDetailAuthProvider}: {session.identifierAuthProvider}
             </span>
           </div>
         </div>
 
         <div className="p-4 bg-card text-card-foreground border border-border rounded-xl shadow-sm flex flex-col gap-2 text-xs">
           <span className="text-sm font-bold text-surface-foreground mb-1">
-            {strings.session_detail_device_info}
+            {strings.ui.sessionDetailDeviceInfo}
           </span>
 
           <span data-testid={SessionDetailTestTags.DEVICE_NAME}>
-            <strong className="text-muted-foreground">{strings.session_detail_device_name}:</strong> {deviceName}
+            <strong className="text-muted-foreground">{strings.ui.sessionDetailDeviceName}:</strong> {deviceName}
           </span>
 
           <span data-testid={SessionDetailTestTags.CLIENT_TYPE}>
-            <strong className="text-muted-foreground">{strings.session_detail_client_type}:</strong> {clientType}
+            <strong className="text-muted-foreground">{strings.ui.sessionDetailClientType}:</strong> {clientType}
           </span>
 
           <span data-testid={SessionDetailTestTags.LANGUAGE}>
-            <strong className="text-muted-foreground">{strings.session_detail_language}:</strong> {language}
+            <strong className="text-muted-foreground">{strings.ui.sessionDetailLanguage}:</strong> {language}
           </span>
 
           <span data-testid={SessionDetailTestTags.APP_VERSION}>
-            <strong className="text-muted-foreground">{strings.session_detail_app_version}:</strong> {appVersion}
+            <strong className="text-muted-foreground">{strings.ui.sessionDetailAppVersion}:</strong> {appVersion}
           </span>
 
           <span data-testid={SessionDetailTestTags.OS_VERSION}>
-            <strong className="text-muted-foreground">{strings.session_detail_os_version}:</strong> {osVersion}
+            <strong className="text-muted-foreground">{strings.ui.sessionDetailOsVersion}:</strong> {osVersion}
           </span>
 
           <div className="border-t border-border my-1 pt-2 flex flex-col gap-1">
             <span data-testid={SessionDetailTestTags.IP_ADDRESS}>
-              <strong className="text-muted-foreground">{strings.session_detail_ip_address_label}:</strong> {ipAddress}
+              <strong className="text-muted-foreground">{strings.ui.sessionDetailIpAddressLabel}:</strong> {ipAddress}
             </span>
 
             <span data-testid={SessionDetailTestTags.LAST_ACCESSED_AT}>
-              <strong className="text-muted-foreground">{strings.session_detail_last_accessed_label}:</strong> {lastAccessedFormatted}
+              <strong className="text-muted-foreground">{strings.ui.sessionDetailLastAccessedLabel}:</strong> {lastAccessedFormatted}
             </span>
 
             <span data-testid={SessionDetailTestTags.CREATED_AT}>
-              <strong className="text-muted-foreground">{strings.session_detail_created_at_label}:</strong> {createdAtFormatted}
+              <strong className="text-muted-foreground">{strings.ui.sessionDetailCreatedAtLabel}:</strong> {createdAtFormatted}
             </span>
           </div>
         </div>
@@ -225,7 +225,7 @@ const SessionDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           {!isCurrentSession && (
             <CoreButton
               type="button"
-              label={strings.session_revoke}
+              label={strings.ui.sessionRevoke}
               onClick={onRevokeSessionClick}
               disabled={actionLoading || isSelfUser}
               className="bg-error hover:bg-error/90 text-error-foreground"
@@ -250,12 +250,12 @@ export interface SessionDetailScreenProps extends React.HTMLAttributes<HTMLDivEl
   /** Dependencies required by store. */
   dependencies: SessionDetailStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Screen component displaying detailed information about a single active user session. */
 export const SessionDetailScreen = forwardRef<HTMLDivElement, SessionDetailScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SessionDetailProvider dependencies={dependencies}>

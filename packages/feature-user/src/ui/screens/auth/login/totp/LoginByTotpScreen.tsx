@@ -12,9 +12,7 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByTotpMode } from '@mudrichenkoevgeny/shared-foundation'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
+import { LoginByTotpMode, UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/field-validator'
 import {
   LoginByTotpProvider,
@@ -22,8 +20,10 @@ import {
 } from '@/ui/screens/auth/login/totp/login-by-totp-store'
 import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/login-by-totp-store'
 
-const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const LoginByTotpContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useLoginByTotpStore((s) => s.dependencies)
   const screenState = useLoginByTotpStore((s) => s.screenState)
@@ -49,23 +49,23 @@ const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   const title =
     mode === LoginByTotpMode.TOTP
-      ? strings.login_by_totp
-      : strings.login_by_recovery_code
+      ? strings.ui.loginByTotp
+      : strings.ui.loginByRecoveryCode
 
   const description =
     mode === LoginByTotpMode.TOTP
-      ? strings.login_by_totp_desc(6)
-      : strings.login_by_recovery_code_desc
+      ? strings.ui.loginByTotpDesc(6)
+      : strings.ui.loginByRecoveryCodeDesc
 
   const fieldLabel =
     mode === LoginByTotpMode.TOTP
-      ? strings.totp_code
-      : strings.recovery_code
+      ? strings.ui.totpCode
+      : strings.ui.recoveryCode
 
   const toggleModeLabel =
     mode === LoginByTotpMode.TOTP
-      ? strings.use_recovery_code
-      : strings.use_totp
+      ? strings.ui.useRecoveryCode
+      : strings.ui.useTotp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -131,7 +131,7 @@ const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
           type="submit"
-          label={strings.login}
+          label={strings.ui.login}
           disabled={!canSubmit}
           onClick={onSubmitClick}
         />
@@ -151,11 +151,11 @@ const LoginByTotpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
 export interface LoginByTotpScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: LoginByTotpStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const LoginByTotpScreen = forwardRef<HTMLDivElement, LoginByTotpScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <LoginByTotpProvider dependencies={dependencies}>

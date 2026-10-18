@@ -1,13 +1,13 @@
 import React, { forwardRef } from 'react'
-import type { UserSummary } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, type UserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export interface UserItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   user: UserSummary
   onClick: () => void
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
@@ -15,7 +15,7 @@ export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
     {
       user,
       onClick,
-      strings = enManagementUserStrings,
+      strings = defaultUserStrings,
       className,
       ...rest
     },
@@ -34,13 +34,13 @@ export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
         {...rest}
       >
         <div className="text-sm font-bold text-surface-foreground">
-          {strings.user_id(user.id ?? '')}
+          {user.id ?? ''}
         </div>
         <div className="text-xs text-muted-foreground">
-          {strings.user_role}: {user.role}
+          {strings.ui.userRole}: {user.role}
         </div>
         <div className="text-xs text-muted-foreground">
-          {strings.user_account_status}: {user.accountStatus}
+          {strings.ui.userAccountStatus}: {user.accountStatus}
         </div>
       </button>
     )

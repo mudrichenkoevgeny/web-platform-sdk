@@ -1,15 +1,16 @@
-import { UserErrorCodes, UserErrorArgs, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, CommonErrorArgs, UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientUserErrorCodes } from '@/error/naming/client-user-error-codes'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * AppErrorParser implementation for user-related error codes.
  */
 export class UserErrorParser implements AppErrorParser {
-  private readonly getStrings: () => FeatureUserStrings
+  private readonly getStrings: () => UserModuleStrings
 
   /**
    * Constructs a new {@link UserErrorParser}.
@@ -17,7 +18,7 @@ export class UserErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Feature user strings dictionary or dynamic getter function
    */
   public constructor(
-    stringsOrGetter: FeatureUserStrings | (() => FeatureUserStrings) = enUserStrings
+    stringsOrGetter: UserModuleStrings | (() => UserModuleStrings) = defaultUserStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -34,120 +35,120 @@ export class UserErrorParser implements AppErrorParser {
 
     switch (appError.code) {
       case UserErrorCodes.INVALID_ACCESS_TOKEN:
-        return strings.error_user_invalid_access_token
+        return strings.errors.invalidAccessToken
 
       case UserErrorCodes.ACCESS_TOKEN_EXPIRED:
-        return strings.error_user_access_token_expired
+        return strings.errors.accessTokenExpired
 
       case UserErrorCodes.INVALID_REFRESH_TOKEN:
-        return strings.error_user_invalid_refresh_token
+        return strings.errors.invalidRefreshToken
 
       case UserErrorCodes.INVALID_SESSION:
-        return strings.error_user_invalid_session
+        return strings.errors.invalidSession
 
       case UserErrorCodes.USER_BANNED:
-        return strings.error_user_banned
+        return strings.errors.banned
 
       case UserErrorCodes.USER_LOCKED: {
         const formattedUntil = formatEpochMillisToDateTime(args[UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL])
         if (formattedUntil) {
-          return strings.error_user_locked_until(formattedUntil)
+          return strings.errors.locked(formattedUntil)
         }
-        return strings.error_user_locked
+        return strings.errors.lockedWithoutArgs
       }
 
       case UserErrorCodes.SELF_SERVICE_UNLOCK_DISABLED:
-        return strings.error_user_self_service_unlock_disabled
+        return strings.errors.selfServiceUnlockDisabled
 
       case UserErrorCodes.USER_READ_ONLY:
-        return strings.error_user_read_only
+        return strings.errors.readOnly
 
       case UserErrorCodes.USER_SECURITY_HOLD:
-        return strings.error_user_security_hold
+        return strings.errors.securityHold
 
       case UserErrorCodes.USER_PENDING_DELETION:
-        return strings.error_user_pending_deletion
+        return strings.errors.pendingDeletion
 
       case UserErrorCodes.USER_ILLEGAL_ACCOUNT_STATUS:
-        return strings.error_user_illegal_status
+        return strings.errors.illegalStatus
 
       case UserErrorCodes.USER_FORBIDDEN:
-        return strings.error_user_forbidden
+        return strings.errors.forbidden
 
       case UserErrorCodes.USER_ROLE_NOT_ALLOWED:
-        return strings.error_user_role_not_allowed
+        return strings.errors.roleNotAllowed
 
       case UserErrorCodes.USER_MISSING_PERMISSIONS:
-        return strings.error_user_missing_permissions
+        return strings.errors.missingPermissions
 
       case UserErrorCodes.USER_INSUFFICIENT_AUTHORITY_LEVEL:
-        return strings.error_user_insufficient_authority
+        return strings.errors.insufficientAuthority
 
       case UserErrorCodes.USER_NOT_FOUND:
-        return strings.error_user_not_found
+        return strings.errors.notFound
 
       case UserErrorCodes.INVALID_CREDENTIALS:
-        return strings.error_user_invalid_credentials
+        return strings.errors.invalidCredentials
 
       case UserErrorCodes.WRONG_PASSWORD:
-        return strings.error_user_wrong_password
+        return strings.errors.wrongPassword
 
       case UserErrorCodes.PASSWORD_SETUP_REQUIRED:
-        return strings.error_user_password_setup_required
+        return strings.errors.passwordSetupRequired
 
       case UserErrorCodes.USER_IDENTIFIER_PASSWORD_NOT_SUPPORTED:
-        return strings.error_user_identifier_password_not_supported
+        return strings.errors.identifierPasswordNotSupported
 
       case UserErrorCodes.USER_IDENTIFIER_PASSWORD_NOT_SET:
-        return strings.error_user_identifier_password_not_set
+        return strings.errors.identifierPasswordNotSet
 
       case UserErrorCodes.WRONG_CONFIRMATION_CODE:
-        return strings.error_user_wrong_confirmation_code
+        return strings.errors.wrongConfirmationCode
 
       case UserErrorCodes.EXTERNAL_IDENTIFIER_LINKAGE_FAILED:
-        return strings.error_user_external_linkage_failed
+        return strings.errors.externalLinkageFailed
 
       case UserErrorCodes.CAN_NOT_DELETE_USER_IDENTIFIER:
-        return strings.error_user_can_not_delete_identifier
+        return strings.errors.canNotDeleteIdentifier
 
       case UserErrorCodes.CAN_NOT_CREATE_USER_IDENTIFIER:
-        return strings.error_user_can_not_create_identifier
+        return strings.errors.canNotCreateIdentifier
 
       case UserErrorCodes.EMAIL_NOT_ALLOWED:
-        return strings.error_user_email_not_allowed
+        return strings.errors.emailNotAllowed
 
       case UserErrorCodes.USER_IDENTIFIER_LIMIT_REACHED:
         return this.resolveLimit(
           args,
           UserErrorArgs.USER_AUTH_PROVIDER,
           UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS,
-          (limit, provider) => strings.error_user_identifier_limit_reached_args(limit, provider),
-          strings.error_user_identifier_limit_reached
+          (limit, provider) => strings.errors.identifierLimitReached(limit, provider),
+          strings.errors.identifierLimitReachedWithoutArgs
         )
 
       case UserErrorCodes.TOTAL_USER_IDENTIFIERS_LIMIT_REACHED: {
         const limit = args[UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS]
         if (limit && limit.trim().length > 0) {
-          return strings.error_user_total_identifiers_limit_reached_args(limit)
+          return strings.errors.totalIdentifiersLimitReached(limit)
         }
-        return strings.error_user_total_identifiers_limit_reached
+        return strings.errors.totalIdentifiersLimitReachedWithoutArgs
       }
 
       case ClientUserErrorCodes.REGISTRATION_DISABLED:
-        return strings.error_user_registration_disabled
+        return strings.errors.registrationDisabled
 
       case ClientUserErrorCodes.EXTERNAL_AUTH_CANCELLED:
-        return strings.error_user_external_auth_cancelled
+        return strings.errors.externalAuthCancelled
 
       case ClientUserErrorCodes.EXTERNAL_AUTH_FAILED:
-        return strings.error_user_external_auth_failed
+        return strings.errors.externalAuthFailed
 
       case ClientUserErrorCodes.TOO_MANY_CONFIRMATION_REQUESTS: {
         const seconds = args[CommonErrorArgs.RETRY_AFTER_SECONDS]
         if (seconds && seconds.trim().length > 0) {
-          return strings.error_common_too_many_requests_args(seconds)
+          return defaultCommonStrings.errors.tooManyRequests(seconds)
         }
-        return strings.error_user_too_many_confirmation_requests
+        return strings.errors.tooManyConfirmationRequests
       }
 
       default:

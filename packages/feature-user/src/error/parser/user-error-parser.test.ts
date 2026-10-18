@@ -1,21 +1,21 @@
 import { describe, it, expect } from 'vitest'
-import { UserErrorCodes, UserErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserErrorParser } from '@/error/parser/user-error-parser'
 import { UserError } from '@/error/model/user-error'
-import { enUserStrings, ruUserStrings } from '@/locales/index'
+
 describe('UserErrorParser', () => {
-  const parserEn = new UserErrorParser(enUserStrings)
-  const parserRu = new UserErrorParser(ruUserStrings)
+  const parserEn = new UserErrorParser(new UserModuleStrings(undefined, 'en'))
+  const parserRu = new UserErrorParser(new UserModuleStrings(undefined, 'ru'))
 
   it('parses client user feature errors', () => {
     expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The refresh token is invalid.')
-    expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled')
+    expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled.')
     expect(parserEn.parse(UserError.externalAuthCancelled())).toBe('Authentication was cancelled.')
     expect(parserEn.parse(UserError.externalAuthFailed())).toBe('External authentication failed.')
     expect(parserEn.parse(UserError.tooManyConfirmationRequests(60))).toBe('Too many requests. Try again in 60 seconds.')
-    expect(parserRu.parse(UserError.externalAuthCancelled())).toBe('Аутентификация была отменена.')
+    expect(parserRu.parse(UserError.externalAuthCancelled())).toBe('Авторизация была отменена.')
   })
 
   it('parses shared foundation user error codes', () => {
@@ -50,7 +50,7 @@ describe('UserErrorParser', () => {
       isRetryable: false
     } as const
 
-    expect(parserEn.parse(limitError)).toBe('The limit of 3 identifiers for "GOOGLE" has been reached.')
+    expect(parserEn.parse(limitError)).toBe("The limit of 3 identifiers for 'GOOGLE' has been reached.")
   })
 
   it('returns null for unhandled errors', () => {

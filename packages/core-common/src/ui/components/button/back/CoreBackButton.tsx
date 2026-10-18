@@ -1,8 +1,10 @@
 import { forwardRef } from 'react'
+import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
 import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
-import { enStrings } from '@/locales/en/strings'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface CoreBackButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   onClick: () => void
@@ -11,7 +13,7 @@ export interface CoreBackButtonProps extends React.ButtonHTMLAttributes<HTMLButt
 }
 
 export const CoreBackButton = forwardRef<HTMLButtonElement, CoreBackButtonProps>(
-  ({ onClick, disabled = false, icon, className, ariaLabel = enStrings.back, ...rest }, ref) => {
+  ({ onClick, disabled = false, icon, className, ariaLabel = defaultCommonStrings.ui.back, ...rest }, ref) => {
     return (
       <button
         ref={ref}

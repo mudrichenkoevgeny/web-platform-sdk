@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -11,16 +12,16 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
 import {
   UnlockOtpProvider,
   useUnlockOtpStore
 } from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
 import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/unlock-otp-store'
 
-const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const UnlockOtpContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useUnlockOtpStore((s) => s.dependencies)
   const screenState = useUnlockOtpStore((s) => s.screenState)
@@ -54,7 +55,7 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton onClick={onBackClick} disabled={actionLoading} />
         <CoreScreenTitleText
-          text={strings.unlock_account}
+          text={strings.ui.unlockAccount}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -68,8 +69,8 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         <CoreCodeTextField
           value={codeInput}
           onChange={(e) => onCodeChanged(e.target.value)}
-          label={strings.confirmation_code}
-          placeholder={strings.enter_confirmation_code}
+          label={strings.ui.confirmationCode}
+          placeholder={strings.ui.enterConfirmationCode}
           isError={Boolean(actionError)}
           disabled={actionLoading}
           autoFocus
@@ -88,11 +89,11 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
         <div className="flex justify-center text-xs text-muted-foreground pt-1">
           {remainingDelaySeconds > 0 ? (
-            <span>{strings.resend_code_timer(remainingDelaySeconds)}</span>
+            <span>{strings.ui.resendCodeTimer(remainingDelaySeconds)}</span>
           ) : (
             <CoreTextButton
               type="button"
-              label={strings.resend_code}
+              label={strings.ui.resendCode}
               onClick={onResendCodeClick}
               disabled={actionLoading}
             />
@@ -103,7 +104,7 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
           type="submit"
-          label={strings.unlock_account}
+          label={strings.ui.unlockAccount}
           disabled={!canUnlock}
           onClick={onUnlockClick}
         />
@@ -114,7 +115,7 @@ const UnlockOtpContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-const UnlockOtpController: React.FC<{ strings?: FeatureUserStrings }> = ({ strings }) => {
+const UnlockOtpController: React.FC<{ strings?: UserModuleStrings }> = ({ strings }) => {
   const initTimer = useUnlockOtpStore((s) => s.initTimer)
 
   useEffect(() => {
@@ -126,11 +127,11 @@ const UnlockOtpController: React.FC<{ strings?: FeatureUserStrings }> = ({ strin
 
 export interface UnlockOtpScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: UnlockOtpStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const UnlockOtpScreen = forwardRef<HTMLDivElement, UnlockOtpScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UnlockOtpProvider dependencies={dependencies}>

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
+import { UserModuleStrings, formatLocalizedString, type AvailableAuthProviders, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -16,9 +17,6 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
-import type { AvailableAuthProviders, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
@@ -28,6 +26,8 @@ import {
   useSelfIdentifierListStore
 } from '@/ui/screens/user/identifier/list/self-identifier-list-store'
 import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from '@/ui/screens/user/identifier/list/self-identifier-list-store'
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Automation test tags for {@link SelfIdentifierListScreen}.
@@ -46,7 +46,7 @@ export const IdentifierListTestTags = {
 const AddIdentifierDialogContent: React.FC<{
   dialogState: AddIdentifierDialogState
   availableAuthProviders: AvailableAuthProviders | null
-  strings: FeatureUserStrings
+  strings: UserModuleStrings
 }> = ({ dialogState, availableAuthProviders, strings }) => {
   const onAddIdentifierSelectProvider = useSelfIdentifierListStore((s) => s.onAddIdentifierSelectProvider)
   const onAddIdentifierEmailChanged = useSelfIdentifierListStore((s) => s.onAddIdentifierEmailChanged)
@@ -81,6 +81,7 @@ const AddIdentifierDialogContent: React.FC<{
           <AuthProviderGrid
             authProviders={availableAuthProviders.secondary}
             onProviderClick={onAddIdentifierSelectProvider}
+            strings={strings}
           />
         )}
       </div>
@@ -103,8 +104,8 @@ const AddIdentifierDialogContent: React.FC<{
             id={emailId}
             value={dialogState.email}
             onChange={(e) => onAddIdentifierEmailChanged(e.target.value)}
-            label={strings.email}
-            placeholder={strings.email}
+            label={strings.ui.email}
+            placeholder={strings.ui.email}
             disabled={dialogState.actionLoading}
           />
 
@@ -114,7 +115,7 @@ const AddIdentifierDialogContent: React.FC<{
 
           <CoreButton
             type="submit"
-            label={strings.send_code}
+            label={strings.ui.sendCode}
             disabled={!dialogState.canSendCode}
           />
         </form>
@@ -132,7 +133,7 @@ const AddIdentifierDialogContent: React.FC<{
         className="w-full flex flex-col gap-4 py-2"
       >
         <p className="text-xs text-muted-foreground text-center">
-          {strings.code_sent_to(dialogState.email)}
+          {strings.ui.codeSentTo(dialogState.email)}
         </p>
 
         <CoreCodeTextField
@@ -150,20 +151,20 @@ const AddIdentifierDialogContent: React.FC<{
           onChange={(e) => onAddIdentifierPasswordChanged(e.target.value)}
           isPasswordVisible={dialogState.isPasswordVisible}
           onTogglePasswordVisibility={onAddIdentifierTogglePasswordVisibility}
-          label={strings.password}
-          placeholder={strings.password}
+          label={strings.ui.password}
+          placeholder={strings.ui.password}
           disabled={dialogState.actionLoading}
         />
 
         <div className="flex justify-between items-center text-xs">
           {dialogState.resendTimerSeconds > 0 ? (
             <span className="text-muted-foreground">
-              {strings.resend_code_timer(dialogState.resendTimerSeconds)}
+              {strings.ui.resendCodeTimer(dialogState.resendTimerSeconds)}
             </span>
           ) : (
             <CoreTextButton
               type="button"
-              label={strings.resend_code}
+              label={strings.ui.resendCode}
               onClick={onAddIdentifierSendCode}
               disabled={!dialogState.canResendCode}
             />
@@ -171,7 +172,7 @@ const AddIdentifierDialogContent: React.FC<{
 
           <CoreTextButton
             type="button"
-            label={strings.change_email}
+            label={strings.ui.changeEmail}
             onClick={onAddIdentifierDialogBack}
             disabled={dialogState.actionLoading}
           />
@@ -183,7 +184,7 @@ const AddIdentifierDialogContent: React.FC<{
 
         <CoreButton
           type="submit"
-          label={strings.add_identifier}
+          label={strings.ui.addIdentifier}
           disabled={!dialogState.canSubmit}
         />
       </form>
@@ -206,8 +207,8 @@ const AddIdentifierDialogContent: React.FC<{
             id={phoneId}
             value={dialogState.phoneNumber}
             onChange={(e) => onAddIdentifierPhoneChanged(e.target.value)}
-            label={strings.phone_number}
-            placeholder={strings.enter_phone_number}
+            label={strings.ui.phoneNumber}
+            placeholder={strings.ui.enterPhoneNumber}
             disabled={dialogState.actionLoading}
           />
 
@@ -217,7 +218,7 @@ const AddIdentifierDialogContent: React.FC<{
 
           <CoreButton
             type="submit"
-            label={strings.send_code}
+            label={strings.ui.sendCode}
             disabled={!dialogState.canSendCode}
           />
         </form>
@@ -235,7 +236,7 @@ const AddIdentifierDialogContent: React.FC<{
         className="w-full flex flex-col gap-4 py-2"
       >
         <p className="text-xs text-muted-foreground text-center">
-          {strings.code_sent_to(dialogState.phoneNumber)}
+          {strings.ui.codeSentTo(dialogState.phoneNumber)}
         </p>
 
         <CoreCodeTextField
@@ -250,12 +251,12 @@ const AddIdentifierDialogContent: React.FC<{
         <div className="flex justify-between items-center text-xs">
           {dialogState.resendTimerSeconds > 0 ? (
             <span className="text-muted-foreground">
-              {strings.resend_code_timer(dialogState.resendTimerSeconds)}
+              {strings.ui.resendCodeTimer(dialogState.resendTimerSeconds)}
             </span>
           ) : (
             <CoreTextButton
               type="button"
-              label={strings.resend_code}
+              label={strings.ui.resendCode}
               onClick={onAddIdentifierSendCode}
               disabled={!dialogState.canResendCode}
             />
@@ -263,7 +264,7 @@ const AddIdentifierDialogContent: React.FC<{
 
           <CoreTextButton
             type="button"
-            label={strings.change_phone_number}
+            label={strings.ui.changePhoneNumber}
             onClick={onAddIdentifierDialogBack}
             disabled={dialogState.actionLoading}
           />
@@ -275,7 +276,7 @@ const AddIdentifierDialogContent: React.FC<{
 
         <CoreButton
           type="submit"
-          label={strings.add_identifier}
+          label={strings.ui.addIdentifier}
           disabled={!dialogState.canSubmit}
         />
       </form>
@@ -285,8 +286,8 @@ const AddIdentifierDialogContent: React.FC<{
   return null
 }
 
-const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useSelfIdentifierListStore((s) => s.screenState)
   const onRefresh = useSelfIdentifierListStore((s) => s.onRefresh)
@@ -318,8 +319,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.identifiers}
-        strings={strings}
+        title={strings.ui.identifiers}
       />
     )
   }
@@ -342,7 +342,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           data-testid={IdentifierListTestTags.BACK_BUTTON}
         />
         <CoreScreenTitleText
-          text={strings.identifiers}
+          text={strings.ui.identifiers}
           className="absolute left-1/2 -translate-x-1/2"
           data-testid={IdentifierListTestTags.TITLE}
         />
@@ -383,7 +383,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         {isAddIdentifierSupported && (
           <CoreButton
             type="button"
-            label={strings.add_identifier}
+            label={strings.ui.addIdentifier}
             onClick={onAddIdentifierClick}
             disabled={actionLoading}
             data-testid={IdentifierListTestTags.ADD_IDENTIFIER_BUTTON}
@@ -416,11 +416,11 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
                 className="text-lg font-bold text-surface-foreground"
                 data-testid={IdentifierListTestTags.ADD_IDENTIFIER_DIALOG_TITLE}
               >
-                {strings.add_identifier}
+                {strings.ui.addIdentifier}
               </h3>
               <CoreTextButton
                 type="button"
-                label={strings.cancel}
+                label={strings.ui.cancel}
                 onClick={onAddIdentifierDialogDismiss}
               />
             </div>
@@ -437,7 +437,7 @@ const SelfIdentifierListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-const SelfIdentifierListController: React.FC<{ strings?: FeatureUserStrings }> = ({
+const SelfIdentifierListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const loadIdentifiers = useSelfIdentifierListStore((s) => s.loadIdentifiers)
@@ -454,14 +454,14 @@ const SelfIdentifierListController: React.FC<{ strings?: FeatureUserStrings }> =
  */
 export interface SelfIdentifierListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: SelfIdentifierListStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component displaying linked user identifiers (email/phone/Google) with options to add new identifiers.
  */
 export const SelfIdentifierListScreen = forwardRef<HTMLDivElement, SelfIdentifierListScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SelfIdentifierListProvider dependencies={dependencies}>

@@ -1,33 +1,33 @@
-import { AuditActorType, AuditFilterValues, AuditStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditActorType, AuditFilterValues, AuditStatus, UserRole, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export const getAuditEventListingOptionsConfig = (
-  strings: FeatureManagementUserStrings = enManagementUserStrings
+  commonStrings: CommonModuleStrings = defaultCommonStrings
 ): ListingOptionsConfig => ({
   sortOptions: [
     {
       id: 'CREATED_AT',
-      title: strings.ui_common_created_at
+      title: commonStrings.ui.createdAt
     }
   ],
   filters: [
     {
       type: 'text',
       id: AuditFilterValues.AuditEventFilterValues.ACTOR_ID,
-      title: strings.ui_common_actor_id,
-      placeholder: strings.ui_common_search_placeholder
+      title: commonStrings.ui.actorId,
+      placeholder: commonStrings.ui.searchPlaceholder
     },
     {
       type: 'choice',
       id: AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE,
-      title: strings.ui_common_actor_type,
+      title: commonStrings.ui.actorType,
       options: [
-        { id: AuditActorType.USER, title: strings.ui_common_user },
-        { id: AuditActorType.SYSTEM, title: strings.ui_common_system },
-        { id: AuditActorType.SERVICE, title: strings.ui_common_service }
+        { id: AuditActorType.USER, title: commonStrings.ui.user },
+        { id: AuditActorType.SYSTEM, title: commonStrings.ui.system },
+        { id: AuditActorType.SERVICE, title: commonStrings.ui.service }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -35,10 +35,10 @@ export const getAuditEventListingOptionsConfig = (
     {
       type: 'choice',
       id: AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE,
-      title: strings.ui_common_role,
+      title: commonStrings.ui.role,
       options: [
-        { id: UserRole.STAFF, title: strings.ui_common_staff },
-        { id: UserRole.ADMIN, title: strings.ui_common_admin }
+        { id: UserRole.STAFF, title: commonStrings.ui.staff },
+        { id: UserRole.ADMIN, title: commonStrings.ui.admin }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -46,29 +46,29 @@ export const getAuditEventListingOptionsConfig = (
     {
       type: 'text',
       id: AuditFilterValues.AuditEventFilterValues.ACTION,
-      title: strings.ui_common_action,
-      placeholder: strings.ui_common_search_placeholder
+      title: commonStrings.ui.action,
+      placeholder: commonStrings.ui.searchPlaceholder
     },
     {
       type: 'text',
       id: AuditFilterValues.AuditEventFilterValues.RESOURCE,
-      title: strings.ui_common_resource,
-      placeholder: strings.ui_common_search_placeholder
+      title: commonStrings.ui.resource,
+      placeholder: commonStrings.ui.searchPlaceholder
     },
     {
       type: 'text',
       id: AuditFilterValues.AuditEventFilterValues.RESOURCE_ID,
-      title: strings.ui_common_resource_id,
-      placeholder: strings.ui_common_search_placeholder
+      title: commonStrings.ui.resourceId,
+      placeholder: commonStrings.ui.searchPlaceholder
     },
     {
       type: 'choice',
       id: AuditFilterValues.AuditEventFilterValues.STATUS,
-      title: strings.ui_common_status,
+      title: commonStrings.ui.status,
       options: [
-        { id: AuditStatus.SUCCESS, title: strings.ui_common_success },
-        { id: AuditStatus.FAILED, title: strings.ui_common_failed },
-        { id: AuditStatus.DENIED, title: strings.ui_common_denied }
+        { id: AuditStatus.SUCCESS, title: commonStrings.ui.success },
+        { id: AuditStatus.FAILED, title: commonStrings.ui.failed },
+        { id: AuditStatus.DENIED, title: commonStrings.ui.denied }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -76,8 +76,8 @@ export const getAuditEventListingOptionsConfig = (
     {
       type: 'text',
       id: AuditFilterValues.AuditEventFilterValues.MESSAGE,
-      title: strings.ui_common_message,
-      placeholder: strings.ui_common_search_placeholder
+      title: commonStrings.ui.message,
+      placeholder: commonStrings.ui.searchPlaceholder
     }
   ]
 })

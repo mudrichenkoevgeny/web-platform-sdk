@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditAuthSettingsScreen } from '@/ui/screens/management/settings/auth/EditAuthSettingsScreen'
 import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('EditAuthSettingsScreen', () => {
   const createMockDeps = (): EditAuthSettingsStoreDependencies => ({
@@ -60,9 +62,9 @@ describe('EditAuthSettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_auth_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editAuthSettingsTitle)).toBeDefined()
 
-    const saveButton = screen.getByRole('button', { name: enManagementUserStrings.save })
+    const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
     expect(deps.saveRemoteAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)
@@ -79,9 +81,9 @@ describe('EditAuthSettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_auth_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editAuthSettingsTitle)).toBeDefined()
 
-    const resetButton = screen.getByRole('button', { name: enManagementUserStrings.reset_to_defaults })
+    const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
     expect(deps.resetRemoteAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -8,13 +9,13 @@ import {
   FullscreenError,
   FullscreenLoading
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   AuditEventDetailProvider,
   useAuditEventDetailStore
 } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export const AuditEventDetailTestTags = {
   BACK_BUTTON: 'AuditEventDetail_BackButton',
@@ -53,8 +54,8 @@ const DetailRow: React.FC<{
   )
 }
 
-const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const AuditEventDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useAuditEventDetailStore((s) => s.screenState)
   const onRetry = useAuditEventDetailStore((s) => s.onRetry)
@@ -73,8 +74,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.audit_event_details_title}
-        strings={strings}
+        title={strings.ui.auditEventDetailsTitle}
       />
     )
   }
@@ -102,49 +102,49 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
         <CoreBackButton data-testid={AuditEventDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={AuditEventDetailTestTags.TITLE}
-          text={strings.audit_event_details_title}
+          text={strings.ui.auditEventDetailsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
       </div>
 
       <div className="w-full flex-1 flex flex-col gap-6 mb-6">
-        <CoreTitleText data-testid={AuditEventDetailTestTags.EVENT_ID_TEXT} text={`${strings.audit_event_id}: ${event.id}`} />
+        <CoreTitleText data-testid={AuditEventDetailTestTags.EVENT_ID_TEXT} text={`${strings.ui.auditEventId}: ${event.id}`} />
 
         <div className="w-full p-4 rounded-lg border border-border bg-card flex flex-col gap-2 shadow-sm">
           <DetailRow
-            label={strings.audit_event_action}
+            label={strings.ui.auditEventAction}
             value={String(event.action)}
           />
           <DetailRow
-            label={strings.audit_event_status}
+            label={strings.ui.auditEventStatus}
             value={String(event.status)}
           />
           <DetailRow
-            label={strings.audit_event_resource}
+            label={strings.ui.auditEventResource}
             value={resourceValue}
             onClick={isResourceClickable ? onResourceClick : null}
             testTag={AuditEventDetailTestTags.RESOURCE_ROW}
           />
           <DetailRow
-            label={strings.audit_event_actor}
+            label={strings.ui.auditEventActor}
             value={subjectValue}
             onClick={isSubjectClickable ? onSubjectClick : null}
             testTag={AuditEventDetailTestTags.SUBJECT_ROW}
           />
           {event.message && (
             <DetailRow
-              label={strings.audit_event_message}
+              label={strings.ui.auditEventMessage}
               value={event.message}
             />
           )}
           <DetailRow
-            label={strings.audit_event_timestamp}
+            label={strings.ui.auditEventTimestamp}
             value={formattedTimestamp}
           />
           {formattedUpdatedAt && (
             <DetailRow
-              label={strings.audit_event_updated_at}
+              label={strings.ui.auditEventUpdatedAt}
               value={formattedUpdatedAt}
             />
           )}
@@ -152,7 +152,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
 
         {metadataItems.length > 0 && (
           <div className="w-full p-4 rounded-lg border border-border bg-card flex flex-col gap-3 shadow-sm">
-            <CoreTitleText text={strings.audit_event_metadata} />
+            <CoreTitleText text={strings.ui.auditEventMetadata} />
             <div className="border-t border-border pt-2 flex flex-col gap-2">
               {metadataItems.map((item, idx) => (
                 <DetailRow
@@ -169,7 +169,7 @@ const AuditEventDetailContent: React.FC<{ strings?: FeatureManagementUserStrings
   )
 }
 
-const AuditEventDetailController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const AuditEventDetailController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useAuditEventDetailStore((s) => s.initScreen)
@@ -183,11 +183,11 @@ const AuditEventDetailController: React.FC<{ strings?: FeatureManagementUserStri
 
 export interface AuditEventDetailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: AuditEventDetailStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const AuditEventDetailScreen = forwardRef<HTMLDivElement, AuditEventDetailScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <AuditEventDetailProvider dependencies={dependencies}>

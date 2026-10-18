@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react'
 import { SdkProvider } from '@/context/SdkProvider'
+import { LocalizationProvider } from '@/context/LocalizationContext'
 import { ThemeProvider } from '@/theme/ThemeContext'
-import { CommonComponent } from '@/di/common-component'
+import type { CommonComponent } from '@/di/common-component'
 import { createMockCommonComponent } from '@/mock/di/common-component-mock'
 
 /**
@@ -20,18 +21,23 @@ export interface ComponentTestHarnessProps {
    * Default theme mode ('light', 'dark', or 'system').
    */
   defaultMode?: 'light' | 'dark' | 'system'
+  /**
+   * Optional locale tag. Defaults to 'en'.
+   */
+  locale?: string
 }
 
 /**
- * React test harness component providing SDK and Theme contexts for component testing and Storybook previews.
+ * React test harness component providing SDK, Localization, and Theme contexts for component testing and Storybook previews.
  *
  * @param props - Test harness configuration properties
- * @returns JSX element wrapping children with SdkProvider and ThemeProvider
+ * @returns JSX element wrapping children with SdkProvider, LocalizationProvider and ThemeProvider
  */
 export const ComponentTestHarness: React.FC<ComponentTestHarnessProps> = ({
   children,
   component,
-  defaultMode = 'light'
+  defaultMode = 'light',
+  locale = 'en'
 }) => {
   const sdkComponent = useMemo(
     () => component ?? createMockCommonComponent(),
@@ -40,7 +46,9 @@ export const ComponentTestHarness: React.FC<ComponentTestHarnessProps> = ({
 
   return (
     <SdkProvider component={sdkComponent}>
-      <ThemeProvider defaultMode={defaultMode}>{children}</ThemeProvider>
+      <LocalizationProvider locale={locale}>
+        <ThemeProvider defaultMode={defaultMode}>{children}</ThemeProvider>
+      </LocalizationProvider>
     </SdkProvider>
   )
 }

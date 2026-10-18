@@ -13,15 +13,16 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ResetEmailPasswordProvider,
   useResetEmailPasswordStore
 } from '@/ui/screens/auth/reset-password/reset-email-password-store'
 import type { ResetEmailPasswordStoreDependencies } from "@/ui/screens/auth/reset-password/reset-email-password-store";
 
-const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) => {
+const defaultUserStrings = new UserModuleStrings()
+
+const EmailInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)
   const onEmailChanged = useResetEmailPasswordStore((s) => s.onEmailChanged)
   const onSendCodeClick = useResetEmailPasswordStore((s) => s.onSendCodeClick)
@@ -49,7 +50,7 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton onClick={onBackClick} disabled={actionLoading} />
         <CoreScreenTitleText
-          text={strings.reset_password}
+          text={strings.ui.resetPassword}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -60,8 +61,8 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
           data-testid="ResetEmailPassword_EmailInput"
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
-          label={strings.email}
-          placeholder={strings.email}
+          label={strings.ui.email}
+          placeholder={strings.ui.email}
           isError={Boolean(actionError)}
           disabled={actionLoading}
           autoFocus
@@ -83,7 +84,7 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         <CoreButton
           data-testid="ResetEmailPassword_SendCodeButton"
           type="submit"
-          label={strings.send_code}
+          label={strings.ui.sendCode}
           disabled={!isEmailValid || actionLoading}
           onClick={onSendCodeClick}
         />
@@ -94,7 +95,7 @@ const EmailInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
   )
 }
 
-const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) => {
+const ResetInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)
   const onCodeChanged = useResetEmailPasswordStore((s) => s.onCodeChanged)
   const onPasswordChanged = useResetEmailPasswordStore((s) => s.onPasswordChanged)
@@ -140,7 +141,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton onClick={onBackClick} disabled={actionLoading} />
         <CoreScreenTitleText
-          text={strings.enter_confirmation_code}
+          text={strings.ui.enterConfirmationCode}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -148,15 +149,15 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
 
       <div className="w-full flex-1 flex flex-col justify-center gap-4 my-auto">
         <p className="text-center text-muted-foreground text-sm">
-          {strings.code_sent_to(email)}
+          {strings.ui.codeSentTo(email)}
         </p>
 
         <CoreCodeTextField
           data-testid="ResetEmailPassword_CodeInput"
           value={code}
           onChange={(e) => onCodeChanged(e.target.value)}
-          label={strings.confirmation_code}
-          placeholder={strings.confirmation_code}
+          label={strings.ui.confirmationCode}
+          placeholder={strings.ui.confirmationCode}
           isError={Boolean(actionError)}
           disabled={actionLoading}
           autoFocus
@@ -168,8 +169,8 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
           onChange={(e) => onPasswordChanged(e.target.value)}
           isPasswordVisible={isPasswordVisible}
           onTogglePasswordVisibility={onTogglePasswordVisibility}
-          label={strings.new_password}
-          placeholder={strings.new_password}
+          label={strings.ui.newPassword}
+          placeholder={strings.ui.newPassword}
           isError={Boolean(actionError)}
           disabled={actionLoading}
         />
@@ -187,12 +188,12 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
 
         <div className="flex justify-center text-xs text-muted-foreground pt-1">
           {resendTimerSeconds > 0 ? (
-            <span>{strings.resend_code_timer(resendTimerSeconds)}</span>
+            <span>{strings.ui.resendCodeTimer(resendTimerSeconds)}</span>
           ) : (
             <CoreTextButton
               data-testid="ResetEmailPassword_ResendButton"
               type="button"
-              label={strings.resend_code}
+              label={strings.ui.resendCode}
               onClick={onSendCodeClick}
               disabled={!canResendCode}
             />
@@ -204,7 +205,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         <CoreButton
           data-testid="ResetEmailPassword_ConfirmButton"
           type="submit"
-          label={strings.confirm}
+          label={strings.ui.confirm}
           disabled={!canConfirm}
           onClick={onConfirmResetClick}
         />
@@ -212,7 +213,7 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
         <CoreTextButton
           data-testid="ResetEmailPassword_ChangeEmailButton"
           type="button"
-          label={strings.change_email}
+          label={strings.ui.changeEmail}
           onClick={onResetEmailClick}
           disabled={actionLoading}
         />
@@ -223,8 +224,8 @@ const ResetInputStep: React.FC<{ strings: FeatureUserStrings }> = ({ strings }) 
   )
 }
 
-const ResetEmailPasswordContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const ResetEmailPasswordContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)
 
@@ -250,14 +251,14 @@ export interface ResetEmailPasswordScreenProps extends React.HTMLAttributes<HTML
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component for requesting a password reset email OTP code and applying a new password.
  */
 export const ResetEmailPasswordScreen = forwardRef<HTMLDivElement, ResetEmailPasswordScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <ResetEmailPasswordProvider dependencies={dependencies}>

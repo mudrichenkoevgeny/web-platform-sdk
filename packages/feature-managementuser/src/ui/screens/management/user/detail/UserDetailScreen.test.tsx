@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { type UserId, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserDetailScreen, UserDetailTestTags } from '@/ui/screens/management/user/detail/UserDetailScreen'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UserDetailScreen', () => {
   const createMockDeps = (): UserDetailStoreDependencies => ({
@@ -38,7 +39,7 @@ describe('UserDetailScreen', () => {
     )
 
     expect(await screen.findByTestId(UserDetailTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.user_details_title)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.userDetailsTitle)).toBeDefined()
     expect(screen.getByTestId(UserDetailTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(UserDetailTestTags.USER_ID_TEXT)).toBeDefined()
     expect(screen.getByTestId(UserDetailTestTags.SESSIONS_BUTTON)).toBeDefined()

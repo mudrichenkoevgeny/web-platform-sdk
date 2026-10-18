@@ -2,7 +2,6 @@ export * from './error/naming/client-user-error-codes.js'
 export * from './error/model/user-error.js'
 export * from './error/parser/user-error-parser.js'
 export * from './validator/field-validator.js'
-export * from './locales/index.js'
 export * from './assets/icons/index.js'
 
 export * from '@mudrichenkoevgeny/shared-foundation'

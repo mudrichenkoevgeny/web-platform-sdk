@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react'
+import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -11,16 +12,16 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { FeatureUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   LoginByPhoneProvider,
   useLoginByPhoneStore
 } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 
-const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useLoginByPhoneStore((s) => s.screenState)
   const onPhoneChanged = useLoginByPhoneStore((s) => s.onPhoneChanged)
@@ -53,7 +54,7 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           disabled={actionLoading}
         />
         <CoreScreenTitleText
-          text={strings.sign_in_with_phone}
+          text={strings.ui.signInWithPhone}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -63,14 +64,14 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         {screenState.step === 'phone' ? (
           <>
             <div className="text-xl font-bold text-center">
-              {strings.enter_phone_number}
+              {strings.ui.enterPhoneNumber}
             </div>
 
             <CoreOutlinedTextField
               value={screenState.phoneNumber}
               onChange={(e) => onPhoneChanged(e.target.value)}
-              label={strings.phone_number}
-              placeholder={strings.phone_number}
+              label={strings.ui.phoneNumber}
+              placeholder={strings.ui.phoneNumber}
               isError={Boolean(actionError)}
               disabled={actionLoading}
             />
@@ -78,30 +79,30 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         ) : (
           <>
             <div className="text-xl font-bold text-center">
-              {strings.enter_confirmation_code}
+              {strings.ui.enterConfirmationCode}
             </div>
 
             <div className="text-sm text-muted-foreground text-center">
-              {strings.code_sent_to(screenState.phoneNumber)}
+              {strings.ui.codeSentTo(screenState.phoneNumber)}
             </div>
 
             <CoreCodeTextField
               value={screenState.code}
               onChange={(e) => onCodeChanged(e.target.value)}
-              label={strings.confirmation_code}
-              placeholder={strings.enter_confirmation_code}
+              label={strings.ui.confirmationCode}
+              placeholder={strings.ui.enterConfirmationCode}
               isError={Boolean(actionError)}
               disabled={actionLoading}
             />
 
             {screenState.resendTimerSeconds > 0 ? (
               <span className="text-xs text-muted-foreground">
-                {strings.resend_code_timer(screenState.resendTimerSeconds)}
+                {strings.ui.resendCodeTimer(screenState.resendTimerSeconds)}
               </span>
             ) : (
               <CoreTextButton
                 type="button"
-                label={strings.resend_code}
+                label={strings.ui.resendCode}
                 onClick={onSendCodeClick}
                 disabled={actionLoading}
               />
@@ -125,7 +126,7 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         {screenState.step === 'phone' ? (
           <CoreButton
             type="submit"
-            label={strings.send_code}
+            label={strings.ui.sendCode}
             disabled={!screenState.isPhoneNumberValid || actionLoading}
             onClick={onSendCodeClick}
           />
@@ -133,13 +134,13 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           <>
             <CoreButton
               type="submit"
-              label={strings.confirm}
+              label={strings.ui.confirm}
               disabled={screenState.code.length !== screenState.codeLength || actionLoading}
               onClick={onConfirmCodeClick}
             />
             <CoreTextButton
               type="button"
-              label={strings.change_phone_number}
+              label={strings.ui.changePhoneNumber}
               onClick={onResetPhoneClick}
               disabled={actionLoading}
             />
@@ -154,11 +155,11 @@ const LoginByPhoneContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
 export interface LoginByPhoneScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: LoginByPhoneStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const LoginByPhoneScreen = forwardRef<HTMLDivElement, LoginByPhoneScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <LoginByPhoneProvider dependencies={dependencies}>

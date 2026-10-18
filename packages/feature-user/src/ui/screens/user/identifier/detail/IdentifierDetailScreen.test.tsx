@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierDetailScreen, IdentifierDetailTestTags } from '@/ui/screens/user/identifier/detail/IdentifierDetailScreen'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('IdentifierDetailScreen', () => {
   const mockIdentifier: UserIdentifierPrivate = {
@@ -46,7 +47,7 @@ describe('IdentifierDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByTestId(IdentifierDetailTestTags.TITLE).textContent).toBe(enUserStrings.identifier_detail_title)
+    expect(screen.getByTestId(IdentifierDetailTestTags.TITLE).textContent).toBe(userStrings.ui.identifierDetailTitle)
     expect(screen.getByTestId(IdentifierDetailTestTags.CHANGE_PASSWORD_BUTTON)).not.toBeNull()
     expect(screen.getByTestId(IdentifierDetailTestTags.DELETE_PASSWORD_BUTTON)).not.toBeNull()
     expect(screen.getByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).not.toBeNull()
@@ -61,7 +62,7 @@ describe('IdentifierDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByTestId(IdentifierDetailTestTags.TITLE).textContent).toBe(enUserStrings.identifier_detail_title_current)
+    expect(screen.getByTestId(IdentifierDetailTestTags.TITLE).textContent).toBe(userStrings.ui.identifierDetailTitleCurrent)
     expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).toBeNull()
   })
 
@@ -77,13 +78,13 @@ describe('IdentifierDetailScreen', () => {
 
     await user.click(screen.getByTestId(IdentifierDetailTestTags.CHANGE_PASSWORD_BUTTON))
 
-    const oldPassInput = screen.getByPlaceholderText(enUserStrings.old_password)
-    const newPassInput = screen.getByPlaceholderText(enUserStrings.new_password)
+    const oldPassInput = screen.getByPlaceholderText(userStrings.ui.oldPassword)
+    const newPassInput = screen.getByPlaceholderText(userStrings.ui.newPassword)
 
     await user.type(oldPassInput, 'old_secret')
     await user.type(newPassInput, 'new_secret')
 
-    const confirmBtn = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
+    const confirmBtn = screen.getByRole('button', { name: userStrings.ui.dialogConfirm })
     await user.click(confirmBtn)
 
     expect(deps.emailChangePasswordUseCase?.execute).toHaveBeenCalledWith(mockIdentifier.id, 'old_secret', 'new_secret')

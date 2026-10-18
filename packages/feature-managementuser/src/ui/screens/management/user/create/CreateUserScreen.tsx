@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
@@ -12,13 +12,14 @@ import {
   CoreScreenTitleText,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   CreateUserProvider,
   useCreateUserStore
 } from '@/ui/screens/management/user/create/CreateUserStore'
 import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 export const CreateUserTestTags = {
   BACK_BUTTON: 'CreateUser_BackButton',
@@ -32,38 +33,38 @@ export const CreateUserTestTags = {
   ERROR_TEXT: 'CreateUser_ErrorText'
 }
 
-const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureManagementUserStrings): string => {
+const getUserAccountStatusLabel = (status: UserAccountStatus, commonStrings: CommonModuleStrings): string => {
   switch (status) {
     case UserAccountStatus.ACTIVE:
-      return strings.ui_common_active
+      return commonStrings.ui.active
     case UserAccountStatus.READ_ONLY:
-      return strings.ui_common_read_only
+      return commonStrings.ui.readOnly
     case UserAccountStatus.BANNED:
-      return strings.ui_common_banned
+      return commonStrings.ui.banned
     case UserAccountStatus.SECURITY_HOLD:
-      return strings.ui_common_security_hold
+      return commonStrings.ui.securityHold
     case UserAccountStatus.PENDING_DELETION:
-      return strings.ui_common_pending_deletion
+      return commonStrings.ui.pendingDeletion
     default:
       return status
   }
 }
 
-const getUserRoleLabel = (role: UserRole, strings: FeatureManagementUserStrings): string => {
+const getUserRoleLabel = (role: UserRole, commonStrings: CommonModuleStrings): string => {
   switch (role) {
     case UserRole.USER:
-      return strings.ui_common_user
+      return commonStrings.ui.user
     case UserRole.STAFF:
-      return strings.ui_common_staff
+      return commonStrings.ui.staff
     case UserRole.ADMIN:
-      return strings.ui_common_admin
+      return commonStrings.ui.admin
     default:
       return role
   }
 }
 
-const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const { email, password, isPasswordVisible, role, status, authorityLevel, isLoading, error } = useCreateUserStore((s) => s.screenState)
   const onEmailChanged = useCreateUserStore((s) => s.onEmailChanged)
@@ -88,7 +89,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreBackButton data-testid={CreateUserTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={CreateUserTestTags.TITLE}
-          text={strings.create_user_title}
+          text={strings.ui.createUserTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -100,7 +101,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           data-testid={CreateUserTestTags.EMAIL_INPUT}
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
-          label={strings.email}
+          label={strings.ui.email}
           placeholder="user@example.com"
           autoComplete="off"
           disabled={isLoading}
@@ -111,7 +112,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           data-testid={CreateUserTestTags.PASSWORD_INPUT}
           value={password}
           onChange={(e) => onPasswordChanged(e.target.value)}
-          label={strings.password}
+          label={strings.ui.password}
           isPasswordVisible={isPasswordVisible}
           onTogglePasswordVisibility={onTogglePasswordVisibility}
           autoComplete="new-password"
@@ -120,7 +121,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <div className="flex flex-col gap-1">
           <label htmlFor={roleId} className="text-xs font-medium text-surface-foreground">
-            {strings.user_role}
+            {strings.ui.userRole}
           </label>
           <select
             id={roleId}
@@ -132,7 +133,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           >
             {[UserRole.USER, UserRole.STAFF, UserRole.ADMIN].map((r) => (
               <option key={`role_${r}`} value={r}>
-                {getUserRoleLabel(r, strings)}
+                {getUserRoleLabel(r, defaultCommonStrings)}
               </option>
             ))}
           </select>
@@ -140,7 +141,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <div className="flex flex-col gap-1">
           <label htmlFor={statusId} className="text-xs font-medium text-surface-foreground">
-            {strings.user_account_status}
+            {strings.ui.userAccountStatus}
           </label>
           <select
             id={statusId}
@@ -158,7 +159,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
               UserAccountStatus.PENDING_DELETION
             ].map((st) => (
               <option key={`status_${st}`} value={st}>
-                {getUserAccountStatusLabel(st, strings)}
+                {getUserAccountStatusLabel(st, defaultCommonStrings)}
               </option>
             ))}
           </select>
@@ -169,7 +170,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           data-testid={CreateUserTestTags.AUTHORITY_LEVEL_INPUT}
           value={authorityLevel}
           onChange={(e) => onAuthorityLevelChanged(e.target.value)}
-          label={strings.authority_level}
+          label={strings.ui.authorityLevel}
           disabled={isLoading}
         />
 
@@ -177,7 +178,7 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           <CoreButton
             type="button"
             data-testid={CreateUserTestTags.CREATE_BUTTON}
-            label={isLoading ? strings.saving : strings.create_user}
+            label={isLoading ? strings.ui.saving : strings.ui.createUser}
             onClick={onCreateClick}
             disabled={isLoading || !FieldValidator.isValidEmail(email)}
           />
@@ -193,11 +194,11 @@ const CreateUserContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
 export interface CreateUserScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: CreateUserStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const CreateUserScreen = forwardRef<HTMLDivElement, CreateUserScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <CreateUserProvider dependencies={dependencies}>

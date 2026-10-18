@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -14,8 +15,6 @@ import {
   icons,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpMainProvider,
   useTotpMainStore
@@ -23,6 +22,8 @@ import {
 import type { TotpMainStoreDependencies } from "@/ui/screens/user/totp/main/totp-main-store";
 
 const QR_CODE_SIZE_PX = 180
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Automation test tags for {@link TotpMainScreen}.
@@ -52,8 +53,8 @@ export const TotpMainTestTags = {
   ENABLED_ACTION_ERROR_TEXT: 'TotpMain_EnabledActionErrorText'
 }
 
-const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const TotpMainContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useTotpMainStore((s) => s.screenState)
   const loadTotpStatus = useTotpMainStore((s) => s.loadTotpStatus)
@@ -84,8 +85,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={onSetupClick}
         onBack={onBackClick}
-        title={strings.totp_main}
-        strings={strings}
+        title={strings.ui.totpMain}
       />
     )
   }
@@ -104,7 +104,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           data-testid={TotpMainTestTags.BACK_BUTTON}
         />
         <CoreScreenTitleText
-          text={strings.totp_main}
+          text={strings.ui.totpMain}
           className="absolute left-1/2 -translate-x-1/2"
           data-testid={TotpMainTestTags.TITLE}
         />
@@ -118,13 +118,13 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               className="text-sm text-muted-foreground max-w-sm"
               data-testid={TotpMainTestTags.DISABLED_DESC_TEXT}
             >
-              {strings.totp_disabled_desc}
+              {strings.ui.totpDisabledDesc}
             </p>
 
             <div className="w-full max-w-xs pt-4">
               <CoreButton
                 type="button"
-                label={strings.setup_totp}
+                label={strings.ui.setupTotp}
                 onClick={onSetupClick}
                 disabled={screenState.actionLoading}
                 data-testid={TotpMainTestTags.SETUP_TOTP_BUTTON}
@@ -146,13 +146,13 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               className="text-base font-bold text-surface-foreground"
               data-testid={TotpMainTestTags.STEP1_TITLE}
             >
-              {strings.totp_setup_step1}
+              {strings.ui.totpSetupStep1}
             </h3>
             <p
               className="text-xs text-muted-foreground"
               data-testid={TotpMainTestTags.STEP1_DESC}
             >
-              {strings.totp_setup_step1_desc}
+              {strings.ui.totpSetupStep1Desc}
             </p>
 
             <div
@@ -173,7 +173,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
                 className="text-xs text-muted-foreground"
                 data-testid={TotpMainTestTags.MANUAL_KEY_LABEL}
               >
-                {strings.totp_manual_key}
+                {strings.ui.totpManualKey}
               </span>
               <div className="flex items-center gap-2 bg-accent/40 px-3 py-1.5 rounded-md border border-border">
                 <span
@@ -204,13 +204,13 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
                 className="text-base font-bold text-surface-foreground"
                 data-testid={TotpMainTestTags.STEP2_TITLE}
               >
-                {strings.totp_setup_step2}
+                {strings.ui.totpSetupStep2}
               </h3>
               <p
                 className="text-xs text-muted-foreground"
                 data-testid={TotpMainTestTags.STEP2_DESC}
               >
-                {strings.totp_setup_step2_desc}
+                {strings.ui.totpSetupStep2Desc}
               </p>
 
               <CoreCodeTextField
@@ -233,7 +233,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               <div className="w-full pt-2">
                 <CoreButton
                   type="button"
-                  label={strings.confirm}
+                  label={strings.ui.confirm}
                   onClick={onConfirmSetupClick}
                   disabled={!screenState.canConfirm}
                   data-testid={TotpMainTestTags.CONFIRM_SETUP_BUTTON}
@@ -249,19 +249,19 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               className="text-base font-bold text-primary"
               data-testid={TotpMainTestTags.ENABLED_TITLE}
             >
-              {strings.totp_enabled_title}
+              {strings.ui.totpEnabledTitle}
             </h3>
             <p
               className="text-xs text-muted-foreground"
               data-testid={TotpMainTestTags.ENABLED_DESC}
             >
-              {strings.totp_enabled_desc}
+              {strings.ui.totpEnabledDesc}
             </p>
 
             <div className="w-full flex flex-col gap-2 pt-4">
               <CoreButton
                 type="button"
-                label={strings.recovery_codes_title}
+                label={strings.ui.recoveryCodesTitle}
                 onClick={onRecoveryCodesClick}
                 disabled={screenState.actionLoading}
                 data-testid={TotpMainTestTags.RECOVERY_CODES_BUTTON}
@@ -269,7 +269,7 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
               <CoreButton
                 type="button"
-                label={strings.disable_totp}
+                label={strings.ui.disableTotp}
                 onClick={onDisableClick}
                 disabled={screenState.actionLoading}
                 className="bg-error hover:bg-error/90 text-error-foreground"
@@ -301,20 +301,20 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="disable-totp-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.dialog_confirm_title}
+              {strings.ui.dialogConfirmTitle}
             </h3>
             <p id="disable-totp-dialog-desc" className="text-sm text-muted-foreground">
-              {strings.disable_totp_confirm_msg}
+              {strings.ui.disableTotpConfirmMsg}
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissDialogs}
               />
               <CoreTextButton
                 type="button"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 onClick={onConfirmDisable}
               />
             </div>
@@ -330,14 +330,14 @@ const TotpMainContent: React.FC<{ strings?: FeatureUserStrings }> = ({
  */
 export interface TotpMainScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: TotpMainStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component for managing Two-Factor Authentication (TOTP setup, QR code display, and disabling).
  */
 export const TotpMainScreen = forwardRef<HTMLDivElement, TotpMainScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <TotpMainProvider dependencies={dependencies}>

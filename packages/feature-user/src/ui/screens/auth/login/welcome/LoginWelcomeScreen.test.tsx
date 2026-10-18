@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginWelcomeScreen } from '@/ui/screens/auth/login/welcome/LoginWelcomeScreen'
 import type { LoginWelcomeStoreDependencies } from '@/ui/screens/auth/login/welcome/login-welcome-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('LoginWelcomeScreen', () => {
   const createMockDeps = (): LoginWelcomeStoreDependencies => ({
@@ -43,9 +44,9 @@ describe('LoginWelcomeScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByRole('button', { name: enUserStrings.sign_in_with_email })).toBeDefined()
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_phone })).toBeDefined()
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_google })).toBeDefined()
+    expect(await screen.findByRole('button', { name: userStrings.ui.signInWithEmail })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithPhone })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithGoogle })).toBeDefined()
   })
 
   it('triggers onNavigateToLoginByEmail when Email button is clicked', async () => {
@@ -58,7 +59,7 @@ describe('LoginWelcomeScreen', () => {
       </ComponentTestHarness>
     )
 
-    const emailBtn = await screen.findByRole('button', { name: enUserStrings.sign_in_with_email })
+    const emailBtn = await screen.findByRole('button', { name: userStrings.ui.signInWithEmail })
     await user.click(emailBtn)
 
     expect(deps.onNavigateToLoginByEmail).toHaveBeenCalledTimes(1)
@@ -74,7 +75,7 @@ describe('LoginWelcomeScreen', () => {
       </ComponentTestHarness>
     )
 
-    const privacyBtn = await screen.findByRole('button', { name: enUserStrings.privacy_policy })
+    const privacyBtn = await screen.findByRole('button', { name: userStrings.ui.privacyPolicy })
     await user.click(privacyBtn)
 
     expect(deps.externalLauncher.openUrl).toHaveBeenCalledWith('https://example.com/privacy')

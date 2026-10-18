@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -18,8 +19,6 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import { UserItem } from '@/ui/components/user/item/UserItem'
 import { getGlobalUserListingOptionsConfig } from '@/ui/screens/management/user/global-list/global-user-list-options-config'
 import {
@@ -32,20 +31,22 @@ import {
 } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
+
 export const GlobalUserListTestTags = {
   BACK_BUTTON: 'GlobalUserList_BackButton',
   TITLE: 'GlobalUserList_Title',
   FILTER_BUTTON: 'GlobalUserList_FilterButton',
   REFRESH_BUTTON: 'GlobalUserList_RefreshButton',
   CREATE_BUTTON: 'GlobalUserList_CreateButton',
-  CREATE_USER_BUTTON: 'GlobalUserList_CreateButton',
   USER_LIST: 'GlobalUserList_List',
   GLOBAL_ERROR_TEXT: 'GlobalUserList_GlobalErrorText',
   ACTION_ERROR_TEXT: 'GlobalUserList_ActionErrorText'
 }
 
-const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const GlobalUserListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useGlobalUserListStore((s) => s.dependencies)
   const screenState = useGlobalUserListStore((s) => s.screenState)
@@ -108,8 +109,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.users_management}
-        strings={strings}
+        title={strings.ui.usersManagementTitle}
       />
     )
   }
@@ -120,7 +120,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
     actionError
   } = screenState
 
-  const optionsConfig = getGlobalUserListingOptionsConfig(strings)
+  const optionsConfig = getGlobalUserListingOptionsConfig(defaultCommonStrings)
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
@@ -128,14 +128,14 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <CoreBackButton data-testid={GlobalUserListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={GlobalUserListTestTags.TITLE}
-          text={strings.users_management}
+          text={strings.ui.usersManagementTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
           <button
             type="button"
             data-testid={GlobalUserListTestTags.FILTER_BUTTON}
-            aria-label={strings.filter}
+            aria-label={strings.ui.filter}
             onClick={onToggleFilterPanel}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -144,7 +144,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           <button
             type="button"
             data-testid={GlobalUserListTestTags.REFRESH_BUTTON}
-            aria-label={strings.refresh}
+            aria-label={defaultCommonStrings.ui.refresh}
             onClick={onRefresh}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -156,7 +156,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
       <div className="w-full flex items-center justify-end mb-4">
         <CoreButton
           data-testid={GlobalUserListTestTags.CREATE_BUTTON}
-          label={strings.create_user}
+          label={strings.ui.createUser}
           onClick={onCreateUserClick}
           className="w-auto"
         />
@@ -217,7 +217,6 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -226,7 +225,7 @@ const GlobalUserListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   )
 }
 
-const GlobalUserListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const GlobalUserListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const deps = useGlobalUserListStore((s) => s.dependencies)
@@ -248,11 +247,11 @@ const GlobalUserListController: React.FC<{ strings?: FeatureManagementUserString
 
 export interface GlobalUserListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: GlobalUserListStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const GlobalUserListScreen = forwardRef<HTMLDivElement, GlobalUserListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <GlobalUserListProvider dependencies={dependencies}>

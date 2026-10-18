@@ -1,11 +1,13 @@
 import { forwardRef } from 'react'
+import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { CoreOutlinedTextField, type CoreOutlinedTextFieldProps } from '@/ui/components/input/outlined/CoreOutlinedTextField'
-import { enStrings } from '@/locales/en/strings'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export type CoreEmailTextFieldProps = CoreOutlinedTextFieldProps
 
 export const CoreEmailTextField = forwardRef<HTMLInputElement, CoreEmailTextFieldProps>(
-  ({ label = enStrings.ui_common_email, placeholder = enStrings.ui_common_email, ...rest }, ref) => {
+  ({ label = defaultCommonStrings.ui.email, placeholder = defaultCommonStrings.ui.email, ...rest }, ref) => {
     return (
       <CoreOutlinedTextField
         ref={ref}

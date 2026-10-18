@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useId, useState } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,13 +13,14 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
 import {
   IdentifierDetailProvider,
   useIdentifierDetailStore
 } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link IdentifierDetailScreen}. */
 export const IdentifierDetailTestTags = {
@@ -63,8 +65,8 @@ const DetailRow: React.FC<{
   )
 }
 
-const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const IdentifierDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useIdentifierDetailStore((s) => s.screenState)
   const initializeIdentifier = useIdentifierDetailStore((s) => s.initializeIdentifier)
@@ -103,8 +105,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.identifier_detail_title}
-        strings={strings}
+        title={strings.ui.identifierDetailTitle}
       />
     )
   }
@@ -120,10 +121,10 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
     isDeleteConfirmationVisible
   } = screenState
 
-  const notAvailableText = strings.not_available
+  const notAvailableText = defaultCommonStrings.ui.notAvailable
   const titleText = isCurrentIdentifier
-    ? strings.identifier_detail_title_current
-    : strings.identifier_detail_title
+    ? strings.ui.identifierDetailTitleCurrent
+    : strings.ui.identifierDetailTitle
 
   const createdAtFormatted = formatEpochMillisToDateTime(identifier.createdAt) ?? String(identifier.createdAt)
   const updatedAtFormatted = identifier.updatedAt
@@ -162,39 +163,39 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           </h3>
 
           <DetailRow
-            label={strings.user_label}
-            value={strings.user_id(identifier.userId)}
+            label={strings.ui.userLabel}
+            value={identifier.userId}
             onClick={onUserClick}
             testTag={IdentifierDetailTestTags.USER_ROW}
           />
 
           <DetailRow
-            label={strings.identifier_detail_value}
+            label={strings.ui.identifierDetailValue}
             value={identifier.identifier}
           />
 
           <DetailRow
-            label={strings.identifier_detail_id}
+            label={strings.ui.identifierDetailId}
             value={identifier.id ?? ''}
           />
 
           <DetailRow
-            label={strings.identifier_detail_auth_provider}
+            label={strings.ui.identifierDetailAuthProvider}
             value={identifier.userAuthProvider}
           />
 
           <DetailRow
-            label={strings.identifier_detail_external_email}
+            label={strings.ui.identifierDetailExternalEmail}
             value={identifier.externalProviderEmail ?? notAvailableText}
           />
 
           <DetailRow
-            label={strings.identifier_detail_created_at}
+            label={strings.ui.identifierDetailCreatedAt}
             value={createdAtFormatted}
           />
 
           <DetailRow
-            label={strings.identifier_detail_updated_at}
+            label={strings.ui.identifierDetailUpdatedAt}
             value={updatedAtFormatted}
           />
         </div>
@@ -203,7 +204,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           {canChangePassword && (
             <CoreButton
               type="button"
-              label={strings.change_password}
+              label={strings.ui.changePassword}
               onClick={onChangePasswordClick}
               disabled={actionLoading || isCurrentIdentifier}
               data-testid={IdentifierDetailTestTags.CHANGE_PASSWORD_BUTTON}
@@ -213,7 +214,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           {canDeletePassword && (
             <CoreButton
               type="button"
-              label={strings.identifier_delete_password_button}
+              label={strings.ui.identifierDeletePasswordButton}
               onClick={onDeletePasswordClick}
               disabled={actionLoading || isCurrentIdentifier}
               className="bg-error hover:bg-error/90 text-error-foreground"
@@ -224,7 +225,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           {!isCurrentIdentifier && (
             <CoreButton
               type="button"
-              label={strings.identifier_delete_button}
+              label={strings.ui.identifierDeleteButton}
               onClick={onDeleteIdentifierRequested}
               disabled={actionLoading}
               className="bg-error hover:bg-error/90 text-error-foreground"
@@ -252,7 +253,7 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="change-password-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.change_password}
+              {strings.ui.changePassword}
             </h3>
 
             <CorePasswordTextField
@@ -261,8 +262,8 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               onChange={(e) => setOldPassword(e.target.value)}
               isPasswordVisible={isOldPasswordVisible}
               onTogglePasswordVisibility={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
-              label={strings.old_password}
-              placeholder={strings.old_password}
+              label={strings.ui.oldPassword}
+              placeholder={strings.ui.oldPassword}
               disabled={actionLoading}
             />
 
@@ -272,8 +273,8 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               onChange={(e) => setNewPassword(e.target.value)}
               isPasswordVisible={isNewPasswordVisible}
               onTogglePasswordVisibility={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
-              label={strings.new_password}
-              placeholder={strings.new_password}
+              label={strings.ui.newPassword}
+              placeholder={strings.ui.newPassword}
               disabled={actionLoading}
             />
 
@@ -284,13 +285,13 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissChangePasswordDialog}
                 disabled={actionLoading}
               />
               <CoreTextButton
                 type="submit"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 disabled={actionLoading || !oldPassword.trim() || !newPassword.trim()}
               />
             </div>
@@ -311,18 +312,18 @@ const IdentifierDetailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="delete-identifier-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.dialog_confirm_title}
+              {strings.ui.dialogConfirmTitle}
             </h3>
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissDeleteIdentifierDialog}
                 disabled={actionLoading}
               />
               <CoreTextButton
                 type="button"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 onClick={onDeleteIdentifierClick}
                 disabled={actionLoading}
               />
@@ -339,12 +340,12 @@ export interface IdentifierDetailScreenProps extends React.HTMLAttributes<HTMLDi
   /** Injected dependencies. */
   dependencies: IdentifierDetailStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Screen component displaying detailed information for a single user identifier (email/phone/OAuth). */
 export const IdentifierDetailScreen = forwardRef<HTMLDivElement, IdentifierDetailScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <IdentifierDetailProvider dependencies={dependencies}>

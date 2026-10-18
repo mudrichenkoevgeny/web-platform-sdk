@@ -1,4 +1,5 @@
 import React, { forwardRef, useId } from 'react'
+import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   ListingOptionsConfig,
   ListingSortState,
@@ -8,8 +9,9 @@ import { CoreButton } from '@/ui/components/button/button/CoreButton'
 import { ListingChoiceDropdown } from '@/ui/components/listing/option/dropdown/ListingChoiceDropdown'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
-import { enStrings } from '@/locales/en/strings'
 import { cn } from '@/utils/cn'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface ListingOptionsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   config: ListingOptionsConfig
@@ -51,7 +53,7 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
               htmlFor={sortSelectId}
               className="text-sm font-semibold text-surface-foreground"
             >
-              {enStrings.ui_common_status}
+              {defaultCommonStrings.ui.status}
             </label>
             <div className="flex items-center gap-2">
               <select
@@ -83,8 +85,8 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
                 className="px-3 h-core-button rounded-lg border border-border text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/10"
               >
                 {sortState?.isAscending
-                  ? enStrings.ui_common_sort_asc
-                  : enStrings.ui_common_sort_desc}
+                  ? defaultCommonStrings.ui.sortAsc
+                  : defaultCommonStrings.ui.sortDesc}
               </button>
             </div>
           </div>
@@ -103,7 +105,7 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
                       {textVal && (
                         <div className="ml-auto mb-1">
                           <CoreTextButton
-                            label={enStrings.ui_common_clear_all}
+                            label={defaultCommonStrings.ui.clearAll}
                             onClick={() => onFilterChanged(filter.id, null)}
                             className="h-6 text-xs w-auto px-1"
                           />
@@ -157,7 +159,7 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
           </div>
         )}
 
-        <CoreButton onClick={onApplyClick} label={enStrings.ui_common_apply} />
+        <CoreButton onClick={onApplyClick} label={defaultCommonStrings.ui.apply} />
       </div>
     )
   }

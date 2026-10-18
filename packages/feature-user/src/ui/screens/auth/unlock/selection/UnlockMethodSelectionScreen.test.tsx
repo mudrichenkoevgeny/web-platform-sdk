@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethodSelectionScreen } from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionScreen'
 import type { UnlockMethodSelectionStoreDependencies } from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UnlockMethodSelectionScreen', () => {
   const createMockDeps = (): UnlockMethodSelectionStoreDependencies => ({
@@ -37,9 +38,9 @@ describe('UnlockMethodSelectionScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.unlock_choose_method)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.unlockChooseMethod)).toBeDefined()
 
-    const emailBtn = screen.getByRole('button', { name: enUserStrings.unlock_by_email })
+    const emailBtn = screen.getByRole('button', { name: userStrings.ui.unlockByEmail })
     await user.click(emailBtn)
 
     expect(deps.onNavigateToEmailInput).toHaveBeenCalledTimes(1)
@@ -55,7 +56,7 @@ describe('UnlockMethodSelectionScreen', () => {
       </ComponentTestHarness>
     )
 
-    const googleBtn = screen.getByRole('button', { name: enUserStrings.unlock_by_google })
+    const googleBtn = screen.getByRole('button', { name: userStrings.ui.unlockByGoogle })
     await user.click(googleBtn)
 
     expect(deps.unlockByGoogleUseCase?.execute).toHaveBeenCalledTimes(1)

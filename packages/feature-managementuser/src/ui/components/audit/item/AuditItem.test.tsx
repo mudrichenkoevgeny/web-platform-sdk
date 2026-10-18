@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
-import { enManagementUserStrings } from '@/locales/index'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
+
+const userStrings = new UserModuleStrings()
 
 describe('AuditItem', () => {
   it('renders event details and handles click', async () => {
@@ -18,8 +20,8 @@ describe('AuditItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(`${enManagementUserStrings.audit_event_id}: ${event.id}`)).toBeDefined()
-    expect(screen.getByText(`${enManagementUserStrings.audit_event_status}: ${event.status}`)).toBeDefined()
+    expect(screen.getByText(`${userStrings.ui.auditEventId}: ${event.id}`)).toBeDefined()
+    expect(screen.getByText(`${userStrings.ui.auditEventStatus}: ${event.status}`)).toBeDefined()
 
     const item = screen.getByTestId(`AuditItem_${event.id}`)
     await user.click(item)

@@ -164,5 +164,4 @@ export {
 } from './ui/screens/management/user/global-list/globalUserListSearchConverters.js'
 export * from './ui/screens/management/user/global-list/globalUserListSearchSchema.js'
 
-export * from './locales/index.js'
 export * from './mock/index.js'

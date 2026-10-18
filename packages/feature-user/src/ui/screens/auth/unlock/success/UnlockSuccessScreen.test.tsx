@@ -2,8 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockSuccessScreen } from '@/ui/screens/auth/unlock/success/UnlockSuccessScreen'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UnlockSuccessScreen', () => {
   it('renders success title, description and handles finish button click', async () => {
@@ -16,10 +18,10 @@ describe('UnlockSuccessScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.unlock_success_title)).toBeDefined()
-    expect(screen.getByText(enUserStrings.unlock_success_desc)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.unlockSuccessTitle)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.unlockSuccessDesc)).toBeDefined()
 
-    const confirmBtn = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
+    const confirmBtn = screen.getByRole('button', { name: userStrings.ui.dialogConfirm })
     await user.click(confirmBtn)
 
     expect(onFinished).toHaveBeenCalledTimes(1)

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -18,8 +19,6 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { IdentifierItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import { getGlobalIdentifierListingOptionsConfig } from '@/ui/screens/management/identifier/global-list/global-identifier-list-options-config'
 import {
   searchParamsToListingStates,
@@ -31,6 +30,9 @@ import {
 } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
 import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
 
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
+
 export const GlobalIdentifierListTestTags = {
   BACK_BUTTON: 'GlobalIdentifierList_BackButton',
   TITLE: 'GlobalIdentifierList_Title',
@@ -41,8 +43,8 @@ export const GlobalIdentifierListTestTags = {
   ACTION_ERROR_TEXT: 'GlobalIdentifierList_ActionErrorText'
 }
 
-const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const GlobalIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useGlobalIdentifierListStore((s) => s.dependencies)
   const screenState = useGlobalIdentifierListStore((s) => s.screenState)
@@ -104,8 +106,7 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.user_identifiers}
-        strings={strings}
+        title={strings.ui.userIdentifiers}
       />
     )
   }
@@ -116,7 +117,7 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
     actionError
   } = screenState
 
-  const optionsConfig = getGlobalIdentifierListingOptionsConfig(strings)
+  const optionsConfig = getGlobalIdentifierListingOptionsConfig(defaultCommonStrings)
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
@@ -124,14 +125,14 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
         <CoreBackButton data-testid={GlobalIdentifierListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={GlobalIdentifierListTestTags.TITLE}
-          text={strings.user_identifiers}
+          text={strings.ui.userIdentifiers}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
           <button
             type="button"
             data-testid={GlobalIdentifierListTestTags.FILTER_BUTTON}
-            aria-label={strings.filter}
+            aria-label={strings.ui.filter}
             onClick={onToggleFilterPanel}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -140,7 +141,7 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
           <button
             type="button"
             data-testid={GlobalIdentifierListTestTags.REFRESH_BUTTON}
-            aria-label={strings.refresh}
+            aria-label={defaultCommonStrings.ui.refresh}
             onClick={onRefresh}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -204,7 +205,6 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -213,7 +213,7 @@ const GlobalIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStr
   )
 }
 
-const GlobalIdentifierListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const GlobalIdentifierListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const deps = useGlobalIdentifierListStore((s) => s.dependencies)
@@ -235,11 +235,11 @@ const GlobalIdentifierListController: React.FC<{ strings?: FeatureManagementUser
 
 export interface GlobalIdentifierListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: GlobalIdentifierListStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const GlobalIdentifierListScreen = forwardRef<HTMLDivElement, GlobalIdentifierListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <GlobalIdentifierListProvider dependencies={dependencies}>

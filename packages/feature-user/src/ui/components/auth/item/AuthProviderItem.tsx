@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link AuthProviderItem} component.
@@ -24,7 +24,7 @@ export interface AuthProviderItemProps extends Omit<React.ButtonHTMLAttributes<H
   /**
    * Localized strings dictionary override for accessibility label.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentType<React.SVGProps<SVGSVGElement>> {
@@ -42,18 +42,18 @@ function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentTyp
   }
 }
 
-function getAuthProviderTitle(authProvider: UserAuthProvider, strings: FeatureUserStrings): string {
+function getAuthProviderTitle(authProvider: UserAuthProvider, strings: UserModuleStrings): string {
   switch (authProvider) {
     case UserAuthProvider.EMAIL:
-      return strings.sign_in_with_email
+      return strings.ui.signInWithEmail
     case UserAuthProvider.PHONE:
-      return strings.sign_in_with_phone
+      return strings.ui.signInWithPhone
     case UserAuthProvider.GOOGLE:
-      return strings.sign_in_with_google
+      return strings.ui.signInWithGoogle
     case UserAuthProvider.APPLE:
-      return strings.sign_in_with_apple
+      return strings.ui.signInWithApple
     default:
-      return strings.sign_in_with_email
+      return strings.ui.signInWithEmail
   }
 }
 
@@ -66,7 +66,7 @@ export const AuthProviderItem = forwardRef<HTMLButtonElement, AuthProviderItemPr
       authProvider,
       onClick,
       disabled = false,
-      strings = enUserStrings,
+      strings = defaultUserStrings,
       className,
       type = 'button',
       ...rest

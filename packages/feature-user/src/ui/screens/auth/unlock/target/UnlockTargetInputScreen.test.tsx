@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
+import { UnlockMethod, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
 import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UnlockTargetInputScreen', () => {
   const createMockDeps = (method: UnlockMethod = UnlockMethod.EMAIL): UnlockTargetInputStoreDependencies => ({
@@ -30,9 +31,9 @@ describe('UnlockTargetInputScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.unlock_by_email)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.unlockByEmail)).toBeDefined()
 
-    const submitBtn = screen.getByRole('button', { name: enUserStrings.send_code })
+    const submitBtn = screen.getByRole('button', { name: userStrings.ui.sendCode })
     expect(submitBtn.getAttribute('disabled')).not.toBeNull()
 
     const input = screen.getByRole('textbox')
@@ -56,12 +57,12 @@ describe('UnlockTargetInputScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.unlock_by_phone)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.unlockByPhone)).toBeDefined()
 
-    const input = screen.getByPlaceholderText(enUserStrings.enter_phone_number)
+    const input = screen.getByPlaceholderText(userStrings.ui.enterPhoneNumber)
     await user.type(input, '+1234567890')
 
-    const submitBtn = screen.getByRole('button', { name: enUserStrings.send_code })
+    const submitBtn = screen.getByRole('button', { name: userStrings.ui.sendCode })
     await user.click(submitBtn)
 
     expect(deps.sendUnlockPhoneConfirmationUseCase.execute).toHaveBeenCalledWith('+1234567890')

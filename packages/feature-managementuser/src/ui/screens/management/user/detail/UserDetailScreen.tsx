@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useId } from 'react'
 import { z } from 'zod'
-import { AccountLockoutType, UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -14,14 +14,15 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   hasUserDetailChanges,
   UserDetailProvider,
   useUserDetailStore
 } from '@/ui/screens/management/user/detail/UserDetailStore'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link UserDetailScreen}. */
 export const UserDetailTestTags = {
@@ -59,49 +60,49 @@ const parseAccountLockoutType = (value: unknown): AccountLockoutType | null => {
   return parseResult.success ? parseResult.data : null
 }
 
-const getUserAccountStatusLabel = (status: UserAccountStatus, strings: FeatureManagementUserStrings): string => {
+const getUserAccountStatusLabel = (status: UserAccountStatus, commonStrings: CommonModuleStrings): string => {
   switch (status) {
     case UserAccountStatus.ACTIVE:
-      return strings.ui_common_active
+      return commonStrings.ui.active
     case UserAccountStatus.READ_ONLY:
-      return strings.ui_common_read_only
+      return commonStrings.ui.readOnly
     case UserAccountStatus.BANNED:
-      return strings.ui_common_banned
+      return commonStrings.ui.banned
     case UserAccountStatus.SECURITY_HOLD:
-      return strings.ui_common_security_hold
+      return commonStrings.ui.securityHold
     case UserAccountStatus.PENDING_DELETION:
-      return strings.ui_common_pending_deletion
+      return commonStrings.ui.pendingDeletion
     default:
       return status
   }
 }
 
-const getAccountLockoutTypeLabel = (type: AccountLockoutType, strings: FeatureManagementUserStrings): string => {
+const getAccountLockoutTypeLabel = (type: AccountLockoutType, commonStrings: CommonModuleStrings): string => {
   switch (type) {
     case AccountLockoutType.NONE:
-      return strings.ui_common_lockout_none
+      return commonStrings.ui.lockoutNone
     case AccountLockoutType.INDEFINITE:
-      return strings.ui_common_lockout_indefinite
+      return commonStrings.ui.lockoutIndefinite
     case AccountLockoutType.TEMPORARY:
-      return strings.ui_common_lockout_temporary
+      return commonStrings.ui.lockoutTemporary
     default:
       return type
   }
 }
 
-const getUserRoleLabel = (role: UserRole, strings: FeatureManagementUserStrings): string => {
+const getUserRoleLabel = (role: UserRole, commonStrings: CommonModuleStrings): string => {
   switch (role) {
     case UserRole.STAFF:
-      return strings.ui_common_staff
+      return commonStrings.ui.staff
     case UserRole.ADMIN:
-      return strings.ui_common_admin
+      return commonStrings.ui.admin
     default:
       return role
   }
 }
 
-const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useUserDetailStore((s) => s.screenState)
   const onAuthorityLevelChanged = useUserDetailStore((s) => s.onAuthorityLevelChanged)
@@ -136,8 +137,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.user_details_title}
-        strings={strings}
+        title={strings.ui.userDetailsTitle}
       />
     )
   }
@@ -161,8 +161,8 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   const hasChanges = hasUserDetailChanges(screenState)
 
   const createdAtText = formatEpochMillisToDateTime(user.createdAt) ?? String(user.createdAt)
-  const lastLoginText = user.lastLoginAt ? (formatEpochMillisToDateTime(user.lastLoginAt) ?? String(user.lastLoginAt)) : strings.not_available
-  const lastActiveText = user.lastActiveAt ? (formatEpochMillisToDateTime(user.lastActiveAt) ?? String(user.lastActiveAt)) : strings.not_available
+  const lastLoginText = user.lastLoginAt ? (formatEpochMillisToDateTime(user.lastLoginAt) ?? String(user.lastLoginAt)) : defaultCommonStrings.ui.notAvailable
+  const lastActiveText = user.lastActiveAt ? (formatEpochMillisToDateTime(user.lastActiveAt) ?? String(user.lastActiveAt)) : defaultCommonStrings.ui.notAvailable
 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
@@ -170,23 +170,23 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
         <CoreBackButton data-testid={UserDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={UserDetailTestTags.TITLE}
-          text={strings.user_details_title}
+          text={strings.ui.userDetailsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
       </div>
 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
-        <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${strings.user_id(user.id ?? '')}`} />
-        <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.user_role}: ${getUserRoleLabel(user.role, strings)}`}</p>
-        <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.totp_enabled_label(user.isTotpEnabled ? strings.ui_common_yes : strings.ui_common_no)}</p>
+        <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${user.id ?? ''}`} />
+        <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.ui.userRole}: ${getUserRoleLabel(user.role, defaultCommonStrings)}`}</p>
+        <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.ui.totpEnabledLabel(user.isTotpEnabled ? defaultCommonStrings.ui.yes : defaultCommonStrings.ui.no)}</p>
 
         {user.isTotpEnabled && (
           <div className="flex flex-col gap-1">
             <CoreButton
               type="button"
               data-testid={UserDetailTestTags.DISABLE_TOTP_BUTTON}
-              label={isDisablingTotp ? strings.disabling_totp : strings.disable_totp}
+              label={isDisablingTotp ? strings.ui.disablingTotp : strings.ui.disableTotp}
               onClick={onDisableTotpClick}
               disabled={isSelfUser || isSaving || isDeleting || isDisablingTotp}
             />
@@ -196,13 +196,13 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           </div>
         )}
 
-        <p className="text-sm text-muted-foreground">{strings.created_at_label(createdAtText)}</p>
-        <p className="text-sm text-muted-foreground">{strings.last_login_at_label(lastLoginText)}</p>
-        <p className="text-sm text-muted-foreground">{strings.last_active_at_label(lastActiveText)}</p>
+        <p className="text-sm text-muted-foreground">{strings.ui.createdAtLabel(createdAtText)}</p>
+        <p className="text-sm text-muted-foreground">{strings.ui.lastLoginAtLabel(lastLoginText)}</p>
+        <p className="text-sm text-muted-foreground">{strings.ui.lastActiveAtLabel(lastActiveText)}</p>
 
         {user.accountStatus === UserAccountStatus.PENDING_DELETION && user.scheduledPermanentDeletionAt && (
           <CoreErrorText
-            text={strings.scheduled_deletion_at_label(
+            text={strings.ui.scheduledDeletionAtLabel(
               formatEpochMillisToDateTime(user.scheduledPermanentDeletionAt) ?? String(user.scheduledPermanentDeletionAt)
             )}
           />
@@ -212,21 +212,21 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           <CoreButton
             type="button"
             data-testid={UserDetailTestTags.SESSIONS_BUTTON}
-            label={strings.user_sessions}
+            label={strings.ui.userSessions}
             onClick={onSessionsClick}
             className="flex-1"
           />
           <CoreButton
             type="button"
             data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
-            label={strings.user_identifiers}
+            label={strings.ui.userIdentifiers}
             onClick={onIdentifiersClick}
             className="flex-1"
           />
           <CoreButton
             type="button"
             data-testid={UserDetailTestTags.AUDIT_EVENTS_BUTTON}
-            label={strings.audit_logs_title}
+            label={strings.ui.auditLogsTitle}
             onClick={onAuditEventsClick}
             className="flex-1"
           />
@@ -234,7 +234,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
         <div className="flex flex-col gap-1">
           <label htmlFor={statusSelectId} className="text-xs font-medium text-surface-foreground">
-            {strings.user_account_status}
+            {strings.ui.userAccountStatus}
           </label>
           <select
             id={statusSelectId}
@@ -251,7 +251,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           >
             {Object.values(UserAccountStatus).map((status) => (
               <option key={status} value={status}>
-                {getUserAccountStatusLabel(status, strings)}
+                {getUserAccountStatusLabel(status, defaultCommonStrings)}
               </option>
             ))}
           </select>
@@ -262,13 +262,13 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           data-testid={UserDetailTestTags.AUTHORITY_LEVEL_INPUT}
           value={authorityLevelInput}
           onChange={(e) => onAuthorityLevelChanged(e.target.value)}
-          label={strings.authority_level}
+          label={strings.ui.authorityLevel}
           disabled={isSelfUser || isSaving || isDeleting}
         />
 
         <div className="flex flex-col gap-1">
           <label htmlFor={lockoutTypeId} className="text-xs font-medium text-surface-foreground">
-            {strings.ui_common_lockout_type}
+            {defaultCommonStrings.ui.lockoutType}
           </label>
           <select
             id={lockoutTypeId}
@@ -285,7 +285,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           >
             {Object.values(AccountLockoutType).map((type) => (
               <option key={type} value={type}>
-                {getAccountLockoutTypeLabel(type, strings)}
+                {getAccountLockoutTypeLabel(type, defaultCommonStrings)}
               </option>
             ))}
           </select>
@@ -296,7 +296,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           data-testid={UserDetailTestTags.LOCKOUT_UNTIL_INPUT}
           value={temporaryLockoutUntilInput}
           onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
-          label={strings.ui_common_lockout_until}
+          label={defaultCommonStrings.ui.lockoutUntil}
           disabled={isSelfUser || isSaving || isDeleting}
         />
 
@@ -304,7 +304,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           <CoreButton
             type="button"
             data-testid={UserDetailTestTags.UPDATE_BUTTON}
-            label={isSaving ? strings.saving : strings.update_user}
+            label={isSaving ? strings.ui.saving : strings.ui.updateUser}
             onClick={onUpdateClick}
             disabled={isSelfUser || !hasChanges || isSaving || isDeleting}
           />
@@ -315,7 +315,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
           <CoreButton
             type="button"
             data-testid={UserDetailTestTags.DELETE_BUTTON}
-            label={strings.delete_user}
+            label={strings.ui.deleteUser}
             onClick={onDeleteClick}
             disabled={isSelfUser || isSaving || isDeleting}
             className="bg-error hover:bg-error/90 text-error-foreground"
@@ -328,9 +328,9 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
 
       {isDeleteConfirmationVisible && (
         <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50">
-          <div className="bg-card border border-border p-6 rounded-lg max-w-sm w-full flex flex-col gap-4 shadow-lg">
-            <CoreTitleText data-testid={UserDetailTestTags.CONFIRM_DELETE_TITLE} text={strings.delete_user} />
-            <p data-testid={UserDetailTestTags.CONFIRM_DELETE_DESC} className="text-sm text-surface-foreground">{strings.delete_user_confirmation_desc}</p>
+          <div className="bg-card border border-border p-6 rounded-xl shadow-lg max-w-sm w-full flex flex-col gap-4">
+            <CoreTitleText data-testid={UserDetailTestTags.CONFIRM_DELETE_TITLE} text={strings.ui.deleteUser} />
+            <p data-testid={UserDetailTestTags.CONFIRM_DELETE_DESC} className="text-sm text-surface-foreground">{strings.ui.deleteUserConfirmationDesc}</p>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
@@ -339,7 +339,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm rounded-md border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {strings.dialog_cancel}
+                {strings.ui.dialogCancel}
               </button>
               <button
                 type="button"
@@ -348,7 +348,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
                 disabled={isDeleting}
                 className="px-4 py-2 text-sm rounded-md bg-error text-error-foreground hover:bg-error/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {strings.dialog_confirm}
+                {strings.ui.dialogConfirm}
               </button>
             </div>
           </div>
@@ -358,7 +358,7 @@ const UserDetailContent: React.FC<{ strings?: FeatureManagementUserStrings }> = 
   )
 }
 
-const UserDetailController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const UserDetailController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useUserDetailStore((s) => s.initScreen)
@@ -375,12 +375,12 @@ export interface UserDetailScreenProps extends React.HTMLAttributes<HTMLDivEleme
   /** Dependencies required by store. */
   dependencies: UserDetailStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Administrative screen component displaying detailed information and management actions for a single user account. */
 export const UserDetailScreen = forwardRef<HTMLDivElement, UserDetailScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UserDetailProvider dependencies={dependencies}>

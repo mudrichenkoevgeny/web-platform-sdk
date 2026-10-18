@@ -1,5 +1,5 @@
 export * from './theme/index.js'
-export * from './locales/index.js'
+export * from './context/LocalizationContext.js'
 export * from './assets/icons/index.js'
 export * from './result/app-result.js'
 export * from './error/model/error-id.js'

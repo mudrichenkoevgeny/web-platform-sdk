@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -17,8 +18,6 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
 import { getAuditEventListingOptionsConfig } from '@/ui/screens/management/audit/list/audit-event-list-options-config'
 import {
@@ -31,6 +30,9 @@ import {
 } from '@/ui/screens/management/audit/list/AuditEventListStore'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
 
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
+
 export const AuditEventListTestTags = {
   BACK_BUTTON: 'AuditEventList_BackButton',
   TITLE: 'AuditEventList_Title',
@@ -41,8 +43,8 @@ export const AuditEventListTestTags = {
   ACTION_ERROR_TEXT: 'AuditEventList_ActionErrorText'
 }
 
-const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const AuditEventListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useAuditEventListStore((s) => s.dependencies)
   const screenState = useAuditEventListStore((s) => s.screenState)
@@ -104,8 +106,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.audit_logs_title}
-        strings={strings}
+        title={strings.ui.auditLogsTitle}
       />
     )
   }
@@ -116,7 +117,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
     actionError
   } = screenState
 
-  const optionsConfig = getAuditEventListingOptionsConfig(strings)
+  const optionsConfig = getAuditEventListingOptionsConfig(defaultCommonStrings)
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
@@ -124,14 +125,14 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
         <CoreBackButton data-testid={AuditEventListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={AuditEventListTestTags.TITLE}
-          text={strings.audit_logs_title}
+          text={strings.ui.auditLogsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
           <button
             type="button"
             data-testid={AuditEventListTestTags.FILTER_BUTTON}
-            aria-label={strings.filter}
+            aria-label={strings.ui.filter}
             onClick={onToggleFilterPanel}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -140,7 +141,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
           <button
             type="button"
             data-testid={AuditEventListTestTags.REFRESH_BUTTON}
-            aria-label={strings.refresh}
+            aria-label={defaultCommonStrings.ui.refresh}
             onClick={onRefresh}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -204,7 +205,6 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -213,7 +213,7 @@ const AuditEventListContent: React.FC<{ strings?: FeatureManagementUserStrings }
   )
 }
 
-const AuditEventListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const AuditEventListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const deps = useAuditEventListStore((s) => s.dependencies)
@@ -235,11 +235,11 @@ const AuditEventListController: React.FC<{ strings?: FeatureManagementUserString
 
 export interface AuditEventListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: AuditEventListStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const AuditEventListScreen = forwardRef<HTMLDivElement, AuditEventListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <AuditEventListProvider dependencies={dependencies}>

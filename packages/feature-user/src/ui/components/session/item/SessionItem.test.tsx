@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
-import { enUserStrings } from '@/locales/index'
 import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
+
+const userStrings = new UserModuleStrings()
 
 describe('SessionItem', () => {
   it('renders session details and handles revoke button click', async () => {
@@ -24,7 +26,7 @@ describe('SessionItem', () => {
 
     expect(screen.getByText('user@example.com')).toBeDefined()
 
-    const revokeButton = screen.getByRole('button', { name: enUserStrings.session_revoke })
+    const revokeButton = screen.getByRole('button', { name: userStrings.ui.sessionRevoke })
     await user.click(revokeButton)
 
     expect(onRevokeClick).toHaveBeenCalledTimes(1)
@@ -41,7 +43,7 @@ describe('SessionItem', () => {
       </ComponentTestHarness>
     )
 
-    const button = screen.getByRole('button', { name: enUserStrings.session_detail_title_session })
+    const button = screen.getByRole('button', { name: userStrings.ui.sessionDetailTitleSession })
     button.focus()
     expect(button).toBe(document.activeElement)
 
@@ -58,7 +60,7 @@ describe('SessionItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.queryByRole('button', { name: enUserStrings.session_revoke })).toBeNull()
+    expect(screen.queryByRole('button', { name: userStrings.ui.sessionRevoke })).toBeNull()
   })
 
   it('disables revoke button when enabled is false', async () => {
@@ -73,7 +75,7 @@ describe('SessionItem', () => {
       </ComponentTestHarness>
     )
 
-    const revokeButton = screen.getByRole('button', { name: enUserStrings.session_revoke })
+    const revokeButton = screen.getByRole('button', { name: userStrings.ui.sessionRevoke })
     expect(revokeButton.getAttribute('disabled')).not.toBeNull()
 
     await user.click(revokeButton)

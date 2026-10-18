@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalSessionListScreen, GlobalSessionListTestTags } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('GlobalSessionListScreen', () => {
   const createMockDeps = (): GlobalSessionListStoreDependencies => ({
@@ -37,7 +39,7 @@ describe('GlobalSessionListScreen', () => {
     )
 
     expect(await screen.findByTestId(GlobalSessionListTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.sessions)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.sessions)).toBeDefined()
     expect(screen.getByTestId(GlobalSessionListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalSessionListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalSessionListTestTags.REFRESH_BUTTON)).toBeDefined()
@@ -69,6 +71,6 @@ describe('GlobalSessionListScreen', () => {
 
     const sessionCard = await screen.findByTestId(`SessionItem_${mockSession.id}`)
     expect(sessionCard).toBeDefined()
-    expect(screen.queryByRole('button', { name: enManagementUserStrings.session_revoke })).toBeNull()
+    expect(screen.queryByRole('button', { name: userStrings.ui.sessionRevoke })).toBeNull()
   })
 })

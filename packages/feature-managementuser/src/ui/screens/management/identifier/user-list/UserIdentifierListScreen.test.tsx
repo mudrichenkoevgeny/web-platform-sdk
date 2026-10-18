@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { type UserId, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserIdentifierListScreen, UserIdentifierListTestTags } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('UserIdentifierListScreen', () => {
   const createMockDeps = (): UserIdentifierListStoreDependencies => ({
@@ -35,7 +36,7 @@ describe('UserIdentifierListScreen', () => {
     )
 
     expect(await screen.findByTestId(UserIdentifierListTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.user_identifiers)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.userIdentifiers)).toBeDefined()
     expect(screen.getByTestId(UserIdentifierListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(UserIdentifierListTestTags.REFRESH_BUTTON)).toBeDefined()
   })

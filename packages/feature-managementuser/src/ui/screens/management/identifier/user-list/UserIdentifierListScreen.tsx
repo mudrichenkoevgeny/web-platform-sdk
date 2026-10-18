@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -16,13 +17,14 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { IdentifierItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   UserIdentifierListProvider,
   useUserIdentifierListStore
 } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link UserIdentifierListScreen}. */
 export const UserIdentifierListTestTags = {
@@ -34,8 +36,8 @@ export const UserIdentifierListTestTags = {
   ACTION_ERROR_TEXT: 'UserIdentifiers_ActionErrorText'
 }
 
-const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const UserIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useUserIdentifierListStore((s) => s.dependencies)
   const screenState = useUserIdentifierListStore((s) => s.screenState)
@@ -65,8 +67,7 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.user_identifiers}
-        strings={strings}
+        title={strings.ui.userIdentifiers}
       />
     )
   }
@@ -79,13 +80,13 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
         <CoreBackButton data-testid={UserIdentifierListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={UserIdentifierListTestTags.TITLE}
-          text={strings.user_identifiers}
+          text={strings.ui.userIdentifiers}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <button
           type="button"
           data-testid={UserIdentifierListTestTags.REFRESH_BUTTON}
-          aria-label={strings.refresh}
+          aria-label={defaultCommonStrings.ui.refresh}
           onClick={onRefresh}
           className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
         >
@@ -134,7 +135,6 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -143,7 +143,7 @@ const UserIdentifierListContent: React.FC<{ strings?: FeatureManagementUserStrin
   )
 }
 
-const UserIdentifierListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const UserIdentifierListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useUserIdentifierListStore((s) => s.initScreen)
@@ -160,12 +160,12 @@ export interface UserIdentifierListScreenProps extends React.HTMLAttributes<HTML
   /** Dependencies injected into screen store. */
   dependencies: UserIdentifierListStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Screen displaying a paginated list of user identifiers for a specific target user. */
 export const UserIdentifierListScreen = forwardRef<HTMLDivElement, UserIdentifierListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UserIdentifierListProvider dependencies={dependencies}>

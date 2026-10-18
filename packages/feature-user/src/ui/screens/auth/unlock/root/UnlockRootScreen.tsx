@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react'
-import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
+import { UnlockMethod, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
 import { UnlockMethodSelectionScreen } from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionScreen'
 import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
 import { UnlockOtpScreen } from '@/ui/screens/auth/unlock/otp/UnlockOtpScreen'
@@ -13,10 +11,12 @@ import {
 } from '@/ui/screens/auth/unlock/root/unlock-root-store'
 import type { UnlockRootStoreDependencies } from '@/ui/screens/auth/unlock/root/unlock-root-store'
 
+const defaultUserStrings = new UserModuleStrings()
+
 const UnlockRootContent: React.FC<{
   dependencies: UnlockRootStoreDependencies
-  strings?: FeatureUserStrings
-}> = ({ dependencies, strings = enUserStrings }) => {
+  strings?: UserModuleStrings
+}> = ({ dependencies, strings = defaultUserStrings }) => {
   const stack = useUnlockRootStore((s) => s.stack)
   const push = useUnlockRootStore((s) => s.push)
   const pop = useUnlockRootStore((s) => s.pop)
@@ -98,11 +98,11 @@ const UnlockRootContent: React.FC<{
 
 export interface UnlockRootScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: UnlockRootStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const UnlockRootScreen = forwardRef<HTMLDivElement, UnlockRootScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UnlockRootProvider dependencies={dependencies}>

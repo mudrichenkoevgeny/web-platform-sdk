@@ -10,14 +10,15 @@ import {
   icons,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
-import { AppType, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, UserAccountStatus, UserModuleStrings, CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import {
   MainUserProvider,
   useMainUserStore
 } from '@/ui/screens/user/main/main-user-store'
 import type { MainUserStoreDependencies } from '@/ui/screens/user/main/main-user-store'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * Automation test tags for {@link MainUserScreen}.
@@ -38,8 +39,8 @@ export const MainUserTestTags = {
   REFRESH_BUTTON: 'MainUser_RefreshButton'
 }
 
-const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const MainUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useMainUserStore((s) => s.screenState)
   const onRefresh = useMainUserStore((s) => s.onRefresh)
@@ -74,7 +75,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full h-full p-6 flex flex-col items-center justify-center gap-4">
         <CoreButton
           type="button"
-          label={strings.sign_in}
+          label={strings.ui.signIn}
           onClick={onLoginClick}
           data-testid={MainUserTestTags.LOGIN_BUTTON}
         />
@@ -101,35 +102,35 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   const getAccountStatusText = (status: UserAccountStatus): string => {
     switch (status) {
       case UserAccountStatus.ACTIVE:
-        return strings.account_status_active
+        return strings.ui.accountStatusActive
       case UserAccountStatus.READ_ONLY:
-        return strings.account_status_read_only
+        return strings.ui.accountStatusReadOnly
       case UserAccountStatus.BANNED:
-        return strings.account_status_banned
+        return strings.ui.accountStatusBanned
       case UserAccountStatus.SECURITY_HOLD:
-        return strings.account_status_security_hold
+        return strings.ui.accountStatusSecurityHold
       case UserAccountStatus.PENDING_DELETION:
-        return strings.account_status_pending_deletion
+        return strings.ui.accountStatusPendingDeletion
       default:
-        return strings.account_status_active
+        return strings.ui.accountStatusActive
     }
   }
 
   const permissionsText = user.permissionCodes.length > 0
     ? user.permissionCodes.join(', ')
-    : strings.permissions_none
+    : strings.ui.permissionsNone
 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
       <div className="w-full flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-surface-foreground">
-          {strings.user}
+          {strings.ui.user}
         </h2>
         <button
           type="button"
           onClick={onRefresh}
           disabled={actionLoading}
-          aria-label={strings.retry}
+          aria-label={defaultCommonStrings.ui.retry}
           className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-50"
           data-testid={MainUserTestTags.REFRESH_BUTTON}
         >
@@ -142,14 +143,14 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           className="text-base font-semibold text-surface-foreground"
           data-testid={MainUserTestTags.USER_ID_TEXT}
         >
-          {strings.user_id(user.id ?? '')}
+          {user.id ?? ''}
         </span>
 
         <span
           className="text-sm text-muted-foreground"
           data-testid={MainUserTestTags.ACCOUNT_STATUS_TEXT}
         >
-          {strings.account_status_prefix(getAccountStatusText(user.accountStatus))}
+          {strings.ui.accountStatusPrefix(getAccountStatusText(user.accountStatus))}
         </span>
 
         {appType === AppType.MANAGEMENT && (
@@ -158,14 +159,14 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
               className="text-sm text-muted-foreground"
               data-testid={MainUserTestTags.AUTHORITY_LEVEL_TEXT}
             >
-              {strings.authority_level_prefix(user.authorityLevel)}
+              {strings.ui.authorityLevelPrefix(user.authorityLevel)}
             </span>
 
             <span
               className="text-sm text-muted-foreground"
               data-testid={MainUserTestTags.PERMISSION_CODES_TEXT}
             >
-              {strings.permission_codes_prefix(permissionsText)}
+              {strings.ui.permissionCodesPrefix(permissionsText)}
             </span>
           </>
         )}
@@ -173,7 +174,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         <div className="w-full max-w-sm flex flex-col gap-2 mt-4">
           <CoreButton
             type="button"
-            label={strings.totp_main}
+            label={strings.ui.totpMain}
             onClick={onTotpMainClick}
             disabled={actionLoading}
             data-testid={MainUserTestTags.TOTP_MAIN_BUTTON}
@@ -181,7 +182,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
           <CoreButton
             type="button"
-            label={strings.sessions}
+            label={strings.ui.sessions}
             onClick={onSessionsClick}
             disabled={actionLoading}
             data-testid={MainUserTestTags.SESSIONS_BUTTON}
@@ -189,7 +190,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
           <CoreButton
             type="button"
-            label={strings.identifiers}
+            label={strings.ui.identifiers}
             onClick={onIdentifiersClick}
             disabled={actionLoading}
             data-testid={MainUserTestTags.IDENTIFIERS_BUTTON}
@@ -198,7 +199,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           {isAccountDeletionAvailable && (
             <CoreButton
               type="button"
-              label={strings.delete_account}
+              label={strings.ui.deleteAccount}
               onClick={onDeleteAccountClick}
               disabled={actionLoading}
               data-testid={MainUserTestTags.DELETE_ACCOUNT_BUTTON}
@@ -207,7 +208,7 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
           <CoreButton
             type="button"
-            label={strings.logout}
+            label={strings.ui.logout}
             onClick={onLogoutClick}
             disabled={actionLoading}
             data-testid={MainUserTestTags.LOGOUT_BUTTON}
@@ -243,20 +244,20 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="delete-account-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.dialog_confirm_title}
+              {strings.ui.dialogConfirmTitle}
             </h3>
             <p id="delete-account-dialog-desc" className="text-sm text-muted-foreground">
-              {strings.delete_account_confirm_msg}
+              {strings.ui.deleteAccountConfirmMsg}
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissDialog}
               />
               <CoreTextButton
                 type="button"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 onClick={onConfirmDeleteAccount}
               />
             </div>
@@ -278,20 +279,20 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="logout-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.dialog_confirm_title}
+              {strings.ui.dialogConfirmTitle}
             </h3>
             <p id="logout-dialog-desc" className="text-sm text-muted-foreground">
-              {strings.logout_confirm_msg}
+              {strings.ui.logoutConfirmMsg}
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissDialog}
               />
               <CoreTextButton
                 type="button"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 onClick={onConfirmLogout}
               />
             </div>
@@ -309,14 +310,14 @@ const MainUserContent: React.FC<{ strings?: FeatureUserStrings }> = ({
  */
 export interface MainUserScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: MainUserStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Main user screen component showing signed-in user details and navigation actions.
  */
 export const MainUserScreen = forwardRef<HTMLDivElement, MainUserScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <MainUserProvider dependencies={dependencies}>

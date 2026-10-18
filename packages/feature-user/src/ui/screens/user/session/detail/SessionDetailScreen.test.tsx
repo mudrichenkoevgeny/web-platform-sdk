@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen, SessionDetailTestTags } from '@/ui/screens/user/session/detail/SessionDetailScreen'
 import type { SessionDetailStoreDependencies } from '@/ui/screens/user/session/detail/session-detail-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('SessionDetailScreen', () => {
   const mockSession: UserSessionPrivate = {
@@ -57,7 +58,7 @@ describe('SessionDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByTestId(SessionDetailTestTags.TITLE).textContent).toBe(enUserStrings.session_detail_title_session)
+    expect(screen.getByTestId(SessionDetailTestTags.TITLE).textContent).toBe(userStrings.ui.sessionDetailTitleSession)
     expect(screen.getByTestId(SessionDetailTestTags.IDENTIFIER_DISPLAY_NAME).textContent).toBe('user@example.com')
     expect(screen.getByTestId(SessionDetailTestTags.DEVICE_NAME).textContent).toContain('Chrome on Windows')
     expect(screen.getByTestId(SessionDetailTestTags.REVOKE_BUTTON)).not.toBeNull()
@@ -72,7 +73,7 @@ describe('SessionDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByTestId(SessionDetailTestTags.TITLE).textContent).toBe(enUserStrings.session_detail_title_current_session)
+    expect(screen.getByTestId(SessionDetailTestTags.TITLE).textContent).toBe(userStrings.ui.sessionDetailTitleCurrentSession)
     expect(screen.queryByTestId(SessionDetailTestTags.REVOKE_BUTTON)).toBeNull()
   })
 

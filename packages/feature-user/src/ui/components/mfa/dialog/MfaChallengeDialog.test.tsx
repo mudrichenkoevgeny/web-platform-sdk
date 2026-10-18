@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { MfaChallengeDialog } from '@/ui/components/mfa/dialog/MfaChallengeDialog'
-import { enUserStrings } from '@/locales/index'
 import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
+
+const userStrings = new UserModuleStrings()
 
 describe('MfaChallengeDialog', () => {
   const mockRequest: MfaChallengeRequest = {
@@ -28,10 +30,10 @@ describe('MfaChallengeDialog', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.mfa_step_up_title)).toBeDefined()
-    expect(screen.getByText(enUserStrings.mfa_step_up_desc)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.mfaStepUpTitle)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.mfaStepUpDesc)).toBeDefined()
 
-    const confirmButton = screen.getByRole('button', { name: enUserStrings.confirm })
+    const confirmButton = screen.getByRole('button', { name: userStrings.ui.confirm })
     expect(confirmButton.getAttribute('disabled')).not.toBeNull()
 
     const input = screen.getByRole('textbox')
@@ -58,7 +60,7 @@ describe('MfaChallengeDialog', () => {
       </ComponentTestHarness>
     )
 
-    const cancelButton = screen.getByRole('button', { name: enUserStrings.cancel })
+    const cancelButton = screen.getByRole('button', { name: userStrings.ui.cancel })
     await user.click(cancelButton)
 
     expect(onCancel).toHaveBeenCalledTimes(1)

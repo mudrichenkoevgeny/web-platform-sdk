@@ -1,11 +1,12 @@
 import React, { forwardRef } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreButton,
   CoreScreenTitleText
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link UnlockSuccessScreen} component.
@@ -18,14 +19,14 @@ export interface UnlockSuccessScreenProps extends React.HTMLAttributes<HTMLDivEl
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component displaying successful account unlock confirmation.
  */
 export const UnlockSuccessScreen = forwardRef<HTMLDivElement, UnlockSuccessScreenProps>(
-  ({ onFinished, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ onFinished, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div
         ref={ref}
@@ -36,17 +37,17 @@ export const UnlockSuccessScreen = forwardRef<HTMLDivElement, UnlockSuccessScree
         {...rest}
       >
         <div className="w-full flex-1 flex flex-col items-center justify-center gap-3 my-auto">
-          <CoreScreenTitleText text={strings.unlock_success_title} />
+          <CoreScreenTitleText text={strings.ui.unlockSuccessTitle} />
 
           <p className="text-muted-foreground text-sm">
-            {strings.unlock_success_desc}
+            {strings.ui.unlockSuccessDesc}
           </p>
         </div>
 
         <div className="w-full pt-4">
           <CoreButton
             type="button"
-            label={strings.dialog_confirm}
+            label={strings.ui.dialogConfirm}
             onClick={onFinished}
           />
         </div>

@@ -1,9 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { CreateUserScreen, CreateUserTestTags } from '@/ui/screens/management/user/create/CreateUserScreen'
 import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('CreateUserScreen', () => {
   const createMockDeps = (): CreateUserStoreDependencies => ({
@@ -24,7 +26,7 @@ describe('CreateUserScreen', () => {
     )
 
     expect(await screen.findByTestId(CreateUserTestTags.TITLE)).toBeDefined()
-    expect(screen.getByTestId(CreateUserTestTags.TITLE).textContent).toContain(enManagementUserStrings.create_user_title)
+    expect(screen.getByTestId(CreateUserTestTags.TITLE).textContent).toContain(userStrings.ui.createUserTitle)
     expect(screen.getByTestId(CreateUserTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(CreateUserTestTags.EMAIL_INPUT)).toBeDefined()
     expect(screen.getByTestId(CreateUserTestTags.PASSWORD_INPUT)).toBeDefined()

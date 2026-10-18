@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditGlobalSettingsScreen } from '@/ui/screens/management/settings/global/EditGlobalSettingsScreen'
 import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('EditGlobalSettingsScreen', () => {
   const createMockDeps = (): EditGlobalSettingsStoreDependencies => ({
@@ -42,9 +44,9 @@ describe('EditGlobalSettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_global_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editGlobalSettingsTitle)).toBeDefined()
 
-    const saveButton = screen.getByRole('button', { name: enManagementUserStrings.save })
+    const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
     expect(deps.saveRemoteGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)
@@ -61,9 +63,9 @@ describe('EditGlobalSettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_global_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editGlobalSettingsTitle)).toBeDefined()
 
-    const resetButton = screen.getByRole('button', { name: enManagementUserStrings.reset_to_defaults })
+    const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
     expect(deps.resetRemoteGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)

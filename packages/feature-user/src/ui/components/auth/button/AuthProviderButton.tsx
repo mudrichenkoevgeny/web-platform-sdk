@@ -1,10 +1,11 @@
 import { forwardRef } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
+
+const defaultUserStrings = new UserModuleStrings()
+
 /**
  * Props for the {@link AuthProviderButton} component.
  */
@@ -28,7 +29,7 @@ export interface AuthProviderButtonProps extends Omit<React.ButtonHTMLAttributes
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentType<React.SVGProps<SVGSVGElement>> {
@@ -49,34 +50,34 @@ function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentTyp
 function getAuthProviderText(
   authProvider: UserAuthProvider,
   mode: AuthProviderButtonMode,
-  strings: FeatureUserStrings
+  strings: UserModuleStrings
 ): string {
   if (mode === AuthProviderButtonMode.SIGN_IN) {
     switch (authProvider) {
       case UserAuthProvider.EMAIL:
-        return strings.sign_in_with_email
+        return strings.ui.signInWithEmail
       case UserAuthProvider.PHONE:
-        return strings.sign_in_with_phone
+        return strings.ui.signInWithPhone
       case UserAuthProvider.GOOGLE:
-        return strings.sign_in_with_google
+        return strings.ui.signInWithGoogle
       case UserAuthProvider.APPLE:
-        return strings.sign_in_with_apple
+        return strings.ui.signInWithApple
       default:
-        return strings.sign_in_with_email
+        return strings.ui.signInWithEmail
     }
   }
 
   switch (authProvider) {
     case UserAuthProvider.EMAIL:
-      return strings.identifier_add_email
+      return strings.ui.identifierAddEmail
     case UserAuthProvider.PHONE:
-      return strings.identifier_add_phone
+      return strings.ui.identifierAddPhone
     case UserAuthProvider.GOOGLE:
-      return strings.identifier_add_google
+      return strings.ui.identifierAddGoogle
     case UserAuthProvider.APPLE:
-      return strings.identifier_add_apple
+      return strings.ui.identifierAddApple
     default:
-      return strings.identifier_add_email
+      return strings.ui.identifierAddEmail
   }
 }
 
@@ -90,7 +91,7 @@ export const AuthProviderButton = forwardRef<HTMLButtonElement, AuthProviderButt
       onClick,
       disabled = false,
       mode = AuthProviderButtonMode.SIGN_IN,
-      strings = enUserStrings,
+      strings = defaultUserStrings,
       className,
       type = 'button',
       ...rest

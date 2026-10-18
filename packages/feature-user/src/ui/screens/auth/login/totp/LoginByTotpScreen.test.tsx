@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
 import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/login-by-totp-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('LoginByTotpScreen', () => {
   const createMockDeps = (): LoginByTotpStoreDependencies => ({
@@ -44,9 +46,9 @@ describe('LoginByTotpScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.login_by_totp)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.loginByTotp)).toBeDefined()
 
-    const submitBtn = screen.getByRole('button', { name: enUserStrings.login })
+    const submitBtn = screen.getByRole('button', { name: userStrings.ui.login })
     expect(submitBtn.getAttribute('disabled')).not.toBeNull()
 
     const input = screen.getByRole('textbox')
@@ -71,7 +73,7 @@ describe('LoginByTotpScreen', () => {
       </ComponentTestHarness>
     )
 
-    const toggleBtn = screen.getByRole('button', { name: enUserStrings.use_recovery_code })
+    const toggleBtn = screen.getByRole('button', { name: userStrings.ui.useRecoveryCode })
     await user.click(toggleBtn)
 
     expect(onModeChange).toHaveBeenCalledWith('recovery_code')

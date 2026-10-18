@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link LegalFooter} component.
@@ -26,7 +27,7 @@ export interface LegalFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
@@ -39,7 +40,7 @@ export const LegalFooter = forwardRef<HTMLDivElement, LegalFooterProps>(
       isTermsOfServiceVisible = true,
       onPrivacyPolicyClick,
       onTermsOfServiceClick,
-      strings = enUserStrings,
+      strings = defaultUserStrings,
       className,
       ...rest
     },
@@ -58,18 +59,18 @@ export const LegalFooter = forwardRef<HTMLDivElement, LegalFooterProps>(
         )}
         {...rest}
       >
-        <span>{strings.legal_agreement_prefix}</span>
+        <span>{strings.ui.legalAgreementPrefix}</span>
         {isPrivacyPolicyVisible && (
           <button
             type="button"
             onClick={onPrivacyPolicyClick}
             className="text-primary underline hover:opacity-80 transition-opacity font-medium focus:outline-none"
           >
-            {strings.privacy_policy}
+            {strings.ui.privacyPolicy}
           </button>
         )}
         {isPrivacyPolicyVisible && isTermsOfServiceVisible && (
-          <span>{strings.and}</span>
+          <span>{strings.ui.and}</span>
         )}
         {isTermsOfServiceVisible && (
           <button
@@ -77,7 +78,7 @@ export const LegalFooter = forwardRef<HTMLDivElement, LegalFooterProps>(
             onClick={onTermsOfServiceClick}
             className="text-primary underline hover:opacity-80 transition-opacity font-medium focus:outline-none"
           >
-            {strings.terms_of_service}
+            {strings.ui.termsOfService}
           </button>
         )}
       </div>

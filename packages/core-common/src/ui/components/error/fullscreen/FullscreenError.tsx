@@ -1,25 +1,26 @@
 import React, { forwardRef } from 'react'
+import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 import { useAppErrorParser } from '@/context/SdkProvider'
 import { CoreButton } from '@/ui/components/button/button/CoreButton'
 import { CoreBackButton } from '@/ui/components/button/back/CoreBackButton'
 import { CoreScreenTitleText } from '@/ui/components/text/screen-title/CoreScreenTitleText'
-import { enStrings } from '@/locales/en/strings'
-import type { CoreCommonStrings } from '@/locales/en/strings'
 import { cn } from '@/utils/cn'
 import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface FullscreenErrorProps extends React.HTMLAttributes<HTMLDivElement> {
   error: AppError
   onRetry: () => void
   onBack?: () => void
   title?: string
-  strings?: CoreCommonStrings
+  strings?: CommonModuleStrings
 }
 
 export const FullscreenError = forwardRef<HTMLDivElement, FullscreenErrorProps>(
-  ({ error, onRetry, onBack, title, strings = enStrings, className, ...rest }, ref) => {
+  ({ error, onRetry, onBack, title, strings = defaultCommonStrings, className, ...rest }, ref) => {
     const errorParser = useAppErrorParser()
     const message = errorParser.parse(error) ?? error.code
 
@@ -52,7 +53,7 @@ export const FullscreenError = forwardRef<HTMLDivElement, FullscreenErrorProps>(
           </p>
 
           {error.isRetryable && (
-            <CoreButton onClick={onRetry} label={strings.retry} />
+            <CoreButton onClick={onRetry} label={strings.ui.retry} />
           )}
         </div>
       </div>

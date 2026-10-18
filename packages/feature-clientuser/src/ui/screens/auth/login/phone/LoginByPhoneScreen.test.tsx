@@ -2,9 +2,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByPhoneScreen } from '@/ui/screens/auth/login/phone/LoginByPhoneScreen'
 import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
+
+const userStrings = new UserModuleStrings()
+const commonStrings = new CommonModuleStrings()
 
 describe('LoginByPhoneScreen', () => {
   const createMockDeps = (): LoginByPhoneStoreDependencies => ({
@@ -43,10 +46,10 @@ describe('LoginByPhoneScreen', () => {
       </ComponentTestHarness>
     )
 
-    const sendCodeButton = screen.getByRole('button', { name: enUserStrings.send_code })
+    const sendCodeButton = screen.getByRole('button', { name: userStrings.ui.sendCode })
     expect(sendCodeButton.getAttribute('disabled')).not.toBeNull()
 
-    const phoneInput = screen.getByPlaceholderText(enUserStrings.phone_number)
+    const phoneInput = screen.getByPlaceholderText(userStrings.ui.phoneNumber)
     await user.type(phoneInput, '+12345678901')
 
     expect(sendCodeButton.getAttribute('disabled')).toBeNull()
@@ -66,7 +69,7 @@ describe('LoginByPhoneScreen', () => {
       </ComponentTestHarness>
     )
 
-    const backButton = screen.getByRole('button', { name: enUserStrings.back })
+    const backButton = screen.getByRole('button', { name: commonStrings.ui.back })
     await user.click(backButton)
 
     expect(deps.onBack).toHaveBeenCalledTimes(1)

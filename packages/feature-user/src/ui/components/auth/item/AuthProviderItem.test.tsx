@@ -2,9 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('AuthProviderItem', () => {
   it('renders provider icon tile and handles click event', async () => {
@@ -17,7 +18,7 @@ describe('AuthProviderItem', () => {
       </ComponentTestHarness>
     )
 
-    const button = screen.getByRole('button', { name: enUserStrings.sign_in_with_google })
+    const button = screen.getByRole('button', { name: userStrings.ui.signInWithGoogle })
     expect(button).toBeDefined()
 
     await user.click(button)
@@ -30,21 +31,21 @@ describe('AuthProviderItem', () => {
         <AuthProviderItem authProvider={UserAuthProvider.EMAIL} />
       </ComponentTestHarness>
     )
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_email })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithEmail })).toBeDefined()
 
     rerender(
       <ComponentTestHarness>
         <AuthProviderItem authProvider={UserAuthProvider.PHONE} />
       </ComponentTestHarness>
     )
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_phone })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithPhone })).toBeDefined()
 
     rerender(
       <ComponentTestHarness>
         <AuthProviderItem authProvider={UserAuthProvider.APPLE} />
       </ComponentTestHarness>
     )
-    expect(screen.getByRole('button', { name: enUserStrings.sign_in_with_apple })).toBeDefined()
+    expect(screen.getByRole('button', { name: userStrings.ui.signInWithApple })).toBeDefined()
   })
 
   it('does not trigger click when disabled', async () => {

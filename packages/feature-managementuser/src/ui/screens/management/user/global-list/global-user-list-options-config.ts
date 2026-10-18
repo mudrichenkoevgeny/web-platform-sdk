@@ -1,50 +1,50 @@
-import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export const getGlobalUserListingOptionsConfig = (
-  strings: FeatureManagementUserStrings = enManagementUserStrings
+  commonStrings: CommonModuleStrings = defaultCommonStrings
 ): ListingOptionsConfig => ({
   sortOptions: [
     {
       id: UserSortValues.UserSortBy.LAST_LOGIN_AT,
-      title: strings.ui_common_last_login_at
+      title: commonStrings.ui.lastLoginAt
     },
     {
       id: UserSortValues.UserSortBy.LAST_ACTIVE_AT,
-      title: strings.ui_common_last_active_at
+      title: commonStrings.ui.lastActiveAt
     },
     {
       id: UserSortValues.UserSortBy.SCHEDULED_PERMANENT_DELETION_AT,
-      title: strings.ui_common_scheduled_permanent_deletion_at
+      title: commonStrings.ui.scheduledPermanentDeletionAt
     },
     {
       id: UserSortValues.UserSortBy.ACCOUNT_LOCKOUT_TYPE,
-      title: strings.ui_common_lockout_type
+      title: commonStrings.ui.lockoutType
     },
     {
       id: UserSortValues.UserSortBy.TEMPORARY_LOCKOUT_UNTIL,
-      title: strings.ui_common_lockout_until
+      title: commonStrings.ui.lockoutUntil
     },
     {
       id: UserSortValues.UserSortBy.CREATED_AT,
-      title: strings.ui_common_created_at
+      title: commonStrings.ui.createdAt
     },
     {
       id: UserSortValues.UserSortBy.UPDATED_AT,
-      title: strings.ui_common_updated_at
+      title: commonStrings.ui.updatedAt
     }
   ],
   filters: [
     {
       type: 'choice',
       id: UserFilterValues.UserFilterValues.ROLE,
-      title: strings.ui_common_role,
+      title: commonStrings.ui.role,
       options: [
-        { id: UserRole.STAFF, title: strings.ui_common_staff },
-        { id: UserRole.ADMIN, title: strings.ui_common_admin }
+        { id: UserRole.STAFF, title: commonStrings.ui.staff },
+        { id: UserRole.ADMIN, title: commonStrings.ui.admin }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -52,13 +52,13 @@ export const getGlobalUserListingOptionsConfig = (
     {
       type: 'choice',
       id: UserFilterValues.UserFilterValues.ACCOUNT_STATUS,
-      title: strings.ui_common_status,
+      title: commonStrings.ui.status,
       options: [
-        { id: UserAccountStatus.ACTIVE, title: strings.ui_common_active },
-        { id: UserAccountStatus.READ_ONLY, title: strings.ui_common_read_only },
-        { id: UserAccountStatus.BANNED, title: strings.ui_common_banned },
-        { id: UserAccountStatus.SECURITY_HOLD, title: strings.ui_common_security_hold },
-        { id: UserAccountStatus.PENDING_DELETION, title: strings.ui_common_pending_deletion }
+        { id: UserAccountStatus.ACTIVE, title: commonStrings.ui.active },
+        { id: UserAccountStatus.READ_ONLY, title: commonStrings.ui.readOnly },
+        { id: UserAccountStatus.BANNED, title: commonStrings.ui.banned },
+        { id: UserAccountStatus.SECURITY_HOLD, title: commonStrings.ui.securityHold },
+        { id: UserAccountStatus.PENDING_DELETION, title: commonStrings.ui.pendingDeletion }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -66,11 +66,11 @@ export const getGlobalUserListingOptionsConfig = (
     {
       type: 'choice',
       id: UserFilterValues.UserFilterValues.ACCOUNT_LOCKOUT_TYPE,
-      title: strings.ui_common_lockout_type,
+      title: commonStrings.ui.lockoutType,
       options: [
-        { id: AccountLockoutType.NONE, title: strings.ui_common_lockout_none },
-        { id: AccountLockoutType.INDEFINITE, title: strings.ui_common_lockout_indefinite },
-        { id: AccountLockoutType.TEMPORARY, title: strings.ui_common_lockout_temporary }
+        { id: AccountLockoutType.NONE, title: commonStrings.ui.lockoutNone },
+        { id: AccountLockoutType.INDEFINITE, title: commonStrings.ui.lockoutIndefinite },
+        { id: AccountLockoutType.TEMPORARY, title: commonStrings.ui.lockoutTemporary }
       ],
       isMultiple: true,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
@@ -78,18 +78,18 @@ export const getGlobalUserListingOptionsConfig = (
     {
       type: 'boolean',
       id: UserFilterValues.UserFilterValues.IS_TOTP_ENABLED,
-      title: strings.ui_common_totp_enabled
+      title: commonStrings.ui.totpEnabled
     },
     {
       type: 'number',
       id: UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_FROM,
-      title: strings.ui_common_authority_level_from,
+      title: commonStrings.ui.authorityLevelFrom,
       placeholder: '0'
     },
     {
       type: 'number',
       id: UserFilterValues.UserFilterValues.AUTHORITY_LEVEL_TO,
-      title: strings.ui_common_authority_level_to,
+      title: commonStrings.ui.authorityLevelTo,
       placeholder: '100'
     }
   ]

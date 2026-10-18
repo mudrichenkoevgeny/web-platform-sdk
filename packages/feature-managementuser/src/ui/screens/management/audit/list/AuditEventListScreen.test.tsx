@@ -2,10 +2,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventListScreen, AuditEventListTestTags } from '@/ui/screens/management/audit/list/AuditEventListScreen'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('AuditEventListScreen', () => {
   const createMockDeps = (): AuditEventListStoreDependencies => ({
@@ -35,7 +37,7 @@ describe('AuditEventListScreen', () => {
     )
 
     expect(await screen.findByTestId(AuditEventListTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.audit_logs_title)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.auditLogsTitle)).toBeDefined()
     expect(screen.getByTestId(AuditEventListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(AuditEventListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(AuditEventListTestTags.REFRESH_BUTTON)).toBeDefined()

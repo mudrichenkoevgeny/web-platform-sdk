@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,16 +13,16 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   EditSecuritySettingsProvider,
   useEditSecuritySettingsStore
 } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
 import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
 
-const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const EditSecuritySettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useEditSecuritySettingsStore((s) => s.screenState)
   const onRetry = useEditSecuritySettingsStore((s) => s.onRetry)
@@ -83,8 +84,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.edit_security_settings_title}
-        strings={strings}
+        title={strings.ui.editSecuritySettingsTitle}
       />
     )
   }
@@ -142,7 +142,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
           disabled={isSaving}
         />
         <CoreScreenTitleText
-          text={strings.edit_security_settings_title}
+          text={strings.ui.editSecuritySettingsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -150,69 +150,69 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
 
       <div className="w-full flex-1 flex flex-col gap-6 mb-6">
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.general_security} />
+          <CoreTitleText text={strings.ui.generalSecurity} />
 
           <CoreOutlinedTextField
             value={recentAuthenticationValiditySecondsForOpenUser}
             onChange={(e) => onRecentAuthenticationValidityForOpenUserChanged(e.target.value)}
-            label={strings.recent_authentication_validity_seconds}
-            placeholder={strings.recent_authentication_validity_seconds}
+            label={strings.ui.recentAuthenticationValiditySeconds}
+            placeholder={strings.ui.recentAuthenticationValiditySeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={recentAuthenticationValiditySecondsForManagementUser}
             onChange={(e) => onRecentAuthenticationValidityForManagementUserChanged(e.target.value)}
-            label={strings.recent_authentication_validity_for_management}
-            placeholder={strings.recent_authentication_validity_for_management}
+            label={strings.ui.recentAuthenticationValidityForManagement}
+            placeholder={strings.ui.recentAuthenticationValidityForManagement}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={mfaTokenExpirationSeconds}
             onChange={(e) => onMfaTokenExpirationSecondsChanged(e.target.value)}
-            label={strings.mfa_token_expiration_seconds}
-            placeholder={strings.mfa_token_expiration_seconds}
+            label={strings.ui.mfaTokenExpirationSeconds}
+            placeholder={strings.ui.mfaTokenExpirationSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={refreshTokenRotationGracePeriodSeconds}
             onChange={(e) => onRefreshTokenRotationGracePeriodSecondsChanged(e.target.value)}
-            label={strings.refresh_token_rotation_grace_period_seconds}
-            placeholder={strings.refresh_token_rotation_grace_period_seconds}
+            label={strings.ui.refreshTokenRotationGracePeriodSeconds}
+            placeholder={strings.ui.refreshTokenRotationGracePeriodSeconds}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.rate_limiting} />
+          <CoreTitleText text={strings.ui.rateLimiting} />
 
           <CoreOutlinedTextField
             value={maxRequestsPerPeriod}
             onChange={(e) => onMaxRequestsPerPeriodChanged(e.target.value)}
-            label={strings.max_requests_per_period}
-            placeholder={strings.max_requests_per_period}
+            label={strings.ui.maxRequestsPerPeriod}
+            placeholder={strings.ui.maxRequestsPerPeriod}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={rateLimitPeriodSeconds}
             onChange={(e) => onRateLimitPeriodSecondsChanged(e.target.value)}
-            label={strings.rate_limit_period_seconds}
-            placeholder={strings.rate_limit_period_seconds}
+            label={strings.ui.rateLimitPeriodSeconds}
+            placeholder={strings.ui.rateLimitPeriodSeconds}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.password_policy} />
+          <CoreTitleText text={strings.ui.passwordPolicy} />
 
           <CoreOutlinedTextField
             value={passwordMinLength}
             onChange={(e) => onPasswordMinLengthChanged(e.target.value)}
-            label={strings.password_min_length}
-            placeholder={strings.password_min_length}
+            label={strings.ui.passwordMinLength}
+            placeholder={strings.ui.passwordMinLength}
             disabled={isSaving}
           />
 
@@ -226,7 +226,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={reqLetterId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.password_require_letter}
+              {strings.ui.passwordRequireLetter}
             </label>
           </div>
 
@@ -240,7 +240,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={reqUpperId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.password_require_uppercase}
+              {strings.ui.passwordRequireUppercase}
             </label>
           </div>
 
@@ -254,7 +254,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={reqLowerId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.password_require_lowercase}
+              {strings.ui.passwordRequireLowercase}
             </label>
           </div>
 
@@ -268,7 +268,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={reqDigitId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.password_require_digit}
+              {strings.ui.passwordRequireDigit}
             </label>
           </div>
 
@@ -282,67 +282,67 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={reqSpecialId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.password_require_special_char}
+              {strings.ui.passwordRequireSpecialChar}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={commonPasswords}
             onChange={(e) => onCommonPasswordsChanged(e.target.value)}
-            label={strings.common_passwords_placeholder}
-            placeholder={strings.common_passwords_placeholder}
+            label={strings.ui.commonPasswordsPlaceholder}
+            placeholder={strings.ui.commonPasswordsPlaceholder}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.account_lockout_policy_section} />
+          <CoreTitleText text={strings.ui.accountLockoutPolicySection} />
 
           <CoreOutlinedTextField
             value={accountLockoutMaxFailedPasswordAttempts}
             onChange={(e) => onAccountLockoutMaxFailedPasswordAttemptsChanged(e.target.value)}
-            label={strings.max_failed_password_attempts}
-            placeholder={strings.max_failed_password_attempts}
+            label={strings.ui.maxFailedPasswordAttempts}
+            placeholder={strings.ui.maxFailedPasswordAttempts}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountLockoutMaxFailedOtpAttempts}
             onChange={(e) => onAccountLockoutMaxFailedOtpAttemptsChanged(e.target.value)}
-            label={strings.max_failed_otp_attempts}
-            placeholder={strings.max_failed_otp_attempts}
+            label={strings.ui.maxFailedOtpAttempts}
+            placeholder={strings.ui.maxFailedOtpAttempts}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountLockoutMaxFailedTotpAttempts}
             onChange={(e) => onAccountLockoutMaxFailedTotpAttemptsChanged(e.target.value)}
-            label={strings.max_failed_totp_attempts}
-            placeholder={strings.max_failed_totp_attempts}
+            label={strings.ui.maxFailedTotpAttempts}
+            placeholder={strings.ui.maxFailedTotpAttempts}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountLockoutFailedAttemptsWindowSeconds}
             onChange={(e) => onAccountLockoutFailedAttemptsWindowSecondsChanged(e.target.value)}
-            label={strings.failed_attempts_window_seconds}
-            placeholder={strings.failed_attempts_window_seconds}
+            label={strings.ui.failedAttemptsWindowSeconds}
+            placeholder={strings.ui.failedAttemptsWindowSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountLockoutDurationSeconds}
             onChange={(e) => onAccountLockoutDurationSecondsChanged(e.target.value)}
-            label={strings.lockout_duration_seconds}
-            placeholder={strings.lockout_duration_seconds}
+            label={strings.ui.lockoutDurationSeconds}
+            placeholder={strings.ui.lockoutDurationSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={accountLockoutIndefiniteLockoutThreshold}
             onChange={(e) => onAccountLockoutIndefiniteLockoutThresholdChanged(e.target.value)}
-            label={strings.indefinite_lockout_threshold}
-            placeholder={strings.indefinite_lockout_threshold}
+            label={strings.ui.indefiniteLockoutThreshold}
+            placeholder={strings.ui.indefiniteLockoutThreshold}
             disabled={isSaving}
           />
 
@@ -356,21 +356,21 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={selfServiceUnlockId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.self_service_unlock_enabled}
+              {strings.ui.selfServiceUnlockEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={accountLockoutCheckIntervalSeconds}
             onChange={(e) => onAccountLockoutCheckIntervalSecondsChanged(e.target.value)}
-            label={strings.account_lockout_check_interval_seconds}
-            placeholder={strings.account_lockout_check_interval_seconds}
+            label={strings.ui.accountLockoutCheckIntervalSeconds}
+            placeholder={strings.ui.accountLockoutCheckIntervalSeconds}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.open_ip_restriction_policy} />
+          <CoreTitleText text={strings.ui.openIpRestrictionPolicy} />
 
           <div className="flex items-center gap-2">
             <input
@@ -382,15 +382,15 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={openIpBlacklistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.blacklist_enabled}
+              {strings.ui.blacklistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={openIpBlacklist}
             onChange={(e) => onOpenIpBlacklistChanged(e.target.value)}
-            label={strings.blacklist_placeholder}
-            placeholder={strings.blacklist_placeholder}
+            label={strings.ui.blacklistPlaceholder}
+            placeholder={strings.ui.blacklistPlaceholder}
             disabled={isSaving}
           />
 
@@ -404,21 +404,21 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={openIpWhitelistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.whitelist_enabled}
+              {strings.ui.whitelistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={openIpWhitelist}
             onChange={(e) => onOpenIpWhitelistChanged(e.target.value)}
-            label={strings.whitelist_placeholder}
-            placeholder={strings.whitelist_placeholder}
+            label={strings.ui.whitelistPlaceholder}
+            placeholder={strings.ui.whitelistPlaceholder}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.management_ip_restriction_policy} />
+          <CoreTitleText text={strings.ui.managementIpRestrictionPolicy} />
 
           <div className="flex items-center gap-2">
             <input
@@ -430,15 +430,15 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={mgmtIpBlacklistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.blacklist_enabled}
+              {strings.ui.blacklistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={managementIpBlacklist}
             onChange={(e) => onManagementIpBlacklistChanged(e.target.value)}
-            label={strings.blacklist_placeholder}
-            placeholder={strings.blacklist_placeholder}
+            label={strings.ui.blacklistPlaceholder}
+            placeholder={strings.ui.blacklistPlaceholder}
             disabled={isSaving}
           />
 
@@ -452,43 +452,43 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={mgmtIpWhitelistId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.whitelist_enabled}
+              {strings.ui.whitelistEnabled}
             </label>
           </div>
 
           <CoreOutlinedTextField
             value={managementIpWhitelist}
             onChange={(e) => onManagementIpWhitelistChanged(e.target.value)}
-            label={strings.whitelist_placeholder}
-            placeholder={strings.whitelist_placeholder}
+            label={strings.ui.whitelistPlaceholder}
+            placeholder={strings.ui.whitelistPlaceholder}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.otp_confirmation} />
+          <CoreTitleText text={strings.ui.otpConfirmation} />
 
           <CoreOutlinedTextField
             value={otpRetryAfterSeconds}
             onChange={(e) => onOtpRetryAfterSecondsChanged(e.target.value)}
-            label={strings.otp_retry_after_seconds}
-            placeholder={strings.otp_retry_after_seconds}
+            label={strings.ui.otpRetryAfterSeconds}
+            placeholder={strings.ui.otpRetryAfterSeconds}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={otpNumberOfSymbols}
             onChange={(e) => onOtpNumberOfSymbolsChanged(e.target.value)}
-            label={strings.otp_number_of_symbols}
-            placeholder={strings.otp_number_of_symbols}
+            label={strings.ui.otpNumberOfSymbols}
+            placeholder={strings.ui.otpNumberOfSymbols}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={otpExpirationSeconds}
             onChange={(e) => onOtpExpirationSecondsChanged(e.target.value)}
-            label={strings.otp_expiration_seconds}
-            placeholder={strings.otp_expiration_seconds}
+            label={strings.ui.otpExpirationSeconds}
+            placeholder={strings.ui.otpExpirationSeconds}
             disabled={isSaving}
           />
         </div>
@@ -508,13 +508,13 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
       <div className="w-full flex flex-col gap-2 pt-4 border-t border-border">
         <CoreButton
           type="submit"
-          label={isSaving ? strings.saving : strings.save}
+          label={isSaving ? strings.ui.saving : strings.ui.save}
           disabled={isSaving}
           onClick={onSaveClick}
         />
         <CoreTextButton
           type="button"
-          label={strings.reset_to_defaults}
+          label={strings.ui.resetToDefaults}
           disabled={isSaving}
           onClick={onResetClick}
         />
@@ -523,7 +523,7 @@ const EditSecuritySettingsContent: React.FC<{ strings?: FeatureManagementUserStr
   )
 }
 
-const EditSecuritySettingsController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const EditSecuritySettingsController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useEditSecuritySettingsStore((s) => s.initScreen)
@@ -537,11 +537,11 @@ const EditSecuritySettingsController: React.FC<{ strings?: FeatureManagementUser
 
 export interface EditSecuritySettingsScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: EditSecuritySettingsStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const EditSecuritySettingsScreen = forwardRef<HTMLDivElement, EditSecuritySettingsScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <EditSecuritySettingsProvider dependencies={dependencies}>

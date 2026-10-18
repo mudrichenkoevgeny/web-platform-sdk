@@ -1,13 +1,13 @@
 import React, { forwardRef } from 'react'
-import type { AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, type AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export interface AuditItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   event: AuditEventSummary
   onClick: () => void
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const AuditItem = forwardRef<HTMLButtonElement, AuditItemProps>(
@@ -15,7 +15,7 @@ export const AuditItem = forwardRef<HTMLButtonElement, AuditItemProps>(
     {
       event,
       onClick,
-      strings = enManagementUserStrings,
+      strings = defaultUserStrings,
       className,
       ...rest
     },
@@ -34,10 +34,10 @@ export const AuditItem = forwardRef<HTMLButtonElement, AuditItemProps>(
         {...rest}
       >
         <div className="text-sm font-bold text-surface-foreground">
-          {strings.audit_event_id}: {event.id}
+          {strings.ui.auditEventId}: {event.id}
         </div>
         <div className="text-xs text-muted-foreground">
-          {strings.audit_event_status}: {event.status}
+          {strings.ui.auditEventStatus}: {event.status}
         </div>
       </button>
     )

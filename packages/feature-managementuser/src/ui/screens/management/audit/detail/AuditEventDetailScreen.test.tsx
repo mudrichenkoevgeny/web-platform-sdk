@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toAuditEventIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { toAuditEventIdOrThrow, toUserIdOrThrow, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventDetailScreen, AuditEventDetailTestTags } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('AuditEventDetailScreen', () => {
   const currentUserId = toUserIdOrThrow('usr_current_123')
@@ -34,7 +35,7 @@ describe('AuditEventDetailScreen', () => {
     )
 
     expect(await screen.findByTestId(AuditEventDetailTestTags.TITLE)).toBeDefined()
-    expect(screen.getByTestId(AuditEventDetailTestTags.TITLE).textContent).toContain(enManagementUserStrings.audit_event_details_title)
+    expect(screen.getByTestId(AuditEventDetailTestTags.TITLE).textContent).toContain(userStrings.ui.auditEventDetailsTitle)
     expect(screen.getByTestId(AuditEventDetailTestTags.BACK_BUTTON)).toBeDefined()
 
     const backButton = screen.getByTestId(AuditEventDetailTestTags.BACK_BUTTON)

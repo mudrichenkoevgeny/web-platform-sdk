@@ -1,18 +1,20 @@
 import React, { forwardRef, useState } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreCodeTextField,
   CoreTextButton,
   CoreScreenTitleText
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
+
+const defaultUserStrings = new UserModuleStrings()
+
 export interface MfaChallengeDialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onConfirm'> {
   request: MfaChallengeRequest
   onConfirm: (code: string) => void
   onCancel: () => void
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const MfaChallengeDialog = forwardRef<HTMLDivElement, MfaChallengeDialogProps>(
@@ -21,7 +23,7 @@ export const MfaChallengeDialog = forwardRef<HTMLDivElement, MfaChallengeDialogP
       request: _request,
       onConfirm,
       onCancel,
-      strings = enUserStrings,
+      strings = defaultUserStrings,
       className,
       ...rest
     },
@@ -52,29 +54,29 @@ export const MfaChallengeDialog = forwardRef<HTMLDivElement, MfaChallengeDialogP
           onSubmit={handleConfirm}
           className="bg-card text-card-foreground border border-border rounded-xl shadow-lg max-w-md w-full p-6 flex flex-col gap-4"
         >
-          <CoreScreenTitleText text={strings.mfa_step_up_title} id="mfa-dialog-title" />
+          <CoreScreenTitleText text={strings.ui.mfaStepUpTitle} id="mfa-dialog-title" />
 
           <p className="text-sm text-muted-foreground">
-            {strings.mfa_step_up_desc}
+            {strings.ui.mfaStepUpDesc}
           </p>
 
           <CoreCodeTextField
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            label={strings.totp_code}
-            placeholder={strings.totp_code}
+            label={strings.ui.totpCode}
+            placeholder={strings.ui.totpCode}
             autoFocus
           />
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <CoreTextButton
               type="button"
-              label={strings.cancel}
+              label={strings.ui.cancel}
               onClick={onCancel}
             />
             <CoreTextButton
               type="submit"
-              label={strings.confirm}
+              label={strings.ui.confirm}
               disabled={!code.trim()}
               onClick={handleConfirm}
             />

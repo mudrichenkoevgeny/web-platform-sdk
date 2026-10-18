@@ -1,4 +1,5 @@
 import React, { forwardRef, useId } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,13 +13,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
 import {
   LoginByEmailProvider,
   useLoginByEmailStore
 } from '@/ui/screens/auth/login/email/login-by-email-store'
 import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export const LoginByEmailTestTags = {
   BACK_BUTTON: 'LoginByEmail_BackButton',
@@ -31,8 +32,8 @@ export const LoginByEmailTestTags = {
   REGISTER_BUTTON: 'LoginByEmail_RegisterButton'
 }
 
-const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const LoginByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useLoginByEmailStore((s) => s.screenState)
   const onEmailChanged = useLoginByEmailStore((s) => s.onEmailChanged)
@@ -162,11 +163,11 @@ const LoginByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
 export interface LoginByEmailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: LoginByEmailStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const LoginByEmailScreen = forwardRef<HTMLDivElement, LoginByEmailScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <LoginByEmailProvider dependencies={dependencies}>

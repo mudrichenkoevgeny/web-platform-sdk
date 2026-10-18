@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs, SecurityModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SecurityErrorParser } from '@/error/parser/security-error-parser'
 import { SecurityError } from '@/error/model/security-error'
-import { enSecurityStrings, ruSecurityStrings } from '@/locales/index'
+
 describe('SecurityErrorParser', () => {
-  const parserEn = new SecurityErrorParser(enSecurityStrings)
-  const parserRu = new SecurityErrorParser(ruSecurityStrings)
+  const parserEn = new SecurityErrorParser(new SecurityModuleStrings(undefined, 'en'))
+  const parserRu = new SecurityErrorParser(new SecurityModuleStrings(undefined, 'ru'))
 
   it('parses client password policy validation errors', () => {
     expect(parserEn.parse(SecurityError.passwordPolicyUnavailable())).toBe(
@@ -37,14 +37,14 @@ describe('SecurityErrorParser', () => {
   })
 
   it('supports dynamic language getter function for reactive localizations', () => {
-    let currentLanguage = enSecurityStrings
+    let currentLanguage = new SecurityModuleStrings(undefined, 'en')
     const dynamicParser = new SecurityErrorParser(() => currentLanguage)
 
     expect(dynamicParser.parse(SecurityError.passwordTooShort(8))).toBe(
       'Password must be at least 8 characters long.'
     )
 
-    currentLanguage = ruSecurityStrings
+    currentLanguage = new SecurityModuleStrings(undefined, 'ru')
 
     expect(dynamicParser.parse(SecurityError.passwordTooShort(8))).toBe(
       'Пароль должен содержать не менее 8 символов.'
@@ -60,7 +60,7 @@ describe('SecurityErrorParser', () => {
     } as const
 
     expect(parserEn.parse(mfaError)).toBe('Authentication confirmation is required. MFA token: token-123')
-    expect(parserRu.parse(mfaError)).toBe('Требуется подтверждение аутентификации. Токен MFA: token-123')
+    expect(parserRu.parse(mfaError)).toBe('Требуется подтверждение аутентификации. MFA токен: token-123')
 
     const otpError = {
       id: 'err-2' as ErrorId,

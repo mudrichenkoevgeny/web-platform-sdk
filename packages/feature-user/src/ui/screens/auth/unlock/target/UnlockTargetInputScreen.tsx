@@ -11,9 +11,7 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
-import { UnlockMethod } from '@mudrichenkoevgeny/shared-foundation'
+import { UnlockMethod, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@/validator/field-validator'
 import {
   UnlockTargetInputProvider,
@@ -21,8 +19,10 @@ import {
 } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
 import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
 
-const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const UnlockTargetInputContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useUnlockTargetInputStore((s) => s.dependencies)
   const screenState = useUnlockTargetInputStore((s) => s.screenState)
@@ -47,13 +47,13 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   const title =
     method === UnlockMethod.EMAIL
-      ? strings.unlock_by_email
-      : strings.unlock_by_phone
+      ? strings.ui.unlockByEmail
+      : strings.ui.unlockByPhone
 
   const description =
     method === UnlockMethod.EMAIL
-      ? strings.unlock_email_input_desc
-      : strings.unlock_phone_input_desc
+      ? strings.ui.unlockEmailInputDesc
+      : strings.ui.unlockPhoneInputDesc
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,8 +85,8 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           <CoreEmailTextField
             value={input}
             onChange={(e) => onInputChanged(e.target.value)}
-            label={strings.email}
-            placeholder={strings.email}
+            label={strings.ui.email}
+            placeholder={strings.ui.email}
             isError={Boolean(actionError)}
             disabled={actionLoading}
             autoFocus
@@ -95,8 +95,8 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           <CoreOutlinedTextField
             value={input}
             onChange={(e) => onInputChanged(e.target.value)}
-            label={strings.phone_number}
-            placeholder={strings.enter_phone_number}
+            label={strings.ui.phoneNumber}
+            placeholder={strings.ui.enterPhoneNumber}
             type="tel"
             inputMode="tel"
             isError={Boolean(actionError)}
@@ -120,7 +120,7 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
           type="submit"
-          label={strings.send_code}
+          label={strings.ui.sendCode}
           disabled={!canSendCode}
           onClick={onSendCodeClick}
         />
@@ -133,11 +133,11 @@ const UnlockTargetInputContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
 export interface UnlockTargetInputScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: UnlockTargetInputStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const UnlockTargetInputScreen = forwardRef<HTMLDivElement, UnlockTargetInputScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UnlockTargetInputProvider dependencies={dependencies}>

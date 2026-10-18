@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -10,13 +11,13 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import {
   TotpRecoveryCodesProvider,
   useTotpRecoveryCodesStore
 } from '@/ui/screens/user/totp/recovery/totp-recovery-codes-store'
 import type { TotpRecoveryCodesStoreDependencies } from "@/ui/screens/user/totp/recovery/totp-recovery-codes-store";
+
+const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Automation test tags for {@link TotpRecoveryCodesScreen}.
@@ -33,8 +34,8 @@ export const TotpRecoveryCodesTestTags = {
   ACTION_ERROR_TEXT: 'TotpRecoveryCodes_ActionErrorText'
 }
 
-const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const TotpRecoveryCodesContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useTotpRecoveryCodesStore((s) => s.screenState)
   const loadRecoveryCodes = useTotpRecoveryCodesStore((s) => s.loadRecoveryCodes)
@@ -61,8 +62,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={loadRecoveryCodes}
         onBack={onBackClick}
-        title={strings.recovery_codes_title}
-        strings={strings}
+        title={strings.ui.recoveryCodesTitle}
       />
     )
   }
@@ -84,7 +84,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           data-testid={TotpRecoveryCodesTestTags.BACK_BUTTON}
         />
         <CoreScreenTitleText
-          text={strings.recovery_codes_title}
+          text={strings.ui.recoveryCodesTitle}
           className="absolute left-1/2 -translate-x-1/2"
           data-testid={TotpRecoveryCodesTestTags.TITLE}
         />
@@ -96,14 +96,14 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           className="text-base font-bold text-surface-foreground"
           data-testid={TotpRecoveryCodesTestTags.RECOVERY_CODES_TITLE}
         >
-          {strings.recovery_codes_title}
+          {strings.ui.recoveryCodesTitle}
         </h3>
 
         <p
           className="text-xs text-muted-foreground"
           data-testid={TotpRecoveryCodesTestTags.RECOVERY_CODES_DESC}
         >
-          {strings.recovery_codes_desc}
+          {strings.ui.recoveryCodesDesc}
         </p>
 
         <div
@@ -120,7 +120,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         <div className="flex flex-col items-center gap-1">
           <CoreTextButton
             type="button"
-            label={strings.copy_all}
+            label={strings.ui.copyAll}
             onClick={handleCopyAll}
             data-testid={TotpRecoveryCodesTestTags.COPY_ALL_RECOVERY_CODES_BUTTON}
           />
@@ -134,7 +134,7 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         <div className="w-full pt-4">
           <CoreButton
             type="button"
-            label={strings.regenerate_recovery_codes}
+            label={strings.ui.regenerateRecoveryCodes}
             onClick={onRegenerateClick}
             disabled={actionLoading}
             data-testid={TotpRecoveryCodesTestTags.REGENERATE_RECOVERY_CODES_BUTTON}
@@ -163,20 +163,20 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
             className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
           >
             <h3 id="regenerate-codes-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.dialog_confirm_title}
+              {strings.ui.dialogConfirmTitle}
             </h3>
             <p id="regenerate-codes-dialog-desc" className="text-sm text-muted-foreground">
-              {strings.regenerate_codes_confirm_msg}
+              {strings.ui.regenerateCodesConfirmMsg}
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <CoreTextButton
                 type="button"
-                label={strings.dialog_cancel}
+                label={strings.ui.dialogCancel}
                 onClick={onDismissDialogs}
               />
               <CoreTextButton
                 type="button"
-                label={strings.dialog_confirm}
+                label={strings.ui.dialogConfirm}
                 onClick={onConfirmRegenerate}
               />
             </div>
@@ -192,14 +192,14 @@ const TotpRecoveryCodesContent: React.FC<{ strings?: FeatureUserStrings }> = ({
  */
 export interface TotpRecoveryCodesScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: TotpRecoveryCodesStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component for viewing and regenerating MFA TOTP backup recovery codes.
  */
 export const TotpRecoveryCodesScreen = forwardRef<HTMLDivElement, TotpRecoveryCodesScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <TotpRecoveryCodesProvider dependencies={dependencies}>

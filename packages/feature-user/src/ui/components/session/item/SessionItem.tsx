@@ -1,10 +1,12 @@
 import React, { forwardRef } from 'react'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings, formatLocalizedString, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon, formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
+
 /**
  * Props for the {@link SessionItem} component.
  */
@@ -32,7 +34,7 @@ export interface SessionItemProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentType<React.SVGProps<SVGSVGElement>> {
@@ -61,7 +63,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
       enabled = true,
       isCurrentSession = false,
       onSessionClick,
-      strings = enUserStrings,
+      strings = defaultUserStrings,
       className,
       ...rest
     },
@@ -71,7 +73,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
     const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
     const formattedLastAccessed = formatEpochMillisToDateTime(session.lastAccessedAt) ?? String(session.lastAccessedAt)
 
-    const deviceName = session.clientDeviceInfo.deviceName ?? strings.not_available
+    const deviceName = session.clientDeviceInfo.deviceName ?? defaultCommonStrings.ui.notAvailable
 
     const iconClassName = cn(
       session.identifierAuthProvider === UserAuthProvider.GOOGLE ? '' : 'text-primary-foreground',
@@ -95,7 +97,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
         {isClickable && (
           <button
             type="button"
-            aria-label={strings.session_detail_title_session}
+            aria-label={strings.ui.sessionDetailTitleSession}
             onClick={onSessionClick}
             className="absolute inset-0 w-full h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-primary z-0 cursor-pointer"
           />
@@ -115,7 +117,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
             </span>
           )}
           <span className="text-xs text-muted-foreground">
-            {strings.session_last_accessed(formattedLastAccessed)}
+            {strings.ui.sessionLastAccessed(formattedLastAccessed)}
           </span>
         </div>
 
@@ -123,7 +125,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
           <div className="pt-2 border-t border-border flex justify-end relative z-10">
             <button
               type="button"
-              aria-label={strings.session_revoke}
+              aria-label={strings.ui.sessionRevoke}
               disabled={!enabled}
               onClick={(e) => {
                 e.stopPropagation()
@@ -131,7 +133,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
               }}
               className="px-3 py-1.5 rounded-md text-xs font-semibold bg-error/10 text-error hover:bg-error/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {strings.session_revoke}
+              {strings.ui.sessionRevoke}
             </button>
           </div>
         )}

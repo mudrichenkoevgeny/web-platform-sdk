@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalIdentifierListScreen, GlobalIdentifierListTestTags } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
 import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('GlobalIdentifierListScreen', () => {
   const createMockDeps = (): GlobalIdentifierListStoreDependencies => ({
@@ -36,7 +38,7 @@ describe('GlobalIdentifierListScreen', () => {
     )
 
     expect(await screen.findByTestId(GlobalIdentifierListTestTags.TITLE)).toBeDefined()
-    expect(screen.getByText(enManagementUserStrings.user_identifiers)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.userIdentifiers)).toBeDefined()
     expect(screen.getByTestId(GlobalIdentifierListTestTags.BACK_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalIdentifierListTestTags.FILTER_BUTTON)).toBeDefined()
     expect(screen.getByTestId(GlobalIdentifierListTestTags.REFRESH_BUTTON)).toBeDefined()

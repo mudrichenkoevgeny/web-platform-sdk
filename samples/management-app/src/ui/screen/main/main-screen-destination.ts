@@ -1,24 +1,24 @@
 import React from 'react'
+import type { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementAppStrings } from '@/locales/index'
 
 export type MainTabKey = 'management' | 'user'
 
 export interface MainScreenDestination {
   key: MainTabKey
-  label: string
+  label: (strings: UserModuleStrings) => string
   Icon: React.ComponentType<{ className?: string }>
 }
 
 export const mainScreenDestinations: Record<MainTabKey, MainScreenDestination> = {
   management: {
     key: 'management',
-    label: enManagementAppStrings.nav_management,
+    label: (strings) => strings.ui.managementSettingsTitle,
     Icon: icons.home
   },
   user: {
     key: 'user',
-    label: enManagementAppStrings.nav_user,
+    label: (strings) => strings.ui.user,
     Icon: icons.user
   }
 }

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -17,13 +18,14 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SessionItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   UserSessionListProvider,
   useUserSessionListStore
 } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link UserSessionListScreen}. */
 export const UserSessionListTestTags = {
@@ -36,8 +38,8 @@ export const UserSessionListTestTags = {
   ACTION_ERROR_TEXT: 'UserSessionList_ActionErrorText'
 }
 
-const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const UserSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useUserSessionListStore((s) => s.dependencies)
   const screenState = useUserSessionListStore((s) => s.screenState)
@@ -69,8 +71,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.user_sessions}
-        strings={strings}
+        title={strings.ui.userSessions}
       />
     )
   }
@@ -83,13 +84,13 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
         <CoreBackButton data-testid={UserSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={UserSessionListTestTags.TITLE}
-          text={strings.user_sessions}
+          text={strings.ui.userSessions}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <button
           type="button"
           data-testid={UserSessionListTestTags.REFRESH_BUTTON}
-          aria-label={strings.refresh}
+          aria-label={defaultCommonStrings.ui.refresh}
           onClick={onRefresh}
           className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
         >
@@ -110,7 +111,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
             <CoreButton
               type="button"
               data-testid={UserSessionListTestTags.REVOKE_ALL_BUTTON}
-              label={strings.revoke_all_sessions}
+              label={strings.ui.revokeAllSessions}
               onClick={onDeleteAllSessionsClick}
               disabled={actionLoading || (deps.currentUserId != null && deps.userId === deps.currentUserId)}
               className="bg-error hover:bg-error/90 text-error-foreground"
@@ -154,7 +155,6 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -163,7 +163,7 @@ const UserSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings 
   )
 }
 
-const UserSessionListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const UserSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useUserSessionListStore((s) => s.initScreen)
@@ -180,12 +180,12 @@ export interface UserSessionListScreenProps extends React.HTMLAttributes<HTMLDiv
   /** Dependencies required by store. */
   dependencies: UserSessionListStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Administrative screen component displaying paginated active sessions for a target user account. */
 export const UserSessionListScreen = forwardRef<HTMLDivElement, UserSessionListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UserSessionListProvider dependencies={dependencies}>

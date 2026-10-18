@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditSecuritySettingsScreen } from '@/ui/screens/management/settings/security/EditSecuritySettingsScreen'
 import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
-import { enManagementUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('EditSecuritySettingsScreen', () => {
   const createMockDeps = (): EditSecuritySettingsStoreDependencies => ({
@@ -75,9 +77,9 @@ describe('EditSecuritySettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_security_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editSecuritySettingsTitle)).toBeDefined()
 
-    const saveButton = screen.getByRole('button', { name: enManagementUserStrings.save })
+    const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
     expect(deps.saveRemoteSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)
@@ -94,9 +96,9 @@ describe('EditSecuritySettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(enManagementUserStrings.edit_security_settings_title)).toBeDefined()
+    expect(await screen.findByText(userStrings.ui.editSecuritySettingsTitle)).toBeDefined()
 
-    const resetButton = screen.getByRole('button', { name: enManagementUserStrings.reset_to_defaults })
+    const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
     expect(deps.resetRemoteSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)

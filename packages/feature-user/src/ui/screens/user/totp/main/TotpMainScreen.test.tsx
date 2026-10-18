@@ -2,9 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { TotpMainScreen, TotpMainTestTags } from '@/ui/screens/user/totp/main/TotpMainScreen'
 import type { TotpMainStoreDependencies } from '@/ui/screens/user/totp/main/totp-main-store'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('TotpMainScreen', () => {
   const createMockDeps = (user = {
@@ -70,7 +72,7 @@ describe('TotpMainScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByTestId(TotpMainTestTags.ENABLED_TITLE).textContent).toBe(enUserStrings.totp_enabled_title)
+    expect(screen.getByTestId(TotpMainTestTags.ENABLED_TITLE).textContent).toBe(userStrings.ui.totpEnabledTitle)
     expect(screen.getByTestId(TotpMainTestTags.RECOVERY_CODES_BUTTON)).not.toBeNull()
     expect(screen.getByTestId(TotpMainTestTags.DISABLE_TOTP_BUTTON)).not.toBeNull()
   })

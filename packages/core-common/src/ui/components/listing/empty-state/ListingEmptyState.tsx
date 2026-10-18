@@ -1,15 +1,17 @@
 import React, { forwardRef } from 'react'
+import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
 import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
 import { icons } from '@/assets/icons/index.js'
-import { enStrings } from '@/locales/en/strings'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface ListingEmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   text?: string
 }
 
 export const ListingEmptyState = forwardRef<HTMLDivElement, ListingEmptyStateProps>(
-  ({ text = enStrings.ui_common_empty_list, className, ...rest }, ref) => {
+  ({ text = defaultCommonStrings.ui.emptyList, className, ...rest }, ref) => {
     return (
       <div
         ref={ref}

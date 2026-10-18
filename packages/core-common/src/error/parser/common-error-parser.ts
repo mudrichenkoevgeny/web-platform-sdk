@@ -1,15 +1,15 @@
-import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 import type { AppErrorParser } from '@/error/parser/app-error-parser'
 import { ClientCommonErrorCodes } from '@/error/naming/client-common-error-codes'
-import { enStrings } from '@/locales/index'
-import type { CoreCommonStrings } from "@/locales/index";
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * Default error parser resolving common SDK and server error codes to localized strings.
  */
 export class CommonErrorParser implements AppErrorParser {
-  private readonly getStrings: () => CoreCommonStrings
+  private readonly getStrings: () => CommonModuleStrings
 
   /**
    * Constructs a new {@link CommonErrorParser}.
@@ -17,7 +17,7 @@ export class CommonErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Core common string dictionary or dynamic getter function returning current strings
    */
   public constructor(
-    stringsOrGetter: CoreCommonStrings | (() => CoreCommonStrings) = enStrings
+    stringsOrGetter: CommonModuleStrings | (() => CommonModuleStrings) = defaultCommonStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -37,74 +37,74 @@ export class CommonErrorParser implements AppErrorParser {
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.RESOURCE,
-          (res) => strings.error_common_not_found_args(res),
-          strings.error_common_not_found
+          (res) => strings.errors.notFound(res),
+          strings.errors.notFoundWithoutArgs
         )
 
       case CommonErrorCodes.MISSING_REQUIRED_PARAMETER:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.PARAMETER_NAME,
-          (param) => strings.error_common_missing_parameter_args(param),
-          strings.error_common_missing_parameter
+          (param) => strings.errors.missingParameter(param),
+          strings.errors.missingParameterWithoutArgs
         )
 
       case CommonErrorCodes.INVALID_PARAMETER_VALUE:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.PARAMETER_NAME,
-          (param) => strings.error_common_invalid_parameter_args(param),
-          strings.error_common_invalid_parameter
+          (param) => strings.errors.invalidParameter(param),
+          strings.errors.invalidParameterWithoutArgs
         )
 
       case CommonErrorCodes.MISSING_REQUIRED_FIELD:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.FIELD_NAME,
-          (field) => strings.error_common_missing_field_args(field),
-          strings.error_common_missing_field
+          (field) => strings.errors.missingField(field),
+          strings.errors.missingFieldWithoutArgs
         )
 
       case CommonErrorCodes.BLANK_STRING_FIELD:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.FIELD_NAME,
-          (field) => strings.error_common_blank_field_args(field),
-          strings.error_common_blank_field
+          (field) => strings.errors.blankField(field),
+          strings.errors.blankFieldWithoutArgs
         )
 
       case CommonErrorCodes.EMPTY_COLLECTION_FIELD:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.FIELD_NAME,
-          (field) => strings.error_common_empty_field_args(field),
-          strings.error_common_empty_field
+          (field) => strings.errors.emptyCollectionField(field),
+          strings.errors.emptyCollectionFieldWithoutArgs
         )
 
       case CommonErrorCodes.INVALID_FIELD_VALUE:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.FIELD_NAME,
-          (field) => strings.error_common_invalid_field_args(field),
-          strings.error_common_invalid_field
+          (field) => strings.errors.invalidField(field),
+          strings.errors.invalidFieldWithoutArgs
         )
 
       case CommonErrorCodes.TOO_MANY_REQUESTS:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.RETRY_AFTER_SECONDS,
-          (seconds) => strings.error_common_too_many_requests_args(seconds),
-          strings.error_common_too_many_requests
+          (seconds) => strings.errors.tooManyRequests(seconds),
+          strings.errors.tooManyRequestsWithoutArgs
         )
 
       case CommonErrorCodes.SERVICE_UNAVAILABLE:
-        return strings.error_common_service_unavailable
+        return strings.errors.serviceUnavailable
 
       case ClientCommonErrorCodes.NO_INTERNET_CONNECTION:
-        return strings.error_common_no_internet
+        return strings.errors.noInternet
 
       case ClientCommonErrorCodes.NETWORK:
-        return strings.error_common_network
+        return strings.errors.network
 
       case CommonErrorCodes.INTERNAL:
       case CommonErrorCodes.BAD_REQUEST:
@@ -112,13 +112,13 @@ export class CommonErrorParser implements AppErrorParser {
       case CommonErrorCodes.UNKNOWN:
       case ClientCommonErrorCodes.CONTRACT_VIOLATION:
       case ClientCommonErrorCodes.LIFECYCLE_ERROR:
-        return strings.error_common_internal
+        return strings.errors.internal
 
       default:
         if ('message' in appError && typeof appError.message === 'string' && appError.message.trim().length > 0) {
           return appError.message
         }
-        return strings.error_common_unknown
+        return strings.errors.unknown
     }
   }
 

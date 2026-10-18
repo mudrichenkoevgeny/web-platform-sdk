@@ -2,11 +2,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { enUserStrings } from '@/locales/index'
+import { AppType, toUserIdOrThrow, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { userPrivateMock } from '@/mock/index'
 import { MainUserScreen, MainUserTestTags } from '@/ui/screens/user/main/MainUserScreen'
 import type { MainUserStoreDependencies } from '@/ui/screens/user/main/main-user-store'
+
+const userStrings = new UserModuleStrings()
 
 describe('MainUserScreen', () => {
   const mockUser = userPrivateMock({
@@ -40,7 +41,7 @@ describe('MainUserScreen', () => {
     render(<MainUserScreen dependencies={deps} />)
 
     expect(screen.getByTestId(MainUserTestTags.USER_ID_TEXT).textContent).toContain('usr_12345')
-    expect(screen.getByTestId(MainUserTestTags.ACCOUNT_STATUS_TEXT).textContent).toContain(enUserStrings.account_status_active)
+    expect(screen.getByTestId(MainUserTestTags.ACCOUNT_STATUS_TEXT).textContent).toContain(userStrings.ui.accountStatusActive)
     expect(screen.getByTestId(MainUserTestTags.TOTP_MAIN_BUTTON)).not.toBeNull()
     expect(screen.getByTestId(MainUserTestTags.SESSIONS_BUTTON)).not.toBeNull()
     expect(screen.getByTestId(MainUserTestTags.IDENTIFIERS_BUTTON)).not.toBeNull()
@@ -62,7 +63,7 @@ describe('MainUserScreen', () => {
     render(<MainUserScreen dependencies={deps} />)
 
     await user.click(screen.getByTestId(MainUserTestTags.LOGOUT_BUTTON))
-    const confirmButton = screen.getByRole('button', { name: enUserStrings.dialog_confirm })
+    const confirmButton = screen.getByRole('button', { name: userStrings.ui.dialogConfirm })
     await user.click(confirmButton)
 
     expect(deps.logoutUseCase.execute).toHaveBeenCalledTimes(1)

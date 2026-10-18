@@ -2,8 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
-import { enUserStrings } from '@/locales/index'
+
+const userStrings = new UserModuleStrings()
 
 describe('LegalFooter', () => {
   it('renders both Privacy Policy and Terms of Service links and handles clicks', async () => {
@@ -20,10 +22,10 @@ describe('LegalFooter', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(enUserStrings.legal_agreement_prefix)).toBeDefined()
+    expect(screen.getByText(userStrings.ui.legalAgreementPrefix)).toBeDefined()
 
-    const privacyButton = screen.getByRole('button', { name: enUserStrings.privacy_policy })
-    const termsButton = screen.getByRole('button', { name: enUserStrings.terms_of_service })
+    const privacyButton = screen.getByRole('button', { name: userStrings.ui.privacyPolicy })
+    const termsButton = screen.getByRole('button', { name: userStrings.ui.termsOfService })
 
     await user.click(privacyButton)
     expect(onPrivacyClick).toHaveBeenCalledTimes(1)
@@ -39,8 +41,8 @@ describe('LegalFooter', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByRole('button', { name: enUserStrings.privacy_policy })).toBeDefined()
-    expect(screen.queryByRole('button', { name: enUserStrings.terms_of_service })).toBeNull()
+    expect(screen.getByRole('button', { name: userStrings.ui.privacyPolicy })).toBeDefined()
+    expect(screen.queryByRole('button', { name: userStrings.ui.termsOfService })).toBeNull()
   })
 
   it('returns null when both visibility flags are false', () => {

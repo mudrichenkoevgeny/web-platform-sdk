@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreButton,
@@ -8,16 +9,16 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import {
   PendingDeletionProvider,
   usePendingDeletionStore
 } from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'
 import type { PendingDeletionStoreDependencies } from "@/ui/screens/auth/login/pending-deletion/pending-deletion-store";
 
-const PendingDeletionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const PendingDeletionContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = usePendingDeletionStore((s) => s.screenState)
   const onRestoreAccountClick = usePendingDeletionStore((s) => s.onRestoreAccountClick)
@@ -29,17 +30,17 @@ const PendingDeletionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   return (
     <div className="w-full h-full p-6 flex flex-col items-center justify-between relative overflow-y-auto">
       <CoreScreenTitleText
-        text={strings.account_pending_deletion_title}
+        text={strings.ui.accountPendingDeletionTitle}
         className="mb-4 text-center"
       />
 
       <div className="w-full flex-1 flex flex-col items-center justify-center gap-4 my-auto">
         <div className="w-full p-4 rounded-lg bg-error/10 border border-error/20 text-center flex flex-col gap-2">
           <span className="text-base font-bold text-error">
-            {strings.account_pending_deletion_title}
+            {strings.ui.accountPendingDeletionTitle}
           </span>
           <span className="text-sm text-surface-foreground">
-            {strings.account_pending_deletion_desc}
+            {strings.ui.accountPendingDeletionDesc}
           </span>
         </div>
 
@@ -58,14 +59,14 @@ const PendingDeletionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
       <div className="w-full flex flex-col gap-2 pt-4">
         <CoreButton
           type="button"
-          label={strings.restore_account}
+          label={strings.ui.restoreAccount}
           disabled={actionLoading}
           onClick={onRestoreAccountClick}
         />
 
         <CoreTextButton
           type="button"
-          label={strings.logout}
+          label={strings.ui.logout}
           disabled={actionLoading}
           onClick={onSignOutClick}
         />
@@ -87,14 +88,14 @@ export interface PendingDeletionScreenProps extends React.HTMLAttributes<HTMLDiv
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Screen component displayed when an account is scheduled for permanent deletion, allowing restoration.
  */
 export const PendingDeletionScreen = forwardRef<HTMLDivElement, PendingDeletionScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <PendingDeletionProvider dependencies={dependencies}>

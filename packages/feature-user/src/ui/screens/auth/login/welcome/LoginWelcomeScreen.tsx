@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBodyText,
@@ -9,8 +10,6 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
@@ -21,11 +20,13 @@ import {
 } from '@/ui/screens/auth/login/welcome/login-welcome-store'
 import type { LoginWelcomeStoreDependencies } from "@/ui/screens/auth/login/welcome/login-welcome-store";
 
+const defaultUserStrings = new UserModuleStrings()
+
 /**
  * Internal content component rendering login welcome UI states (loading, error, providers list, legal footer).
  */
-const LoginWelcomeContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const LoginWelcomeContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useLoginWelcomeStore((s) => s.screenState)
   const onRetryInitClick = useLoginWelcomeStore((s) => s.onRetryInitClick)
@@ -63,7 +64,7 @@ const LoginWelcomeContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 
   return (
     <div className="w-full h-full p-6 flex flex-col items-center justify-between relative overflow-y-auto">
-      <CoreScreenTitleText text={strings.sign_in} className="mb-4" />
+      <CoreScreenTitleText text={strings.ui.signIn} className="mb-4" />
 
       <div className="w-full flex-1 flex flex-col items-center justify-center gap-2">
         {availableAuthProviders.primary.map((provider) => (
@@ -78,7 +79,7 @@ const LoginWelcomeContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         ))}
 
         {hasPrimary && hasSecondary && (
-          <CoreBodyText text={strings.or_sign_in_with} className="my-3 text-xs text-muted-foreground uppercase font-medium" />
+          <CoreBodyText text={strings.ui.orSignInWith} className="my-3 text-xs text-muted-foreground uppercase font-medium" />
         )}
 
         <AuthProviderGrid
@@ -116,7 +117,7 @@ const LoginWelcomeContent: React.FC<{ strings?: FeatureUserStrings }> = ({
 /**
  * Internal controller component triggering screen initialization on mount.
  */
-const LoginWelcomeController: React.FC<{ strings?: FeatureUserStrings }> = ({ strings }) => {
+const LoginWelcomeController: React.FC<{ strings?: UserModuleStrings }> = ({ strings }) => {
   const initScreen = useLoginWelcomeStore((s) => s.initScreen)
 
   useEffect(() => {
@@ -137,14 +138,14 @@ export interface LoginWelcomeScreenProps extends React.HTMLAttributes<HTMLDivEle
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
  * Login welcome screen displaying available sign-in providers, legal links, and OAuth actions.
  */
 export const LoginWelcomeScreen = forwardRef<HTMLDivElement, LoginWelcomeScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <LoginWelcomeProvider dependencies={dependencies}>

@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,16 +13,16 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import {
   EditGlobalSettingsProvider,
   useEditGlobalSettingsStore
 } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
 import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
 
-const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const EditGlobalSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useEditGlobalSettingsStore((s) => s.screenState)
   const onRetry = useEditGlobalSettingsStore((s) => s.onRetry)
@@ -54,8 +55,7 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
         error={screenState.error}
         onRetry={onRetry}
         onBack={onBackClick}
-        title={strings.edit_global_settings_title}
-        strings={strings}
+        title={strings.ui.editGlobalSettingsTitle}
       />
     )
   }
@@ -91,7 +91,7 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
           disabled={isSaving}
         />
         <CoreScreenTitleText
-          text={strings.edit_global_settings_title}
+          text={strings.ui.editGlobalSettingsTitle}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -102,30 +102,30 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
           <CoreOutlinedTextField
             value={privacyPolicyUrl}
             onChange={(e) => onPrivacyPolicyUrlChanged(e.target.value)}
-            label={strings.privacy_policy_url}
-            placeholder={strings.privacy_policy_url}
+            label={strings.ui.privacyPolicyUrl}
+            placeholder={strings.ui.privacyPolicyUrl}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={termsOfServiceUrl}
             onChange={(e) => onTermsOfServiceUrlChanged(e.target.value)}
-            label={strings.terms_of_service_url}
-            placeholder={strings.terms_of_service_url}
+            label={strings.ui.termsOfServiceUrl}
+            placeholder={strings.ui.termsOfServiceUrl}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={contactSupportEmail}
             onChange={(e) => onContactSupportEmailChanged(e.target.value)}
-            label={strings.contact_support_email}
-            placeholder={strings.contact_support_email}
+            label={strings.ui.contactSupportEmail}
+            placeholder={strings.ui.contactSupportEmail}
             disabled={isSaving}
           />
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.telemetry_and_logging} />
+          <CoreTitleText text={strings.ui.telemetryAndLogging} />
 
           <div className="flex items-center gap-2">
             <input
@@ -137,7 +137,7 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={isTracingId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.is_tracing_enabled}
+              {strings.ui.isTracingEnabled}
             </label>
           </div>
 
@@ -151,7 +151,7 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={isMetricsId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.is_metrics_enabled}
+              {strings.ui.isMetricsEnabled}
             </label>
           </div>
 
@@ -165,43 +165,43 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
               className="rounded border-border text-primary focus:ring-primary h-4 w-4"
             />
             <label htmlFor={isVerboseLoggingId} className="text-sm text-surface-foreground cursor-pointer">
-              {strings.is_verbose_logging_enabled}
+              {strings.ui.isVerboseLoggingEnabled}
             </label>
           </div>
         </div>
 
         <div className="flex flex-col gap-3">
-          <CoreTitleText text={strings.min_supported_app_versions} />
+          <CoreTitleText text={strings.ui.minSupportedAppVersions} />
 
           <CoreOutlinedTextField
             value={minVersionAndroid}
             onChange={(e) => onMinVersionAndroidChanged(e.target.value)}
-            label={strings.min_version_android}
-            placeholder={strings.min_version_android}
+            label={strings.ui.minVersionAndroid}
+            placeholder={strings.ui.minVersionAndroid}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={minVersionIos}
             onChange={(e) => onMinVersionIosChanged(e.target.value)}
-            label={strings.min_version_ios}
-            placeholder={strings.min_version_ios}
+            label={strings.ui.minVersionIos}
+            placeholder={strings.ui.minVersionIos}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={minVersionWeb}
             onChange={(e) => onMinVersionWebChanged(e.target.value)}
-            label={strings.min_version_web}
-            placeholder={strings.min_version_web}
+            label={strings.ui.minVersionWeb}
+            placeholder={strings.ui.minVersionWeb}
             disabled={isSaving}
           />
 
           <CoreOutlinedTextField
             value={minVersionDesktop}
             onChange={(e) => onMinVersionDesktopChanged(e.target.value)}
-            label={strings.min_version_desktop}
-            placeholder={strings.min_version_desktop}
+            label={strings.ui.minVersionDesktop}
+            placeholder={strings.ui.minVersionDesktop}
             disabled={isSaving}
           />
         </div>
@@ -221,13 +221,13 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
       <div className="w-full flex flex-col gap-2 pt-4 border-t border-border">
         <CoreButton
           type="submit"
-          label={isSaving ? strings.saving : strings.save}
+          label={isSaving ? strings.ui.saving : strings.ui.save}
           disabled={isSaving}
           onClick={onSaveClick}
         />
         <CoreTextButton
           type="button"
-          label={strings.reset_to_defaults}
+          label={strings.ui.resetToDefaults}
           disabled={isSaving}
           onClick={onResetClick}
         />
@@ -236,7 +236,7 @@ const EditGlobalSettingsContent: React.FC<{ strings?: FeatureManagementUserStrin
   )
 }
 
-const EditGlobalSettingsController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const EditGlobalSettingsController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const initScreen = useEditGlobalSettingsStore((s) => s.initScreen)
@@ -250,11 +250,11 @@ const EditGlobalSettingsController: React.FC<{ strings?: FeatureManagementUserSt
 
 export interface EditGlobalSettingsScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: EditGlobalSettingsStoreDependencies
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 export const EditGlobalSettingsScreen = forwardRef<HTMLDivElement, EditGlobalSettingsScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <EditGlobalSettingsProvider dependencies={dependencies}>

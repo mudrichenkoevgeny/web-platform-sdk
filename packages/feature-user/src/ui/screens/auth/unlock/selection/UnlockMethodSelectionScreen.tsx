@@ -9,18 +9,18 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AccountLockoutType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from "@/locales/index";
 import {
   UnlockMethodSelectionProvider,
   useUnlockMethodSelectionStore
 } from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
 import type { UnlockMethodSelectionStoreDependencies } from "@/ui/screens/auth/unlock/selection/unlock-method-selection-store";
 
-const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const defaultUserStrings = new UserModuleStrings()
+
+const UnlockMethodSelectionContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const lockoutType = useUnlockMethodSelectionStore((s) => s.lockoutType)
   const lockoutUntil = useUnlockMethodSelectionStore((s) => s.lockoutUntil)
@@ -55,10 +55,10 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
   if (lockoutType === AccountLockoutType.TEMPORARY && lockoutUntil != null) {
     const formatted = formatEpochMillisToDateTime(lockoutUntil)
     lockoutText = formatted
-      ? strings.error_user_locked_until(formatted)
-      : strings.error_user_locked
+      ? strings.errors.locked(formatted)
+      : strings.errors.lockedWithoutArgs
   } else if (lockoutType != null && lockoutType !== AccountLockoutType.NONE) {
-    lockoutText = strings.error_user_locked
+    lockoutText = strings.errors.lockedWithoutArgs
   }
 
   return (
@@ -66,7 +66,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
       <div className="w-full flex items-center justify-between relative mb-4">
         <CoreBackButton onClick={onBackClick} disabled={actionLoading} />
         <CoreScreenTitleText
-          text={strings.unlock_choose_method}
+          text={strings.ui.unlockChooseMethod}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -82,7 +82,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
         {isEmailAvailable && (
           <CoreButton
             type="button"
-            label={strings.unlock_by_email}
+            label={strings.ui.unlockByEmail}
             disabled={actionLoading}
             onClick={onSelectEmailUnlock}
           />
@@ -91,7 +91,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
         {isPhoneAvailable && (
           <CoreButton
             type="button"
-            label={strings.unlock_by_phone}
+            label={strings.ui.unlockByPhone}
             disabled={actionLoading}
             onClick={onSelectPhoneUnlock}
           />
@@ -100,7 +100,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
         {isGoogleAvailable && (
           <CoreButton
             type="button"
-            label={strings.unlock_by_google}
+            label={strings.ui.unlockByGoogle}
             disabled={actionLoading}
             onClick={onSelectGoogleUnlock}
           />
@@ -109,7 +109,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
         {isAppleAvailable && (
           <CoreButton
             type="button"
-            label={strings.unlock_by_apple}
+            label={strings.ui.unlockByApple}
             disabled={actionLoading}
             onClick={onSelectAppleUnlock}
           />
@@ -132,7 +132,7 @@ const UnlockMethodSelectionContent: React.FC<{ strings?: FeatureUserStrings }> =
   )
 }
 
-const UnlockMethodSelectionController: React.FC<{ strings?: FeatureUserStrings }> = ({
+const UnlockMethodSelectionController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const loadIdentifiers = useUnlockMethodSelectionStore((s) => s.loadIdentifiers)
@@ -155,7 +155,7 @@ export interface UnlockMethodSelectionScreenProps extends React.HTMLAttributes<H
   /**
    * Localized strings dictionary override.
    */
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 /**
@@ -164,7 +164,7 @@ export interface UnlockMethodSelectionScreenProps extends React.HTMLAttributes<H
 export const UnlockMethodSelectionScreen = forwardRef<
   HTMLDivElement,
   UnlockMethodSelectionScreenProps
->(({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+>(({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
   return (
     <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
       <UnlockMethodSelectionProvider dependencies={dependencies}>

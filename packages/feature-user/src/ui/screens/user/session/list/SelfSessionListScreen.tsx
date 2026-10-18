@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
+import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,14 +13,14 @@ import {
   useAppErrorParser,
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@/locales/index'
-import type { FeatureUserStrings } from '@/locales/index'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import {
   SelfSessionListProvider,
   useSelfSessionListStore
 } from '@/ui/screens/user/session/list/self-session-list-store'
 import type { SelfSessionListStoreDependencies } from '@/ui/screens/user/session/list/self-session-list-store'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export const SelfSessionListTestTags = {
   TITLE: 'SelfSessionList_Title',
@@ -31,8 +32,8 @@ export const SelfSessionListTestTags = {
   ACTION_ERROR_TEXT: 'SelfSessionList_ActionErrorText'
 }
 
-const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const SelfSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useSelfSessionListStore((s) => s.screenState)
   const onRefresh = useSelfSessionListStore((s) => s.onRefresh)
@@ -64,8 +65,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.sessions}
-        strings={strings}
+        title={strings.ui.sessions}
       />
     )
   }
@@ -80,7 +80,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
           data-testid={SelfSessionListTestTags.BACK_BUTTON}
         />
         <CoreScreenTitleText
-          text={strings.sessions}
+          text={strings.ui.sessions}
           className="absolute left-1/2 -translate-x-1/2"
           data-testid={SelfSessionListTestTags.TITLE}
         />
@@ -124,7 +124,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
         {items.length > 1 && (
           <CoreButton
             type="button"
-            label={strings.session_revoke_all_others}
+            label={strings.ui.sessionRevokeAllOthers}
             onClick={onRevokeAllOtherSessionsClick}
             disabled={actionLoading}
             className="bg-error hover:bg-error/90 text-error-foreground"
@@ -143,7 +143,7 @@ const SelfSessionListContent: React.FC<{ strings?: FeatureUserStrings }> = ({
   )
 }
 
-const SelfSessionListController: React.FC<{ strings?: FeatureUserStrings }> = ({
+const SelfSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const loadSessions = useSelfSessionListStore((s) => s.loadSessions)
@@ -157,11 +157,11 @@ const SelfSessionListController: React.FC<{ strings?: FeatureUserStrings }> = ({
 
 export interface SelfSessionListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: SelfSessionListStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const SelfSessionListScreen = forwardRef<HTMLDivElement, SelfSessionListScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SelfSessionListProvider dependencies={dependencies}>

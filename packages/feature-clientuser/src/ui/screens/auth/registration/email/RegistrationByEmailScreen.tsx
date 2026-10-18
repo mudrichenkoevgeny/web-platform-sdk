@@ -1,4 +1,5 @@
 import React, { forwardRef, useId } from 'react'
+import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -12,13 +13,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { enUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { FeatureUserStrings } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   RegistrationByEmailProvider,
   useRegistrationByEmailStore
 } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export const RegistrationByEmailTestTags = {
   BACK_BUTTON: 'RegistrationByEmail_BackButton',
@@ -33,8 +34,8 @@ export const RegistrationByEmailTestTags = {
   ACTION_ERROR_TEXT: 'RegistrationByEmail_ActionErrorText'
 }
 
-const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = ({
-  strings = enUserStrings
+const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const screenState = useRegistrationByEmailStore((s) => s.screenState)
   const onEmailChanged = useRegistrationByEmailStore((s) => s.onEmailChanged)
@@ -74,7 +75,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
         />
         <CoreScreenTitleText
           data-testid={RegistrationByEmailTestTags.TITLE}
-          text={strings.registration_by_email}
+          text={strings.ui.registrationByEmail}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="w-10" />
@@ -87,19 +88,19 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
             data-testid={RegistrationByEmailTestTags.EMAIL_INPUT}
             value={screenState.email}
             onChange={(e) => onEmailChanged(e.target.value)}
-            label={strings.email}
-            placeholder={strings.email}
+            label={strings.ui.email}
+            placeholder={strings.ui.email}
             isError={Boolean(actionError)}
             disabled={actionLoading}
           />
         ) : (
           <>
             <div className="text-xl font-bold text-center">
-              {strings.enter_confirmation_code}
+              {strings.ui.enterConfirmationCode}
             </div>
 
             <div className="text-sm text-muted-foreground text-center">
-              {strings.code_sent_to(screenState.email)}
+              {strings.ui.codeSentTo(screenState.email)}
             </div>
 
             <CoreCodeTextField
@@ -107,8 +108,8 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
               data-testid={RegistrationByEmailTestTags.CODE_INPUT}
               value={screenState.code}
               onChange={(e) => onCodeChanged(e.target.value)}
-              label={strings.confirmation_code}
-              placeholder={strings.enter_confirmation_code}
+              label={strings.ui.confirmationCode}
+              placeholder={strings.ui.enterConfirmationCode}
               isError={Boolean(actionError)}
               disabled={actionLoading}
             />
@@ -120,8 +121,8 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
               onChange={(e) => onPasswordChanged(e.target.value)}
               isPasswordVisible={screenState.isPasswordVisible}
               onTogglePasswordVisibility={onTogglePasswordVisibility}
-              label={strings.password}
-              placeholder={strings.password}
+              label={strings.ui.password}
+              placeholder={strings.ui.password}
               isError={!screenState.isPasswordValid || Boolean(actionError)}
               disabled={actionLoading}
             />
@@ -131,13 +132,13 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
                 data-testid={RegistrationByEmailTestTags.RESEND_TIMER_TEXT}
                 className="text-xs text-muted-foreground"
               >
-                {strings.resend_code_timer(screenState.resendTimerSeconds)}
+                {strings.ui.resendCodeTimer(screenState.resendTimerSeconds)}
               </span>
             ) : (
               <CoreTextButton
                 type="button"
                 data-testid={RegistrationByEmailTestTags.RESEND_CODE_BUTTON}
-                label={strings.resend_code}
+                label={strings.ui.resendCode}
                 onClick={onSendCodeClick}
                 disabled={actionLoading}
               />
@@ -165,7 +166,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
           <CoreButton
             type="submit"
             data-testid={RegistrationByEmailTestTags.SEND_CODE_BUTTON}
-            label={strings.send_code}
+            label={strings.ui.sendCode}
             disabled={!screenState.isEmailValid || actionLoading}
             onClick={onSendCodeClick}
           />
@@ -173,7 +174,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
           <CoreButton
             type="submit"
             data-testid={RegistrationByEmailTestTags.REGISTER_BUTTON}
-            label={strings.register}
+            label={strings.ui.register}
             disabled={
               screenState.code.length !== screenState.codeLength ||
               !screenState.isPasswordValid ||
@@ -192,11 +193,11 @@ const RegistrationByEmailContent: React.FC<{ strings?: FeatureUserStrings }> = (
 
 export interface RegistrationByEmailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: RegistrationByEmailStoreDependencies
-  strings?: FeatureUserStrings
+  strings?: UserModuleStrings
 }
 
 export const RegistrationByEmailScreen = forwardRef<HTMLDivElement, RegistrationByEmailScreenProps>(
-  ({ dependencies, strings = enUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <RegistrationByEmailProvider dependencies={dependencies}>

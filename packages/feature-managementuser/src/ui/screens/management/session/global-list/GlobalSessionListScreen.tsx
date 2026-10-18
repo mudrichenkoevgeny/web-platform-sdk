@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
+import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -18,8 +19,6 @@ import {
   useInfiniteScroll
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SessionItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { enManagementUserStrings } from '@/locales/index'
-import type { FeatureManagementUserStrings } from '@/locales/index'
 import { getGlobalSessionListingOptionsConfig } from '@/ui/screens/management/session/global-list/global-session-list-options-config'
 import {
   searchParamsToListingStates,
@@ -30,6 +29,9 @@ import {
   useGlobalSessionListStore
 } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
+
+const defaultUserStrings = new UserModuleStrings()
+const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link GlobalSessionListScreen}. */
 export const GlobalSessionListTestTags = {
@@ -42,8 +44,8 @@ export const GlobalSessionListTestTags = {
   ACTION_ERROR_TEXT: 'GlobalSessionList_ActionErrorText'
 }
 
-const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
-  strings = enManagementUserStrings
+const GlobalSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
+  strings = defaultUserStrings
 }) => {
   const deps = useGlobalSessionListStore((s) => s.dependencies)
   const screenState = useGlobalSessionListStore((s) => s.screenState)
@@ -106,8 +108,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
         error={screenState.error}
         onRetry={onRefresh}
         onBack={onBackClick}
-        title={strings.sessions}
-        strings={strings}
+        title={strings.ui.sessions}
       />
     )
   }
@@ -118,7 +119,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
     actionError
   } = screenState
 
-  const optionsConfig = getGlobalSessionListingOptionsConfig(strings)
+  const optionsConfig = getGlobalSessionListingOptionsConfig(defaultCommonStrings)
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
@@ -126,14 +127,14 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
         <CoreBackButton data-testid={GlobalSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
           data-testid={GlobalSessionListTestTags.TITLE}
-          text={strings.sessions}
+          text={strings.ui.sessions}
           className="absolute left-1/2 -translate-x-1/2"
         />
         <div className="flex items-center gap-2">
           <button
             type="button"
             data-testid={GlobalSessionListTestTags.FILTER_BUTTON}
-            aria-label={strings.filter}
+            aria-label={strings.ui.filter}
             onClick={onToggleFilterPanel}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -142,7 +143,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
           <button
             type="button"
             data-testid={GlobalSessionListTestTags.REFRESH_BUTTON}
-            aria-label={strings.refresh}
+            aria-label={defaultCommonStrings.ui.refresh}
             onClick={onRefresh}
             className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
           >
@@ -207,7 +208,6 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
               currentPage={paging.pageNumber}
               totalPages={paging.totalPages}
               totalCount={paging.totalCount}
-              strings={strings}
             />
           </div>
         )}
@@ -216,7 +216,7 @@ const GlobalSessionListContent: React.FC<{ strings?: FeatureManagementUserString
   )
 }
 
-const GlobalSessionListController: React.FC<{ strings?: FeatureManagementUserStrings }> = ({
+const GlobalSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
   strings
 }) => {
   const deps = useGlobalSessionListStore((s) => s.dependencies)
@@ -241,12 +241,12 @@ export interface GlobalSessionListScreenProps extends React.HTMLAttributes<HTMLD
   /** Dependencies injected into screen store. */
   dependencies: GlobalSessionListStoreDependencies
   /** Optional localized strings override. */
-  strings?: FeatureManagementUserStrings
+  strings?: UserModuleStrings
 }
 
 /** Screen displaying a paginated global list of user sessions across all accounts. */
 export const GlobalSessionListScreen = forwardRef<HTMLDivElement, GlobalSessionListScreenProps>(
-  ({ dependencies, strings = enManagementUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <GlobalSessionListProvider dependencies={dependencies}>

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from '@tanstack/react-router'
-import { ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientUserNavigation, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon, icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   MfaChallengeDialog,
   type MfaChallengeRequest
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useClientAppComponent } from '@/di/client-app-context'
-import { enClientAppStrings } from '@/locales/index'
 import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'
+
+const defaultUserStrings = new UserModuleStrings()
 
 export function MainScreen(): React.JSX.Element {
   useEnsureHistoryStack()
@@ -39,7 +40,7 @@ export function MainScreen(): React.JSX.Element {
             )}
           >
             <CoreIcon src={icons.user} className="w-5 h-5" />
-            <span>{enClientAppStrings.nav_user}</span>
+            <span>{defaultUserStrings.ui.user}</span>
           </button>
         </div>
       </nav>

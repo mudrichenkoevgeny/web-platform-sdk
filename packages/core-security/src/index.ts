@@ -1,4 +1,3 @@
-export * from './locales/index.js'
 export * from './error/naming/client-security-error-codes.js'
 export * from './error/model/security-error.js'
 export * from './error/parser/security-error-parser.js'

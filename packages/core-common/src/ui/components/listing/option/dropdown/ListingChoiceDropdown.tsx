@@ -1,9 +1,11 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react'
+import { CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
 import type { ChoiceListingFilterDefinition } from '@/listing/listing-models'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
-import { enStrings } from '@/locales/en/strings'
 import { cn } from '@/utils/cn'
+
+const defaultCommonStrings = new CommonModuleStrings()
 
 export interface ListingChoiceDropdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   filter: ChoiceListingFilterDefinition
@@ -48,14 +50,14 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
     }, [isExpanded])
 
     const selectedOptions = filter.options.filter((opt) => selectedIds.has(opt.id))
-    let displayValue = enStrings.ui_common_all
+    let displayValue = defaultCommonStrings.ui.all
 
     if (selectedOptions.length === 1) {
       displayValue = selectedOptions[0]?.title ?? ''
     } else if (selectedOptions.length === 2) {
       displayValue = selectedOptions.map((opt) => opt.title).join(', ')
     } else if (selectedOptions.length > 2) {
-      displayValue = enStrings.ui_common_selected_count(selectedOptions.length)
+      displayValue = formatLocalizedString(defaultCommonStrings.ui.selectedCount, selectedOptions.length)
     }
 
     const filteredOptions = searchQuery.trim().length === 0
@@ -113,7 +115,7 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
           <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-surface border border-border rounded-lg shadow-lg p-2 max-h-60 overflow-y-auto flex flex-col gap-2">
             {(filter.isSearchable || filter.options.length > 8) && (
               <CoreOutlinedTextField
-                placeholder={enStrings.ui_common_search_placeholder}
+                placeholder={defaultCommonStrings.ui.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-9 text-sm"
@@ -122,8 +124,8 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
 
             {filter.isMultiple && filter.options.length > 3 && (
               <div className="flex items-center justify-between px-2">
-                <CoreTextButton label={enStrings.ui_common_select_all} onClick={handleSelectAll} className="h-6 text-xs w-auto px-2" />
-                <CoreTextButton label={enStrings.ui_common_clear_all} onClick={handleClearAll} className="h-6 text-xs w-auto px-2" />
+                <CoreTextButton label={defaultCommonStrings.ui.selectAll} onClick={handleSelectAll} className="h-6 text-xs w-auto px-2" />
+                <CoreTextButton label={defaultCommonStrings.ui.clearAll} onClick={handleClearAll} className="h-6 text-xs w-auto px-2" />
               </div>
             )}
 
