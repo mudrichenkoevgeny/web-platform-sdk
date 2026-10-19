@@ -2,33 +2,30 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings, commonStrings, UserAccountStatus, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByPhoneScreen } from '@/ui/screens/auth/login/phone/LoginByPhoneScreen'
 import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
-
-const userStrings = new UserModuleStrings()
-const commonStrings = new CommonModuleStrings()
 
 describe('LoginByPhoneScreen', () => {
   const createMockDeps = (): LoginByPhoneStoreDependencies => ({
     loginRepository: {
       getRemainingLoginConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    } as unknown as LoginByPhoneStoreDependencies['loginRepository'],
+    },
     sendLoginConfirmationToPhoneUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({ retryAfterSeconds: 60 })
       )
-    } as unknown as LoginByPhoneStoreDependencies['sendLoginConfirmationToPhoneUseCase'],
+    },
     loginByPhoneUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           userPrivate: {
-            id: 'usr_123',
-            accountStatus: 'ACTIVE'
+            id: toUserIdOrThrow('usr_123'),
+            accountStatus: UserAccountStatus.ACTIVE
           }
         })
       )
-    } as unknown as LoginByPhoneStoreDependencies['loginByPhoneUseCase'],
+    },
     onNavigateToTotp: vi.fn(),
     onNavigateToPendingDeletion: vi.fn(),
     onNavigateToAccountUnlock: vi.fn(),
@@ -56,6 +53,7 @@ describe('LoginByPhoneScreen', () => {
 
     await user.click(sendCodeButton)
 
+    expect(await screen.findByText(userStrings.ui.enterConfirmationCode)).toBeDefined()
     expect(deps.sendLoginConfirmationToPhoneUseCase.execute).toHaveBeenCalledWith('+12345678901')
   })
 

@@ -2,10 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
-
-const userStrings = new UserModuleStrings()
 
 describe('AuthProviderGrid', () => {
   it('renders provider items and triggers onProviderClick with clicked provider', async () => {

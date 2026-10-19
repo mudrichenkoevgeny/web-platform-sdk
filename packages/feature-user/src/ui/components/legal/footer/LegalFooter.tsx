@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-
-const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link LegalFooter} component.
@@ -40,7 +38,7 @@ export const LegalFooter = forwardRef<HTMLDivElement, LegalFooterProps>(
       isTermsOfServiceVisible = true,
       onPrivacyPolicyClick,
       onTermsOfServiceClick,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       ...rest
     },

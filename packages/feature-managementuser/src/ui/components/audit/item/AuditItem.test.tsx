@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
-
-const userStrings = new UserModuleStrings()
 
 describe('AuditItem', () => {
   it('renders event details and handles click', async () => {

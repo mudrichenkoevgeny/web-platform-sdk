@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
@@ -164,13 +164,14 @@ export const PendingDeletionProvider: React.FC<PendingDeletionProviderProps> = (
   initialState,
   children
 }) => {
-  const storeRef = useRef<PendingDeletionStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createPendingDeletionStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createPendingDeletionStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <PendingDeletionContext.Provider value={storeRef.current}>
+    <PendingDeletionContext.Provider value={store}>
       {children}
     </PendingDeletionContext.Provider>
   )

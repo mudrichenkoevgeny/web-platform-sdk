@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react'
-import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
+import React, { forwardRef, useId } from 'react'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -14,14 +14,13 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   LoginByPhoneProvider,
+  LoginByPhoneStep,
   useLoginByPhoneStore
 } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 
-const defaultUserStrings = new UserModuleStrings()
-
 const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = useLoginByPhoneStore((s) => s.screenState)
   const onPhoneChanged = useLoginByPhoneStore((s) => s.onPhoneChanged)
@@ -32,42 +31,34 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onBackClick = useLoginByPhoneStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
+  const phoneInputId = useId()
+  const codeInputId = useId()
+
   const { actionLoading, actionError } = screenState
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (screenState.step === 'phone') {
-      onSendCodeClick()
-    } else {
-      onConfirmCodeClick()
+    switch (screenState.step) {
+      case LoginByPhoneStep.PHONE:
+        void onSendCodeClick()
+        break
+      case LoginByPhoneStep.CODE:
+        void onConfirmCodeClick()
+        break
     }
   }
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto"
-    >
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton
-          onClick={onBackClick}
-          disabled={actionLoading}
-        />
-        <CoreScreenTitleText
-          text={strings.ui.signInWithPhone}
-          className="absolute left-1/2 -translate-x-1/2"
-        />
-        <div className="w-10" />
-      </div>
-
-      <div className="w-full flex-1 flex flex-col justify-center items-center gap-4 my-auto">
-        {screenState.step === 'phone' ? (
+  const renderStepContent = () => {
+    switch (screenState.step) {
+      case LoginByPhoneStep.PHONE:
+        return (
           <>
             <div className="text-xl font-bold text-center">
               {strings.ui.enterPhoneNumber}
             </div>
 
             <CoreOutlinedTextField
+              id={phoneInputId}
               value={screenState.phoneNumber}
               onChange={(e) => onPhoneChanged(e.target.value)}
               label={strings.ui.phoneNumber}
@@ -76,7 +67,9 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
               disabled={actionLoading}
             />
           </>
-        ) : (
+        )
+      case LoginByPhoneStep.CODE:
+        return (
           <>
             <div className="text-xl font-bold text-center">
               {strings.ui.enterConfirmationCode}
@@ -87,6 +80,7 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
             </div>
 
             <CoreCodeTextField
+              id={codeInputId}
               value={screenState.code}
               onChange={(e) => onCodeChanged(e.target.value)}
               label={strings.ui.confirmationCode}
@@ -108,29 +102,23 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
               />
             )}
           </>
-        )}
+        )
+    }
+  }
 
-        <div
-          className={cn(
-            'transition-all duration-300 ease-in-out overflow-hidden w-full text-center',
-            actionError ? 'max-h-24 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0 pointer-events-none'
-          )}
-        >
-          {actionError && (
-            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
-          )}
-        </div>
-      </div>
-
-      <div className="w-full flex flex-col gap-2 pt-4">
-        {screenState.step === 'phone' ? (
+  const renderStepButtons = () => {
+    switch (screenState.step) {
+      case LoginByPhoneStep.PHONE:
+        return (
           <CoreButton
             type="submit"
             label={strings.ui.sendCode}
             disabled={!screenState.isPhoneNumberValid || actionLoading}
             onClick={onSendCodeClick}
           />
-        ) : (
+        )
+      case LoginByPhoneStep.CODE:
+        return (
           <>
             <CoreButton
               type="submit"
@@ -145,7 +133,44 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
               disabled={actionLoading}
             />
           </>
-        )}
+        )
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto"
+    >
+      <div className="w-full flex items-center justify-between relative mb-4">
+        <CoreBackButton
+          onClick={onBackClick}
+          disabled={actionLoading}
+        />
+        <CoreScreenTitleText
+          text={strings.ui.signInWithPhone}
+          className="absolute left-1/2 -translate-x-1/2"
+        />
+        <div className="w-10" />
+      </div>
+
+      <div className="w-full flex-1 flex flex-col justify-center items-center gap-4 my-auto">
+        {renderStepContent()}
+
+        <div
+          className={cn(
+            'transition-all duration-300 ease-in-out overflow-hidden w-full text-center',
+            actionError ? 'max-h-24 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0 pointer-events-none'
+          )}
+        >
+          {actionError && (
+            <CoreErrorText text={errorParser.parse(actionError) ?? ''} />
+          )}
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col gap-2 pt-4">
+        {renderStepButtons()}
       </div>
 
       {actionLoading && <FullscreenOverlayLoading />}
@@ -153,13 +178,19 @@ const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
   )
 }
 
+/** Props for {@link LoginByPhoneScreen}. */
 export interface LoginByPhoneScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Injected store dependencies. */
   dependencies: LoginByPhoneStoreDependencies
+  /** Optional localized strings override. */
   strings?: UserModuleStrings
 }
 
+/**
+ * Screen component for signing in via phone number with OTP code verification.
+ */
 export const LoginByPhoneScreen = forwardRef<HTMLDivElement, LoginByPhoneScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <LoginByPhoneProvider dependencies={dependencies}>

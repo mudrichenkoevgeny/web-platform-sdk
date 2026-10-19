@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen } from '@/ui/screens/user/session/detail/SessionDetailScreen'
@@ -15,7 +15,7 @@ const mockSession: UserSessionPrivate = {
   identifierAuthProvider: UserAuthProvider.EMAIL,
   clientDeviceInfo: {
     clientType: ClientType.WEB,
-    language: 'en',
+    language: CommonLocales.ENGLISH,
     deviceId: null,
     deviceName: 'Chrome on Windows',
     appVersion: '1.0.0',

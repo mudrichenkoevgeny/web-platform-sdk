@@ -1,9 +1,7 @@
-import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 import type { AppErrorParser } from '@/error/parser/app-error-parser'
 import { ClientCommonErrorCodes } from '@/error/naming/client-common-error-codes'
-
-const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * Default error parser resolving common SDK and server error codes to localized strings.
@@ -17,7 +15,7 @@ export class CommonErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Core common string dictionary or dynamic getter function returning current strings
    */
   public constructor(
-    stringsOrGetter: CommonModuleStrings | (() => CommonModuleStrings) = defaultCommonStrings
+    stringsOrGetter: CommonModuleStrings | (() => CommonModuleStrings) = commonStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -37,7 +35,7 @@ export class CommonErrorParser implements AppErrorParser {
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.RESOURCE,
-          (res) => strings.errors.notFound(res),
+          (resource) => strings.errors.notFound(resource),
           strings.errors.notFoundWithoutArgs
         )
 

@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalUserListScreen, GlobalUserListTestTags } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('GlobalUserListScreen', () => {
   const createMockDeps = (): GlobalUserListStoreDependencies => ({
@@ -14,12 +12,12 @@ describe('GlobalUserListScreen', () => {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [userDetailsMock()],
-          pageNumber: 1,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
           totalPages: 1,
           totalCount: 1
         })
       )
-    } as unknown as GlobalUserListStoreDependencies['getUsersUseCase'],
+    },
     onNavigateToUserDetail: vi.fn(),
     onNavigateToCreateUser: vi.fn(),
     onBack: vi.fn()

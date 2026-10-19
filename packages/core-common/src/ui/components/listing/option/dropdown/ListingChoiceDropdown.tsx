@@ -1,23 +1,29 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react'
-import { CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, useId } from 'react'
+import { commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ChoiceListingFilterDefinition } from '@/listing/listing-models'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlinedTextField'
 import { cn } from '@/utils/cn'
 
-const defaultCommonStrings = new CommonModuleStrings()
-
+/** Props for {@link ListingChoiceDropdown}. */
 export interface ListingChoiceDropdownProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  /** Choice filter definition containing option list and selection settings. */
   filter: ChoiceListingFilterDefinition
+  /** Set of currently selected option IDs. */
   selectedIds: Set<string>
+  /** Callback triggered when option selection is modified. */
   onSelectionChanged: (selectedIds: Set<string>) => void
 }
 
+/**
+ * Dropdown selector component for single or multiple choice listing filters.
+ */
 export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDropdownProps>(
   ({ filter, selectedIds, onSelectionChanged, className, ...rest }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const [isExpanded, setIsExpanded] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
+    const dropdownBaseId = useId()
 
     useImperativeHandle(ref, () => containerRef.current as HTMLDivElement)
 
@@ -27,7 +33,11 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
       }
 
       const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        if (
+          event.target instanceof Node &&
+          containerRef.current &&
+          !containerRef.current.contains(event.target)
+        ) {
           setIsExpanded(false)
         }
       }
@@ -50,14 +60,14 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
     }, [isExpanded])
 
     const selectedOptions = filter.options.filter((opt) => selectedIds.has(opt.id))
-    let displayValue = defaultCommonStrings.ui.all
+    let displayValue = commonStrings.ui.all
 
     if (selectedOptions.length === 1) {
       displayValue = selectedOptions[0]?.title ?? ''
     } else if (selectedOptions.length === 2) {
       displayValue = selectedOptions.map((opt) => opt.title).join(', ')
     } else if (selectedOptions.length > 2) {
-      displayValue = formatLocalizedString(defaultCommonStrings.ui.selectedCount, selectedOptions.length)
+      displayValue = commonStrings.ui.selectedCount(selectedOptions.length)
     }
 
     const filteredOptions = searchQuery.trim().length === 0
@@ -115,7 +125,7 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
           <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-surface border border-border rounded-lg shadow-lg p-2 max-h-60 overflow-y-auto flex flex-col gap-2">
             {(filter.isSearchable || filter.options.length > 8) && (
               <CoreOutlinedTextField
-                placeholder={defaultCommonStrings.ui.searchPlaceholder}
+                placeholder={commonStrings.ui.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-9 text-sm"
@@ -124,30 +134,31 @@ export const ListingChoiceDropdown = forwardRef<HTMLDivElement, ListingChoiceDro
 
             {filter.isMultiple && filter.options.length > 3 && (
               <div className="flex items-center justify-between px-2">
-                <CoreTextButton label={defaultCommonStrings.ui.selectAll} onClick={handleSelectAll} className="h-6 text-xs w-auto px-2" />
-                <CoreTextButton label={defaultCommonStrings.ui.clearAll} onClick={handleClearAll} className="h-6 text-xs w-auto px-2" />
+                <CoreTextButton label={commonStrings.ui.selectAll} onClick={handleSelectAll} className="h-6 text-xs w-auto px-2" />
+                <CoreTextButton label={commonStrings.ui.clearAll} onClick={handleClearAll} className="h-6 text-xs w-auto px-2" />
               </div>
             )}
 
             <div className="flex flex-col gap-1">
               {filteredOptions.map((option) => {
                 const isSelected = selectedIds.has(option.id)
+                const optionInputId = `${dropdownBaseId}_opt_${option.id}`
                 return (
-                  <button
+                  <div
                     key={option.id}
-                    type="button"
-                    onClick={() => handleOptionToggle(option.id)}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-sm text-left hover:bg-black/5 dark:hover:bg-white/10"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded text-sm text-left hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
                   >
                     <input
+                      id={optionInputId}
                       type={filter.isMultiple ? 'checkbox' : 'radio'}
                       checked={isSelected}
-                      readOnly
-                      tabIndex={-1}
-                      className="pointer-events-none"
+                      onChange={() => handleOptionToggle(option.id)}
+                      className="cursor-pointer"
                     />
-                    <span>{option.title}</span>
-                  </button>
+                    <label htmlFor={optionInputId} className="flex-1 cursor-pointer select-none">
+                      {option.title}
+                    </label>
+                  </div>
                 )
               })}
             </div>

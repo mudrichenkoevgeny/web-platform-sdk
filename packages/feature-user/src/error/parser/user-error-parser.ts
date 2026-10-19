@@ -1,10 +1,7 @@
-import { UserErrorCodes, UserErrorArgs, CommonErrorArgs, UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, CommonErrorArgs, UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientUserErrorCodes } from '@/error/naming/client-user-error-codes'
-
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * AppErrorParser implementation for user-related error codes.
@@ -18,7 +15,7 @@ export class UserErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Feature user strings dictionary or dynamic getter function
    */
   public constructor(
-    stringsOrGetter: UserModuleStrings | (() => UserModuleStrings) = defaultUserStrings
+    stringsOrGetter: UserModuleStrings | (() => UserModuleStrings) = userStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -146,7 +143,7 @@ export class UserErrorParser implements AppErrorParser {
       case ClientUserErrorCodes.TOO_MANY_CONFIRMATION_REQUESTS: {
         const seconds = args[CommonErrorArgs.RETRY_AFTER_SECONDS]
         if (seconds && seconds.trim().length > 0) {
-          return defaultCommonStrings.errors.tooManyRequests(seconds)
+          return commonStrings.errors.tooManyRequests(seconds)
         }
         return strings.errors.tooManyConfirmationRequests
       }

@@ -8,16 +8,23 @@ import type { GetManagementGlobalSettingsUseCase } from '@/usecase/global-settin
 import type { ResetRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/reset-remote-global-settings-use-case'
 import type { SaveRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/save-remote-global-settings-use-case'
 
+/** Status values for {@link EditGlobalSettingsScreenState}. */
+export enum EditGlobalSettingsStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 export type EditGlobalSettingsScreenState =
   | {
-      status: 'loading'
+      status: EditGlobalSettingsStatus.LOADING
     }
   | {
-      status: 'error'
+      status: EditGlobalSettingsStatus.ERROR
       error: AppError
     }
   | {
-      status: 'content'
+      status: EditGlobalSettingsStatus.CONTENT
       privacyPolicyUrl: string
       termsOfServiceUrl: string
       contactSupportEmail: string
@@ -67,17 +74,17 @@ export const createEditGlobalSettingsStore = (
   let isFetching = false
 
   return createStore<EditGlobalSettingsStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: EditGlobalSettingsStatus.LOADING },
 
     initScreen: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === EditGlobalSettingsStatus.CONTENT) {
         return
       }
       isFetching = true
 
       try {
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: EditGlobalSettingsStatus.LOADING } })
         const result = await deps.getManagementGlobalSettingsUseCase.execute()
 
         if (isSuccess(result)) {
@@ -86,7 +93,7 @@ export const createEditGlobalSettingsStore = (
 
           set({
             screenState: {
-              status: 'content',
+              status: EditGlobalSettingsStatus.CONTENT,
               privacyPolicyUrl: settings.privacyPolicyUrl ?? '',
               termsOfServiceUrl: settings.termsOfServiceUrl ?? '',
               contactSupportEmail: settings.contactSupportEmail ?? '',
@@ -104,7 +111,7 @@ export const createEditGlobalSettingsStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: EditGlobalSettingsStatus.ERROR,
               error: result.error
             }
           })
@@ -120,100 +127,93 @@ export const createEditGlobalSettingsStore = (
 
     onPrivacyPolicyUrlChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, privacyPolicyUrl: value, saveError: null } })
       }
     },
 
     onTermsOfServiceUrlChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, termsOfServiceUrl: value, saveError: null } })
       }
     },
 
     onContactSupportEmailChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, contactSupportEmail: value, saveError: null } })
       }
     },
 
     onMinVersionAndroidChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, minVersionAndroid: value, saveError: null } })
       }
     },
 
     onMinVersionIosChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, minVersionIos: value, saveError: null } })
       }
     },
 
     onMinVersionWebChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, minVersionWeb: value, saveError: null } })
       }
     },
 
     onMinVersionDesktopChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, minVersionDesktop: value, saveError: null } })
       }
     },
 
     onTracingEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, isTracingEnabled: enabled, saveError: null } })
       }
     },
 
     onMetricsEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, isMetricsEnabled: enabled, saveError: null } })
       }
     },
 
     onVerboseLoggingEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditGlobalSettingsStatus.CONTENT) {
         set({ screenState: { ...current, isVerboseLoggingEnabled: enabled, saveError: null } })
       }
     },
 
     onSaveClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditGlobalSettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
-      const minSupportedAppVersions: Partial<Record<ClientType, string>> = {}
-      if (current.minVersionAndroid.trim().length > 0) {
-        minSupportedAppVersions[ClientType.ANDROID] = current.minVersionAndroid.trim()
-      }
-      if (current.minVersionIos.trim().length > 0) {
-        minSupportedAppVersions[ClientType.IOS] = current.minVersionIos.trim()
-      }
-      if (current.minVersionWeb.trim().length > 0) {
-        minSupportedAppVersions[ClientType.WEB] = current.minVersionWeb.trim()
-      }
-      if (current.minVersionDesktop.trim().length > 0) {
-        minSupportedAppVersions[ClientType.DESKTOP] = current.minVersionDesktop.trim()
+      const minSupportedAppVersions: Record<ClientType, string> = {
+        [ClientType.ANDROID]: current.minVersionAndroid,
+        [ClientType.IOS]: current.minVersionIos,
+        [ClientType.WEB]: current.minVersionWeb,
+        [ClientType.DESKTOP]: current.minVersionDesktop
       }
 
       const settings: ManagementGlobalSettings = {
-        privacyPolicyUrl: current.privacyPolicyUrl.trim() || null,
-        termsOfServiceUrl: current.termsOfServiceUrl.trim() || null,
-        contactSupportEmail: current.contactSupportEmail.trim() || null,
+        privacyPolicyUrl: current.privacyPolicyUrl,
+        termsOfServiceUrl: current.termsOfServiceUrl,
+        contactSupportEmail: current.contactSupportEmail,
         minSupportedAppVersions,
         isTracingEnabled: current.isTracingEnabled,
         isMetricsEnabled: current.isMetricsEnabled,
@@ -225,7 +225,7 @@ export const createEditGlobalSettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditGlobalSettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: saveResult.error } })
         }
       }
@@ -233,7 +233,7 @@ export const createEditGlobalSettingsStore = (
 
     onResetClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditGlobalSettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
@@ -244,7 +244,7 @@ export const createEditGlobalSettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditGlobalSettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: result.error } })
         }
       }

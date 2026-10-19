@@ -7,12 +7,17 @@ import type { LoginByTotpRecoveryCodeUseCase } from '@/usecase/auth/login/login-
 import type { LoginByTotpUseCase } from '@/usecase/auth/login/login-by-totp-use-case'
 import { FieldValidator } from '@/validator/field-validator'
 
+export enum LoginByTotpStatus {
+  LOADING = 'loading',
+  CONTENT = 'content'
+}
+
 export type LoginByTotpScreenState =
   | {
-      status: 'loading'
+      status: LoginByTotpStatus.LOADING
     }
   | {
-      status: 'content'
+      status: LoginByTotpStatus.CONTENT
       mfaToken: string
       code: string
       actionLoading: boolean
@@ -46,7 +51,7 @@ export const createLoginByTotpStore = (
   initialState?: LoginByTotpScreenState
 ) => {
   const defaultContentState: LoginByTotpScreenState = {
-    status: 'content',
+    status: LoginByTotpStatus.CONTENT,
     mfaToken: deps.mfaToken,
     code: '',
     actionLoading: false,
@@ -59,7 +64,7 @@ export const createLoginByTotpStore = (
 
     onCodeChanged: (code: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== LoginByTotpStatus.CONTENT) {
         return
       }
 
@@ -83,7 +88,7 @@ export const createLoginByTotpStore = (
       activeDeps.onModeChange?.(nextMode)
 
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === LoginByTotpStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -96,7 +101,7 @@ export const createLoginByTotpStore = (
 
     onSubmitClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== LoginByTotpStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -133,12 +138,12 @@ export const createLoginByTotpStore = (
           activeDeps.onFinished()
         }
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === LoginByTotpStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false } })
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === LoginByTotpStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

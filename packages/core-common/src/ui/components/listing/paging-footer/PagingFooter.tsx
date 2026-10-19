@@ -1,9 +1,7 @@
 import React, { forwardRef } from 'react'
-import { CommonModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonModuleStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
 import { CoreBackButton } from '@/ui/components/button/back/CoreBackButton'
-
-const defaultCommonStrings = new CommonModuleStrings()
 
 export interface PagingFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   currentPage?: number
@@ -20,7 +18,7 @@ export const PagingFooter = forwardRef<HTMLDivElement, PagingFooterProps>(
       totalPages = 1,
       onPageChange,
       totalCount,
-      strings = defaultCommonStrings,
+      strings = commonStrings,
       className,
       ...rest
     },

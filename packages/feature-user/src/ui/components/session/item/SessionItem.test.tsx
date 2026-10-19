@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
-
-const userStrings = new UserModuleStrings()
 
 describe('SessionItem', () => {
   it('renders session details and handles revoke button click', async () => {

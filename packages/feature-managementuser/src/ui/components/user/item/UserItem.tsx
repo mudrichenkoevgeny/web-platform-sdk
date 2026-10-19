@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings, type UserSummary } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, type UserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-
-const defaultUserStrings = new UserModuleStrings()
 
 export interface UserItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   user: UserSummary
@@ -15,7 +13,7 @@ export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
     {
       user,
       onClick,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       ...rest
     },

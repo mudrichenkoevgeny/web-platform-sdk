@@ -24,6 +24,6 @@
     "vitest": "catalog:"
   },
   "dependencies": {
-    "@mudrichenkoevgeny/shared-foundation": "^0.0.55"
+    "@mudrichenkoevgeny/shared-foundation": "catalog:"
   }
 }

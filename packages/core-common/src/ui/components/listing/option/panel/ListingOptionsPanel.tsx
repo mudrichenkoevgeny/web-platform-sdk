@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   ListingOptionsConfig,
   ListingSortState,
@@ -11,17 +11,25 @@ import { CoreOutlinedTextField } from '@/ui/components/input/outlined/CoreOutlin
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
 import { cn } from '@/utils/cn'
 
-const defaultCommonStrings = new CommonModuleStrings()
-
+/** Props for {@link ListingOptionsPanel}. */
 export interface ListingOptionsPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Listing configuration containing sort options and filter definitions. */
   config: ListingOptionsConfig
+  /** Active sort state or null if unsorted. */
   sortState: ListingSortState | null
+  /** Map of active filter states keyed by filter ID. */
   filterStates: Record<string, ListingFilterState>
+  /** Callback triggered when sorting selection changes. */
   onSortChanged: (sortState: ListingSortState) => void
+  /** Callback triggered when a filter state changes or is cleared. */
   onFilterChanged: (filterId: string, newState: ListingFilterState | null) => void
+  /** Callback triggered when user clicks the apply button. */
   onApplyClick: () => void
 }
 
+/**
+ * Slide-out or collapsible panel component for configuring listing sorting and filtering options.
+ */
 export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPanelProps>(
   (
     {
@@ -37,6 +45,11 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
     ref
   ) => {
     const sortSelectId = useId()
+    const panelBaseId = useId()
+
+    const sortDirectionLabel = sortState?.isAscending
+      ? commonStrings.ui.sortAsc
+      : commonStrings.ui.sortDesc
 
     return (
       <div
@@ -53,7 +66,7 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
               htmlFor={sortSelectId}
               className="text-sm font-semibold text-surface-foreground"
             >
-              {defaultCommonStrings.ui.status}
+              {sortDirectionLabel}
             </label>
             <div className="flex items-center gap-2">
               <select
@@ -79,14 +92,14 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
                 onClick={() =>
                   onSortChanged({
                     optionId: sortState?.optionId ?? config.sortOptions[0]?.id ?? '',
-                    isAscending: !sortState?.isAscending
+                    isAscending: !(sortState?.isAscending ?? false)
                   })
                 }
                 className="px-3 h-core-button rounded-lg border border-border text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/10"
               >
                 {sortState?.isAscending
-                  ? defaultCommonStrings.ui.sortAsc
-                  : defaultCommonStrings.ui.sortDesc}
+                  ? commonStrings.ui.sortAsc
+                  : commonStrings.ui.sortDesc}
               </button>
             </div>
           </div>
@@ -97,69 +110,132 @@ export const ListingOptionsPanel = forwardRef<HTMLDivElement, ListingOptionsPane
             {config.filters.map((filter) => {
               const currentState = filterStates[filter.id]
 
-              if (filter.type === 'text') {
-                const textVal = currentState?.type === 'text' ? currentState.value : ''
-                return (
-                  <div key={filter.id} className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between">
-                      {textVal && (
-                        <div className="ml-auto mb-1">
-                          <CoreTextButton
-                            label={defaultCommonStrings.ui.clearAll}
-                            onClick={() => onFilterChanged(filter.id, null)}
-                            className="h-6 text-xs w-auto px-1"
-                          />
-                        </div>
-                      )}
+              switch (filter.type) {
+                case 'text': {
+                  const textVal = currentState?.type === 'text' ? currentState.value : ''
+                  return (
+                    <div key={filter.id} className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        {textVal && (
+                          <div className="ml-auto mb-1">
+                            <CoreTextButton
+                              label={commonStrings.ui.clearAll}
+                              onClick={() => onFilterChanged(filter.id, null)}
+                              className="h-6 text-xs w-auto px-1"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <CoreOutlinedTextField
+                        label={filter.title}
+                        placeholder={filter.placeholder}
+                        value={textVal}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          if (!val) {
+                            onFilterChanged(filter.id, null)
+                          } else {
+                            onFilterChanged(filter.id, { type: 'text', value: val })
+                          }
+                        }}
+                      />
                     </div>
-                    <CoreOutlinedTextField
-                      label={filter.title}
-                      placeholder={filter.placeholder}
-                      value={textVal}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        if (!val) {
+                  )
+                }
+
+                case 'number': {
+                  const numVal = currentState?.type === 'number' ? currentState.value : ''
+                  return (
+                    <div key={filter.id} className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        {numVal !== '' && (
+                          <div className="ml-auto mb-1">
+                            <CoreTextButton
+                              label={commonStrings.ui.clearAll}
+                              onClick={() => onFilterChanged(filter.id, null)}
+                              className="h-6 text-xs w-auto px-1"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <CoreOutlinedTextField
+                        type="number"
+                        label={filter.title}
+                        placeholder={filter.placeholder}
+                        value={numVal}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          if (val === '') {
+                            onFilterChanged(filter.id, null)
+                          } else {
+                            const parsed = Number(val)
+                            if (!isNaN(parsed)) {
+                              onFilterChanged(filter.id, { type: 'number', value: parsed })
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  )
+                }
+
+                case 'boolean': {
+                  const boolVal = currentState?.type === 'boolean' ? currentState.value : null
+                  const checkboxId = `${panelBaseId}_bool_${filter.id}`
+                  return (
+                    <div key={filter.id} className="flex items-center justify-between py-1">
+                      <label htmlFor={checkboxId} className="text-sm font-medium text-surface-foreground cursor-pointer">
+                        {filter.title}
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          id={checkboxId}
+                          type="checkbox"
+                          checked={boolVal === true}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              onFilterChanged(filter.id, { type: 'boolean', value: true })
+                            } else {
+                              onFilterChanged(filter.id, null)
+                            }
+                          }}
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  )
+                }
+
+                case 'choice': {
+                  const choiceSet =
+                    currentState?.type === 'choice'
+                      ? new Set(currentState.selectedIds)
+                      : new Set<string>()
+
+                  return (
+                    <ListingChoiceDropdown
+                      key={filter.id}
+                      filter={filter}
+                      selectedIds={choiceSet}
+                      onSelectionChanged={(newSet) => {
+                        if (newSet.size === 0) {
                           onFilterChanged(filter.id, null)
                         } else {
-                          onFilterChanged(filter.id, { type: 'text', value: val })
+                          onFilterChanged(filter.id, {
+                            type: 'choice',
+                            selectedIds: newSet
+                          })
                         }
                       }}
                     />
-                  </div>
-                )
+                  )
+                }
               }
-
-              if (filter.type === 'choice') {
-                const choiceSet =
-                  currentState?.type === 'choice'
-                    ? new Set(currentState.selectedIds)
-                    : new Set<string>()
-
-                return (
-                  <ListingChoiceDropdown
-                    key={filter.id}
-                    filter={filter}
-                    selectedIds={choiceSet}
-                    onSelectionChanged={(newSet) => {
-                      if (newSet.size === 0) {
-                        onFilterChanged(filter.id, null)
-                      } else {
-                        onFilterChanged(filter.id, {
-                          type: 'choice',
-                          selectedIds: newSet
-                        })
-                      }
-                    }}
-                  />
-                )
-              }
-
-              return null
             })}
           </div>
         )}
 
-        <CoreButton onClick={onApplyClick} label={defaultCommonStrings.ui.apply} />
+        <CoreButton onClick={onApplyClick} label={commonStrings.ui.apply} />
       </div>
     )
   }

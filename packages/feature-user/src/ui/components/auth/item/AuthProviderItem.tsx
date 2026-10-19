@@ -1,9 +1,7 @@
 import React, { forwardRef } from 'react'
-import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
-
-const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link AuthProviderItem} component.
@@ -66,7 +64,7 @@ export const AuthProviderItem = forwardRef<HTMLButtonElement, AuthProviderItemPr
       authProvider,
       onClick,
       disabled = false,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       type = 'button',
       ...rest

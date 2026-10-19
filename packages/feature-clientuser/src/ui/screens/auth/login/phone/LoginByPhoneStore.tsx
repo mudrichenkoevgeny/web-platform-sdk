@@ -1,16 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
-  accountLockoutTypeSchema,
-  SecurityErrorArgs,
+  AccountLockoutType,
   SecurityErrorCodes,
   UserAccountStatus,
-  UserErrorArgs,
   UserErrorCodes
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  getAppErrorAccountLockoutType,
+  getAppErrorMfaToken,
+  getAppErrorRetryAfterSeconds,
+  getAppErrorTemporaryLockoutUntil,
+  isSuccess
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { LoginByPhoneUseCase } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -18,16 +21,25 @@ import type { SendLoginConfirmationToPhoneUseCase } from '@mudrichenkoevgeny/web
 
 const DEFAULT_OTP_LENGTH = 6
 
+/** Active step in the phone authentication flow. */
+export enum LoginByPhoneStep {
+  /** Phone number entry step. */
+  PHONE = 'phone',
+  /** OTP confirmation code entry step. */
+  CODE = 'code'
+}
+
+/** Discriminated union representing active screen state for {@link LoginByPhoneScreen}. */
 export type LoginByPhoneScreenState =
   | {
-      step: 'phone'
+      step: LoginByPhoneStep.PHONE
       phoneNumber: string
       isPhoneNumberValid: boolean
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      step: 'code'
+      step: LoginByPhoneStep.CODE
       phoneNumber: string
       code: string
       codeLength: number
@@ -36,10 +48,11 @@ export type LoginByPhoneScreenState =
       actionError: AppError | null
     }
 
+/** Dependencies required to construct and run {@link LoginByPhoneStore}. */
 export interface LoginByPhoneStoreDependencies {
-  loginRepository: LoginRepository
-  sendLoginConfirmationToPhoneUseCase: SendLoginConfirmationToPhoneUseCase
-  loginByPhoneUseCase: LoginByPhoneUseCase
+  loginRepository: Pick<LoginRepository, 'getRemainingLoginConfirmationDelayInSeconds'>
+  sendLoginConfirmationToPhoneUseCase: Pick<SendLoginConfirmationToPhoneUseCase, 'execute'>
+  loginByPhoneUseCase: Pick<LoginByPhoneUseCase, 'execute'>
   onNavigateToTotp: (mfaToken: string) => void
   onNavigateToPendingDeletion: () => void
   onNavigateToAccountUnlock?: (
@@ -50,6 +63,7 @@ export interface LoginByPhoneStoreDependencies {
   onFinished: () => void
 }
 
+/** State and actions managed by {@link LoginByPhoneStore}. */
 export interface LoginByPhoneStoreState {
   screenState: LoginByPhoneScreenState
   onPhoneChanged: (phone: string) => void
@@ -77,7 +91,7 @@ export const createLoginByPhoneStore = (
   }
 
   const defaultState: LoginByPhoneScreenState = {
-    step: 'phone',
+    step: LoginByPhoneStep.PHONE,
     phoneNumber: '',
     isPhoneNumberValid: false,
     actionLoading: false,
@@ -93,7 +107,7 @@ export const createLoginByPhoneStore = (
 
       timerInterval = setInterval(() => {
         const current = get().screenState
-        if (current.step !== 'code') {
+        if (current.step !== LoginByPhoneStep.CODE) {
           stopTimer()
           return
         }
@@ -123,7 +137,7 @@ export const createLoginByPhoneStore = (
 
       onPhoneChanged: (phone: string) => {
         const current = get().screenState
-        if (current.step !== 'phone') {
+        if (current.step !== LoginByPhoneStep.PHONE) {
           return
         }
 
@@ -142,7 +156,7 @@ export const createLoginByPhoneStore = (
           if (remaining > 0) {
             set({
               screenState: {
-                step: 'code',
+                step: LoginByPhoneStep.CODE,
                 phoneNumber: phone,
                 code: '',
                 codeLength: DEFAULT_OTP_LENGTH,
@@ -158,7 +172,7 @@ export const createLoginByPhoneStore = (
 
       onCodeChanged: (code: string) => {
         const current = get().screenState
-        if (current.step !== 'code') {
+        if (current.step !== LoginByPhoneStep.CODE) {
           return
         }
 
@@ -179,7 +193,7 @@ export const createLoginByPhoneStore = (
 
       onSendCodeClick: async () => {
         const current = get().screenState
-        if (current.step === 'code') {
+        if (current.step === LoginByPhoneStep.CODE) {
           if (current.actionLoading || current.resendTimerSeconds > 0) {
             return
           }
@@ -192,9 +206,9 @@ export const createLoginByPhoneStore = (
             }
           })
 
-          const result = await deps.sendLoginConfirmationToPhoneUseCase.execute(current.phoneNumber)
-          if (isSuccess(result)) {
-            const retrySeconds = result.data.retryAfterSeconds
+          const sendCodeResult = await deps.sendLoginConfirmationToPhoneUseCase.execute(current.phoneNumber)
+          if (isSuccess(sendCodeResult)) {
+            const retrySeconds = sendCodeResult.data.retryAfterSeconds
             set({
               screenState: {
                 ...current,
@@ -208,14 +222,14 @@ export const createLoginByPhoneStore = (
               screenState: {
                 ...current,
                 actionLoading: false,
-                actionError: result.error
+                actionError: sendCodeResult.error
               }
             })
           }
           return
         }
 
-        if (current.step !== 'phone' || !current.isPhoneNumberValid || current.actionLoading) {
+        if (current.step !== LoginByPhoneStep.PHONE || !current.isPhoneNumberValid || current.actionLoading) {
           return
         }
 
@@ -227,12 +241,12 @@ export const createLoginByPhoneStore = (
           }
         })
 
-        const result = await deps.sendLoginConfirmationToPhoneUseCase.execute(current.phoneNumber)
-        if (isSuccess(result)) {
-          const retrySeconds = result.data.retryAfterSeconds
+        const sendCodeResult = await deps.sendLoginConfirmationToPhoneUseCase.execute(current.phoneNumber)
+        if (isSuccess(sendCodeResult)) {
+          const retrySeconds = sendCodeResult.data.retryAfterSeconds
           set({
             screenState: {
-              step: 'code',
+              step: LoginByPhoneStep.CODE,
               phoneNumber: current.phoneNumber,
               code: '',
               codeLength: DEFAULT_OTP_LENGTH,
@@ -243,14 +257,13 @@ export const createLoginByPhoneStore = (
           })
           startTimer(retrySeconds)
         } else {
-          const error = result.error
-          const retryAfterSecondsArg = error.args?.retryAfterSeconds ?? error.args?.['retry_after_seconds']
-          const retryAfterSeconds = retryAfterSecondsArg ? Number(retryAfterSecondsArg) : 0
+          const error = sendCodeResult.error
+          const retryAfterSeconds = getAppErrorRetryAfterSeconds(error)
 
           if (retryAfterSeconds > 0) {
             set({
               screenState: {
-                step: 'code',
+                step: LoginByPhoneStep.CODE,
                 phoneNumber: current.phoneNumber,
                 code: '',
                 codeLength: DEFAULT_OTP_LENGTH,
@@ -278,7 +291,7 @@ export const createLoginByPhoneStore = (
         const phone = current.phoneNumber
         set({
           screenState: {
-            step: 'phone',
+            step: LoginByPhoneStep.PHONE,
             phoneNumber: phone,
             isPhoneNumberValid: FieldValidator.isValidPhone(phone),
             actionLoading: false,
@@ -289,11 +302,7 @@ export const createLoginByPhoneStore = (
 
       onConfirmCodeClick: async () => {
         const current = get().screenState
-        if (
-          current.step !== 'code' ||
-          current.code.length !== current.codeLength ||
-          current.actionLoading
-        ) {
+        if (current.step !== LoginByPhoneStep.CODE || current.code.length !== current.codeLength || current.actionLoading) {
           return
         }
 
@@ -305,68 +314,84 @@ export const createLoginByPhoneStore = (
           }
         })
 
-        const result = await deps.loginByPhoneUseCase.execute(current.phoneNumber, current.code)
-        if (isSuccess(result)) {
+        const loginResult = await deps.loginByPhoneUseCase.execute(current.phoneNumber, current.code)
+        if (isSuccess(loginResult)) {
           stopTimer()
-          if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: null
+            }
+          })
+
+          const userPrivate = loginResult.data.userPrivate
+          if (userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
             deps.onNavigateToPendingDeletion()
           } else {
             deps.onFinished()
           }
-          const updated = get().screenState
-          if (updated.step === 'code') {
-            set({ screenState: { ...updated, actionLoading: false } })
-          }
         } else {
-          const error = result.error
-
+          const error = loginResult.error
           if (error.code === SecurityErrorCodes.MFA_CONFIRMATION_REQUIRED) {
-            const mfaToken = error.args?.[SecurityErrorArgs.MFA_TOKEN] as string | undefined
+            const mfaToken = getAppErrorMfaToken(error)
             if (mfaToken) {
               stopTimer()
+              set({
+                screenState: {
+                  ...current,
+                  actionLoading: false,
+                  actionError: null
+                }
+              })
               deps.onNavigateToTotp(mfaToken)
-              const updated = get().screenState
-              if (updated.step === 'code') {
-                set({ screenState: { ...updated, actionLoading: false } })
-              }
               return
             }
           }
 
           if (error.code === UserErrorCodes.USER_LOCKED) {
-            const lockoutTypeRaw = error.args?.[UserErrorArgs.ACCOUNT_LOCKOUT_TYPE] as string | undefined
-            const lockoutTypeParsed = accountLockoutTypeSchema.safeParse(lockoutTypeRaw)
-            const lockoutType = lockoutTypeParsed.success ? lockoutTypeParsed.data : null
-            const lockoutUntilRaw = error.args?.[UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL]
-            const lockoutUntil = lockoutUntilRaw ? Number(lockoutUntilRaw) : null
+            const lockoutType = getAppErrorAccountLockoutType(error)
+            const lockoutUntil = getAppErrorTemporaryLockoutUntil(error)
 
             stopTimer()
-            deps.onNavigateToAccountUnlock?.(lockoutType, lockoutUntil)
-            const updated = get().screenState
-            if (updated.step === 'code') {
-              set({ screenState: { ...updated, actionLoading: false } })
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                actionError: null
+              }
+            })
+
+            if (deps.onNavigateToAccountUnlock) {
+              deps.onNavigateToAccountUnlock(lockoutType, lockoutUntil)
+            } else {
+              set({
+                screenState: {
+                  ...current,
+                  actionLoading: false,
+                  actionError: error
+                }
+              })
             }
             return
           }
 
-          const updated = get().screenState
-          if (updated.step === 'code') {
-            set({
-              screenState: {
-                ...updated,
-                actionLoading: false,
-                actionError: error
-              }
-            })
-          }
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: error
+            }
+          })
         }
       },
 
       onBackClick: () => {
         const current = get().screenState
-        if (current.step === 'code') {
+        if (current.step === LoginByPhoneStep.CODE) {
           get().onResetPhoneClick()
         } else {
+          stopTimer()
           deps.onBack()
         }
       },
@@ -380,18 +405,11 @@ export const createLoginByPhoneStore = (
 
 const LoginByPhoneContext = createContext<LoginByPhoneStore | null>(null)
 
-export interface LoginByPhoneProviderProps {
+export const LoginByPhoneProvider: React.FC<{
   dependencies: LoginByPhoneStoreDependencies
-  initialState?: LoginByPhoneScreenState
   children: React.ReactNode
-}
-
-export const LoginByPhoneProvider: React.FC<LoginByPhoneProviderProps> = ({
-  dependencies,
-  initialState,
-  children
-}) => {
-  const [store] = useState(() => createLoginByPhoneStore(dependencies, initialState))
+}> = ({ dependencies, children }) => {
+  const [store] = useState(() => createLoginByPhoneStore(dependencies))
 
   useEffect(() => {
     return () => {

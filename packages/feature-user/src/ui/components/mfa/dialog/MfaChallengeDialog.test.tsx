@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { MfaChallengeDialog } from '@/ui/components/mfa/dialog/MfaChallengeDialog'
 import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
-
-const userStrings = new UserModuleStrings()
 
 describe('MfaChallengeDialog', () => {
   const mockRequest: MfaChallengeRequest = {

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ManagementAuditEventListParamsParser, managementAuditEventListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditEventListParamsParser } from '@mudrichenkoevgeny/shared-foundation'
 import type { AuditEventId, AuditEventSummary, ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -15,25 +15,35 @@ import {
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
 import type { AuditEventListSearchParams } from './auditEventListSearchSchema'
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null
+function toRecord(val: unknown): Record<string, unknown> {
+  if (typeof val === 'object' && val !== null) {
+    return { ...val }
+  }
+  return {}
+}
+
+/** Status values for {@link AuditEventListScreenState}. */
+export enum AuditEventListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
 }
 
 /** Discriminated union representing screen states for the audit event list view. */
 export type AuditEventListScreenState =
   | {
       /** Loading state while audit events list is being loaded initially. */
-      status: 'loading'
+      status: AuditEventListStatus.LOADING
     }
   | {
       /** Error state when loading audit events list failed. */
-      status: 'error'
+      status: AuditEventListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated audit events. */
-      status: 'content'
+      status: AuditEventListStatus.CONTENT
       /** Current pagination state for audit event items. */
       paging: PaginationState<AuditEventSummary>
       /** Whether the filter panel drawer is expanded. */
@@ -47,7 +57,7 @@ export type AuditEventListScreenState =
 /** External dependencies required by {@link createAuditEventListStore}. */
 export interface AuditEventListStoreDependencies {
   /** Use case for loading paginated audit events. */
-  getAuditEventsUseCase: GetAuditEventsUseCase
+  getAuditEventsUseCase: Pick<GetAuditEventsUseCase, 'execute'>
   /** Navigation callback to open audit event detail screen. */
   onNavigateToEventDetail: (eventId: AuditEventId) => void
   /** Navigation callback to return to previous screen. */
@@ -113,23 +123,21 @@ export const createAuditEventListStore = (
     try {
       const activeDeps = get().dependencies
       const rawParams = overrideParams ?? activeDeps.searchParams
-      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const searchRecord = toRecord(rawParams)
       const parsedParams = ManagementAuditEventListParamsParser.parse(searchRecord)
       const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const auditEventsResult = await activeDeps.getAuditEventsUseCase.execute(
-        managementAuditEventListParamsSchema.parse({
-          ...parsedParams,
-          pageNumber: effectivePageNumber
-        })
-      )
+      const auditEventsResult = await activeDeps.getAuditEventsUseCase.execute({
+        ...parsedParams,
+        pageNumber: effectivePageNumber
+      })
 
       if (isSuccess(auditEventsResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<AuditEventSummary>()
+        const currentPaging = current.status === AuditEventListStatus.CONTENT ? current.paging : createInitialPaginationState<AuditEventSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, auditEventsResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === AuditEventListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -139,7 +147,7 @@ export const createAuditEventListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: AuditEventListStatus.CONTENT,
               paging: nextPaging,
               isFilterPanelExpanded: false,
               actionLoading: false,
@@ -149,7 +157,7 @@ export const createAuditEventListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === AuditEventListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -159,7 +167,7 @@ export const createAuditEventListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: AuditEventListStatus.ERROR,
               error: auditEventsResult.error
             }
           })
@@ -172,37 +180,39 @@ export const createAuditEventListStore = (
 
   return createStore<AuditEventListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: AuditEventListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === AuditEventListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
-      const parsedParams = isRecord(searchParams) ? ManagementAuditEventListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      set({ screenState: { status: AuditEventListStatus.LOADING } })
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementAuditEventListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementAuditEventListParams | AuditEventListSearchParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: AuditEventListStatus.CONTENT,
           paging: createInitialPaginationState<AuditEventSummary>(),
           isFilterPanelExpanded: false,
           actionLoading: false,
           actionError: null
         }
       })
-      const parsedParams = isRecord(searchParams) ? ManagementAuditEventListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementAuditEventListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== AuditEventListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -213,7 +223,7 @@ export const createAuditEventListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: AuditEventListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
@@ -227,7 +237,7 @@ export const createAuditEventListStore = (
 
     onToggleFilterPanel: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === AuditEventListStatus.CONTENT) {
         set({
           screenState: {
             ...current,

@@ -9,17 +9,26 @@ import type { EnableTotpUseCase } from '@/usecase/user/security/enable-totp-use-
 import type { DisableTotpUseCase } from '@/usecase/user/security/disable-totp-use-case'
 import { TotpMainMode } from '@/ui/screens/user/totp/main/TotpMainSearchSchema'
 
+/** Status values for {@link TotpMainScreenState}. */
+export enum TotpMainStatus {
+  LOADING = 'loading',
+  DISABLED = 'disabled',
+  SETUP_IN_PROGRESS = 'setupInProgress',
+  ENABLED = 'enabled',
+  ERROR = 'error'
+}
+
 export type TotpMainScreenState =
   | {
-      status: 'loading'
+      status: TotpMainStatus.LOADING
     }
   | {
-      status: 'disabled'
+      status: TotpMainStatus.DISABLED
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      status: 'setupInProgress'
+      status: TotpMainStatus.SETUP_IN_PROGRESS
       setup: TotpSetup
       code: string
       canConfirm: boolean
@@ -27,13 +36,13 @@ export type TotpMainScreenState =
       actionError: AppError | null
     }
   | {
-      status: 'enabled'
+      status: TotpMainStatus.ENABLED
       showDisableConfirmation: boolean
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      status: 'error'
+      status: TotpMainStatus.ERROR
       error: AppError
     }
 
@@ -45,7 +54,7 @@ export interface TotpMainStoreDependencies {
   onNavigateToRecoveryCodes: () => void
   onBack: () => void
   totpMode?: TotpMainMode
-  onTotpModeChange?: (totpMode: TotpMainMode) => void
+  onTotpModeChange?: (mode: TotpMainMode) => void
 }
 
 export interface TotpMainStoreState {
@@ -69,14 +78,14 @@ export const createTotpMainStore = (
   initialState?: TotpMainScreenState
 ) => {
   const store = createStore<TotpMainStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: TotpMainStatus.LOADING },
 
     loadTotpStatus: async () => {
       const result = await deps.userRepository.refreshCurrentUser()
       if (!isSuccess(result)) {
         set({
           screenState: {
-            status: 'error',
+            status: TotpMainStatus.ERROR,
             error: result.error
           }
         })
@@ -85,13 +94,13 @@ export const createTotpMainStore = (
 
     initSetup: async () => {
       const current = get().screenState
-      if (current.status === 'setupInProgress') {
+      if (current.status === TotpMainStatus.SETUP_IN_PROGRESS) {
         return
       }
 
       set({
         screenState: {
-          status: 'disabled',
+          status: TotpMainStatus.DISABLED,
           actionLoading: true,
           actionError: null
         }
@@ -103,7 +112,7 @@ export const createTotpMainStore = (
         deps.onTotpModeChange?.(TotpMainMode.SETUP_IN_PROGRESS)
         set({
           screenState: {
-            status: 'setupInProgress',
+            status: TotpMainStatus.SETUP_IN_PROGRESS,
             setup: result.data,
             code: '',
             canConfirm: false,
@@ -114,7 +123,7 @@ export const createTotpMainStore = (
       } else {
         set({
           screenState: {
-            status: 'disabled',
+            status: TotpMainStatus.DISABLED,
             actionLoading: false,
             actionError: result.error
           }
@@ -128,7 +137,7 @@ export const createTotpMainStore = (
 
     onCodeChanged: (code: string) => {
       const current = get().screenState
-      if (current.status !== 'setupInProgress') {
+      if (current.status !== TotpMainStatus.SETUP_IN_PROGRESS) {
         return
       }
 
@@ -146,7 +155,7 @@ export const createTotpMainStore = (
 
     onConfirmSetupClick: async () => {
       const current = get().screenState
-      if (current.status !== 'setupInProgress' || !current.canConfirm) {
+      if (current.status !== TotpMainStatus.SETUP_IN_PROGRESS || !current.canConfirm) {
         return
       }
 
@@ -184,7 +193,7 @@ export const createTotpMainStore = (
 
     onDisableClick: () => {
       const current = get().screenState
-      if (current.status !== 'enabled') {
+      if (current.status !== TotpMainStatus.ENABLED) {
         return
       }
       set({
@@ -197,7 +206,7 @@ export const createTotpMainStore = (
 
     onConfirmDisable: async () => {
       const current = get().screenState
-      if (current.status !== 'enabled') {
+      if (current.status !== TotpMainStatus.ENABLED) {
         return
       }
 
@@ -217,7 +226,7 @@ export const createTotpMainStore = (
         deps.onTotpModeChange?.(TotpMainMode.DISABLED)
         set({
           screenState: {
-            status: 'disabled',
+            status: TotpMainStatus.DISABLED,
             actionLoading: false,
             actionError: null
           }
@@ -225,7 +234,7 @@ export const createTotpMainStore = (
       } else {
         set({
           screenState: {
-            status: 'enabled',
+            status: TotpMainStatus.ENABLED,
             showDisableConfirmation: false,
             actionLoading: false,
             actionError: result.error
@@ -236,7 +245,7 @@ export const createTotpMainStore = (
 
     onDismissDialogs: () => {
       const current = get().screenState
-      if (current.status !== 'enabled') {
+      if (current.status !== TotpMainStatus.ENABLED) {
         return
       }
       set({
@@ -275,14 +284,14 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
       if (!user) {
         store.setState({
           screenState: {
-            status: 'error',
+            status: TotpMainStatus.ERROR,
             error: CommonError.unknown()
           }
         })
       } else if (user.isTotpEnabled) {
         store.setState({
           screenState: {
-            status: 'enabled',
+            status: TotpMainStatus.ENABLED,
             showDisableConfirmation: false,
             actionLoading: false,
             actionError: null
@@ -292,27 +301,27 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
         const currentStatus = store.getState().screenState.status
         if (
           dependencies.totpMode === TotpMainMode.SETUP_IN_PROGRESS &&
-          currentStatus !== 'setupInProgress'
+          currentStatus !== TotpMainStatus.SETUP_IN_PROGRESS
         ) {
           void store.getState().initSetup()
         } else if (
           dependencies.totpMode !== TotpMainMode.SETUP_IN_PROGRESS &&
-          currentStatus === 'setupInProgress'
+          currentStatus === TotpMainStatus.SETUP_IN_PROGRESS
         ) {
           store.setState({
             screenState: {
-              status: 'disabled',
+              status: TotpMainStatus.DISABLED,
               actionLoading: false,
               actionError: null
             }
           })
         } else if (
-          currentStatus !== 'setupInProgress' &&
-          currentStatus !== 'disabled'
+          currentStatus !== TotpMainStatus.SETUP_IN_PROGRESS &&
+          currentStatus !== TotpMainStatus.DISABLED
         ) {
           store.setState({
             screenState: {
-              status: 'disabled',
+              status: TotpMainStatus.DISABLED,
               actionLoading: false,
               actionError: null
             }
@@ -320,7 +329,10 @@ export const TotpMainProvider: React.FC<TotpMainProviderProps> = ({
         }
       }
     })
-    return () => unsubscribe()
+
+    return () => {
+      unsubscribe()
+    }
   }, [dependencies, store])
 
   return (

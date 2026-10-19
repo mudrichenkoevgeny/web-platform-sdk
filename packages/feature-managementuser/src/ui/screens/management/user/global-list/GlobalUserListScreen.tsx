@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
-import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -27,13 +27,12 @@ import {
 } from '@/ui/screens/management/user/global-list/globalUserListSearchConverters'
 import {
   GlobalUserListProvider,
+  GlobalUserListStatus,
   useGlobalUserListStore
 } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
-
+/** Automation test selectors for {@link GlobalUserListScreen}. */
 export const GlobalUserListTestTags = {
   BACK_BUTTON: 'GlobalUserList_BackButton',
   TITLE: 'GlobalUserList_Title',
@@ -45,8 +44,9 @@ export const GlobalUserListTestTags = {
   ACTION_ERROR_TEXT: 'GlobalUserList_ActionErrorText'
 }
 
+/** Internal content component rendering global user list states (loading, error, content with filtering and paging). */
 const GlobalUserListContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const deps = useGlobalUserListStore((s) => s.dependencies)
   const screenState = useGlobalUserListStore((s) => s.screenState)
@@ -89,7 +89,7 @@ const GlobalUserListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     onToggleFilterPanel()
   }
 
-  const isContent = screenState.status === 'content'
+  const isContent = screenState.status === GlobalUserListStatus.CONTENT
   const pagingState = isContent ? screenState.paging : undefined
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
@@ -98,131 +98,137 @@ const GlobalUserListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
-  }
+  switch (screenState.status) {
+    case GlobalUserListStatus.LOADING:
+      return <FullscreenLoading />
 
-  if (screenState.status === 'error') {
-    return (
-      <FullscreenError
-        data-testid={GlobalUserListTestTags.GLOBAL_ERROR_TEXT}
-        error={screenState.error}
-        onRetry={onRefresh}
-        onBack={onBackClick}
-        title={strings.ui.usersManagementTitle}
-      />
-    )
-  }
-
-  const {
-    paging,
-    isFilterPanelExpanded,
-    actionError
-  } = screenState
-
-  const optionsConfig = getGlobalUserListingOptionsConfig(defaultCommonStrings)
-
-  return (
-    <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton data-testid={GlobalUserListTestTags.BACK_BUTTON} onClick={onBackClick} />
-        <CoreScreenTitleText
-          data-testid={GlobalUserListTestTags.TITLE}
-          text={strings.ui.usersManagementTitle}
-          className="absolute left-1/2 -translate-x-1/2"
+    case GlobalUserListStatus.ERROR:
+      return (
+        <FullscreenError
+          data-testid={GlobalUserListTestTags.GLOBAL_ERROR_TEXT}
+          error={screenState.error}
+          onRetry={onRefresh}
+          onBack={onBackClick}
+          title={strings.ui.usersManagementTitle}
         />
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            data-testid={GlobalUserListTestTags.FILTER_BUTTON}
-            aria-label={strings.ui.filter}
-            onClick={onToggleFilterPanel}
-            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <CoreIcon src={icons.filter} size={20} className="text-surface-foreground" />
-          </button>
-          <button
-            type="button"
-            data-testid={GlobalUserListTestTags.REFRESH_BUTTON}
-            aria-label={defaultCommonStrings.ui.refresh}
-            onClick={onRefresh}
-            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
-          </button>
-        </div>
-      </div>
+      )
 
-      <div className="w-full flex items-center justify-end mb-4">
-        <CoreButton
-          data-testid={GlobalUserListTestTags.CREATE_BUTTON}
-          label={strings.ui.createUser}
-          onClick={onCreateUserClick}
-          className="w-auto"
-        />
-      </div>
+    case GlobalUserListStatus.CONTENT: {
+      const {
+        paging,
+        isFilterPanelExpanded,
+        actionError
+      } = screenState
 
-      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalUserListTestTags.USER_LIST}>
-        {actionError && (
-          <CoreErrorText
-            data-testid={GlobalUserListTestTags.ACTION_ERROR_TEXT}
-            text={errorParser.parse(actionError) ?? ''}
-          />
-        )}
+      const optionsConfig = getGlobalUserListingOptionsConfig(commonStrings)
 
-        {isFilterPanelExpanded && (
-          <div className="w-full mb-2">
-            <ListingOptionsPanel
-              config={optionsConfig}
-              sortState={draftSortState}
-              filterStates={draftFilterStates}
-              onSortChanged={setDraftSortState}
-              onFilterChanged={handleFilterChanged}
-              onApplyClick={handleApplyFilters}
+      return (
+        <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
+          <div className="w-full flex items-center justify-between relative mb-4">
+            <CoreBackButton data-testid={GlobalUserListTestTags.BACK_BUTTON} onClick={onBackClick} />
+            <CoreScreenTitleText
+              data-testid={GlobalUserListTestTags.TITLE}
+              text={strings.ui.usersManagementTitle}
+              className="absolute left-1/2 -translate-x-1/2"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                data-testid={GlobalUserListTestTags.FILTER_BUTTON}
+                aria-label={strings.ui.filter}
+                onClick={onToggleFilterPanel}
+                className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <CoreIcon src={icons.filter} size={20} className="text-surface-foreground" />
+              </button>
+              <button
+                type="button"
+                data-testid={GlobalUserListTestTags.REFRESH_BUTTON}
+                aria-label={commonStrings.ui.refresh}
+                onClick={onRefresh}
+                className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
+              </button>
+            </div>
+          </div>
+
+          <div className="w-full flex items-center justify-end mb-4">
+            <CoreButton
+              data-testid={GlobalUserListTestTags.CREATE_BUTTON}
+              label={strings.ui.createUser}
+              onClick={onCreateUserClick}
+              className="w-auto"
             />
           </div>
-        )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <ListingEmptyState />
-          </div>
-        ) : (
-          <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar
-              onRefreshClick={onRefresh}
-              onOptionsClick={onToggleFilterPanel}
-            />
+          <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalUserListTestTags.USER_LIST}>
+            {actionError && (
+              <CoreErrorText
+                data-testid={GlobalUserListTestTags.ACTION_ERROR_TEXT}
+                text={errorParser.parse(actionError) ?? ''}
+              />
+            )}
 
-            {paging.items.map((user) => (
-              user.id ? (
-                <UserItem
-                  key={user.id}
-                  user={user}
-                  onClick={() => onUserClick(user.id!)}
-                  strings={strings}
+            {isFilterPanelExpanded && (
+              <div className="w-full mb-2">
+                <ListingOptionsPanel
+                  config={optionsConfig}
+                  sortState={draftSortState}
+                  filterStates={draftFilterStates}
+                  onSortChanged={setDraftSortState}
+                  onFilterChanged={handleFilterChanged}
+                  onApplyClick={handleApplyFilters}
                 />
-              ) : null
-            ))}
-
-            {paging.pageNumber < paging.totalPages && (
-              <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
-                {paging.isNextPageLoading && (
-                  <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                )}
               </div>
             )}
 
-            <PagingFooter
-              currentPage={paging.pageNumber}
-              totalPages={paging.totalPages}
-              totalCount={paging.totalCount}
-            />
+            {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
+              <div className="flex-1 flex items-center justify-center">
+                <ListingEmptyState />
+              </div>
+            ) : (
+              <div className="w-full flex flex-col gap-3">
+                <ListingHeaderBar
+                  onRefreshClick={onRefresh}
+                  onOptionsClick={onToggleFilterPanel}
+                />
+
+                {paging.items.map((user) => {
+                  const userId = user.id
+                  if (!userId) {
+                    return null
+                  }
+                  return (
+                    <UserItem
+                      key={userId}
+                      user={user}
+                      onClick={() => onUserClick(userId)}
+                      strings={strings}
+                    />
+                  )
+                })}
+
+                {paging.pageNumber < paging.totalPages && (
+                  <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
+                    {paging.isNextPageLoading && (
+                      <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    )}
+                  </div>
+                )}
+
+                <PagingFooter
+                  currentPage={paging.pageNumber}
+                  totalPages={paging.totalPages}
+                  totalCount={paging.totalCount}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  )
+        </div>
+      )
+    }
+  }
 }
 
 const GlobalUserListController: React.FC<{ strings?: UserModuleStrings }> = ({
@@ -245,13 +251,17 @@ const GlobalUserListController: React.FC<{ strings?: UserModuleStrings }> = ({
   return <GlobalUserListContent strings={strings} />
 }
 
+/** Props for {@link GlobalUserListScreen}. */
 export interface GlobalUserListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Dependencies injected into screen store. */
   dependencies: GlobalUserListStoreDependencies
+  /** Optional localized strings override. */
   strings?: UserModuleStrings
 }
 
+/** Administrative screen component displaying a paginated global list of user accounts with filter options. */
 export const GlobalUserListScreen = forwardRef<HTMLDivElement, GlobalUserListScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <GlobalUserListProvider dependencies={dependencies}>

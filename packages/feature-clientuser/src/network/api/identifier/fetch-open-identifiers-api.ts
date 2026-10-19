@@ -16,6 +16,7 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   OpenIdentifierRoutes,
+  otpConfirmationPayloadSchema,
   pagedResultSchema,
   SelfIdentifierListParamsParser,
   UserApiPaths,
@@ -23,6 +24,9 @@ import {
   userIdentifierSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
+
+/** Route template for deleting identifier password in open identifier API. */
+export const OPEN_IDENTIFIER_DELETE_PASSWORD_ROUTE = `${OpenIdentifierRoutes.DELETE_IDENTIFIER}/password`
 
 /** {@link OpenIdentifiersApi} implementation backed by {@link HttpClient}. */
 export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
@@ -59,6 +63,11 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
 
   public async deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     const path = OpenIdentifierRoutes.DELETE_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, identifierId)
+    return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
+  }
+
+  public async deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    const path = OPEN_IDENTIFIER_DELETE_PASSWORD_ROUTE.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, userIdentifierId)
     return callResult(() => this.client.request<void>(path, { method: 'DELETE' }))
   }
 
@@ -116,24 +125,26 @@ export class FetchOpenIdentifiersApi implements OpenIdentifiersApi {
     email: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     const request: SendConfirmationToEmailRequest = { email }
-    return callResult(() =>
-      this.client.request<OtpConfirmationPayload>(OpenIdentifierRoutes.SEND_ADD_EMAIL_IDENTIFIER_CONFIRMATION, {
+    return callResult(async () => {
+      const response = await this.client.request<unknown>(OpenIdentifierRoutes.SEND_ADD_EMAIL_IDENTIFIER_CONFIRMATION, {
         method: 'POST',
         body: JSON.stringify(request)
       })
-    )
+      return otpConfirmationPayloadSchema.parse(response)
+    })
   }
 
   public async sendAddPhoneIdentifierConfirmation(
     phoneNumber: string
   ): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     const request: SendConfirmationToPhoneRequest = { phone_number: phoneNumber }
-    return callResult(() =>
-      this.client.request<OtpConfirmationPayload>(OpenIdentifierRoutes.SEND_ADD_PHONE_IDENTIFIER_CONFIRMATION, {
+    return callResult(async () => {
+      const response = await this.client.request<unknown>(OpenIdentifierRoutes.SEND_ADD_PHONE_IDENTIFIER_CONFIRMATION, {
         method: 'POST',
         body: JSON.stringify(request)
       })
-    )
+      return otpConfirmationPayloadSchema.parse(response)
+    })
   }
 
   public async emailChangePassword(

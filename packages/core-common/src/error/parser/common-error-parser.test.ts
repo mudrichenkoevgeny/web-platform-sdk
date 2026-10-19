@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonErrorParser } from '@/error/parser/common-error-parser'
 import { CommonError } from '@/error/model/common-error'
 import { ServerError } from '@/error/model/server-error'
@@ -7,7 +7,7 @@ import { generateErrorId } from '@/error/model/error-id'
 
 describe('CommonErrorParser', () => {
   const parser = new CommonErrorParser()
-  const ruParser = new CommonErrorParser(new CommonModuleStrings(undefined, 'ru'))
+  const ruParser = new CommonErrorParser(new CommonModuleStrings(undefined, CommonLocales.RUSSIAN))
   const dummyErrorId = generateErrorId()
 
   it('parses UNKNOWN error to internal error message (en & ru)', () => {

@@ -2,32 +2,30 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { type UserId, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserSessionListScreen, UserSessionListTestTags } from '@/ui/screens/management/session/user-list/UserSessionListScreen'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 
-const userStrings = new UserModuleStrings()
-
 describe('UserSessionListScreen', () => {
   const createMockDeps = (): UserSessionListStoreDependencies => ({
-    userId: 'usr_123' as unknown as UserId,
+    userId: toUserIdOrThrow('usr_123'),
     managementGetSessionsUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [userSessionMock()],
-          pageNumber: 1,
-          pageSize: 20,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
+          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
           totalItems: 1,
           totalPages: 1
         })
       )
-    } as unknown as UserSessionListStoreDependencies['managementGetSessionsUseCase'],
+    },
     managementDeleteSessionUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as UserSessionListStoreDependencies['managementDeleteSessionUseCase'],
+    },
     managementDeleteAllUserSessionsUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as UserSessionListStoreDependencies['managementDeleteAllUserSessionsUseCase'],
+    },
     onNavigateToSessionDetail: vi.fn(),
     onBack: vi.fn()
   })

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ManagementGlobalIdentifierListParamsParser, managementGlobalIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementGlobalIdentifierListParamsParser } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalIdentifierListParams, UserIdentifierSummary, UserIdentifierId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -14,27 +14,37 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementDeleteIdentifierUseCase } from '@/usecase/identifier/management-delete-identifier-use-case'
 import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/management-get-identifiers-use-case'
-import type { GlobalIdentifierListSearchParams } from '@/ui/screens/management/identifier/global-list/globalIdentifierListSearchSchema'
+import type { GlobalIdentifierListSearchParams } from './globalIdentifierListSearchSchema'
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null
+function toRecord(val: unknown): Record<string, unknown> {
+  if (typeof val === 'object' && val !== null) {
+    return { ...val }
+  }
+  return {}
+}
+
+/** Status values for {@link GlobalIdentifierListScreenState}. */
+export enum GlobalIdentifierListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
 }
 
 /** Discriminated union representing screen states for the global identifier list view. */
 export type GlobalIdentifierListScreenState =
   | {
       /** Loading state while identifiers list is being loaded initially. */
-      status: 'loading'
+      status: GlobalIdentifierListStatus.LOADING
     }
   | {
       /** Error state when loading identifiers list failed. */
-      status: 'error'
+      status: GlobalIdentifierListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated identifiers. */
-      status: 'content'
+      status: GlobalIdentifierListStatus.CONTENT
       /** Current pagination state for identifier items. */
       paging: PaginationState<UserIdentifierSummary>
       /** Whether the filter panel drawer is expanded. */
@@ -48,9 +58,9 @@ export type GlobalIdentifierListScreenState =
 /** External dependencies required by {@link createGlobalIdentifierListStore}. */
 export interface GlobalIdentifierListStoreDependencies {
   /** Use case for loading paginated global user identifiers. */
-  managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
+  managementGetIdentifiersUseCase: Pick<ManagementGetIdentifiersUseCase, 'execute'>
   /** Use case for deleting a user identifier. */
-  managementDeleteIdentifierUseCase: ManagementDeleteIdentifierUseCase
+  managementDeleteIdentifierUseCase: Pick<ManagementDeleteIdentifierUseCase, 'execute'>
   /** Optional current identifier ID. */
   currentIdentifierId?: UserIdentifierId | null
   /** Optional current user ID. */
@@ -122,23 +132,21 @@ export const createGlobalIdentifierListStore = (
     try {
       const activeDeps = get().dependencies
       const rawParams = overrideParams ?? activeDeps.searchParams
-      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const searchRecord = toRecord(rawParams)
       const parsedParams = ManagementGlobalIdentifierListParamsParser.parse(searchRecord)
       const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const identifiersResult = await activeDeps.managementGetIdentifiersUseCase.execute(
-        managementGlobalIdentifierListParamsSchema.parse({
-          ...parsedParams,
-          pageNumber: effectivePageNumber
-        })
-      )
+      const identifiersResult = await activeDeps.managementGetIdentifiersUseCase.execute({
+        ...parsedParams,
+        pageNumber: effectivePageNumber
+      })
 
       if (isSuccess(identifiersResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
+        const currentPaging = current.status === GlobalIdentifierListStatus.CONTENT ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, identifiersResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === GlobalIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -148,7 +156,7 @@ export const createGlobalIdentifierListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: GlobalIdentifierListStatus.CONTENT,
               paging: nextPaging,
               isFilterPanelExpanded: false,
               actionLoading: false,
@@ -158,7 +166,7 @@ export const createGlobalIdentifierListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === GlobalIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -168,7 +176,7 @@ export const createGlobalIdentifierListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: GlobalIdentifierListStatus.ERROR,
               error: identifiersResult.error
             }
           })
@@ -181,37 +189,39 @@ export const createGlobalIdentifierListStore = (
 
   return createStore<GlobalIdentifierListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: GlobalIdentifierListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === GlobalIdentifierListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
-      const parsedParams = isRecord(searchParams) ? ManagementGlobalIdentifierListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      set({ screenState: { status: GlobalIdentifierListStatus.LOADING } })
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementGlobalIdentifierListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementGlobalIdentifierListParams | GlobalIdentifierListSearchParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: GlobalIdentifierListStatus.CONTENT,
           paging: createInitialPaginationState<UserIdentifierSummary>(),
           isFilterPanelExpanded: false,
           actionLoading: false,
           actionError: null
         }
       })
-      const parsedParams = isRecord(searchParams) ? ManagementGlobalIdentifierListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementGlobalIdentifierListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== GlobalIdentifierListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -222,13 +232,13 @@ export const createGlobalIdentifierListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: GlobalIdentifierListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
     onToggleFilterPanel: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === GlobalIdentifierListStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -244,7 +254,7 @@ export const createGlobalIdentifierListStore = (
 
     onDeleteIdentifierClick: async (userId: UserId, identifierId: UserIdentifierId) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== GlobalIdentifierListStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -260,7 +270,7 @@ export const createGlobalIdentifierListStore = (
 
       if (isSuccess(deleteIdentifierResult)) {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === GlobalIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...updated,
@@ -275,7 +285,7 @@ export const createGlobalIdentifierListStore = (
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === GlobalIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

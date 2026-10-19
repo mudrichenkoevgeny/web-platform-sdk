@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditAuthSettingsScreen } from '@/ui/screens/management/settings/auth/EditAuthSettingsScreen'
 import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('EditAuthSettingsScreen', () => {
   const createMockDeps = (): EditAuthSettingsStoreDependencies => ({

@@ -14,21 +14,28 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   return isNaN(parsed) ? defaultValue : parsed
 }
 
+/** Status values for {@link UserDetailScreenState}. */
+export enum UserDetailStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 /** Discriminated union representing active screen state for user detail screen. */
 export type UserDetailScreenState =
   | {
       /** Loading state while user details are being loaded initially. */
-      status: 'loading'
+      status: UserDetailStatus.LOADING
     }
   | {
       /** Error state when loading user details failed. */
-      status: 'error'
+      status: UserDetailStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing user detail data and editable inputs. */
-      status: 'content'
+      status: UserDetailStatus.CONTENT
       /** Private user domain model. */
       user: UserPrivate
       /** Whether target user is the currently logged in user. */
@@ -64,13 +71,13 @@ export interface UserDetailStoreDependencies {
   /** Optional currently authenticated user ID. */
   currentUserId?: UserId | null
   /** Use case for loading user details. */
-  getUserUseCase: GetUserUseCase
+  getUserUseCase: Pick<GetUserUseCase, 'execute'>
   /** Use case for updating user settings. */
-  updateUserUseCase: UpdateUserUseCase
+  updateUserUseCase: Pick<UpdateUserUseCase, 'execute'>
   /** Use case for deleting user account. */
-  deleteUserUseCase: DeleteUserUseCase
+  deleteUserUseCase: Pick<DeleteUserUseCase, 'execute'>
   /** Use case for disabling TOTP MFA. */
-  managementDisableTotpUseCase: ManagementDisableTotpUseCase
+  managementDisableTotpUseCase: Pick<ManagementDisableTotpUseCase, 'execute'>
   /** Navigation callback to open user sessions list. */
   onNavigateToSessions: (userId: UserId) => void
   /** Navigation callback to open user identifiers list. */
@@ -126,7 +133,7 @@ export type UserDetailStore = ReturnType<typeof createUserDetailStore>
  * @param state - Current content screen state
  * @returns True if input values differ from original user data
  */
-export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { status: 'content' }>): boolean => {
+export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { status: UserDetailStatus.CONTENT }>): boolean => {
   const initialAuthLevel = state.user.authorityLevel.toString()
   const currentAuthLevel = state.authorityLevelInput.trim() || '0'
   const initialTempLockout = state.user.temporaryLockoutUntil ? String(state.user.temporaryLockoutUntil) : ''
@@ -136,7 +143,7 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
     currentAuthLevel !== initialAuthLevel ||
     state.accountStatusInput !== state.user.accountStatus ||
     state.lockoutTypeInput !== initialLockoutType ||
-    state.temporaryLockoutUntilInput !== initialTempLockout
+    state.temporaryLockoutUntilInput.trim() !== initialTempLockout
   )
 }
 
@@ -154,11 +161,11 @@ export const createUserDetailStore = (
   let isFetching = false
 
   return createStore<UserDetailStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: UserDetailStatus.LOADING },
 
     initScreen: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === UserDetailStatus.CONTENT) {
         return
       }
       isFetching = true
@@ -168,14 +175,14 @@ export const createUserDetailStore = (
         if (!validUserId) {
           set({
             screenState: {
-              status: 'error',
+              status: UserDetailStatus.ERROR,
               error: CommonError.unknown()
             }
           })
           return
         }
 
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: UserDetailStatus.LOADING } })
         const userResult = await deps.getUserUseCase.execute(validUserId)
 
         if (isSuccess(userResult)) {
@@ -183,7 +190,7 @@ export const createUserDetailStore = (
           const isSelfUser = deps.currentUserId != null && user.id === deps.currentUserId
           set({
             screenState: {
-              status: 'content',
+              status: UserDetailStatus.CONTENT,
               user,
               isSelfUser,
               authorityLevelInput: String(user.authorityLevel),
@@ -202,7 +209,7 @@ export const createUserDetailStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: UserDetailStatus.ERROR,
               error: userResult.error
             }
           })
@@ -214,7 +221,7 @@ export const createUserDetailStore = (
 
     onAuthorityLevelChanged: (value: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UserDetailStatus.CONTENT) {
         return
       }
 
@@ -231,43 +238,43 @@ export const createUserDetailStore = (
 
     onAccountStatusChanged: (value: UserAccountStatus) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UserDetailStatus.CONTENT) {
         set({ screenState: { ...current, accountStatusInput: value, saveError: null } })
       }
     },
 
     onLockoutTypeChanged: (value: AccountLockoutType) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UserDetailStatus.CONTENT) {
         set({ screenState: { ...current, lockoutTypeInput: value, saveError: null } })
       }
     },
 
     onTemporaryLockoutUntilChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UserDetailStatus.CONTENT) {
         set({ screenState: { ...current, temporaryLockoutUntilInput: value, saveError: null } })
       }
     },
 
     onUpdateClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== UserDetailStatus.CONTENT || current.isSaving) {
         return
       }
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
       const authLevel = parseIntegerOrDefault(current.authorityLevelInput, 0)
-      const tempLockout = current.temporaryLockoutUntilInput
+      const tempLockout = current.temporaryLockoutUntilInput.trim().length > 0
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
-        : current.user.temporaryLockoutUntil
+        : null
 
       const updateUserResult = await deps.updateUserUseCase.execute(deps.userId, {
         accountStatus: current.accountStatusInput,
         authorityLevel: authLevel,
         permissionCodes: null,
-        accountLockoutType: current.lockoutTypeInput,
+        lockoutType: current.lockoutTypeInput,
         temporaryLockoutUntil: tempLockout
       })
 
@@ -275,7 +282,7 @@ export const createUserDetailStore = (
         await get().initScreen()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UserDetailStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: updateUserResult.error } })
         }
       }
@@ -283,14 +290,14 @@ export const createUserDetailStore = (
 
     onDeleteClick: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UserDetailStatus.CONTENT) {
         set({ screenState: { ...current, isDeleteConfirmationVisible: true, deleteError: null } })
       }
     },
 
     onConfirmDeleteClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UserDetailStatus.CONTENT) {
         return
       }
 
@@ -301,7 +308,7 @@ export const createUserDetailStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UserDetailStatus.CONTENT) {
           set({ screenState: { ...updated, isDeleting: false, deleteError: deleteUserResult.error } })
         }
       }
@@ -309,14 +316,14 @@ export const createUserDetailStore = (
 
     onDismissDeleteDialog: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UserDetailStatus.CONTENT) {
         set({ screenState: { ...current, isDeleteConfirmationVisible: false } })
       }
     },
 
     onDisableTotpClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isDisablingTotp) {
+      if (current.status !== UserDetailStatus.CONTENT || current.isDisablingTotp) {
         return
       }
 
@@ -327,7 +334,7 @@ export const createUserDetailStore = (
         await get().initScreen()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UserDetailStatus.CONTENT) {
           set({ screenState: { ...updated, isDisablingTotp: false, disableTotpError: disableTotpResult.error } })
         }
       }

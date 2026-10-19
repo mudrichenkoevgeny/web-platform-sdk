@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UnlockMethod, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UnlockMethod, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
 import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unlock/target/unlock-target-input-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('UnlockTargetInputScreen', () => {
   const createMockDeps = (method: UnlockMethod = UnlockMethod.EMAIL): UnlockTargetInputStoreDependencies => ({

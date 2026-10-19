@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react'
-import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
-
-const defaultCommonStrings = new CommonModuleStrings()
 
 export interface FullscreenOverlayLoadingProps extends React.HTMLAttributes<HTMLDivElement> {
   isFixed?: boolean
@@ -22,7 +20,7 @@ export const FullscreenOverlayLoading = forwardRef<HTMLDivElement, FullscreenOve
       >
         <div
           role="status"
-          aria-label={defaultCommonStrings.ui.loading}
+          aria-label={commonStrings.ui.loading}
           className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
         />
       </div>

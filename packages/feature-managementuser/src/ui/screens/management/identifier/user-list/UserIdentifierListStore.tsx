@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import {
-  ManagementUserIdentifierListParamsParser,
-  managementUserIdentifierListParamsSchema
-} from '@mudrichenkoevgeny/shared-foundation'
+
 import type {
   ManagementUserIdentifierListParams,
   UserIdentifierSummary,
@@ -22,25 +19,28 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/management-get-identifiers-use-case'
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null
+/** Status values for {@link UserIdentifierListScreenState}. */
+export enum UserIdentifierListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
 }
 
 /** Discriminated union representing active screen state for {@link UserIdentifierListScreen}. */
 export type UserIdentifierListScreenState =
   | {
       /** Loading state while user identifiers list is initially fetched. */
-      status: 'loading'
+      status: UserIdentifierListStatus.LOADING
     }
   | {
       /** Error state when loading user identifiers list failed. */
-      status: 'error'
+      status: UserIdentifierListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated user identifier items. */
-      status: 'content'
+      status: UserIdentifierListStatus.CONTENT
       /** Pagination state wrapping loaded user identifier summaries. */
       paging: PaginationState<UserIdentifierSummary>
       /** Indicates whether a background action is currently loading. */
@@ -58,7 +58,7 @@ export interface UserIdentifierListStoreDependencies {
   /** Optional currently authenticated user ID. */
   currentUserId?: UserId | null
   /** Administrative use case for fetching user identifiers. */
-  managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
+  managementGetIdentifiersUseCase: Pick<ManagementGetIdentifiersUseCase, 'execute'>
   /** Optional navigation callback when an identifier item is selected. */
   onIdentifierSelect?: (identifierId: string) => void
   /** Navigation callback to return to previous screen. */
@@ -124,26 +124,20 @@ export const createUserIdentifierListStore = (
     try {
       const activeDeps = get().dependencies
       const rawParams = overrideParams ?? activeDeps.searchParams
-      const searchRecord = isRecord(rawParams) ? rawParams : {}
-      const parsedParams = ManagementUserIdentifierListParamsParser.parse({
-        userId: activeDeps.userId,
-        ...searchRecord
-      })
-      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
+      const effectivePageNumber = pageNumber !== 1 ? pageNumber : (rawParams?.pageNumber ?? pageNumber)
 
-      const userIdentifiersResult = await activeDeps.managementGetIdentifiersUseCase.execute(
-        managementUserIdentifierListParamsSchema.parse({
-          ...parsedParams,
-          pageNumber: effectivePageNumber
-        })
-      )
+      const userIdentifiersResult = await activeDeps.managementGetIdentifiersUseCase.execute({
+        userId: activeDeps.userId,
+        ...rawParams,
+        pageNumber: effectivePageNumber
+      })
 
       if (isSuccess(userIdentifiersResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
+        const currentPaging = current.status === UserIdentifierListStatus.CONTENT ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, userIdentifiersResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === UserIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -153,7 +147,7 @@ export const createUserIdentifierListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: UserIdentifierListStatus.CONTENT,
               paging: nextPaging,
               actionLoading: false,
               actionError: null
@@ -162,7 +156,7 @@ export const createUserIdentifierListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === UserIdentifierListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -172,7 +166,7 @@ export const createUserIdentifierListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: UserIdentifierListStatus.ERROR,
               error: userIdentifiersResult.error
             }
           })
@@ -185,36 +179,34 @@ export const createUserIdentifierListStore = (
 
   return createStore<UserIdentifierListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: UserIdentifierListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementUserIdentifierListParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === UserIdentifierListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
-      const parsedParams = isRecord(searchParams) ? ManagementUserIdentifierListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      set({ screenState: { status: UserIdentifierListStatus.LOADING } })
+      const startPage = searchParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementUserIdentifierListParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: UserIdentifierListStatus.CONTENT,
           paging: createInitialPaginationState<UserIdentifierSummary>(),
           actionLoading: false,
           actionError: null
         }
       })
-      const parsedParams = isRecord(searchParams) ? ManagementUserIdentifierListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      const startPage = searchParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== UserIdentifierListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -225,7 +217,7 @@ export const createUserIdentifierListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: UserIdentifierListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
@@ -235,7 +227,7 @@ export const createUserIdentifierListStore = (
 
     onIdentifierDeleted: (identifierId: UserIdentifierId) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UserIdentifierListStatus.CONTENT) {
         return
       }
 

@@ -9,7 +9,7 @@ import {
   FullscreenLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AccountLockoutType, UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAuthProvider, UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
 import {
   UnlockMethodSelectionProvider,
@@ -17,10 +17,8 @@ import {
 } from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
 import type { UnlockMethodSelectionStoreDependencies } from "@/ui/screens/auth/unlock/selection/unlock-method-selection-store";
 
-const defaultUserStrings = new UserModuleStrings()
-
 const UnlockMethodSelectionContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const lockoutType = useUnlockMethodSelectionStore((s) => s.lockoutType)
   const lockoutUntil = useUnlockMethodSelectionStore((s) => s.lockoutUntil)
@@ -164,7 +162,7 @@ export interface UnlockMethodSelectionScreenProps extends React.HTMLAttributes<H
 export const UnlockMethodSelectionScreen = forwardRef<
   HTMLDivElement,
   UnlockMethodSelectionScreenProps
->(({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+>(({ dependencies, strings = userStrings, className, ...rest }, ref) => {
   return (
     <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
       <UnlockMethodSelectionProvider dependencies={dependencies}>

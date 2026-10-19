@@ -15,16 +15,23 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   return Number.isNaN(parsed) ? defaultValue : parsed
 }
 
+/** Status values for {@link EditAuthSettingsScreenState}. */
+export enum EditAuthSettingsStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 export type EditAuthSettingsScreenState =
   | {
-      status: 'loading'
+      status: EditAuthSettingsStatus.LOADING
     }
   | {
-      status: 'error'
+      status: EditAuthSettingsStatus.ERROR
       error: AppError
     }
   | {
-      status: 'content'
+      status: EditAuthSettingsStatus.CONTENT
       enabledProviders: Set<UserAuthProvider>
       maxTotalIdentifiers: string
       maxEmailIdentifiers: string
@@ -94,17 +101,17 @@ export const createEditAuthSettingsStore = (
   let isFetching = false
 
   return createStore<EditAuthSettingsStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: EditAuthSettingsStatus.LOADING },
 
     initScreen: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === EditAuthSettingsStatus.CONTENT) {
         return
       }
       isFetching = true
 
       try {
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: EditAuthSettingsStatus.LOADING } })
         const result = await deps.getManagementAuthSettingsUseCase.execute()
 
         if (isSuccess(result)) {
@@ -116,7 +123,7 @@ export const createEditAuthSettingsStore = (
 
           set({
             screenState: {
-              status: 'content',
+              status: EditAuthSettingsStatus.CONTENT,
               enabledProviders: enabled,
               maxTotalIdentifiers: String(settings.maxTotalIdentifiers),
               maxEmailIdentifiers: String(settings.maxEmailIdentifiers),
@@ -144,7 +151,7 @@ export const createEditAuthSettingsStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: EditAuthSettingsStatus.ERROR,
               error: result.error
             }
           })
@@ -160,7 +167,7 @@ export const createEditAuthSettingsStore = (
 
     onProviderToggled: (provider: UserAuthProvider, enabled: boolean) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== EditAuthSettingsStatus.CONTENT) {
         return
       }
 
@@ -182,140 +189,140 @@ export const createEditAuthSettingsStore = (
 
     onMaxTotalIdentifiersChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxTotalIdentifiers: value, saveError: null } })
       }
     },
 
     onMaxEmailIdentifiersChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxEmailIdentifiers: value, saveError: null } })
       }
     },
 
     onMaxPhoneIdentifiersChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxPhoneIdentifiers: value, saveError: null } })
       }
     },
 
     onMaxIdentifiersPerExternalProviderChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxIdentifiersPerExternalProvider: value, saveError: null } })
       }
     },
 
     onMaxActiveSessionsForOpenUserChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxActiveSessionsForOpenUser: value, saveError: null } })
       }
     },
 
     onMaxActiveSessionsForManagementUserChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxActiveSessionsForManagementUser: value, saveError: null } })
       }
     },
 
     onAccessTokenExpirationSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, accessTokenExpirationSeconds: value, saveError: null } })
       }
     },
 
     onRefreshTokenExpirationSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, refreshTokenExpirationSeconds: value, saveError: null } })
       }
     },
 
     onAccountDeletionGracePeriodSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountDeletionGracePeriodSeconds: value, saveError: null } })
       }
     },
 
     onAccountDeletionCheckIntervalSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountDeletionCheckIntervalSeconds: value, saveError: null } })
       }
     },
 
     onRegistrationEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, isRegistrationEnabled: enabled, saveError: null } })
       }
     },
 
     onOpenEmailBlacklistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, openEmailBlacklistEnabled: enabled, saveError: null } })
       }
     },
 
     onOpenEmailBlacklistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, openEmailBlacklist: value, saveError: null } })
       }
     },
 
     onOpenEmailWhitelistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, openEmailWhitelistEnabled: enabled, saveError: null } })
       }
     },
 
     onOpenEmailWhitelistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, openEmailWhitelist: value, saveError: null } })
       }
     },
 
     onManagementEmailBlacklistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementEmailBlacklistEnabled: enabled, saveError: null } })
       }
     },
 
     onManagementEmailBlacklistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementEmailBlacklist: value, saveError: null } })
       }
     },
 
     onManagementEmailWhitelistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementEmailWhitelistEnabled: enabled, saveError: null } })
       }
     },
 
     onManagementEmailWhitelistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementEmailWhitelist: value, saveError: null } })
       }
     },
 
     onSaveClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditAuthSettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
@@ -375,7 +382,7 @@ export const createEditAuthSettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditAuthSettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: saveResult.error } })
         }
       }
@@ -383,7 +390,7 @@ export const createEditAuthSettingsStore = (
 
     onResetClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditAuthSettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
@@ -394,7 +401,7 @@ export const createEditAuthSettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditAuthSettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: result.error } })
         }
       }

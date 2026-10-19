@@ -37,6 +37,14 @@ export interface OpenIdentifiersApi {
   deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 
   /**
+   * Removes password credential from the specified identifier.
+   *
+   * @param userIdentifierId - Unique user identifier ID
+   * @returns Void result or a mapped failure
+   */
+  deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
+
+  /**
    * Starts linking a new email identifier to the account.
    *
    * @param email - Target email

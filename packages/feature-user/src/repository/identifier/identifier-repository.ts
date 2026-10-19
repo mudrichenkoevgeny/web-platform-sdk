@@ -24,6 +24,9 @@ export interface IdentifierRepository {
   /** Removes an existing identifier from user account. */
   deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
 
+  /** Removes password credential from the specified identifier record. */
+  deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>>
+
   /** Associates a new email identifier with account. */
   addUserIdentifierEmail(email: string, password: string, confirmationCode: string): Promise<AppResult<UserIdentifierPrivate, AppError>>
 

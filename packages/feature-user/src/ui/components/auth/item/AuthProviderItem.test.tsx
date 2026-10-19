@@ -2,10 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthProviderItem } from '@/ui/components/auth/item/AuthProviderItem'
-
-const userStrings = new UserModuleStrings()
 
 describe('AuthProviderItem', () => {
   it('renders provider icon tile and handles click event', async () => {

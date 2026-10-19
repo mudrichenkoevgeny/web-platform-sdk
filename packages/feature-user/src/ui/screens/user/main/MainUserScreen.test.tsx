@@ -2,12 +2,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType, toUserIdOrThrow, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { userPrivateMock } from '@/mock/index'
 import { MainUserScreen, MainUserTestTags } from '@/ui/screens/user/main/MainUserScreen'
 import type { MainUserStoreDependencies } from '@/ui/screens/user/main/main-user-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('MainUserScreen', () => {
   const mockUser = userPrivateMock({

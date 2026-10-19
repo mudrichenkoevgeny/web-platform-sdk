@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { getAppErrorRetryAfterSeconds, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -11,16 +11,25 @@ import type { SendRegistrationConfirmationToEmailUseCase } from '@mudrichenkoevg
 
 export const DEFAULT_OTP_LENGTH = 6
 
+/** Active step in the email registration flow. */
+export enum RegistrationByEmailStep {
+  /** Email entry step. */
+  EMAIL_INPUT = 'email_input',
+  /** Registration code and password entry step. */
+  REGISTRATION_INPUT = 'registration_input'
+}
+
+/** Discriminated union representing active screen state for {@link RegistrationByEmailScreen}. */
 export type RegistrationByEmailScreenState =
   | {
-      step: 'email_input'
+      step: RegistrationByEmailStep.EMAIL_INPUT
       email: string
       isEmailValid: boolean
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      step: 'registration_input'
+      step: RegistrationByEmailStep.REGISTRATION_INPUT
       email: string
       code: string
       codeLength: number
@@ -33,10 +42,10 @@ export type RegistrationByEmailScreenState =
     }
 
 export interface RegistrationByEmailStoreDependencies {
-  registrationRepository: RegistrationRepository
-  sendRegistrationConfirmationToEmailUseCase: SendRegistrationConfirmationToEmailUseCase
-  registrationByEmailUseCase: RegistrationByEmailUseCase
-  validatePasswordUseCase: ValidatePasswordUseCase
+  registrationRepository: Pick<RegistrationRepository, 'getRemainingRegistrationConfirmationDelayInSeconds'>
+  sendRegistrationConfirmationToEmailUseCase: Pick<SendRegistrationConfirmationToEmailUseCase, 'execute'>
+  registrationByEmailUseCase: Pick<RegistrationByEmailUseCase, 'execute'>
+  validatePasswordUseCase: Pick<ValidatePasswordUseCase, 'execute'>
   onBack: () => void
   onFinished: () => void
 }
@@ -69,7 +78,7 @@ export const createRegistrationByEmailStore = (
   }
 
   const defaultState: RegistrationByEmailScreenState = {
-    step: 'email_input',
+    step: RegistrationByEmailStep.EMAIL_INPUT,
     email: '',
     isEmailValid: false,
     actionLoading: false,
@@ -85,7 +94,7 @@ export const createRegistrationByEmailStore = (
 
       timerInterval = setInterval(() => {
         const current = get().screenState
-        if (current.step !== 'registration_input') {
+        if (current.step !== RegistrationByEmailStep.REGISTRATION_INPUT) {
           stopTimer()
           return
         }
@@ -115,7 +124,7 @@ export const createRegistrationByEmailStore = (
 
       onEmailChanged: (email: string) => {
         const current = get().screenState
-        if (current.step !== 'email_input') {
+        if (current.step !== RegistrationByEmailStep.EMAIL_INPUT) {
           return
         }
 
@@ -134,7 +143,7 @@ export const createRegistrationByEmailStore = (
           if (remaining > 0) {
             set({
               screenState: {
-                step: 'registration_input',
+                step: RegistrationByEmailStep.REGISTRATION_INPUT,
                 email,
                 code: '',
                 codeLength: DEFAULT_OTP_LENGTH,
@@ -153,7 +162,7 @@ export const createRegistrationByEmailStore = (
 
       onSendCodeClick: async () => {
         const current = get().screenState
-        if (current.step === 'registration_input') {
+        if (current.step === RegistrationByEmailStep.REGISTRATION_INPUT) {
           if (current.actionLoading || current.resendTimerSeconds > 0) {
             return
           }
@@ -166,9 +175,9 @@ export const createRegistrationByEmailStore = (
             }
           })
 
-          const result = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
-          if (isSuccess(result)) {
-            const retrySeconds = result.data.retryAfterSeconds
+          const sendCodeResult = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
+          if (isSuccess(sendCodeResult)) {
+            const retrySeconds = sendCodeResult.data.retryAfterSeconds
             set({
               screenState: {
                 ...current,
@@ -182,14 +191,14 @@ export const createRegistrationByEmailStore = (
               screenState: {
                 ...current,
                 actionLoading: false,
-                actionError: result.error
+                actionError: sendCodeResult.error
               }
             })
           }
           return
         }
 
-        if (current.step !== 'email_input' || !current.isEmailValid || current.actionLoading) {
+        if (current.step !== RegistrationByEmailStep.EMAIL_INPUT || !current.isEmailValid || current.actionLoading) {
           return
         }
 
@@ -201,12 +210,12 @@ export const createRegistrationByEmailStore = (
           }
         })
 
-        const result = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
-        if (isSuccess(result)) {
-          const retrySeconds = result.data.retryAfterSeconds
+        const sendCodeResult = await deps.sendRegistrationConfirmationToEmailUseCase.execute(current.email)
+        if (isSuccess(sendCodeResult)) {
+          const retrySeconds = sendCodeResult.data.retryAfterSeconds
           set({
             screenState: {
-              step: 'registration_input',
+              step: RegistrationByEmailStep.REGISTRATION_INPUT,
               email: current.email,
               code: '',
               codeLength: DEFAULT_OTP_LENGTH,
@@ -220,14 +229,13 @@ export const createRegistrationByEmailStore = (
           })
           startTimer(retrySeconds)
         } else {
-          const error = result.error
-          const retryAfterSecondsArg = error.args?.retryAfterSeconds ?? error.args?.['retry_after_seconds']
-          const retryAfterSeconds = retryAfterSecondsArg ? Number(retryAfterSecondsArg) : 0
+          const error = sendCodeResult.error
+          const retryAfterSeconds = getAppErrorRetryAfterSeconds(error)
 
           if (retryAfterSeconds > 0) {
             set({
               screenState: {
-                step: 'registration_input',
+                step: RegistrationByEmailStep.REGISTRATION_INPUT,
                 email: current.email,
                 code: '',
                 codeLength: DEFAULT_OTP_LENGTH,
@@ -254,7 +262,7 @@ export const createRegistrationByEmailStore = (
 
       onCodeChanged: (code: string) => {
         const current = get().screenState
-        if (current.step !== 'registration_input') {
+        if (current.step !== RegistrationByEmailStep.REGISTRATION_INPUT) {
           return
         }
 
@@ -271,16 +279,16 @@ export const createRegistrationByEmailStore = (
 
       onPasswordChanged: async (password: string) => {
         const current = get().screenState
-        if (current.step !== 'registration_input') {
+        if (current.step !== RegistrationByEmailStep.REGISTRATION_INPUT) {
           return
         }
 
-        const passResult = await deps.validatePasswordUseCase.execute(password)
+        const validatePasswordResult = await deps.validatePasswordUseCase.execute(password)
         const isPasswordValid =
-          isSuccess(passResult) ||
-          (!isSuccess(passResult) &&
-            (passResult.error.code === ClientSecurityErrorCodes.PASSWORD_TOO_SHORT ||
-              passResult.error.code === ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE))
+          isSuccess(validatePasswordResult) ||
+          (!isSuccess(validatePasswordResult) &&
+            (validatePasswordResult.error.code === ClientSecurityErrorCodes.PASSWORD_TOO_SHORT ||
+              validatePasswordResult.error.code === ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE))
 
         set({
           screenState: {
@@ -294,7 +302,7 @@ export const createRegistrationByEmailStore = (
 
       onTogglePasswordVisibility: () => {
         const current = get().screenState
-        if (current.step !== 'registration_input') {
+        if (current.step !== RegistrationByEmailStep.REGISTRATION_INPUT) {
           return
         }
 
@@ -309,7 +317,7 @@ export const createRegistrationByEmailStore = (
       onRegisterClick: async () => {
         const current = get().screenState
         if (
-          current.step !== 'registration_input' ||
+          current.step !== RegistrationByEmailStep.REGISTRATION_INPUT ||
           current.code.length !== current.codeLength ||
           !current.isPasswordValid ||
           current.password.length === 0 ||
@@ -326,8 +334,8 @@ export const createRegistrationByEmailStore = (
           }
         })
 
-        const passResult = await deps.validatePasswordUseCase.execute(current.password)
-        if (!isSuccess(passResult)) {
+        const validatePasswordResult = await deps.validatePasswordUseCase.execute(current.password)
+        if (!isSuccess(validatePasswordResult)) {
           set({
             screenState: {
               ...current,
@@ -338,23 +346,23 @@ export const createRegistrationByEmailStore = (
           return
         }
 
-        const result = await deps.registrationByEmailUseCase.execute(
+        const registrationResult = await deps.registrationByEmailUseCase.execute(
           current.email,
           current.password,
           current.code
         )
 
-        if (isSuccess(result)) {
+        if (isSuccess(registrationResult)) {
           stopTimer()
           deps.onFinished()
         } else {
           const updated = get().screenState
-          if (updated.step === 'registration_input') {
+          if (updated.step === RegistrationByEmailStep.REGISTRATION_INPUT) {
             set({
               screenState: {
                 ...updated,
                 actionLoading: false,
-                actionError: result.error
+                actionError: registrationResult.error
               }
             })
           }
@@ -363,11 +371,11 @@ export const createRegistrationByEmailStore = (
 
       onBackClick: () => {
         const current = get().screenState
-        if (current.step === 'registration_input') {
+        if (current.step === RegistrationByEmailStep.REGISTRATION_INPUT) {
           stopTimer()
           set({
             screenState: {
-              step: 'email_input',
+              step: RegistrationByEmailStep.EMAIL_INPUT,
               email: current.email,
               isEmailValid: FieldValidator.isValidEmail(current.email),
               actionLoading: false,

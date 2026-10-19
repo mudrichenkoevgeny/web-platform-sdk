@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -17,13 +17,12 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   TotpMainProvider,
+  TotpMainStatus,
   useTotpMainStore
 } from '@/ui/screens/user/totp/main/totp-main-store'
 import type { TotpMainStoreDependencies } from "@/ui/screens/user/totp/main/totp-main-store";
 
 const QR_CODE_SIZE_PX = 180
-
-const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Automation test tags for {@link TotpMainScreen}.
@@ -54,7 +53,7 @@ export const TotpMainTestTags = {
 }
 
 const TotpMainContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = useTotpMainStore((s) => s.screenState)
   const loadTotpStatus = useTotpMainStore((s) => s.loadTotpStatus)
@@ -74,255 +73,268 @@ const TotpMainContent: React.FC<{ strings?: UserModuleStrings }> = ({
     loadTotpStatus()
   }, [loadTotpStatus])
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
-  }
-
-  if (screenState.status === 'error') {
-    return (
-      <FullscreenError
-        data-testid={TotpMainTestTags.GLOBAL_ERROR_TEXT}
-        error={screenState.error}
-        onRetry={onSetupClick}
-        onBack={onBackClick}
-        title={strings.ui.totpMain}
-      />
-    )
-  }
-
   const handleCopySecretKey = async (secretKey: string) => {
     await navigator.clipboard.writeText(secretKey)
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 2000)
   }
 
-  return (
-    <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton
-          onClick={onBackClick}
-          data-testid={TotpMainTestTags.BACK_BUTTON}
+  switch (screenState.status) {
+    case TotpMainStatus.LOADING:
+      return <FullscreenLoading />
+
+    case TotpMainStatus.ERROR:
+      return (
+        <FullscreenError
+          data-testid={TotpMainTestTags.GLOBAL_ERROR_TEXT}
+          error={screenState.error}
+          onRetry={onSetupClick}
+          onBack={onBackClick}
+          title={strings.ui.totpMain}
         />
-        <CoreScreenTitleText
-          text={strings.ui.totpMain}
-          className="absolute left-1/2 -translate-x-1/2"
-          data-testid={TotpMainTestTags.TITLE}
-        />
-        <div className="w-10" />
-      </div>
+      )
 
-      <div className="w-full flex-1 flex flex-col items-center justify-center my-auto">
-        {screenState.status === 'disabled' && (
-          <div className="w-full flex flex-col items-center gap-4 text-center">
-            <p
-              className="text-sm text-muted-foreground max-w-sm"
-              data-testid={TotpMainTestTags.DISABLED_DESC_TEXT}
-            >
-              {strings.ui.totpDisabledDesc}
-            </p>
-
-            <div className="w-full max-w-xs pt-4">
-              <CoreButton
-                type="button"
-                label={strings.ui.setupTotp}
-                onClick={onSetupClick}
-                disabled={screenState.actionLoading}
-                data-testid={TotpMainTestTags.SETUP_TOTP_BUTTON}
-              />
-            </div>
-
-            {screenState.actionError && (
-              <CoreErrorText
-                text={errorParser.parse(screenState.actionError) ?? ''}
-                data-testid={TotpMainTestTags.DISABLED_ACTION_ERROR_TEXT}
-              />
-            )}
+    case TotpMainStatus.DISABLED:
+    case TotpMainStatus.SETUP_IN_PROGRESS:
+    case TotpMainStatus.ENABLED:
+      return (
+        <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
+          <div className="w-full flex items-center justify-between relative mb-4">
+            <CoreBackButton
+              onClick={onBackClick}
+              data-testid={TotpMainTestTags.BACK_BUTTON}
+            />
+            <CoreScreenTitleText
+              text={strings.ui.totpMain}
+              className="absolute left-1/2 -translate-x-1/2"
+              data-testid={TotpMainTestTags.TITLE}
+            />
+            <div className="w-10" />
           </div>
-        )}
 
-        {screenState.status === 'setupInProgress' && (
-          <div className="w-full flex flex-col items-center gap-4 text-center max-w-md">
-            <h3
-              className="text-base font-bold text-surface-foreground"
-              data-testid={TotpMainTestTags.STEP1_TITLE}
-            >
-              {strings.ui.totpSetupStep1}
-            </h3>
-            <p
-              className="text-xs text-muted-foreground"
-              data-testid={TotpMainTestTags.STEP1_DESC}
-            >
-              {strings.ui.totpSetupStep1Desc}
-            </p>
+          <div className="w-full flex-1 flex flex-col items-center justify-center my-auto">
+            {(() => {
+              switch (screenState.status) {
+                case TotpMainStatus.DISABLED:
+                  return (
+                    <div className="w-full flex flex-col items-center gap-4 text-center">
+                      <p
+                        className="text-sm text-muted-foreground max-w-sm"
+                        data-testid={TotpMainTestTags.DISABLED_DESC_TEXT}
+                      >
+                        {strings.ui.totpDisabledDesc}
+                      </p>
 
+                      <div className="w-full max-w-xs pt-4">
+                        <CoreButton
+                          type="button"
+                          label={strings.ui.setupTotp}
+                          onClick={onSetupClick}
+                          disabled={screenState.actionLoading}
+                          data-testid={TotpMainTestTags.SETUP_TOTP_BUTTON}
+                        />
+                      </div>
+
+                      {screenState.actionError && (
+                        <CoreErrorText
+                          text={errorParser.parse(screenState.actionError) ?? ''}
+                          data-testid={TotpMainTestTags.DISABLED_ACTION_ERROR_TEXT}
+                        />
+                      )}
+                    </div>
+                  )
+
+                case TotpMainStatus.SETUP_IN_PROGRESS:
+                  return (
+                    <div className="w-full flex flex-col items-center gap-4 text-center max-w-md">
+                      <h3
+                        className="text-base font-bold text-surface-foreground"
+                        data-testid={TotpMainTestTags.STEP1_TITLE}
+                      >
+                        {strings.ui.totpSetupStep1}
+                      </h3>
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={TotpMainTestTags.STEP1_DESC}
+                      >
+                        {strings.ui.totpSetupStep1Desc}
+                      </p>
+
+                      <div
+                        className="p-3 bg-white rounded-lg border border-border shadow-sm my-2 flex items-center justify-center"
+                        data-testid={TotpMainTestTags.QR_CODE_BOX}
+                      >
+                        <QRCodeSVG
+                          value={screenState.setup.otpAuthUrl}
+                          size={QR_CODE_SIZE_PX}
+                          bgColor="#FFFFFF"
+                          fgColor="#000000"
+                          level="M"
+                        />
+                      </div>
+
+                      <div className="flex flex-col items-center gap-1">
+                        <span
+                          className="text-xs text-muted-foreground"
+                          data-testid={TotpMainTestTags.MANUAL_KEY_LABEL}
+                        >
+                          {strings.ui.totpManualKey}
+                        </span>
+                        <div className="flex items-center gap-2 bg-accent/40 px-3 py-1.5 rounded-md border border-border">
+                          <span
+                            className="font-mono text-sm font-bold tracking-wider text-primary"
+                            data-testid={TotpMainTestTags.SECRET_KEY_TEXT}
+                          >
+                            {screenState.setup.secretKey}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopySecretKey(screenState.setup.secretKey)}
+                            className="p-1 hover:bg-accent rounded text-muted-foreground transition-colors"
+                            title="Copy secret key"
+                            data-testid={TotpMainTestTags.COPY_SECRET_KEY_BUTTON}
+                          >
+                            <CoreIcon src={icons.copy} size={16} />
+                          </button>
+                        </div>
+                        {isCopied && (
+                          <span className="text-xs text-primary font-semibold animate-pulse">
+                            Copied!
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="w-full border-t border-border my-2 pt-4 flex flex-col items-center gap-3">
+                        <h3
+                          className="text-base font-bold text-surface-foreground"
+                          data-testid={TotpMainTestTags.STEP2_TITLE}
+                        >
+                          {strings.ui.totpSetupStep2}
+                        </h3>
+                        <p
+                          className="text-xs text-muted-foreground"
+                          data-testid={TotpMainTestTags.STEP2_DESC}
+                        >
+                          {strings.ui.totpSetupStep2Desc}
+                        </p>
+
+                        <CoreCodeTextField
+                          value={screenState.code}
+                          onChange={(e) => onCodeChanged(e.target.value)}
+                          maxLength={6}
+                          placeholder="000000"
+                          disabled={screenState.actionLoading}
+                          isError={Boolean(screenState.actionError)}
+                          data-testid={TotpMainTestTags.CODE_INPUT}
+                        />
+
+                        {screenState.actionError && (
+                          <CoreErrorText
+                            text={errorParser.parse(screenState.actionError) ?? ''}
+                            data-testid={TotpMainTestTags.SETUP_ACTION_ERROR_TEXT}
+                          />
+                        )}
+
+                        <div className="w-full pt-2">
+                          <CoreButton
+                            type="button"
+                            label={strings.ui.confirm}
+                            onClick={onConfirmSetupClick}
+                            disabled={!screenState.canConfirm}
+                            data-testid={TotpMainTestTags.CONFIRM_SETUP_BUTTON}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )
+
+                case TotpMainStatus.ENABLED:
+                  return (
+                    <div className="w-full flex flex-col items-center gap-4 text-center max-w-sm">
+                      <h3
+                        className="text-base font-bold text-primary"
+                        data-testid={TotpMainTestTags.ENABLED_TITLE}
+                      >
+                        {strings.ui.totpEnabledTitle}
+                      </h3>
+                      <p
+                        className="text-xs text-muted-foreground"
+                        data-testid={TotpMainTestTags.ENABLED_DESC}
+                      >
+                        {strings.ui.totpEnabledDesc}
+                      </p>
+
+                      <div className="w-full flex flex-col gap-2 pt-4">
+                        <CoreButton
+                          type="button"
+                          label={strings.ui.recoveryCodesTitle}
+                          onClick={onRecoveryCodesClick}
+                          disabled={screenState.actionLoading}
+                          data-testid={TotpMainTestTags.RECOVERY_CODES_BUTTON}
+                        />
+
+                        <CoreButton
+                          type="button"
+                          label={strings.ui.disableTotp}
+                          onClick={onDisableClick}
+                          disabled={screenState.actionLoading}
+                          className="bg-error hover:bg-error/90 text-error-foreground"
+                          data-testid={TotpMainTestTags.DISABLE_TOTP_BUTTON}
+                        />
+                      </div>
+
+                      {screenState.actionError && (
+                        <CoreErrorText
+                          text={errorParser.parse(screenState.actionError) ?? ''}
+                          data-testid={TotpMainTestTags.ENABLED_ACTION_ERROR_TEXT}
+                        />
+                      )}
+                    </div>
+                  )
+
+                default:
+                  return null
+              }
+            })()}
+          </div>
+
+          {screenState.status === TotpMainStatus.ENABLED && screenState.showDisableConfirmation && (
             <div
-              className="p-3 bg-white rounded-lg border border-border shadow-sm my-2 flex items-center justify-center"
-              data-testid={TotpMainTestTags.QR_CODE_BOX}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="disable-totp-dialog-title"
+              aria-describedby="disable-totp-dialog-desc"
+              className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={onDismissDialogs}
             >
-              <QRCodeSVG
-                value={screenState.setup.otpAuthUrl}
-                size={QR_CODE_SIZE_PX}
-                bgColor="#FFFFFF"
-                fgColor="#000000"
-                level="M"
-              />
-            </div>
-
-            <div className="flex flex-col items-center gap-1">
-              <span
-                className="text-xs text-muted-foreground"
-                data-testid={TotpMainTestTags.MANUAL_KEY_LABEL}
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
               >
-                {strings.ui.totpManualKey}
-              </span>
-              <div className="flex items-center gap-2 bg-accent/40 px-3 py-1.5 rounded-md border border-border">
-                <span
-                  className="font-mono text-sm font-bold tracking-wider text-primary"
-                  data-testid={TotpMainTestTags.SECRET_KEY_TEXT}
-                >
-                  {screenState.setup.secretKey}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopySecretKey(screenState.setup.secretKey)}
-                  className="p-1 hover:bg-accent rounded text-muted-foreground transition-colors"
-                  title="Copy secret key"
-                  data-testid={TotpMainTestTags.COPY_SECRET_KEY_BUTTON}
-                >
-                  <CoreIcon src={icons.copy} size={16} />
-                </button>
-              </div>
-              {isCopied && (
-                <span className="text-xs text-primary font-semibold animate-pulse">
-                  Copied!
-                </span>
-              )}
-            </div>
-
-            <div className="w-full border-t border-border my-2 pt-4 flex flex-col items-center gap-3">
-              <h3
-                className="text-base font-bold text-surface-foreground"
-                data-testid={TotpMainTestTags.STEP2_TITLE}
-              >
-                {strings.ui.totpSetupStep2}
-              </h3>
-              <p
-                className="text-xs text-muted-foreground"
-                data-testid={TotpMainTestTags.STEP2_DESC}
-              >
-                {strings.ui.totpSetupStep2Desc}
-              </p>
-
-              <CoreCodeTextField
-                value={screenState.code}
-                onChange={(e) => onCodeChanged(e.target.value)}
-                maxLength={6}
-                placeholder="000000"
-                disabled={screenState.actionLoading}
-                isError={Boolean(screenState.actionError)}
-                data-testid={TotpMainTestTags.CODE_INPUT}
-              />
-
-              {screenState.actionError && (
-                <CoreErrorText
-                  text={errorParser.parse(screenState.actionError) ?? ''}
-                  data-testid={TotpMainTestTags.SETUP_ACTION_ERROR_TEXT}
-                />
-              )}
-
-              <div className="w-full pt-2">
-                <CoreButton
-                  type="button"
-                  label={strings.ui.confirm}
-                  onClick={onConfirmSetupClick}
-                  disabled={!screenState.canConfirm}
-                  data-testid={TotpMainTestTags.CONFIRM_SETUP_BUTTON}
-                />
+                <h3 id="disable-totp-dialog-title" className="text-lg font-bold text-surface-foreground">
+                  {strings.ui.dialogConfirmTitle}
+                </h3>
+                <p id="disable-totp-dialog-desc" className="text-sm text-muted-foreground">
+                  {strings.ui.disableTotpConfirmMsg}
+                </p>
+                <div className="flex justify-end gap-2 pt-2">
+                  <CoreTextButton
+                    type="button"
+                    label={strings.ui.dialogCancel}
+                    onClick={onDismissDialogs}
+                  />
+                  <CoreTextButton
+                    type="button"
+                    label={strings.ui.dialogConfirm}
+                    onClick={onConfirmDisable}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {screenState.status === 'enabled' && (
-          <div className="w-full flex flex-col items-center gap-4 text-center max-w-sm">
-            <h3
-              className="text-base font-bold text-primary"
-              data-testid={TotpMainTestTags.ENABLED_TITLE}
-            >
-              {strings.ui.totpEnabledTitle}
-            </h3>
-            <p
-              className="text-xs text-muted-foreground"
-              data-testid={TotpMainTestTags.ENABLED_DESC}
-            >
-              {strings.ui.totpEnabledDesc}
-            </p>
-
-            <div className="w-full flex flex-col gap-2 pt-4">
-              <CoreButton
-                type="button"
-                label={strings.ui.recoveryCodesTitle}
-                onClick={onRecoveryCodesClick}
-                disabled={screenState.actionLoading}
-                data-testid={TotpMainTestTags.RECOVERY_CODES_BUTTON}
-              />
-
-              <CoreButton
-                type="button"
-                label={strings.ui.disableTotp}
-                onClick={onDisableClick}
-                disabled={screenState.actionLoading}
-                className="bg-error hover:bg-error/90 text-error-foreground"
-                data-testid={TotpMainTestTags.DISABLE_TOTP_BUTTON}
-              />
-            </div>
-
-            {screenState.actionError && (
-              <CoreErrorText
-                text={errorParser.parse(screenState.actionError) ?? ''}
-                data-testid={TotpMainTestTags.ENABLED_ACTION_ERROR_TEXT}
-              />
-            )}
-          </div>
-        )}
-      </div>
-
-      {screenState.status === 'enabled' && screenState.showDisableConfirmation && (
-        <div
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="disable-totp-dialog-title"
-          aria-describedby="disable-totp-dialog-desc"
-          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={onDismissDialogs}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
-          >
-            <h3 id="disable-totp-dialog-title" className="text-lg font-bold text-surface-foreground">
-              {strings.ui.dialogConfirmTitle}
-            </h3>
-            <p id="disable-totp-dialog-desc" className="text-sm text-muted-foreground">
-              {strings.ui.disableTotpConfirmMsg}
-            </p>
-            <div className="flex justify-end gap-2 pt-2">
-              <CoreTextButton
-                type="button"
-                label={strings.ui.dialogCancel}
-                onClick={onDismissDialogs}
-              />
-              <CoreTextButton
-                type="button"
-                label={strings.ui.dialogConfirm}
-                onClick={onConfirmDisable}
-              />
-            </div>
-          </div>
+          )}
         </div>
-      )}
-    </div>
-  )
+      )
+  }
 }
 
 /**
@@ -337,7 +349,7 @@ export interface TotpMainScreenProps extends React.HTMLAttributes<HTMLDivElement
  * Screen component for managing Two-Factor Authentication (TOTP setup, QR code display, and disabling).
  */
 export const TotpMainScreen = forwardRef<HTMLDivElement, TotpMainScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <TotpMainProvider dependencies={dependencies}>

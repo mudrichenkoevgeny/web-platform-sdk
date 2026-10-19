@@ -2,12 +2,10 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventListScreen, AuditEventListTestTags } from '@/ui/screens/management/audit/list/AuditEventListScreen'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('AuditEventListScreen', () => {
   const createMockDeps = (): AuditEventListStoreDependencies => ({
@@ -15,13 +13,13 @@ describe('AuditEventListScreen', () => {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [auditEventMock()],
-          pageNumber: 1,
-          pageSize: 20,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
+          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
           totalItems: 1,
           totalPages: 1
         })
       )
-    } as unknown as AuditEventListStoreDependencies['getAuditEventsUseCase'],
+    },
     onNavigateToEventDetail: vi.fn(),
     onBack: vi.fn()
   })

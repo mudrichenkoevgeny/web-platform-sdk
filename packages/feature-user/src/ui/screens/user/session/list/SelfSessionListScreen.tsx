@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -16,11 +16,10 @@ import {
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
 import {
   SelfSessionListProvider,
+  SelfSessionListStatus,
   useSelfSessionListStore
 } from '@/ui/screens/user/session/list/self-session-list-store'
 import type { SelfSessionListStoreDependencies } from '@/ui/screens/user/session/list/self-session-list-store'
-
-const defaultUserStrings = new UserModuleStrings()
 
 export const SelfSessionListTestTags = {
   TITLE: 'SelfSessionList_Title',
@@ -33,7 +32,7 @@ export const SelfSessionListTestTags = {
 }
 
 const SelfSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = useSelfSessionListStore((s) => s.screenState)
   const onRefresh = useSelfSessionListStore((s) => s.onRefresh)
@@ -44,7 +43,7 @@ const SelfSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onBackClick = useSelfSessionListStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
-  const isContent = screenState.status === 'content'
+  const isContent = screenState.status === SelfSessionListStatus.CONTENT
   const hasMore = isContent ? hasMorePages(screenState.paging) : false
   const isNextPageLoading = isContent ? Boolean(screenState.paging.isNextPageLoading) : false
 
@@ -54,93 +53,99 @@ const SelfSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     isLoading: isNextPageLoading
   })
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
-  }
+  switch (screenState.status) {
+    case SelfSessionListStatus.LOADING:
+      return <FullscreenLoading />
 
-  if (screenState.status === 'error') {
-    return (
-      <FullscreenError
-        data-testid={SelfSessionListTestTags.GLOBAL_ERROR_TEXT}
-        error={screenState.error}
-        onRetry={onRefresh}
-        onBack={onBackClick}
-        title={strings.ui.sessions}
-      />
-    )
-  }
-
-  const { items, currentSessionId, actionLoading, actionError } = screenState
-
-  return (
-    <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-hidden">
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton
-          onClick={onBackClick}
-          data-testid={SelfSessionListTestTags.BACK_BUTTON}
+    case SelfSessionListStatus.ERROR:
+      return (
+        <FullscreenError
+          data-testid={SelfSessionListTestTags.GLOBAL_ERROR_TEXT}
+          error={screenState.error}
+          onRetry={onRefresh}
+          onBack={onBackClick}
+          title={strings.ui.sessions}
         />
-        <CoreScreenTitleText
-          text={strings.ui.sessions}
-          className="absolute left-1/2 -translate-x-1/2"
-          data-testid={SelfSessionListTestTags.TITLE}
-        />
-        <CoreTextButton
-          type="button"
-          label="Refresh"
-          onClick={onRefresh}
-          disabled={actionLoading}
-          data-testid={SelfSessionListTestTags.REFRESH_BUTTON}
-        />
-      </div>
+      )
 
-      <div
-        className="w-full flex-1 overflow-y-auto flex flex-col gap-3 my-auto max-w-md mx-auto pr-1"
-        data-testid={SelfSessionListTestTags.SESSION_LIST}
-      >
-        {items.map((session) => (
-          session.id ? (
-            <SessionItem
-              key={session.id}
-              session={session}
-              isCurrentSession={currentSessionId === session.id}
-              enabled={!actionLoading}
-              onRevokeClick={() => onRevokeSessionClick(session.id!)}
-              onSessionClick={() => onSessionClick(session)}
-              strings={strings}
+    case SelfSessionListStatus.CONTENT: {
+      const { items, currentSessionId, actionLoading, actionError } = screenState
+
+      return (
+        <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-hidden">
+          <div className="w-full flex items-center justify-between relative mb-4">
+            <CoreBackButton
+              onClick={onBackClick}
+              data-testid={SelfSessionListTestTags.BACK_BUTTON}
             />
-          ) : null
-        ))}
-
-        {hasMore && <div ref={sentinelRef} className="h-4 w-full" />}
-
-        {isNextPageLoading && (
-          <div className="w-full py-2 text-center text-xs text-muted-foreground">
-            Loading...
+            <CoreScreenTitleText
+              text={strings.ui.sessions}
+              className="absolute left-1/2 -translate-x-1/2"
+              data-testid={SelfSessionListTestTags.TITLE}
+            />
+            <CoreTextButton
+              type="button"
+              label={commonStrings.ui.refresh}
+              onClick={onRefresh}
+              disabled={actionLoading}
+              data-testid={SelfSessionListTestTags.REFRESH_BUTTON}
+            />
           </div>
-        )}
-      </div>
 
-      <div className="w-full max-w-md mx-auto pt-4 flex flex-col gap-2">
-        {items.length > 1 && (
-          <CoreButton
-            type="button"
-            label={strings.ui.sessionRevokeAllOthers}
-            onClick={onRevokeAllOtherSessionsClick}
-            disabled={actionLoading}
-            className="bg-error hover:bg-error/90 text-error-foreground"
-            data-testid={SelfSessionListTestTags.REVOKE_ALL_OTHERS_BUTTON}
-          />
-        )}
+          <div
+            className="w-full flex-1 overflow-y-auto flex flex-col gap-3 my-auto max-w-md mx-auto pr-1"
+            data-testid={SelfSessionListTestTags.SESSION_LIST}
+          >
+            {items.map((session) => {
+              const sessionId = session.id
+              if (!sessionId) {
+                return null
+              }
+              return (
+                <SessionItem
+                  key={sessionId}
+                  session={session}
+                  isCurrentSession={currentSessionId === sessionId}
+                  enabled={!actionLoading}
+                  onRevokeClick={() => onRevokeSessionClick(sessionId)}
+                  onSessionClick={() => onSessionClick(session)}
+                  strings={strings}
+                />
+              )
+            })}
 
-        {actionError && (
-          <CoreErrorText
-            text={errorParser.parse(actionError) ?? ''}
-            data-testid={SelfSessionListTestTags.ACTION_ERROR_TEXT}
-          />
-        )}
-      </div>
-    </div>
-  )
+            {hasMore && <div ref={sentinelRef} className="h-4 w-full" />}
+
+            {isNextPageLoading && (
+              <div className="w-full py-2 text-center text-xs text-muted-foreground">
+                {commonStrings.ui.loading}
+              </div>
+            )}
+          </div>
+
+          <div className="w-full max-w-md mx-auto pt-4 flex flex-col gap-2">
+            {items.length > 1 && (
+              <CoreButton
+                type="button"
+                label={strings.ui.sessionRevokeAllOthers}
+                onClick={onRevokeAllOtherSessionsClick}
+                disabled={actionLoading}
+                className="bg-error hover:bg-error/90 text-error-foreground"
+                data-testid={SelfSessionListTestTags.REVOKE_ALL_OTHERS_BUTTON}
+              />
+            )}
+
+            {actionError && (
+              <CoreErrorText
+                text={errorParser.parse(actionError) ?? ''}
+                data-testid={SelfSessionListTestTags.ACTION_ERROR_TEXT}
+              />
+            )}
+          </div>
+        </div>
+      )
+    }
+  }
 }
 
 const SelfSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
@@ -161,7 +166,7 @@ export interface SelfSessionListScreenProps extends React.HTMLAttributes<HTMLDiv
 }
 
 export const SelfSessionListScreen = forwardRef<HTMLDivElement, SelfSessionListScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <SelfSessionListProvider dependencies={dependencies}>

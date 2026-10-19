@@ -1,8 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react'
-import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
-
-const defaultCommonStrings = new CommonModuleStrings()
 
 export const FULLSCREEN_LOADING_DELAY_MILLIS = 250
 
@@ -41,7 +39,7 @@ export const FullscreenLoading = forwardRef<HTMLDivElement, FullscreenLoadingPro
       >
         <div
           role="status"
-          aria-label={defaultCommonStrings.ui.loading}
+          aria-label={commonStrings.ui.loading}
           className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
         />
       </div>

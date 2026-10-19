@@ -1,11 +1,8 @@
 import React, { forwardRef } from 'react'
-import { UserAuthProvider, UserModuleStrings, formatLocalizedString, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon, formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
 import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
-
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
 
 /**
  * Props for the {@link SessionItem} component.
@@ -37,19 +34,15 @@ export interface SessionItemProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   strings?: UserModuleStrings
 }
 
+const authProviderIcons: Record<UserAuthProvider, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  [UserAuthProvider.EMAIL]: icons.email,
+  [UserAuthProvider.PHONE]: icons.phone,
+  [UserAuthProvider.GOOGLE]: icons.google,
+  [UserAuthProvider.APPLE]: icons.apple
+}
+
 function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentType<React.SVGProps<SVGSVGElement>> {
-  switch (authProvider) {
-    case UserAuthProvider.EMAIL:
-      return icons.email
-    case UserAuthProvider.PHONE:
-      return icons.phone
-    case UserAuthProvider.GOOGLE:
-      return icons.google
-    case UserAuthProvider.APPLE:
-      return icons.apple
-    default:
-      return icons.email
-  }
+  return authProviderIcons[authProvider] ?? icons.email
 }
 
 /**
@@ -63,7 +56,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
       enabled = true,
       isCurrentSession = false,
       onSessionClick,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       ...rest
     },
@@ -73,7 +66,7 @@ export const SessionItem = forwardRef<HTMLDivElement, SessionItemProps>(
     const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
     const formattedLastAccessed = formatEpochMillisToDateTime(session.lastAccessedAt) ?? String(session.lastAccessedAt)
 
-    const deviceName = session.clientDeviceInfo.deviceName ?? defaultCommonStrings.ui.notAvailable
+    const deviceName = session.clientDeviceInfo.deviceName ?? '-'
 
     const iconClassName = cn(
       session.identifierAuthProvider === UserAuthProvider.GOOGLE ? '' : 'text-primary-foreground',

@@ -1,5 +1,5 @@
 import React, { forwardRef, useState } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreCodeTextField,
@@ -7,8 +7,6 @@ import {
   CoreScreenTitleText
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'
-
-const defaultUserStrings = new UserModuleStrings()
 
 export interface MfaChallengeDialogProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onConfirm'> {
   request: MfaChallengeRequest
@@ -23,7 +21,7 @@ export const MfaChallengeDialog = forwardRef<HTMLDivElement, MfaChallengeDialogP
       request: _request,
       onConfirm,
       onCancel,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       ...rest
     },

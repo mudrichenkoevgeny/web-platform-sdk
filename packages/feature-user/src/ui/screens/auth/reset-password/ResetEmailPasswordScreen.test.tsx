@@ -2,30 +2,28 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { ResetEmailPasswordScreen } from '@/ui/screens/auth/reset-password/ResetEmailPasswordScreen'
 import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/reset-password/reset-email-password-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('ResetEmailPasswordScreen', () => {
   const createMockDeps = (): ResetEmailPasswordStoreDependencies => ({
     resetPasswordRepository: {
       getRemainingResetPasswordConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    } as unknown as ResetEmailPasswordStoreDependencies['resetPasswordRepository'],
+    },
     sendResetPasswordConfirmationToEmailUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           retryAfterSeconds: 30
         })
       )
-    } as unknown as ResetEmailPasswordStoreDependencies['sendResetPasswordConfirmationToEmailUseCase'],
+    },
     resetEmailPasswordUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as ResetEmailPasswordStoreDependencies['resetEmailPasswordUseCase'],
+    },
     validatePasswordUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as ResetEmailPasswordStoreDependencies['validatePasswordUseCase'],
+    },
     onBack: vi.fn(),
     onFinished: vi.fn()
   })
@@ -78,7 +76,7 @@ describe('ResetEmailPasswordScreen', () => {
     await user.type(codeInput, '123456')
     await user.type(passwordInput, 'NewPassword123!')
 
-    const confirmBtn = screen.getByRole('button', { name: userStrings.ui.confirm })
+    const confirmBtn = screen.getByRole('button', { name: userStrings.ui.dialogConfirm })
     await user.click(confirmBtn)
 
     expect(deps.resetEmailPasswordUseCase.execute).toHaveBeenCalledWith('user@example.com', 'NewPassword123!', '123456')

@@ -23,7 +23,7 @@ export interface CreateUserScreenState {
 }
 
 export interface CreateUserStoreDependencies {
-  createUserUseCase: CreateUserUseCase
+  createUserUseCase: Pick<CreateUserUseCase, 'execute'>
   onSuccess: () => void
   onBack: () => void
 }

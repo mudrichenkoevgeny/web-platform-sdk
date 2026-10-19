@@ -23,6 +23,7 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
     totalPages: 0
   })
   public deleteUserIdentifierResult: AppResult<void, AppError> = appResultSuccess(undefined)
+  public deletePasswordResult: AppResult<void, AppError> = appResultSuccess(undefined)
   public addUserIdentifierEmailResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public addUserIdentifierPhoneResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public addUserIdentifierExternalAuthProviderResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
@@ -46,6 +47,12 @@ export class OpenIdentifiersApiMock implements OpenIdentifiersApi {
     _identifierId: UserIdentifierId
   ): Promise<AppResult<void, AppError>> {
     return this.deleteUserIdentifierResult
+  }
+
+  public async deletePassword(
+    _userIdentifierId: UserIdentifierId
+  ): Promise<AppResult<void, AppError>> {
+    return this.deletePasswordResult
   }
 
   public async addUserIdentifierEmail(

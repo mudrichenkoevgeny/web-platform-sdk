@@ -1,11 +1,9 @@
 import React, { forwardRef } from 'react'
-import { CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { commonStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@/utils/cn'
 import { CoreIcon } from '@/ui/components/icon/icon/CoreIcon'
-import { icons } from '@/assets/icons/index.js'
+import { icons } from '@/assets/icons'
 import { CoreTextButton } from '@/ui/components/button/text/CoreTextButton'
-
-const defaultCommonStrings = new CommonModuleStrings()
 
 export interface ListingHeaderBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onRefreshClick?: () => void
@@ -25,7 +23,7 @@ export const ListingHeaderBar = forwardRef<HTMLDivElement, ListingHeaderBarProps
           <button
             type="button"
             onClick={onRefreshClick}
-            aria-label={defaultCommonStrings.ui.refresh}
+            aria-label={commonStrings.ui.refresh}
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <CoreIcon src={icons.refresh} size={20} />
@@ -36,7 +34,7 @@ export const ListingHeaderBar = forwardRef<HTMLDivElement, ListingHeaderBarProps
           <div className="relative">
             <CoreTextButton
               onClick={onOptionsClick}
-              label={defaultCommonStrings.ui.apply}
+              label={userStrings.ui.filter}
               className={cn(hasActiveFilters ? 'font-bold text-primary' : '')}
             />
             {hasActiveFilters && (

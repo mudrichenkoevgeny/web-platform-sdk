@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginWelcomeScreen } from '@/ui/screens/auth/login/welcome/LoginWelcomeScreen'
 import type { LoginWelcomeStoreDependencies } from '@/ui/screens/auth/login/welcome/login-welcome-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('LoginWelcomeScreen', () => {
   const createMockDeps = (): LoginWelcomeStoreDependencies => ({

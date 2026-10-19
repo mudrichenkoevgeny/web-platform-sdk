@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs, SecurityModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs, SecurityModuleStrings, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { SecurityErrorParser } from '@/error/parser/security-error-parser'
 import { SecurityError } from '@/error/model/security-error'
 
 describe('SecurityErrorParser', () => {
-  const parserEn = new SecurityErrorParser(new SecurityModuleStrings(undefined, 'en'))
-  const parserRu = new SecurityErrorParser(new SecurityModuleStrings(undefined, 'ru'))
+  const parserEn = new SecurityErrorParser(new SecurityModuleStrings(undefined, CommonLocales.ENGLISH))
+  const parserRu = new SecurityErrorParser(new SecurityModuleStrings(undefined, CommonLocales.RUSSIAN))
 
   it('parses client password policy validation errors', () => {
     expect(parserEn.parse(SecurityError.passwordPolicyUnavailable())).toBe(
@@ -37,14 +37,14 @@ describe('SecurityErrorParser', () => {
   })
 
   it('supports dynamic language getter function for reactive localizations', () => {
-    let currentLanguage = new SecurityModuleStrings(undefined, 'en')
+    let currentLanguage = new SecurityModuleStrings(undefined, CommonLocales.ENGLISH)
     const dynamicParser = new SecurityErrorParser(() => currentLanguage)
 
     expect(dynamicParser.parse(SecurityError.passwordTooShort(8))).toBe(
       'Password must be at least 8 characters long.'
     )
 
-    currentLanguage = new SecurityModuleStrings(undefined, 'ru')
+    currentLanguage = new SecurityModuleStrings(undefined, CommonLocales.RUSSIAN)
 
     expect(dynamicParser.parse(SecurityError.passwordTooShort(8))).toBe(
       'Пароль должен содержать не менее 8 символов.'

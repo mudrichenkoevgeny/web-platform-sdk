@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { TotpRecoveryCodesScreen, TotpRecoveryCodesTestTags } from '@/ui/screens/user/totp/recovery/TotpRecoveryCodesScreen'
 import type { TotpRecoveryCodesStoreDependencies } from '@/ui/screens/user/totp/recovery/totp-recovery-codes-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('TotpRecoveryCodesScreen', () => {
   const createMockDeps = (): TotpRecoveryCodesStoreDependencies => ({

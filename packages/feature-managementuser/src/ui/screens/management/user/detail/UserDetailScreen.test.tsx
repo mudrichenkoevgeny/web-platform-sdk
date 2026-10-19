@@ -2,27 +2,25 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { type UserId, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserDetailScreen, UserDetailTestTags } from '@/ui/screens/management/user/detail/UserDetailScreen'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
 
-const userStrings = new UserModuleStrings()
-
 describe('UserDetailScreen', () => {
   const createMockDeps = (): UserDetailStoreDependencies => ({
-    userId: 'usr_123' as unknown as UserId,
+    userId: toUserIdOrThrow('usr_123'),
     getUserUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(userDetailsMock()))
-    } as unknown as UserDetailStoreDependencies['getUserUseCase'],
+    },
     updateUserUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(userDetailsMock()))
-    } as unknown as UserDetailStoreDependencies['updateUserUseCase'],
+    },
     deleteUserUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as UserDetailStoreDependencies['deleteUserUseCase'],
+    },
     managementDisableTotpUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as UserDetailStoreDependencies['managementDisableTotpUseCase'],
+    },
     onNavigateToSessions: vi.fn(),
     onNavigateToIdentifiers: vi.fn(),
     onNavigateToAuditEvents: vi.fn(),
@@ -57,7 +55,7 @@ describe('UserDetailScreen', () => {
     deps.currentUserId = deps.userId
     deps.getUserUseCase = {
       execute: vi.fn().mockResolvedValue(appResultSuccess(userDetailsMock({ id: deps.userId })))
-    } as unknown as UserDetailStoreDependencies['getUserUseCase']
+    }
 
     render(
       <ComponentTestHarness>

@@ -2,26 +2,24 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { type UserId, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserIdentifierListScreen, UserIdentifierListTestTags } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
-const userStrings = new UserModuleStrings()
-
 describe('UserIdentifierListScreen', () => {
   const createMockDeps = (): UserIdentifierListStoreDependencies => ({
-    userId: 'usr_123' as unknown as UserId,
+    userId: toUserIdOrThrow('usr_123'),
     managementGetIdentifiersUseCase: {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [userIdentifierMock()],
-          pageNumber: 1,
-          pageSize: 20,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
+          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
           totalItems: 1,
           totalPages: 1
         })
       )
-    } as unknown as UserIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
+    },
     onIdentifierSelect: vi.fn(),
     onBack: vi.fn()
   })

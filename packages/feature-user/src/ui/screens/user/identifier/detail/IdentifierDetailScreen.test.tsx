@@ -1,13 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierDetailScreen, IdentifierDetailTestTags } from '@/ui/screens/user/identifier/detail/IdentifierDetailScreen'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('IdentifierDetailScreen', () => {
   const mockIdentifier: UserIdentifierPrivate = {

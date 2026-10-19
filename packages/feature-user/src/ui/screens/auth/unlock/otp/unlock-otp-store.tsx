@@ -8,12 +8,17 @@ import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/s
 import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
 import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/unlock-by-phone-use-case'
 
+export enum UnlockOtpStatus {
+  LOADING = 'loading',
+  CONTENT = 'content'
+}
+
 export type UnlockOtpScreenState =
   | {
-      status: 'loading'
+      status: UnlockOtpStatus.LOADING
     }
   | {
-      status: 'content'
+      status: UnlockOtpStatus.CONTENT
       codeInput: string
       remainingDelaySeconds: number
       actionLoading: boolean
@@ -64,7 +69,7 @@ export const createUnlockOtpStore = (
     const signal = timerController.signal
 
     const current = get().screenState
-    if (current.status === 'content') {
+    if (current.status === UnlockOtpStatus.CONTENT) {
       set({
         screenState: {
           ...current,
@@ -77,7 +82,7 @@ export const createUnlockOtpStore = (
       seconds,
       (remaining) => {
         const active = get().screenState
-        if (active.status === 'content') {
+        if (active.status === UnlockOtpStatus.CONTENT) {
           set({
             screenState: {
               ...active,
@@ -92,7 +97,7 @@ export const createUnlockOtpStore = (
   }
 
   const defaultContentState: UnlockOtpScreenState = {
-    status: 'content',
+    status: UnlockOtpStatus.CONTENT,
     codeInput: '',
     remainingDelaySeconds: deps.initialDelaySeconds ?? 0,
     actionLoading: false,
@@ -112,7 +117,7 @@ export const createUnlockOtpStore = (
 
     onCodeChanged: (code: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UnlockOtpStatus.CONTENT) {
         return
       }
 
@@ -127,7 +132,7 @@ export const createUnlockOtpStore = (
 
     onUnlockClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== UnlockOtpStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -155,13 +160,13 @@ export const createUnlockOtpStore = (
 
       if (isSuccess(result)) {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockOtpStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false } })
         }
         activeDeps.onUnlockSuccess()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockOtpStatus.CONTENT) {
           set({
             screenState: {
               ...updated,
@@ -175,7 +180,7 @@ export const createUnlockOtpStore = (
 
     onResendCodeClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading || current.remainingDelaySeconds > 0) {
+      if (current.status !== UnlockOtpStatus.CONTENT || current.actionLoading || current.remainingDelaySeconds > 0) {
         return
       }
 
@@ -198,14 +203,14 @@ export const createUnlockOtpStore = (
 
       if (isSuccess(result)) {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockOtpStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false } })
         }
         startTimer(result.data.retryAfterSeconds, get, set)
       } else {
         const error = result.error
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockOtpStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

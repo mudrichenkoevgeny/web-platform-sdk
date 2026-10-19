@@ -1,4 +1,4 @@
-import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 
@@ -8,7 +8,7 @@ import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-dev
 export class ClientDeviceInfoProviderMock implements ClientDeviceInfoProvider {
   public mockDeviceInfo: ClientDeviceInfoPayload = {
     client_type: ClientType.WEB,
-    language: 'en',
+    language: CommonLocales.ENGLISH,
     device_id: null,
     device_name: 'Mock Device',
     app_version: '1.0.0-mock',

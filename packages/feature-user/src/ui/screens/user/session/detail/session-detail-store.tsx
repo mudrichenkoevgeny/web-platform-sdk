@@ -6,21 +6,28 @@ import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
 
+/** Status values for {@link SessionDetailScreenState}. */
+export enum SessionDetailStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 /** Discriminated union representing active screen state for {@link SessionDetailScreen}. */
 export type SessionDetailScreenState =
   | {
       /** Loading state while user session details are being fetched. */
-      status: 'loading'
+      status: SessionDetailStatus.LOADING
     }
   | {
       /** Error state when loading user session details failed. */
-      status: 'error'
+      status: SessionDetailStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing user session private details. */
-      status: 'content'
+      status: SessionDetailStatus.CONTENT
       /** User session private details model. */
       session: UserSessionPrivate
       /** Whether this session is the active session. */
@@ -99,11 +106,11 @@ export const createSessionDetailStore = (
 
   const store = createStore<SessionDetailStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: SessionDetailStatus.LOADING },
 
     initializeSession: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === SessionDetailStatus.CONTENT) {
         return
       }
       isFetching = true
@@ -123,7 +130,7 @@ export const createSessionDetailStore = (
 
           set({
             screenState: {
-              status: 'content',
+              status: SessionDetailStatus.CONTENT,
               session: activeDeps.session,
               isCurrentSession: isSelfActiveSession,
               isSelfUser,
@@ -135,7 +142,7 @@ export const createSessionDetailStore = (
         }
 
         if (targetId && activeDeps.getSessionUseCase) {
-          set({ screenState: { status: 'loading' } })
+          set({ screenState: { status: SessionDetailStatus.LOADING } })
           const sessionResult = await activeDeps.getSessionUseCase.execute(targetId)
 
           if (isSuccess(sessionResult)) {
@@ -148,7 +155,7 @@ export const createSessionDetailStore = (
 
             set({
               screenState: {
-                status: 'content',
+                status: SessionDetailStatus.CONTENT,
                 session: loadedSession,
                 isCurrentSession: isSelfActiveSession,
                 isSelfUser,
@@ -159,7 +166,7 @@ export const createSessionDetailStore = (
           } else {
             set({
               screenState: {
-                status: 'error',
+                status: SessionDetailStatus.ERROR,
                 error: sessionResult.error
               }
             })
@@ -167,7 +174,7 @@ export const createSessionDetailStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: SessionDetailStatus.ERROR,
               error: CommonError.unknown()
             }
           })
@@ -179,7 +186,7 @@ export const createSessionDetailStore = (
 
     onRevokeSessionClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== SessionDetailStatus.CONTENT) {
         return
       }
 
@@ -226,7 +233,7 @@ export const createSessionDetailStore = (
 
     onIdentifierClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== SessionDetailStatus.CONTENT) {
         return
       }
       get().dependencies.onNavigateToIdentifierDetail?.(current.session.identifierId)
@@ -234,7 +241,7 @@ export const createSessionDetailStore = (
 
     onUserClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== SessionDetailStatus.CONTENT) {
         return
       }
       const activeDeps = get().dependencies

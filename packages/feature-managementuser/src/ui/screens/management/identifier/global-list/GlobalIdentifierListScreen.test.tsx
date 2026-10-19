@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalIdentifierListScreen, GlobalIdentifierListTestTags } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
 import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('GlobalIdentifierListScreen', () => {
   const createMockDeps = (): GlobalIdentifierListStoreDependencies => ({
@@ -14,16 +12,16 @@ describe('GlobalIdentifierListScreen', () => {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [userIdentifierMock()],
-          pageNumber: 1,
-          pageSize: 20,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
+          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
           totalItems: 1,
           totalPages: 1
         })
       )
-    } as unknown as GlobalIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
+    },
     managementDeleteIdentifierUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as GlobalIdentifierListStoreDependencies['managementDeleteIdentifierUseCase'],
+    },
     onNavigateToIdentifierDetail: vi.fn(),
     onBack: vi.fn()
   })

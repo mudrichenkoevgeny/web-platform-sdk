@@ -61,6 +61,10 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     return result
   }
 
+  public async deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    return this.openIdentifiersApi.deletePassword(userIdentifierId)
+  }
+
   public async addUserIdentifierEmail(
     email: string,
     password: string,

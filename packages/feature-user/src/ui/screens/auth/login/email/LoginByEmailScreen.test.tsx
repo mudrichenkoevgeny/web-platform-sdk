@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, UserAccountStatus, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByEmailScreen, LoginByEmailTestTags } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
 import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
 
@@ -13,12 +13,12 @@ describe('LoginByEmailScreen', () => {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           userPrivate: {
-            id: 'usr_123',
-            accountStatus: 'ACTIVE'
+            id: toUserIdOrThrow('usr_123'),
+            accountStatus: UserAccountStatus.ACTIVE
           }
         })
       )
-    } as unknown as LoginByEmailStoreDependencies['loginByEmailUseCase'],
+    },
     onNavigateToRegistrationByEmail: vi.fn(),
     onNavigateToForgotPassword: vi.fn(),
     onNavigateToTotp: vi.fn(),

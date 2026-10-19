@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
@@ -18,9 +18,7 @@ import {
 } from '@/ui/screens/management/user/create/CreateUserStore'
 import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
 
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
-
+/** Automation test tags for {@link CreateUserScreen}. */
 export const CreateUserTestTags = {
   BACK_BUTTON: 'CreateUser_BackButton',
   TITLE: 'CreateUser_Title',
@@ -33,38 +31,72 @@ export const CreateUserTestTags = {
   ERROR_TEXT: 'CreateUser_ErrorText'
 }
 
-const getUserAccountStatusLabel = (status: UserAccountStatus, commonStrings: CommonModuleStrings): string => {
+/**
+ * Type guard validating whether a value is a valid {@link UserRole}.
+ *
+ * @param value - Value to test
+ * @returns True if value is a valid {@link UserRole}
+ */
+const isUserRole = (value: unknown): value is UserRole => {
+  return typeof value === 'string' && Object.values(UserRole).some((v) => v === value)
+}
+
+/**
+ * Type guard validating whether a value is a valid {@link UserAccountStatus}.
+ *
+ * @param value - Value to test
+ * @returns True if value is a valid {@link UserAccountStatus}
+ */
+const isUserAccountStatus = (value: unknown): value is UserAccountStatus => {
+  return typeof value === 'string' && Object.values(UserAccountStatus).some((v) => v === value)
+}
+
+/**
+ * Resolves localized display label for {@link UserAccountStatus}.
+ *
+ * @param status - User account status
+ * @param strings - Common localized strings
+ * @returns Localized status label
+ */
+const getUserAccountStatusLabel = (status: UserAccountStatus, strings: CommonModuleStrings): string => {
   switch (status) {
     case UserAccountStatus.ACTIVE:
-      return commonStrings.ui.active
+      return strings.ui.active
     case UserAccountStatus.READ_ONLY:
-      return commonStrings.ui.readOnly
+      return strings.ui.readOnly
     case UserAccountStatus.BANNED:
-      return commonStrings.ui.banned
+      return strings.ui.banned
     case UserAccountStatus.SECURITY_HOLD:
-      return commonStrings.ui.securityHold
+      return strings.ui.securityHold
     case UserAccountStatus.PENDING_DELETION:
-      return commonStrings.ui.pendingDeletion
+      return strings.ui.pendingDeletion
     default:
       return status
   }
 }
 
-const getUserRoleLabel = (role: UserRole, commonStrings: CommonModuleStrings): string => {
+/**
+ * Resolves localized display label for {@link UserRole}.
+ *
+ * @param role - User role
+ * @param strings - Common localized strings
+ * @returns Localized user role label
+ */
+const getUserRoleLabel = (role: UserRole, strings: CommonModuleStrings): string => {
   switch (role) {
     case UserRole.USER:
-      return commonStrings.ui.user
+      return strings.ui.user
     case UserRole.STAFF:
-      return commonStrings.ui.staff
+      return strings.ui.staff
     case UserRole.ADMIN:
-      return commonStrings.ui.admin
+      return strings.ui.admin
     default:
       return role
   }
 }
 
 const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const { email, password, isPasswordVisible, role, status, authorityLevel, isLoading, error } = useCreateUserStore((s) => s.screenState)
   const onEmailChanged = useCreateUserStore((s) => s.onEmailChanged)
@@ -83,8 +115,16 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const statusId = useId()
   const authLevelId = useId()
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    void onCreateClick()
+  }
+
   return (
-    <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto"
+    >
       <div className="w-full flex items-center justify-between relative mb-6">
         <CoreBackButton data-testid={CreateUserTestTags.BACK_BUTTON} onClick={onBackClick} />
         <CoreScreenTitleText
@@ -127,13 +167,18 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             id={roleId}
             data-testid={CreateUserTestTags.ROLE_SELECT}
             value={role}
-            onChange={(e) => onRoleChanged(e.target.value as UserRole)}
+            onChange={(e) => {
+              const val = e.target.value
+              if (isUserRole(val)) {
+                onRoleChanged(val)
+              }
+            }}
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {[UserRole.USER, UserRole.STAFF, UserRole.ADMIN].map((r) => (
               <option key={`role_${r}`} value={r}>
-                {getUserRoleLabel(r, defaultCommonStrings)}
+                {getUserRoleLabel(r, commonStrings)}
               </option>
             ))}
           </select>
@@ -147,7 +192,12 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             id={statusId}
             data-testid={CreateUserTestTags.STATUS_SELECT}
             value={status}
-            onChange={(e) => onStatusChanged(e.target.value as UserAccountStatus)}
+            onChange={(e) => {
+              const val = e.target.value
+              if (isUserAccountStatus(val)) {
+                onStatusChanged(val)
+              }
+            }}
             disabled={isLoading}
             className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
@@ -159,7 +209,7 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
               UserAccountStatus.PENDING_DELETION
             ].map((st) => (
               <option key={`status_${st}`} value={st}>
-                {getUserAccountStatusLabel(st, defaultCommonStrings)}
+                {getUserAccountStatusLabel(st, commonStrings)}
               </option>
             ))}
           </select>
@@ -176,7 +226,7 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
         <div className="flex flex-col gap-2 pt-2">
           <CoreButton
-            type="button"
+            type="submit"
             data-testid={CreateUserTestTags.CREATE_BUTTON}
             label={isLoading ? strings.ui.saving : strings.ui.createUser}
             onClick={onCreateClick}
@@ -184,21 +234,26 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
           />
 
           {error && (
-            <CoreErrorText data-testid={CreateUserTestTags.ERROR_TEXT} text={errorParser.parse(error) ?? ''} />
+            <CoreErrorText
+              data-testid={CreateUserTestTags.ERROR_TEXT}
+              text={errorParser.parse(error) ?? ''}
+            />
           )}
         </div>
       </div>
-    </div>
+    </form>
   )
 }
 
+/** Props for {@link CreateUserScreen}. */
 export interface CreateUserScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: CreateUserStoreDependencies
   strings?: UserModuleStrings
 }
 
+/** Screen component for creating a new user account with role and status options. */
 export const CreateUserScreen = forwardRef<HTMLDivElement, CreateUserScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <CreateUserProvider dependencies={dependencies}>

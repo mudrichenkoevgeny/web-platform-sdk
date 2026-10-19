@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ClientType, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfSessionListScreen, SelfSessionListTestTags } from '@/ui/screens/user/session/list/SelfSessionListScreen'
@@ -13,7 +13,7 @@ describe('SelfSessionListScreen', () => {
     userId: toUserIdOrThrow('123e4567-e89b-12d3-a456-426614174000'),
     clientDeviceInfo: {
       clientType: ClientType.WEB,
-      language: 'en',
+      language: CommonLocales.ENGLISH,
       deviceId: null,
       deviceName: 'Chrome on Windows',
       appVersion: '1.0.0',

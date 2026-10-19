@@ -157,6 +157,10 @@ class SelfManagementIdentifierRepositoryAdapter implements IdentifierRepository 
     return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }
 
+  public async deletePassword(): ReturnType<IdentifierRepository['deletePassword']> {
+    return appResultFailure(CommonError.lifecycle('Not supported for management users'))
+  }
+
   public async addUserIdentifierEmail(): ReturnType<IdentifierRepository['addUserIdentifierEmail']> {
     return appResultFailure(CommonError.lifecycle('Not supported for management users'))
   }

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreButton, CoreScreenTitleText } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   MainManagementProvider,
@@ -7,10 +7,8 @@ import {
 } from '@/ui/screens/management/main/MainManagementStore'
 import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
 
-const defaultUserStrings = new UserModuleStrings()
-
 const MainManagementContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const onSettingsClick = useMainManagementStore((s) => s.onSettingsClick)
   const onGlobalUserListClick = useMainManagementStore((s) => s.onGlobalUserListClick)
@@ -64,7 +62,7 @@ export interface MainManagementScreenProps extends React.HTMLAttributes<HTMLDivE
 }
 
 export const MainManagementScreen = forwardRef<HTMLDivElement, MainManagementScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <MainManagementProvider dependencies={dependencies}>

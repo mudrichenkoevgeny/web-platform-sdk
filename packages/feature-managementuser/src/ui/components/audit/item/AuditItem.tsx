@@ -1,8 +1,6 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings, type AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, type AuditEventSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-
-const defaultUserStrings = new UserModuleStrings()
 
 export interface AuditItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   event: AuditEventSummary
@@ -15,7 +13,7 @@ export const AuditItem = forwardRef<HTMLButtonElement, AuditItemProps>(
     {
       event,
       onClick,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       ...rest
     },

@@ -13,14 +13,13 @@ import {
   FullscreenOverlayLoading,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   ResetEmailPasswordProvider,
+  ResetEmailPasswordStatus,
   useResetEmailPasswordStore
 } from '@/ui/screens/auth/reset-password/reset-email-password-store'
 import type { ResetEmailPasswordStoreDependencies } from "@/ui/screens/auth/reset-password/reset-email-password-store";
-
-const defaultUserStrings = new UserModuleStrings()
 
 const EmailInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)
@@ -29,7 +28,7 @@ const EmailInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) =
   const onBackClick = useResetEmailPasswordStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
-  if (screenState.status !== 'email_input') {
+  if (screenState.status !== ResetEmailPasswordStatus.EMAIL_INPUT) {
     return null
   }
 
@@ -106,7 +105,7 @@ const ResetInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) =
   const onBackClick = useResetEmailPasswordStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
-  if (screenState.status !== 'reset_input') {
+  if (screenState.status !== ResetEmailPasswordStatus.RESET_INPUT) {
     return null
   }
 
@@ -225,19 +224,18 @@ const ResetInputStep: React.FC<{ strings: UserModuleStrings }> = ({ strings }) =
 }
 
 const ResetEmailPasswordContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = useResetEmailPasswordStore((s) => s.screenState)
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
+  switch (screenState.status) {
+    case ResetEmailPasswordStatus.LOADING:
+      return <FullscreenLoading />
+    case ResetEmailPasswordStatus.EMAIL_INPUT:
+      return <EmailInputStep strings={strings} />
+    case ResetEmailPasswordStatus.RESET_INPUT:
+      return <ResetInputStep strings={strings} />
   }
-
-  if (screenState.status === 'email_input') {
-    return <EmailInputStep strings={strings} />
-  }
-
-  return <ResetInputStep strings={strings} />
 }
 
 /**
@@ -258,7 +256,7 @@ export interface ResetEmailPasswordScreenProps extends React.HTMLAttributes<HTML
  * Screen component for requesting a password reset email OTP code and applying a new password.
  */
 export const ResetEmailPasswordScreen = forwardRef<HTMLDivElement, ResetEmailPasswordScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <ResetEmailPasswordProvider dependencies={dependencies}>

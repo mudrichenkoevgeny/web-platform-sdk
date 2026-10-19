@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from '@tanstack/react-router'
-import { ClientUserNavigation, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientUserNavigation, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon, icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   MfaChallengeDialog,
@@ -9,8 +9,11 @@ import {
 import { useClientAppComponent } from '@/di/client-app-context'
 import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'
 
-const defaultUserStrings = new UserModuleStrings()
-
+/**
+ * Main application layout and navigation shell component for the sample client app.
+ *
+ * @returns JSX Element rendering the main application shell
+ */
 export function MainScreen(): React.JSX.Element {
   useEnsureHistoryStack()
   const appComponent = useClientAppComponent()
@@ -40,7 +43,7 @@ export function MainScreen(): React.JSX.Element {
             )}
           >
             <CoreIcon src={icons.user} className="w-5 h-5" />
-            <span>{defaultUserStrings.ui.user}</span>
+            <span>{userStrings.ui.user}</span>
           </button>
         </div>
       </nav>

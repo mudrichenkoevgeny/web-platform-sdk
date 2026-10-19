@@ -1,12 +1,10 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreButton,
   CoreScreenTitleText
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-
-const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link UnlockSuccessScreen} component.
@@ -26,7 +24,7 @@ export interface UnlockSuccessScreenProps extends React.HTMLAttributes<HTMLDivEl
  * Screen component displaying successful account unlock confirmation.
  */
 export const UnlockSuccessScreen = forwardRef<HTMLDivElement, UnlockSuccessScreenProps>(
-  ({ onFinished, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ onFinished, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div
         ref={ref}

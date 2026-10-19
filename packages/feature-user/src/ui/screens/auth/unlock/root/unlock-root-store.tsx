@@ -8,22 +8,29 @@ import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/s
 import type { UnlockByEmailUseCase } from '@/usecase/auth/unlock/unlock-by-email-use-case'
 import type { UnlockByPhoneUseCase } from '@/usecase/auth/unlock/unlock-by-phone-use-case'
 
+export enum UnlockDestinationType {
+  SELECTION = 'selection',
+  TARGET_INPUT = 'target_input',
+  OTP = 'otp',
+  SUCCESS = 'success'
+}
+
 export type UnlockDestination =
   | {
-      type: 'selection'
+      type: UnlockDestinationType.SELECTION
     }
   | {
-      type: 'target_input'
+      type: UnlockDestinationType.TARGET_INPUT
       method: UnlockMethod
     }
   | {
-      type: 'otp'
+      type: UnlockDestinationType.OTP
       method: UnlockMethod
       target: string
       initialDelaySeconds: number
     }
   | {
-      type: 'success'
+      type: UnlockDestinationType.SUCCESS
     }
 
 export interface UnlockRootStoreDependencies {
@@ -50,7 +57,7 @@ export type UnlockRootStore = ReturnType<typeof createUnlockRootStore>
 
 export const createUnlockRootStore = (
   deps: UnlockRootStoreDependencies,
-  initialDestination: UnlockDestination = { type: 'selection' }
+  initialDestination: UnlockDestination = { type: UnlockDestinationType.SELECTION }
 ) => {
   return createStore<UnlockRootStoreState>()((set, get) => ({
     stack: [initialDestination],

@@ -1,20 +1,31 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import {
+  AppType,
+  selfIdentifierListParamsSchema,
+  SortOrder,
+  toUserIdentifierIdOrNull,
+  UserAuthProvider
+} from '@mudrichenkoevgeny/shared-foundation'
+import type {
+  AvailableAuthProviders,
+  UserIdentifierId,
+  UserIdentifierSummary
+} from '@mudrichenkoevgeny/shared-foundation'
+import {
   appendResultToPaginationState,
   canLoadMorePages,
+  CommonError,
   createInitialPaginationState,
   createNextPageLoadingPaginationState,
   getNextPageNumber,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType, ListingDefaultValues, selfIdentifierListParamsSchema, SortOrder, UserAuthProvider, toUserIdentifierIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserIdentifierSummary } from '@mudrichenkoevgeny/shared-foundation'
-import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
-import { FieldValidator } from '@/validator/field-validator'
+import type {
+  AppError,
+  PaginationState
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetUserIdentifiersUseCase } from '@/usecase/identifier/get-user-identifiers-use-case'
 import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/get-available-user-auth-providers-use-case'
 import type { SendAddEmailIdentifierConfirmationUseCase } from '@/usecase/identifier/send-add-email-identifier-confirmation-use-case'
@@ -22,18 +33,24 @@ import type { AddUserIdentifierEmailUseCase } from '@/usecase/identifier/add-use
 import type { SendAddPhoneIdentifierConfirmationUseCase } from '@/usecase/identifier/send-add-phone-identifier-confirmation-use-case'
 import type { AddUserIdentifierPhoneUseCase } from '@/usecase/identifier/add-user-identifier-phone-use-case'
 import type { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
-import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
 
-/**
- * State machine steps for the add-identifier modal dialog.
- */
+const DEFAULT_PAGE_SIZE = 20
+
+/** Dialog type discriminators for adding new user identifiers. */
+export enum AddIdentifierDialogType {
+  PROVIDER_SELECTION = 'provider_selection',
+  EMAIL_FLOW = 'email_flow',
+  PHONE_FLOW = 'phone_flow'
+}
+
+/** Discriminated union for add identifier modal dialog state. */
 export type AddIdentifierDialogState =
   | {
-      type: 'providerSelection'
+      type: AddIdentifierDialogType.PROVIDER_SELECTION
     }
   | {
-      type: 'emailFlow'
+      type: AddIdentifierDialogType.EMAIL_FLOW
       email: string
       isEmailValid: boolean
       code: string
@@ -49,7 +66,7 @@ export type AddIdentifierDialogState =
       canResendCode: boolean
     }
   | {
-      type: 'phoneFlow'
+      type: AddIdentifierDialogType.PHONE_FLOW
       phoneNumber: string
       isPhoneNumberValid: boolean
       code: string
@@ -62,19 +79,24 @@ export type AddIdentifierDialogState =
       canResendCode: boolean
     }
 
-/**
- * Discriminated union representing active screen state for {@link SelfIdentifierListScreen}.
- */
+/** Status values for {@link SelfIdentifierListScreenState}. */
+export enum SelfIdentifierListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
+/** Discriminated union representing active screen state for {@link SelfIdentifierListScreen}. */
 export type SelfIdentifierListScreenState =
   | {
-      status: 'loading'
+      status: SelfIdentifierListStatus.LOADING
     }
   | {
-      status: 'error'
+      status: SelfIdentifierListStatus.ERROR
       error: AppError
     }
   | {
-      status: 'content'
+      status: SelfIdentifierListStatus.CONTENT
       items: UserIdentifierSummary[]
       currentIdentifierId: UserIdentifierId | null
       availableAuthProviders: AvailableAuthProviders | null
@@ -85,9 +107,7 @@ export type SelfIdentifierListScreenState =
       actionError: AppError | null
     }
 
-/**
- * Dependencies required to construct and run {@link SelfIdentifierListStore}.
- */
+/** Dependencies required to construct and run {@link SelfIdentifierListStore}. */
 export interface SelfIdentifierListStoreDependencies {
   appType?: AppType
   getUserIdentifiersUseCase: GetUserIdentifiersUseCase
@@ -97,22 +117,22 @@ export interface SelfIdentifierListStoreDependencies {
   sendAddPhoneIdentifierConfirmationUseCase?: SendAddPhoneIdentifierConfirmationUseCase
   addUserIdentifierPhoneUseCase?: AddUserIdentifierPhoneUseCase
   addUserIdentifierGoogleUseCase?: AddUserIdentifierGoogleUseCase
-  identifierRepository?: IdentifierRepository
-  authStorage?: AuthStorage
-  onIdentifierSelect?: (identifierId: UserIdentifierId) => void
+  onNavigateToIdentifierDetail?: (identifierId: UserIdentifierId) => void
+  onIdentifierSelect?: (identifierId: string) => void
+  identifierRepository?: unknown
   onBack: () => void
+  authStorage?: AuthStorage
 }
 
-/**
- * State and actions managed by {@link SelfIdentifierListStore}.
- */
+/** State and actions contract managed by {@link SelfIdentifierListStore}. */
 export interface SelfIdentifierListStoreState {
+  dependencies: SelfIdentifierListStoreDependencies
   screenState: SelfIdentifierListScreenState
   loadIdentifiers: () => Promise<void>
   onRefresh: () => Promise<void>
   onIdentifierClick: (identifierId: UserIdentifierId) => void
   onAddIdentifierClick: () => Promise<void>
-  onAddIdentifierSelectProvider: (authProvider: UserAuthProvider) => Promise<void>
+  onAddIdentifierSelectProvider: (provider: UserAuthProvider) => void
   onAddIdentifierEmailChanged: (email: string) => void
   onAddIdentifierPasswordChanged: (password: string) => void
   onAddIdentifierTogglePasswordVisibility: () => void
@@ -122,81 +142,16 @@ export interface SelfIdentifierListStoreState {
   onAddIdentifierSubmit: () => Promise<void>
   onAddIdentifierDialogBack: () => void
   onAddIdentifierDialogDismiss: () => void
-  onIdentifierDeleted: (identifierId: UserIdentifierId) => void
   onLoadNextPage: () => Promise<void>
   onBackClick: () => void
-  dispose: () => void
 }
 
 export type SelfIdentifierListStore = ReturnType<typeof createSelfIdentifierListStore>
 
-/**
- * Factory function creating a Zustand store instance for {@link SelfIdentifierListScreen}.
- */
 export const createSelfIdentifierListStore = (
   deps: SelfIdentifierListStoreDependencies,
   initialState?: SelfIdentifierListScreenState
 ) => {
-  const DEFAULT_PAGE_SIZE = ListingDefaultValues.PAGE_SIZE
-  const DEFAULT_OTP_LENGTH = 6
-  const appType = deps.appType ?? AppType.CLIENT
-  let timerInterval: ReturnType<typeof setInterval> | null = null
-
-  const clearTimer = () => {
-    if (timerInterval) {
-      clearInterval(timerInterval)
-      timerInterval = null
-    }
-  }
-
-  const startResendTimer = (seconds: number) => {
-    clearTimer()
-    if (seconds <= 0) {
-      return
-    }
-
-    timerInterval = setInterval(() => {
-      const current = store.getState().screenState
-      if (current.status !== 'content' || !current.addIdentifierDialogState) {
-        clearTimer()
-        return
-      }
-
-      const dialog = current.addIdentifierDialogState
-      if (dialog.type === 'emailFlow') {
-        const nextSeconds = Math.max(0, dialog.resendTimerSeconds - 1)
-        if (nextSeconds === 0) {
-          clearTimer()
-        }
-        store.setState({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              resendTimerSeconds: nextSeconds,
-              canResendCode: nextSeconds <= 0 && !dialog.actionLoading
-            }
-          }
-        })
-      } else if (dialog.type === 'phoneFlow') {
-        const nextSeconds = Math.max(0, dialog.resendTimerSeconds - 1)
-        if (nextSeconds === 0) {
-          clearTimer()
-        }
-        store.setState({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              resendTimerSeconds: nextSeconds,
-              canResendCode: nextSeconds <= 0 && !dialog.actionLoading
-            }
-          }
-        })
-      }
-    }, 1000)
-  }
-
   let isFetching = false
 
   const loadIdentifiersInternal = async (
@@ -208,16 +163,16 @@ export const createSelfIdentifierListStore = (
       return
     }
     const current = get().screenState
-    if (!isRefresh && current.status === 'content') {
+    if (!isRefresh && current.status === SelfIdentifierListStatus.CONTENT) {
       return
     }
     isFetching = true
 
     try {
       const storedIdentifierIdRaw = deps.authStorage ? await deps.authStorage.getIdentifierId() : null
-      const activeIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
+      const currentIdentifierId = storedIdentifierIdRaw ? toUserIdentifierIdOrNull(storedIdentifierIdRaw) : null
 
-      const result = await deps.getUserIdentifiersUseCase.execute(
+      const identifiersResult = await deps.getUserIdentifiersUseCase.execute(
         selfIdentifierListParamsSchema.parse({
           pageNumber: 1,
           pageSize: DEFAULT_PAGE_SIZE,
@@ -228,16 +183,29 @@ export const createSelfIdentifierListStore = (
         })
       )
 
-      if (isSuccess(result)) {
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
-        const nextPaging = appendResultToPaginationState(currentPaging, result.data)
+      if (isSuccess(identifiersResult)) {
+        let availableAuthProviders: AvailableAuthProviders | null = null
+        let isAddIdentifierSupported = false
+
+        if (deps.getAvailableUserAuthProvidersUseCase) {
+          const providersResult = await deps.getAvailableUserAuthProvidersUseCase.execute()
+          if (isSuccess(providersResult)) {
+            availableAuthProviders = providersResult.data
+            isAddIdentifierSupported =
+              providersResult.data.primary.length > 0 || providersResult.data.secondary.length > 0
+          }
+        }
+
+        const currentPaging = current.status === SelfIdentifierListStatus.CONTENT ? current.paging : createInitialPaginationState<UserIdentifierSummary>()
+        const nextPaging = appendResultToPaginationState(currentPaging, identifiersResult.data)
+
         set({
           screenState: {
-            status: 'content',
+            status: SelfIdentifierListStatus.CONTENT,
             items: nextPaging.items,
-            currentIdentifierId: activeIdentifierId,
-            availableAuthProviders: null,
-            isAddIdentifierSupported: appType === AppType.CLIENT,
+            currentIdentifierId,
+            availableAuthProviders,
+            isAddIdentifierSupported,
             addIdentifierDialogState: null,
             paging: nextPaging,
             actionLoading: false,
@@ -247,8 +215,8 @@ export const createSelfIdentifierListStore = (
       } else {
         set({
           screenState: {
-            status: 'error',
-            error: result.error
+            status: SelfIdentifierListStatus.ERROR,
+            error: identifiersResult.error
           }
         })
       }
@@ -257,19 +225,20 @@ export const createSelfIdentifierListStore = (
     }
   }
 
-  const store = createStore<SelfIdentifierListStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+  return createStore<SelfIdentifierListStoreState>()((set, get) => ({
+    dependencies: deps,
+    screenState: initialState ?? { status: SelfIdentifierListStatus.LOADING },
 
     loadIdentifiers: async () => {
-      if (get().screenState.status !== 'content') {
-        set({ screenState: { status: 'loading' } })
+      if (get().screenState.status !== SelfIdentifierListStatus.CONTENT) {
+        set({ screenState: { status: SelfIdentifierListStatus.LOADING } })
       }
       await loadIdentifiersInternal(set, get, false)
     },
 
     onRefresh: async () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === SelfIdentifierListStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -278,161 +247,201 @@ export const createSelfIdentifierListStore = (
           }
         })
       } else {
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: SelfIdentifierListStatus.LOADING } })
       }
-
       await loadIdentifiersInternal(set, get, true)
     },
 
-    onIdentifierClick: (identifierId: UserIdentifierId) => {
-      deps.onIdentifierSelect?.(identifierId)
-    },
-
-    onAddIdentifierClick: async () => {
-      if (appType !== AppType.CLIENT) {
-        return
-      }
-
+    onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      if (current.availableAuthProviders) {
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: { type: 'providerSelection' }
-          }
-        })
-        return
-      }
-
-      if (!deps.getAvailableUserAuthProvidersUseCase) {
+      if (
+        current.status !== SelfIdentifierListStatus.CONTENT ||
+        !canLoadMorePages(current.paging) ||
+        isFetching
+      ) {
         return
       }
 
       set({
         screenState: {
           ...current,
-          actionLoading: true,
-          actionError: null
+          paging: createNextPageLoadingPaginationState(current.paging)
         }
       })
 
-      const result = await deps.getAvailableUserAuthProvidersUseCase.execute()
+      const nextPageNumber = getNextPageNumber(current.paging)
+      isFetching = true
 
-      if (isSuccess(result)) {
-        set({
-          screenState: {
-            ...current,
-            availableAuthProviders: result.data,
-            addIdentifierDialogState: { type: 'providerSelection' },
-            actionLoading: false,
-            actionError: null
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            ...current,
-            actionLoading: false,
-            actionError: result.error
-          }
-        })
-      }
-    },
+      try {
+        const identifiersResult = await deps.getUserIdentifiersUseCase.execute(
+          selfIdentifierListParamsSchema.parse({
+            pageNumber: nextPageNumber,
+            pageSize: DEFAULT_PAGE_SIZE,
+            sortBy: 'created_at',
+            sortOrder: SortOrder.DESC,
+            userAuthProviders: [],
+            identifiers: []
+          })
+        )
 
-    onAddIdentifierSelectProvider: async (authProvider: UserAuthProvider) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      if (authProvider === UserAuthProvider.EMAIL) {
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              type: 'emailFlow',
-              email: '',
-              isEmailValid: false,
-              code: '',
-              password: '',
-              isPasswordValid: false,
-              isPasswordVisible: false,
-              isConfirmationSent: false,
-              resendTimerSeconds: 0,
-              actionLoading: false,
-              actionError: null,
-              canSendCode: false,
-              canSubmit: false,
-              canResendCode: false
+        if (isSuccess(identifiersResult)) {
+          const nextPaging = appendResultToPaginationState(current.paging, identifiersResult.data)
+          set({
+            screenState: {
+              ...current,
+              items: nextPaging.items,
+              paging: nextPaging
             }
-          }
-        })
-      } else if (authProvider === UserAuthProvider.PHONE) {
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              type: 'phoneFlow',
-              phoneNumber: '',
-              isPhoneNumberValid: false,
-              code: '',
-              isConfirmationSent: false,
-              resendTimerSeconds: 0,
-              actionLoading: false,
-              actionError: null,
-              canSendCode: false,
-              canSubmit: false,
-              canResendCode: false
-            }
-          }
-        })
-      } else if (authProvider === UserAuthProvider.GOOGLE && deps.addUserIdentifierGoogleUseCase) {
-        set({
-          screenState: {
-            ...current,
-            actionLoading: true,
-            actionError: null
-          }
-        })
-
-        const result = await deps.addUserIdentifierGoogleUseCase.execute()
-
-        if (isSuccess(result)) {
-          get().onAddIdentifierDialogDismiss()
-          await get().loadIdentifiers()
+          })
         } else {
           set({
             screenState: {
               ...current,
-              actionLoading: false,
-              actionError: result.error
+              paging: { ...current.paging, isNextPageLoading: false }
             }
           })
         }
+      } finally {
+        isFetching = false
+      }
+    },
+
+    onIdentifierClick: (identifierId: UserIdentifierId) => {
+      deps.onNavigateToIdentifierDetail?.(identifierId)
+      deps.onIdentifierSelect?.(identifierId)
+    },
+
+    onAddIdentifierClick: async () => {
+      const current = get().screenState
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
+        return
+      }
+
+      set({
+        screenState: {
+          ...current,
+          addIdentifierDialogState: { type: AddIdentifierDialogType.PROVIDER_SELECTION }
+        }
+      })
+    },
+
+    onAddIdentifierSelectProvider: async (provider: UserAuthProvider) => {
+      const current = get().screenState
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
+        return
+      }
+
+      switch (provider) {
+        case UserAuthProvider.EMAIL:
+          set({
+            screenState: {
+              ...current,
+              addIdentifierDialogState: {
+                type: AddIdentifierDialogType.EMAIL_FLOW,
+                email: '',
+                isEmailValid: false,
+                code: '',
+                password: '',
+                isPasswordValid: false,
+                isPasswordVisible: false,
+                isConfirmationSent: false,
+                resendTimerSeconds: 0,
+                actionLoading: false,
+                actionError: null,
+                canSendCode: false,
+                canSubmit: false,
+                canResendCode: false
+              }
+            }
+          })
+          break
+        case UserAuthProvider.PHONE:
+          set({
+            screenState: {
+              ...current,
+              addIdentifierDialogState: {
+                type: AddIdentifierDialogType.PHONE_FLOW,
+                phoneNumber: '',
+                isPhoneNumberValid: false,
+                code: '',
+                isConfirmationSent: false,
+                resendTimerSeconds: 0,
+                actionLoading: false,
+                actionError: null,
+                canSendCode: false,
+                canSubmit: false,
+                canResendCode: false
+              }
+            }
+          })
+          break
+        case UserAuthProvider.GOOGLE:
+          if (deps.addUserIdentifierGoogleUseCase) {
+            set({
+              screenState: {
+                ...current,
+                actionLoading: true,
+                actionError: null
+              }
+            })
+
+            const googleResult = await deps.addUserIdentifierGoogleUseCase.execute()
+            if (isSuccess(googleResult)) {
+              await loadIdentifiersInternal(set, get, true)
+            } else {
+              set({
+                screenState: {
+                  ...current,
+                  actionLoading: false,
+                  actionError: googleResult.error,
+                  addIdentifierDialogState: null
+                }
+              })
+            }
+          } else {
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                actionError: CommonError.contractViolation(
+                  new Error('Google authentication provider is not configured')
+                )
+              }
+            })
+          }
+          break
+        case UserAuthProvider.APPLE:
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: CommonError.contractViolation(
+                new Error('Apple authentication provider is not supported')
+              )
+            }
+          })
+          break
       }
     },
 
     onAddIdentifierEmailChanged: (email: string) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.addIdentifierDialogState?.type !== 'emailFlow') {
+      if (
+        current.status !== SelfIdentifierListStatus.CONTENT ||
+        current.addIdentifierDialogState?.type !== AddIdentifierDialogType.EMAIL_FLOW
+      ) {
         return
       }
 
-      const dialog = current.addIdentifierDialogState
-      const isEmailValid = FieldValidator.isValidEmail(email)
-
+      const isEmailValid = email.trim().length > 0 && email.includes('@')
       set({
         screenState: {
           ...current,
           addIdentifierDialogState: {
-            ...dialog,
+            ...current.addIdentifierDialogState,
             email,
             isEmailValid,
-            canSendCode: isEmailValid && !dialog.actionLoading,
+            canSendCode: isEmailValid,
             actionError: null
           }
         }
@@ -441,19 +450,21 @@ export const createSelfIdentifierListStore = (
 
     onAddIdentifierPasswordChanged: (password: string) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.addIdentifierDialogState?.type !== 'emailFlow') {
+      if (
+        current.status !== SelfIdentifierListStatus.CONTENT ||
+        current.addIdentifierDialogState?.type !== AddIdentifierDialogType.EMAIL_FLOW
+      ) {
         return
       }
 
-      const dialog = current.addIdentifierDialogState
-      const isPasswordValid = password.trim().length > 0
-      const canSubmit = isPasswordValid && dialog.code.length === DEFAULT_OTP_LENGTH && !dialog.actionLoading
+      const isPasswordValid = password.trim().length >= 8
+      const canSubmit = current.addIdentifierDialogState.code.length === 6 && isPasswordValid
 
       set({
         screenState: {
           ...current,
           addIdentifierDialogState: {
-            ...dialog,
+            ...current.addIdentifierDialogState,
             password,
             isPasswordValid,
             canSubmit,
@@ -465,18 +476,19 @@ export const createSelfIdentifierListStore = (
 
     onAddIdentifierTogglePasswordVisibility: () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.addIdentifierDialogState?.type !== 'emailFlow') {
+      if (
+        current.status !== SelfIdentifierListStatus.CONTENT ||
+        current.addIdentifierDialogState?.type !== AddIdentifierDialogType.EMAIL_FLOW
+      ) {
         return
       }
-
-      const dialog = current.addIdentifierDialogState
 
       set({
         screenState: {
           ...current,
           addIdentifierDialogState: {
-            ...dialog,
-            isPasswordVisible: !dialog.isPasswordVisible
+            ...current.addIdentifierDialogState,
+            isPasswordVisible: !current.addIdentifierDialogState.isPasswordVisible
           }
         }
       })
@@ -484,21 +496,22 @@ export const createSelfIdentifierListStore = (
 
     onAddIdentifierPhoneChanged: (phoneNumber: string) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.addIdentifierDialogState?.type !== 'phoneFlow') {
+      if (
+        current.status !== SelfIdentifierListStatus.CONTENT ||
+        current.addIdentifierDialogState?.type !== AddIdentifierDialogType.PHONE_FLOW
+      ) {
         return
       }
 
-      const dialog = current.addIdentifierDialogState
-      const isPhoneNumberValid = FieldValidator.isValidPhone(phoneNumber)
-
+      const isPhoneNumberValid = phoneNumber.trim().length > 5
       set({
         screenState: {
           ...current,
           addIdentifierDialogState: {
-            ...dialog,
+            ...current.addIdentifierDialogState,
             phoneNumber,
             isPhoneNumberValid,
-            canSendCode: isPhoneNumberValid && !dialog.actionLoading,
+            canSendCode: isPhoneNumberValid,
             actionError: null
           }
         }
@@ -507,15 +520,18 @@ export const createSelfIdentifierListStore = (
 
     onAddIdentifierCodeChanged: (code: string) => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.addIdentifierDialogState) {
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
         return
       }
 
       const dialog = current.addIdentifierDialogState
+      if (!dialog) {
+        return
+      }
 
-      if (dialog.type === 'emailFlow') {
-        if (code.length <= DEFAULT_OTP_LENGTH) {
-          const canSubmit = dialog.isPasswordValid && code.length === DEFAULT_OTP_LENGTH && !dialog.actionLoading
+      switch (dialog.type) {
+        case AddIdentifierDialogType.EMAIL_FLOW: {
+          const canSubmit = code.length === 6 && dialog.isPasswordValid
           set({
             screenState: {
               ...current,
@@ -527,10 +543,10 @@ export const createSelfIdentifierListStore = (
               }
             }
           })
+          break
         }
-      } else if (dialog.type === 'phoneFlow') {
-        if (code.length <= DEFAULT_OTP_LENGTH) {
-          const canSubmit = code.length === DEFAULT_OTP_LENGTH && !dialog.actionLoading
+        case AddIdentifierDialogType.PHONE_FLOW: {
+          const canSubmit = code.length === 6
           set({
             screenState: {
               ...current,
@@ -542,209 +558,240 @@ export const createSelfIdentifierListStore = (
               }
             }
           })
+          break
         }
       }
     },
 
     onAddIdentifierSendCode: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.addIdentifierDialogState) {
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
         return
       }
 
       const dialog = current.addIdentifierDialogState
+      if (!dialog) {
+        return
+      }
 
-      if (dialog.type === 'emailFlow' && deps.sendAddEmailIdentifierConfirmationUseCase) {
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              actionLoading: true,
-              canSendCode: false,
-              actionError: null
-            }
+      switch (dialog.type) {
+        case AddIdentifierDialogType.EMAIL_FLOW: {
+          if (!deps.sendAddEmailIdentifierConfirmationUseCase) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionError: CommonError.contractViolation(
+                    new Error('Send email confirmation use case is not configured')
+                  )
+                }
+              }
+            })
+            return
           }
-        })
 
-        const result = await deps.sendAddEmailIdentifierConfirmationUseCase.execute(dialog.email)
-
-        if (isSuccess(result)) {
-          const seconds = Math.max(0, result.data.retryAfterSeconds)
           set({
             screenState: {
               ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                isConfirmationSent: true,
-                resendTimerSeconds: seconds,
-                actionLoading: false,
-                canSendCode: false,
-                canResendCode: seconds <= 0
-              }
+              addIdentifierDialogState: { ...dialog, actionLoading: true, actionError: null }
             }
           })
-          startResendTimer(seconds)
-        } else {
-          set({
-            screenState: {
-              ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                actionLoading: false,
-                canSendCode: dialog.isEmailValid,
-                actionError: result.error
+
+          const sendCodeResult = await deps.sendAddEmailIdentifierConfirmationUseCase.execute(dialog.email)
+          if (isSuccess(sendCodeResult)) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  isConfirmationSent: true,
+                  resendTimerSeconds: sendCodeResult.data.retryAfterSeconds,
+                  actionLoading: false,
+                  canResendCode: false
+                }
               }
-            }
-          })
+            })
+          } else {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionLoading: false,
+                  actionError: sendCodeResult.error
+                }
+              }
+            })
+          }
+          break
         }
-      } else if (dialog.type === 'phoneFlow' && deps.sendAddPhoneIdentifierConfirmationUseCase) {
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              actionLoading: true,
-              canSendCode: false,
-              actionError: null
-            }
+        case AddIdentifierDialogType.PHONE_FLOW: {
+          if (!deps.sendAddPhoneIdentifierConfirmationUseCase) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionError: CommonError.contractViolation(
+                    new Error('Send phone confirmation use case is not configured')
+                  )
+                }
+              }
+            })
+            return
           }
-        })
 
-        const result = await deps.sendAddPhoneIdentifierConfirmationUseCase.execute(dialog.phoneNumber)
-
-        if (isSuccess(result)) {
-          const seconds = Math.max(0, result.data.retryAfterSeconds)
           set({
             screenState: {
               ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                isConfirmationSent: true,
-                resendTimerSeconds: seconds,
-                actionLoading: false,
-                canSendCode: false,
-                canResendCode: seconds <= 0
-              }
+              addIdentifierDialogState: { ...dialog, actionLoading: true, actionError: null }
             }
           })
-          startResendTimer(seconds)
-        } else {
-          set({
-            screenState: {
-              ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                actionLoading: false,
-                canSendCode: dialog.isPhoneNumberValid,
-                actionError: result.error
+
+          const sendCodeResult = await deps.sendAddPhoneIdentifierConfirmationUseCase.execute(dialog.phoneNumber)
+          if (isSuccess(sendCodeResult)) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  isConfirmationSent: true,
+                  resendTimerSeconds: sendCodeResult.data.retryAfterSeconds,
+                  actionLoading: false,
+                  canResendCode: false
+                }
               }
-            }
-          })
+            })
+          } else {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionLoading: false,
+                  actionError: sendCodeResult.error
+                }
+              }
+            })
+          }
+          break
         }
       }
     },
 
     onAddIdentifierSubmit: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !current.addIdentifierDialogState) {
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
         return
       }
 
       const dialog = current.addIdentifierDialogState
+      if (!dialog) {
+        return
+      }
 
-      if (dialog.type === 'emailFlow' && deps.addUserIdentifierEmailUseCase) {
-        if (!dialog.canSubmit) {
-          return
-        }
-
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              actionLoading: true,
-              canSubmit: false,
-              actionError: null
-            }
+      switch (dialog.type) {
+        case AddIdentifierDialogType.EMAIL_FLOW: {
+          if (!deps.addUserIdentifierEmailUseCase) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionError: CommonError.contractViolation(
+                    new Error('Add email identifier use case is not configured')
+                  )
+                }
+              }
+            })
+            return
           }
-        })
 
-        const result = await deps.addUserIdentifierEmailUseCase.execute(dialog.email, dialog.password, dialog.code)
-
-        if (isSuccess(result)) {
-          get().onAddIdentifierDialogDismiss()
-          await get().loadIdentifiers()
-        } else {
           set({
             screenState: {
               ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                actionLoading: false,
-                canSubmit: dialog.isPasswordValid && dialog.code.length === DEFAULT_OTP_LENGTH,
-                actionError: result.error
-              }
+              addIdentifierDialogState: { ...dialog, actionLoading: true, actionError: null }
             }
           })
-        }
-      } else if (dialog.type === 'phoneFlow' && deps.addUserIdentifierPhoneUseCase) {
-        if (!dialog.canSubmit) {
-          return
-        }
 
-        set({
-          screenState: {
-            ...current,
-            addIdentifierDialogState: {
-              ...dialog,
-              actionLoading: true,
-              canSubmit: false,
-              actionError: null
-            }
+          const addIdentifierResult = await deps.addUserIdentifierEmailUseCase.execute(dialog.email, dialog.password, dialog.code)
+          if (isSuccess(addIdentifierResult)) {
+            await loadIdentifiersInternal(set, get, true)
+          } else {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionLoading: false,
+                  actionError: addIdentifierResult.error
+                }
+              }
+            })
           }
-        })
+          break
+        }
+        case AddIdentifierDialogType.PHONE_FLOW: {
+          if (!deps.addUserIdentifierPhoneUseCase) {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionError: CommonError.contractViolation(
+                    new Error('Add phone identifier use case is not configured')
+                  )
+                }
+              }
+            })
+            return
+          }
 
-        const result = await deps.addUserIdentifierPhoneUseCase.execute(dialog.phoneNumber, dialog.code)
-
-        if (isSuccess(result)) {
-          get().onAddIdentifierDialogDismiss()
-          await get().loadIdentifiers()
-        } else {
           set({
             screenState: {
               ...current,
-              addIdentifierDialogState: {
-                ...dialog,
-                actionLoading: false,
-                canSubmit: dialog.code.length === DEFAULT_OTP_LENGTH,
-                actionError: result.error
-              }
+              addIdentifierDialogState: { ...dialog, actionLoading: true, actionError: null }
             }
           })
+
+          const addIdentifierResult = await deps.addUserIdentifierPhoneUseCase.execute(dialog.phoneNumber, dialog.code)
+          if (isSuccess(addIdentifierResult)) {
+            await loadIdentifiersInternal(set, get, true)
+          } else {
+            set({
+              screenState: {
+                ...current,
+                addIdentifierDialogState: {
+                  ...dialog,
+                  actionLoading: false,
+                  actionError: addIdentifierResult.error
+                }
+              }
+            })
+          }
+          break
         }
       }
     },
 
     onAddIdentifierDialogBack: () => {
-      clearTimer()
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
         return
       }
 
       set({
         screenState: {
           ...current,
-          addIdentifierDialogState: { type: 'providerSelection' }
+          addIdentifierDialogState: { type: AddIdentifierDialogType.PROVIDER_SELECTION }
         }
       })
     },
 
     onAddIdentifierDialogDismiss: () => {
-      clearTimer()
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== SelfIdentifierListStatus.CONTENT) {
         return
       }
 
@@ -756,111 +803,26 @@ export const createSelfIdentifierListStore = (
       })
     },
 
-    onIdentifierDeleted: (identifierId: UserIdentifierId) => {
-      const current = get().screenState
-      if (current.status !== 'content') {
-        return
-      }
-
-      const nextItems = current.items.filter((item) => item.id !== identifierId)
-      set({
-        screenState: {
-          ...current,
-          items: nextItems,
-          paging: {
-            ...current.paging,
-            items: nextItems
-          }
-        }
-      })
-    },
-
-    onLoadNextPage: async () => {
-      const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
-        return
-      }
-
-      const nextPage = getNextPageNumber(current.paging)
-
-      set({
-        screenState: {
-          ...current,
-          paging: createNextPageLoadingPaginationState(current.paging)
-        }
-      })
-
-      const result = await deps.getUserIdentifiersUseCase.execute(
-        selfIdentifierListParamsSchema.parse({
-          pageNumber: nextPage,
-          pageSize: DEFAULT_PAGE_SIZE,
-          sortBy: 'created_at',
-          sortOrder: SortOrder.DESC,
-          userAuthProviders: [],
-          identifiers: []
-        })
-      )
-
-      if (isSuccess(result)) {
-        const nextPaging = appendResultToPaginationState(current.paging, result.data)
-        set({
-          screenState: {
-            ...current,
-            items: nextPaging.items,
-            paging: nextPaging
-          }
-        })
-      } else {
-        set({
-          screenState: {
-            ...current,
-            paging: {
-              ...current.paging,
-              isNextPageLoading: false
-            }
-          }
-        })
-      }
-    },
-
     onBackClick: () => {
       deps.onBack()
-    },
-
-    dispose: () => {
-      clearTimer()
     }
   }))
-
-  return store
 }
 
 const SelfIdentifierListContext = createContext<SelfIdentifierListStore | null>(null)
 
-/**
- * Props for {@link SelfIdentifierListProvider}.
- */
 export interface SelfIdentifierListProviderProps {
   dependencies: SelfIdentifierListStoreDependencies
   initialState?: SelfIdentifierListScreenState
   children: React.ReactNode
 }
 
-/**
- * React Context Provider for {@link SelfIdentifierListStore}.
- */
 export const SelfIdentifierListProvider: React.FC<SelfIdentifierListProviderProps> = ({
   dependencies,
   initialState,
   children
 }) => {
   const [store] = useState(() => createSelfIdentifierListStore(dependencies, initialState))
-
-  useEffect(() => {
-    return () => {
-      store.getState().dispose()
-    }
-  }, [store])
 
   return (
     <SelfIdentifierListContext.Provider value={store}>
@@ -869,9 +831,6 @@ export const SelfIdentifierListProvider: React.FC<SelfIdentifierListProviderProp
   )
 }
 
-/**
- * Custom hook to select state from {@link SelfIdentifierListStore}.
- */
 export const useSelfIdentifierListStore = <T,>(
   selector: (state: SelfIdentifierListStoreState) => T
 ): T => {

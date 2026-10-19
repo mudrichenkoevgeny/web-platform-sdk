@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ManagementUsersNavigation, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, ManagementUsersNavigation, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { globalIdentifierListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -20,6 +20,7 @@ export const Route = createFileRoute('/identifiers/$identifierId')({
     return (
       <IdentifierDetailScreen
         dependencies={{
+          appType: AppType.MANAGEMENT,
           identifierId: toUserIdentifierIdOrThrow(identifierId),
           getUserIdentifierUseCase: {
             execute: async (id) => {

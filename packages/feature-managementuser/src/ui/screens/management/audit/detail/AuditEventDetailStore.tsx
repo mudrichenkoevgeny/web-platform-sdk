@@ -17,21 +17,28 @@ import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
+/** Status values for {@link AuditEventDetailScreenState}. */
+export enum AuditEventDetailStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 /** Discriminated union representing screen states for the audit event detail view. */
 export type AuditEventDetailScreenState =
   | {
       /** Loading state while audit event details are being fetched. */
-      status: 'loading'
+      status: AuditEventDetailStatus.LOADING
     }
   | {
       /** Error state when loading audit event details failed. */
-      status: 'error'
+      status: AuditEventDetailStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing successfully loaded audit event details. */
-      status: 'content'
+      status: AuditEventDetailStatus.CONTENT
       /** Loaded private audit event details. */
       event: AuditEventPrivate
     }
@@ -90,11 +97,11 @@ export const createAuditEventDetailStore = (
 
   return createStore<AuditEventDetailStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: AuditEventDetailStatus.LOADING },
 
     initScreen: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === AuditEventDetailStatus.CONTENT) {
         return
       }
       isFetching = true
@@ -105,27 +112,27 @@ export const createAuditEventDetailStore = (
         if (!validEventId) {
           set({
             screenState: {
-              status: 'error',
+              status: AuditEventDetailStatus.ERROR,
               error: CommonError.unknown()
             }
           })
           return
         }
 
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: AuditEventDetailStatus.LOADING } })
         const auditEventResult = await activeDeps.getAuditEventUseCase.execute(validEventId)
 
         if (isSuccess(auditEventResult)) {
           set({
             screenState: {
-              status: 'content',
+              status: AuditEventDetailStatus.CONTENT,
               event: auditEventResult.data
             }
           })
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: AuditEventDetailStatus.ERROR,
               error: auditEventResult.error
             }
           })
@@ -141,7 +148,7 @@ export const createAuditEventDetailStore = (
 
     onResourceClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== AuditEventDetailStatus.CONTENT) {
         return
       }
 
@@ -174,7 +181,7 @@ export const createAuditEventDetailStore = (
 
     onSubjectClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== AuditEventDetailStatus.CONTENT) {
         return
       }
 

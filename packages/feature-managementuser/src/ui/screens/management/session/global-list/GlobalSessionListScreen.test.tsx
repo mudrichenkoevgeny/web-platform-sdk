@@ -2,11 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalSessionListScreen, GlobalSessionListTestTags } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('GlobalSessionListScreen', () => {
   const createMockDeps = (): GlobalSessionListStoreDependencies => ({
@@ -14,16 +12,16 @@ describe('GlobalSessionListScreen', () => {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess({
           items: [userSessionMock()],
-          pageNumber: 1,
-          pageSize: 20,
+          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
+          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
           totalItems: 1,
           totalPages: 1
         })
       )
-    } as unknown as GlobalSessionListStoreDependencies['managementGetSessionsUseCase'],
+    },
     managementDeleteSessionUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    } as unknown as GlobalSessionListStoreDependencies['managementDeleteSessionUseCase'],
+    },
     onNavigateToSessionDetail: vi.fn(),
     onNavigateToUserDetail: vi.fn(),
     onBack: vi.fn()

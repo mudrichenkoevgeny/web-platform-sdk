@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { UserErrorCodes, UserErrorArgs, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, UserModuleStrings, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { UserErrorParser } from '@/error/parser/user-error-parser'
 import { UserError } from '@/error/model/user-error'
 
 describe('UserErrorParser', () => {
-  const parserEn = new UserErrorParser(new UserModuleStrings(undefined, 'en'))
-  const parserRu = new UserErrorParser(new UserModuleStrings(undefined, 'ru'))
+  const parserEn = new UserErrorParser(new UserModuleStrings(undefined, CommonLocales.ENGLISH))
+  const parserRu = new UserErrorParser(new UserModuleStrings(undefined, CommonLocales.RUSSIAN))
 
   it('parses client user feature errors', () => {
     expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The refresh token is invalid.')

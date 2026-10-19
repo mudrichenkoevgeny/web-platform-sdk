@@ -1,13 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ClientType, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen, SessionDetailTestTags } from '@/ui/screens/user/session/detail/SessionDetailScreen'
 import type { SessionDetailStoreDependencies } from '@/ui/screens/user/session/detail/session-detail-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('SessionDetailScreen', () => {
   const mockSession: UserSessionPrivate = {
@@ -20,7 +18,7 @@ describe('SessionDetailScreen', () => {
     identifierAuthProvider: UserAuthProvider.EMAIL,
     clientDeviceInfo: {
       clientType: ClientType.WEB,
-      language: 'en',
+      language: CommonLocales.ENGLISH,
       deviceId: null,
       deviceName: 'Chrome on Windows',
       appVersion: '1.0.0',

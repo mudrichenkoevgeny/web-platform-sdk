@@ -3,12 +3,10 @@ import {
   ManagementAuthSettingsNavigation,
   ManagementSecurityNavigation,
   ManagementSettingsNavigation,
-  UserModuleStrings
+  userStrings
 } from '@mudrichenkoevgeny/shared-foundation'
 import { CoreBackButton, CoreButton, CoreScreenTitleText } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
-
-const userStrings = new UserModuleStrings()
 
 /** Route configuration for administrative settings main hub screen. */
 export const Route = createFileRoute('/settings/')({

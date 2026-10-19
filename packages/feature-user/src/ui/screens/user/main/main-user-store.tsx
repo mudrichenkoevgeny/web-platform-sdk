@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -14,18 +14,28 @@ import type { ObserveAuthSettingsUseCase } from '@/usecase/auth/settings/observe
 import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
+ * Status values for {@link MainUserScreenState}.
+ */
+export enum MainUserStatus {
+  LOADING = 'loading',
+  UNAUTHORIZED = 'unauthorized',
+  CONTENT = 'content',
+  ERROR = 'error'
+}
+
+/**
  * Discriminated union representing the active screen state for {@link MainUserScreen}.
  */
 export type MainUserScreenState =
   | {
-      status: 'loading'
+      status: MainUserStatus.LOADING
     }
   | {
-      status: 'unauthorized'
+      status: MainUserStatus.UNAUTHORIZED
       actionError: AppError | null
     }
   | {
-      status: 'content'
+      status: MainUserStatus.CONTENT
       user: UserPrivate
       appType: AppType
       isAccountDeletionAvailable: boolean
@@ -35,7 +45,7 @@ export type MainUserScreenState =
       actionError: AppError | null
     }
   | {
-      status: 'error'
+      status: MainUserStatus.ERROR
       error: AppError
     }
 
@@ -45,9 +55,9 @@ export type MainUserScreenState =
 export interface MainUserStoreDependencies {
   appType: AppType
   userRepository: UserRepository
+  getUserUseCase?: GetUserUseCase
   logoutUseCase: LogoutUseCase
   scheduleUserDeletionUseCase: ScheduleUserDeletionUseCase
-  getUserUseCase?: GetUserUseCase
   getAuthSettingsUseCase?: GetAuthSettingsUseCase
   observeAuthSettingsUseCase?: ObserveAuthSettingsUseCase
   onNavigateToLogin: () => void
@@ -57,7 +67,7 @@ export interface MainUserStoreDependencies {
 }
 
 /**
- * State and actions managed by {@link MainUserStore}.
+ * Contract for state and actions exposed by {@link MainUserStore}.
  */
 export interface MainUserStoreState {
   screenState: MainUserScreenState
@@ -74,6 +84,9 @@ export interface MainUserStoreState {
   onDismissDialog: () => void
 }
 
+/**
+ * Type alias for the per-instance Zustand store.
+ */
 export type MainUserStore = ReturnType<typeof createMainUserStore>
 
 /**
@@ -84,16 +97,16 @@ export const createMainUserStore = (
   initialState?: MainUserScreenState
 ) => {
   const store = createStore<MainUserStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: MainUserStatus.LOADING },
     authSettings: null,
 
     onRefresh: async () => {
       const current = get().screenState
-      if (current.status === 'unauthorized') {
+      if (current.status === MainUserStatus.UNAUTHORIZED) {
         return
       }
 
-      if (current.status === 'content') {
+      if (current.status === MainUserStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -102,7 +115,7 @@ export const createMainUserStore = (
           }
         })
       } else {
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: MainUserStatus.LOADING } })
       }
 
       const result = deps.getUserUseCase
@@ -113,7 +126,7 @@ export const createMainUserStore = (
         if (result.data) {
           set({
             screenState: {
-              status: 'content',
+              status: MainUserStatus.CONTENT,
               user: result.data,
               appType: deps.appType,
               isAccountDeletionAvailable: deps.appType === AppType.CLIENT,
@@ -126,14 +139,14 @@ export const createMainUserStore = (
         } else {
           set({
             screenState: {
-              status: 'unauthorized',
+              status: MainUserStatus.UNAUTHORIZED,
               actionError: null
             }
           })
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === MainUserStatus.CONTENT) {
           set({
             screenState: {
               ...updated,
@@ -144,7 +157,7 @@ export const createMainUserStore = (
         } else {
           set({
             screenState: {
-              status: 'unauthorized',
+              status: MainUserStatus.UNAUTHORIZED,
               actionError: null
             }
           })
@@ -158,7 +171,7 @@ export const createMainUserStore = (
         if (!currentSettings.isRegistrationEnabled) {
           set({
             screenState: {
-              status: 'unauthorized',
+              status: MainUserStatus.UNAUTHORIZED,
               actionError: UserError.registrationDisabled()
             }
           })
@@ -174,7 +187,7 @@ export const createMainUserStore = (
           if (!result.data.isRegistrationEnabled) {
             set({
               screenState: {
-                status: 'unauthorized',
+                status: MainUserStatus.UNAUTHORIZED,
                 actionError: UserError.registrationDisabled()
               }
             })
@@ -188,7 +201,7 @@ export const createMainUserStore = (
 
     onLogoutClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== MainUserStatus.CONTENT) {
         return
       }
       set({
@@ -201,7 +214,7 @@ export const createMainUserStore = (
 
     onConfirmLogout: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== MainUserStatus.CONTENT) {
         return
       }
 
@@ -217,7 +230,7 @@ export const createMainUserStore = (
 
       set({
         screenState: {
-          status: 'unauthorized',
+          status: MainUserStatus.UNAUTHORIZED,
           actionError: null
         }
       })
@@ -237,7 +250,7 @@ export const createMainUserStore = (
 
     onDeleteAccountClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== MainUserStatus.CONTENT) {
         return
       }
       set({
@@ -250,7 +263,7 @@ export const createMainUserStore = (
 
     onConfirmDeleteAccount: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== MainUserStatus.CONTENT) {
         return
       }
 
@@ -268,13 +281,13 @@ export const createMainUserStore = (
         await deps.userRepository.clearSession()
         set({
           screenState: {
-            status: 'unauthorized',
+            status: MainUserStatus.UNAUTHORIZED,
             actionError: null
           }
         })
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === MainUserStatus.CONTENT) {
           set({
             screenState: {
               ...updated,
@@ -288,7 +301,7 @@ export const createMainUserStore = (
 
     onDismissDialog: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== MainUserStatus.CONTENT) {
         return
       }
       set({
@@ -323,10 +336,11 @@ export const MainUserProvider: React.FC<MainUserProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<MainUserStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createMainUserStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createMainUserStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   useEffect(() => {
     let isMounted = true
@@ -334,9 +348,9 @@ export const MainUserProvider: React.FC<MainUserProviderProps> = ({
     const unsubscribe = dependencies.userRepository.observeCurrentUser((user) => {
       if (!isMounted) return
       if (user) {
-        storeRef.current?.setState({
+        store.setState({
           screenState: {
-            status: 'content',
+            status: MainUserStatus.CONTENT,
             user,
             appType: dependencies.appType,
             isAccountDeletionAvailable: dependencies.appType === AppType.CLIENT,
@@ -347,9 +361,9 @@ export const MainUserProvider: React.FC<MainUserProviderProps> = ({
           }
         })
       } else {
-        storeRef.current?.setState({
+        store.setState({
           screenState: {
-            status: 'unauthorized',
+            status: MainUserStatus.UNAUTHORIZED,
             actionError: null
           }
         })
@@ -360,10 +374,10 @@ export const MainUserProvider: React.FC<MainUserProviderProps> = ({
       isMounted = false
       unsubscribe()
     }
-  }, [dependencies])
+  }, [dependencies, store])
 
   return (
-    <MainUserContext.Provider value={storeRef.current}>
+    <MainUserContext.Provider value={store}>
       {children}
     </MainUserContext.Provider>
   )

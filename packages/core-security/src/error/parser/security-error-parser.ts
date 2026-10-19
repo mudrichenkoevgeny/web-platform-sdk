@@ -2,12 +2,11 @@ import {
   SecurityErrorCodes,
   SecurityErrorArgs,
   CommonErrorArgs,
-  SecurityModuleStrings
+  SecurityModuleStrings,
+  securityStrings
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ClientSecurityErrorCodes } from '@/error/naming/client-security-error-codes'
-
-const defaultSecurityStrings = new SecurityModuleStrings()
 
 /**
  * AppErrorParser implementation for security-domain error codes.
@@ -21,7 +20,7 @@ export class SecurityErrorParser implements AppErrorParser {
    * @param stringsOrGetter - Core security strings dictionary or dynamic getter function returning current strings
    */
   public constructor(
-    stringsOrGetter: SecurityModuleStrings | (() => SecurityModuleStrings) = defaultSecurityStrings
+    stringsOrGetter: SecurityModuleStrings | (() => SecurityModuleStrings) = securityStrings
   ) {
     this.getStrings = typeof stringsOrGetter === 'function' ? stringsOrGetter : () => stringsOrGetter
   }
@@ -54,7 +53,7 @@ export class SecurityErrorParser implements AppErrorParser {
         )
 
       case SecurityErrorCodes.PASSWORD_TOO_WEAK:
-        return strings.errors.passwordTooWeak
+        return strings.errors.passwordTooWeakWithoutArgs
 
       case SecurityErrorCodes.TOTP_ALREADY_ENABLED:
         return strings.errors.totpAlreadyEnabled
@@ -66,7 +65,7 @@ export class SecurityErrorParser implements AppErrorParser {
         return strings.errors.mfaTokenExpired
 
       case SecurityErrorCodes.RECOVERY_CODE_ALREADY_USED:
-        return strings.errors.recoveryCodeUsed
+        return strings.errors.recoveryCodeAlreadyUsed
 
       case SecurityErrorCodes.INVALID_TOTP_CODE:
         return strings.errors.invalidTotpCode

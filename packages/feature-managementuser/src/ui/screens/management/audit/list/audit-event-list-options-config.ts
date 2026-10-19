@@ -1,11 +1,9 @@
-import { AuditActorType, AuditFilterValues, AuditStatus, UserRole, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditActorType, AuditFilterValues, AuditStatus, UserRole, CommonModuleStrings, commonStrings as globalCommonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
-const defaultCommonStrings = new CommonModuleStrings()
-
 export const getAuditEventListingOptionsConfig = (
-  commonStrings: CommonModuleStrings = defaultCommonStrings
+  commonStrings: CommonModuleStrings = globalCommonStrings
 ): ListingOptionsConfig => ({
   sortOptions: [
     {

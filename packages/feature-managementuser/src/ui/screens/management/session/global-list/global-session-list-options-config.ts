@@ -1,11 +1,9 @@
-import { ClientType, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, UserAuthProvider, UserFilterValues, UserRole, UserSortValues, CommonModuleStrings, commonStrings as globalCommonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
-const defaultCommonStrings = new CommonModuleStrings()
-
 export const getGlobalSessionListingOptionsConfig = (
-  commonStrings: CommonModuleStrings = defaultCommonStrings
+  commonStrings: CommonModuleStrings = globalCommonStrings
 ): ListingOptionsConfig => ({
   sortOptions: [
     {

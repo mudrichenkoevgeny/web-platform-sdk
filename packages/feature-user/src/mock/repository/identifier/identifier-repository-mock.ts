@@ -24,6 +24,9 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   public deleteUserIdentifierResultProvider: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)
 
+  public deletePasswordResultProvider: (userIdentifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> = async () =>
+    appResultSuccess(undefined)
+
   public addUserIdentifierResultProvider: () => Promise<AppResult<UserIdentifierPrivate, AppError>> = async () =>
     appResultSuccess(userIdentifierPrivateMock())
 
@@ -57,6 +60,11 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
   public async deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
     this.lastIdentifierId = identifierId
     return this.deleteUserIdentifierResultProvider(identifierId)
+  }
+
+  public async deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    this.lastIdentifierId = userIdentifierId
+    return this.deletePasswordResultProvider(userIdentifierId)
   }
 
   public async addUserIdentifierEmail(

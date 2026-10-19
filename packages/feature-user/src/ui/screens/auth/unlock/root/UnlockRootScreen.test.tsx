@@ -1,11 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockRootScreen } from '@/ui/screens/auth/unlock/root/UnlockRootScreen'
 import type { UnlockRootStoreDependencies } from '@/ui/screens/auth/unlock/root/unlock-root-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('UnlockRootScreen', () => {
   const createMockDeps = (): UnlockRootStoreDependencies => ({

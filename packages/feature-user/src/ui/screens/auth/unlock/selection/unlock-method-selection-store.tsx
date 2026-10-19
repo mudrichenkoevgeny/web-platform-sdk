@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { AccountLockoutType } from "@mudrichenkoevgeny/shared-foundation";
@@ -164,13 +164,14 @@ export const UnlockMethodSelectionProvider: React.FC<UnlockMethodSelectionProvid
   initialState,
   children
 }) => {
-  const storeRef = useRef<UnlockMethodSelectionStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createUnlockMethodSelectionStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createUnlockMethodSelectionStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <UnlockMethodSelectionContext.Provider value={storeRef.current}>
+    <UnlockMethodSelectionContext.Provider value={store}>
       {children}
     </UnlockMethodSelectionContext.Provider>
   )

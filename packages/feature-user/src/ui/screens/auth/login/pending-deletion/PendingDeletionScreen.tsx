@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreButton,
@@ -15,10 +15,8 @@ import {
 } from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'
 import type { PendingDeletionStoreDependencies } from "@/ui/screens/auth/login/pending-deletion/pending-deletion-store";
 
-const defaultUserStrings = new UserModuleStrings()
-
 const PendingDeletionContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = usePendingDeletionStore((s) => s.screenState)
   const onRestoreAccountClick = usePendingDeletionStore((s) => s.onRestoreAccountClick)
@@ -95,7 +93,7 @@ export interface PendingDeletionScreenProps extends React.HTMLAttributes<HTMLDiv
  * Screen component displayed when an account is scheduled for permanent deletion, allowing restoration.
  */
 export const PendingDeletionScreen = forwardRef<HTMLDivElement, PendingDeletionScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <PendingDeletionProvider dependencies={dependencies}>

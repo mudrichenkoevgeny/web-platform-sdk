@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { getAppErrorRetryAfterSeconds, isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { ValidatePasswordUseCase } from "@mudrichenkoevgeny/web-platform-sdk-core-security";
@@ -8,22 +8,32 @@ import type { ResetPasswordRepository } from '@/repository/auth/reset-password/r
 import type { ResetEmailPasswordUseCase } from '@/usecase/auth/reset-password/reset-email-password-use-case'
 import type { SendResetPasswordConfirmationToEmailUseCase } from '@/usecase/auth/reset-password/send-reset-password-confirmation-to-email-use-case'
 import { FieldValidator } from '@/validator/field-validator'
+
+/**
+ * Screen status values for {@link ResetEmailPasswordScreenState}.
+ */
+export enum ResetEmailPasswordStatus {
+  LOADING = 'loading',
+  EMAIL_INPUT = 'email_input',
+  RESET_INPUT = 'reset_input'
+}
+
 /**
  * Union representing the active screen state for {@link ResetEmailPasswordScreen}.
  */
 export type ResetEmailPasswordScreenState =
   | {
-      status: 'loading'
+      status: ResetEmailPasswordStatus.LOADING
     }
   | {
-      status: 'email_input'
+      status: ResetEmailPasswordStatus.EMAIL_INPUT
       email: string
       isEmailValid: boolean
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      status: 'reset_input'
+      status: ResetEmailPasswordStatus.RESET_INPUT
       email: string
       code: string
       newPassword: string
@@ -40,13 +50,13 @@ export type ResetEmailPasswordScreenState =
  */
 export interface ResetEmailPasswordStoreDependencies {
   /** Password recovery repository. */
-  resetPasswordRepository: ResetPasswordRepository
+  resetPasswordRepository: Pick<ResetPasswordRepository, 'getRemainingResetPasswordConfirmationDelayInSeconds'>
   /** Use case for sending reset confirmation code to email. */
-  sendResetPasswordConfirmationToEmailUseCase: SendResetPasswordConfirmationToEmailUseCase
+  sendResetPasswordConfirmationToEmailUseCase: Pick<SendResetPasswordConfirmationToEmailUseCase, 'execute'>
   /** Use case for resetting email password. */
-  resetEmailPasswordUseCase: ResetEmailPasswordUseCase
+  resetEmailPasswordUseCase: Pick<ResetEmailPasswordUseCase, 'execute'>
   /** Use case for validating password against active policy. */
-  validatePasswordUseCase: ValidatePasswordUseCase
+  validatePasswordUseCase: Pick<ValidatePasswordUseCase, 'execute'>
   /** Navigation callback for back action or step pop. */
   onBack: () => void
   /** Flow completion callback. */
@@ -113,7 +123,7 @@ export const createResetEmailPasswordStore = (
       seconds,
       (remaining) => {
         const current = get().screenState
-        if (current.status === 'reset_input') {
+        if (current.status === ResetEmailPasswordStatus.RESET_INPUT) {
           set({
             screenState: {
               ...current,
@@ -135,7 +145,7 @@ export const createResetEmailPasswordStore = (
   ) => {
     set({
       screenState: {
-        status: 'reset_input',
+        status: ResetEmailPasswordStatus.RESET_INPUT,
         email,
         code: '',
         newPassword: '',
@@ -151,7 +161,7 @@ export const createResetEmailPasswordStore = (
   }
 
   const defaultState: ResetEmailPasswordScreenState = {
-    status: 'email_input',
+    status: ResetEmailPasswordStatus.EMAIL_INPUT,
     email: '',
     isEmailValid: false,
     actionLoading: false,
@@ -163,7 +173,7 @@ export const createResetEmailPasswordStore = (
 
     onEmailChanged: (email: string) => {
       const current = get().screenState
-      if (current.status !== 'email_input') {
+      if (current.status !== ResetEmailPasswordStatus.EMAIL_INPUT) {
         return
       }
 
@@ -187,7 +197,7 @@ export const createResetEmailPasswordStore = (
 
     onCodeChanged: (code: string) => {
       const current = get().screenState
-      if (current.status !== 'reset_input') {
+      if (current.status !== ResetEmailPasswordStatus.RESET_INPUT) {
         return
       }
 
@@ -204,7 +214,7 @@ export const createResetEmailPasswordStore = (
 
     onPasswordChanged: async (password: string) => {
       const current = get().screenState
-      if (current.status !== 'reset_input') {
+      if (current.status !== ResetEmailPasswordStatus.RESET_INPUT) {
         return
       }
 
@@ -234,7 +244,7 @@ export const createResetEmailPasswordStore = (
       }
 
       const updated = get().screenState
-      if (updated.status === 'reset_input') {
+      if (updated.status === ResetEmailPasswordStatus.RESET_INPUT) {
         set({
           screenState: {
             ...updated,
@@ -246,7 +256,7 @@ export const createResetEmailPasswordStore = (
 
     onTogglePasswordVisibility: () => {
       const current = get().screenState
-      if (current.status !== 'reset_input') {
+      if (current.status !== ResetEmailPasswordStatus.RESET_INPUT) {
         return
       }
 
@@ -260,12 +270,12 @@ export const createResetEmailPasswordStore = (
 
     onSendCodeClick: async () => {
       const current = get().screenState
-      const email = current.status === 'email_input' || current.status === 'reset_input' ? current.email : ''
+      const email = current.status === ResetEmailPasswordStatus.EMAIL_INPUT || current.status === ResetEmailPasswordStatus.RESET_INPUT ? current.email : ''
       if (!email) {
         return
       }
 
-      if (current.status === 'email_input' || current.status === 'reset_input') {
+      if (current.status === ResetEmailPasswordStatus.EMAIL_INPUT || current.status === ResetEmailPasswordStatus.RESET_INPUT) {
         set({
           screenState: {
             ...current,
@@ -280,11 +290,12 @@ export const createResetEmailPasswordStore = (
         moveToResetInput(email, result.data.retryAfterSeconds, get, set)
       } else {
         const error = result.error
-        if ('retryAfterSeconds' in error && typeof error.retryAfterSeconds === 'number') {
-          moveToResetInput(email, error.retryAfterSeconds, get, set)
+        const retryAfterSeconds = getAppErrorRetryAfterSeconds(error)
+        if (retryAfterSeconds > 0) {
+          moveToResetInput(email, retryAfterSeconds, get, set)
         } else {
           const updated = get().screenState
-          if (updated.status === 'email_input' || updated.status === 'reset_input') {
+          if (updated.status === ResetEmailPasswordStatus.EMAIL_INPUT || updated.status === ResetEmailPasswordStatus.RESET_INPUT) {
             set({
               screenState: {
                 ...updated,
@@ -299,7 +310,7 @@ export const createResetEmailPasswordStore = (
 
     onConfirmResetClick: async () => {
       const current = get().screenState
-      if (current.status !== 'reset_input' || current.actionLoading) {
+      if (current.status !== ResetEmailPasswordStatus.RESET_INPUT || current.actionLoading) {
         return
       }
 
@@ -327,12 +338,12 @@ export const createResetEmailPasswordStore = (
         if (isSuccess(resetResult)) {
           deps.onFinished()
           const updated = get().screenState
-          if (updated.status === 'reset_input') {
+          if (updated.status === ResetEmailPasswordStatus.RESET_INPUT) {
             set({ screenState: { ...updated, actionLoading: false } })
           }
         } else {
           const updated = get().screenState
-          if (updated.status === 'reset_input') {
+          if (updated.status === ResetEmailPasswordStatus.RESET_INPUT) {
             set({
               screenState: {
                 ...updated,
@@ -344,7 +355,7 @@ export const createResetEmailPasswordStore = (
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'reset_input') {
+        if (updated.status === ResetEmailPasswordStatus.RESET_INPUT) {
           set({
             screenState: {
               ...updated,
@@ -359,11 +370,11 @@ export const createResetEmailPasswordStore = (
     onResetEmailClick: () => {
       timerController?.abort()
       const current = get().screenState
-      const email = current.status === 'reset_input' ? current.email : ''
+      const email = current.status === ResetEmailPasswordStatus.RESET_INPUT ? current.email : ''
 
       set({
         screenState: {
-          status: 'email_input',
+          status: ResetEmailPasswordStatus.EMAIL_INPUT,
           email,
           isEmailValid: FieldValidator.isValidEmail(email),
           actionLoading: false,
@@ -374,7 +385,7 @@ export const createResetEmailPasswordStore = (
 
     onBackClick: () => {
       const current = get().screenState
-      if (current.status === 'reset_input') {
+      if (current.status === ResetEmailPasswordStatus.RESET_INPUT) {
         get().onResetEmailClick()
       } else {
         deps.onBack()
@@ -401,13 +412,14 @@ export const ResetEmailPasswordProvider: React.FC<ResetEmailPasswordProviderProp
   initialState,
   children
 }) => {
-  const storeRef = useRef<ResetEmailPasswordStore | null>(null)
-  if (!storeRef.current) {
-    storeRef.current = createResetEmailPasswordStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createResetEmailPasswordStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <ResetEmailPasswordContext.Provider value={storeRef.current}>
+    <ResetEmailPasswordContext.Provider value={store}>
       {children}
     </ResetEmailPasswordContext.Provider>
   )

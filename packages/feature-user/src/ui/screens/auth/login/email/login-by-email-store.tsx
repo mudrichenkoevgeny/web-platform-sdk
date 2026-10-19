@@ -3,23 +3,31 @@ import { createStore, useStore } from 'zustand'
 import {
   AccountLockoutType,
   AppType,
-  SecurityErrorArgs,
   SecurityErrorCodes,
   UserAccountStatus,
-  UserErrorArgs,
   UserErrorCodes
 } from '@mudrichenkoevgeny/shared-foundation'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  getAppErrorAccountLockoutType,
+  getAppErrorMfaToken,
+  getAppErrorTemporaryLockoutUntil,
+  isSuccess
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { LoginByEmailUseCase } from '@/usecase/auth/login/login-by-email-use-case'
 import { FieldValidator } from '@/validator/field-validator'
 
+export enum LoginByEmailStatus {
+  LOADING = 'loading',
+  CONTENT = 'content'
+}
+
 export type LoginByEmailScreenState =
   | {
-      status: 'loading'
+      status: LoginByEmailStatus.LOADING
     }
   | {
-      status: 'content'
+      status: LoginByEmailStatus.CONTENT
       email: string
       isEmailValid: boolean
       password: string
@@ -32,7 +40,7 @@ export type LoginByEmailScreenState =
 
 export interface LoginByEmailStoreDependencies {
   appType: AppType
-  loginByEmailUseCase: LoginByEmailUseCase
+  loginByEmailUseCase: Pick<LoginByEmailUseCase, 'execute'>
   onNavigateToRegistrationByEmail: () => void
   onNavigateToForgotPassword: () => void
   onNavigateToTotp: (mfaToken: string) => void
@@ -63,7 +71,7 @@ export const createLoginByEmailStore = (
   initialState?: LoginByEmailScreenState
 ) => {
   const defaultContentState: LoginByEmailScreenState = {
-    status: 'content',
+    status: LoginByEmailStatus.CONTENT,
     email: '',
     isEmailValid: false,
     password: '',
@@ -79,7 +87,7 @@ export const createLoginByEmailStore = (
 
     onEmailChanged: (email: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== LoginByEmailStatus.CONTENT) {
         return
       }
 
@@ -95,7 +103,7 @@ export const createLoginByEmailStore = (
 
     onPasswordChanged: (password: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== LoginByEmailStatus.CONTENT) {
         return
       }
 
@@ -111,7 +119,7 @@ export const createLoginByEmailStore = (
 
     onTogglePasswordVisibility: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== LoginByEmailStatus.CONTENT) {
         return
       }
 
@@ -126,7 +134,7 @@ export const createLoginByEmailStore = (
     onLoginClick: async () => {
       const current = get().screenState
       if (
-        current.status !== 'content' ||
+        current.status !== LoginByEmailStatus.CONTENT ||
         !current.isEmailValid ||
         !current.isPasswordValid ||
         current.actionLoading
@@ -151,18 +159,18 @@ export const createLoginByEmailStore = (
           deps.onFinished()
         }
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === LoginByEmailStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false } })
         }
       } else {
         const error = result.error
 
         if (error.code === SecurityErrorCodes.MFA_CONFIRMATION_REQUIRED) {
-          const mfaToken = error.args?.[SecurityErrorArgs.MFA_TOKEN] as string | undefined
+          const mfaToken = getAppErrorMfaToken(error)
           if (mfaToken) {
             deps.onNavigateToTotp(mfaToken)
             const updated = get().screenState
-            if (updated.status === 'content') {
+            if (updated.status === LoginByEmailStatus.CONTENT) {
               set({ screenState: { ...updated, actionLoading: false } })
             }
             return
@@ -170,23 +178,19 @@ export const createLoginByEmailStore = (
         }
 
         if (error.code === UserErrorCodes.USER_LOCKED) {
-          const lockoutTypeRaw = error.args?.[UserErrorArgs.ACCOUNT_LOCKOUT_TYPE] as string | undefined
-          const lockoutType = lockoutTypeRaw
-            ? (Object.values(AccountLockoutType).find((v) => v === lockoutTypeRaw) ?? null)
-            : null
-          const lockoutUntilRaw = error.args?.[UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL]
-          const lockoutUntil = lockoutUntilRaw ? Number(lockoutUntilRaw) : null
+          const lockoutType = getAppErrorAccountLockoutType(error)
+          const lockoutUntil = getAppErrorTemporaryLockoutUntil(error)
 
           deps.onNavigateToAccountUnlock?.(lockoutType, lockoutUntil)
           const updated = get().screenState
-          if (updated.status === 'content') {
+          if (updated.status === LoginByEmailStatus.CONTENT) {
             set({ screenState: { ...updated, actionLoading: false } })
           }
           return
         }
 
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === LoginByEmailStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

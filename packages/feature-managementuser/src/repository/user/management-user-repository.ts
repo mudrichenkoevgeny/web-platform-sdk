@@ -26,6 +26,7 @@ export interface UpdateUserParams {
   authorityLevel?: number | null
   permissionCodes?: PermissionCode[] | null
   accountLockoutType?: AccountLockoutType | null
+  lockoutType?: AccountLockoutType | null
   temporaryLockoutUntil?: number | null
 }
 

@@ -1,4 +1,4 @@
-import { ClientType, toClientDeviceIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales, toClientDeviceIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { HttpClient } from '@/network/http-client/http-client'
 
 /** Mock implementation of {@link HttpClient} for unit testing. */
@@ -13,7 +13,7 @@ export class HttpClientMock extends HttpClient {
           device_name: 'Test Device',
           app_version: '1.0.0',
           operation_system_version: '1.0.0',
-          language: 'en'
+          language: CommonLocales.ENGLISH
         })
       }
     })

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
-import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -20,12 +20,10 @@ import {
 import { SessionItem } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   UserSessionListProvider,
+  UserSessionListStatus,
   useUserSessionListStore
 } from '@/ui/screens/management/session/user-list/UserSessionListStore'
 import type { UserSessionListStoreDependencies } from '@/ui/screens/management/session/user-list/UserSessionListStore'
-
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link UserSessionListScreen}. */
 export const UserSessionListTestTags = {
@@ -39,7 +37,7 @@ export const UserSessionListTestTags = {
 }
 
 const UserSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const deps = useUserSessionListStore((s) => s.dependencies)
   const screenState = useUserSessionListStore((s) => s.screenState)
@@ -51,7 +49,7 @@ const UserSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onBackClick = useUserSessionListStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
-  const isContent = screenState.status === 'content'
+  const isContent = screenState.status === UserSessionListStatus.CONTENT
   const pagingState = isContent ? screenState.paging : undefined
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
@@ -60,107 +58,112 @@ const UserSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
-  }
+  switch (screenState.status) {
+    case UserSessionListStatus.LOADING:
+      return <FullscreenLoading />
 
-  if (screenState.status === 'error') {
-    return (
-      <FullscreenError
-        data-testid={UserSessionListTestTags.GLOBAL_ERROR_TEXT}
-        error={screenState.error}
-        onRetry={onRefresh}
-        onBack={onBackClick}
-        title={strings.ui.userSessions}
-      />
-    )
-  }
-
-  const { paging, actionLoading, actionError } = screenState
-
-  return (
-    <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton data-testid={UserSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
-        <CoreScreenTitleText
-          data-testid={UserSessionListTestTags.TITLE}
-          text={strings.ui.userSessions}
-          className="absolute left-1/2 -translate-x-1/2"
+    case UserSessionListStatus.ERROR:
+      return (
+        <FullscreenError
+          data-testid={UserSessionListTestTags.GLOBAL_ERROR_TEXT}
+          error={screenState.error}
+          onRetry={onRefresh}
+          onBack={onBackClick}
+          title={strings.ui.userSessions}
         />
-        <button
-          type="button"
-          data-testid={UserSessionListTestTags.REFRESH_BUTTON}
-          aria-label={defaultCommonStrings.ui.refresh}
-          onClick={onRefresh}
-          className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
-        </button>
-      </div>
+      )
 
-      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={UserSessionListTestTags.SESSION_LIST}>
-        {actionError && (
-          <CoreErrorText
-            data-testid={UserSessionListTestTags.ACTION_ERROR_TEXT}
-            text={errorParser.parse(actionError) ?? ''}
-          />
-        )}
+    case UserSessionListStatus.CONTENT: {
+      const { paging, actionLoading, actionError } = screenState
 
-        {paging.items.length > 1 && (
-          <div className="w-full mb-2">
-            <CoreButton
+      return (
+        <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
+          <div className="w-full flex items-center justify-between relative mb-4">
+            <CoreBackButton data-testid={UserSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
+            <CoreScreenTitleText
+              data-testid={UserSessionListTestTags.TITLE}
+              text={strings.ui.userSessions}
+              className="absolute left-1/2 -translate-x-1/2"
+            />
+            <button
               type="button"
-              data-testid={UserSessionListTestTags.REVOKE_ALL_BUTTON}
-              label={strings.ui.revokeAllSessions}
-              onClick={onDeleteAllSessionsClick}
-              disabled={actionLoading || (deps.currentUserId != null && deps.userId === deps.currentUserId)}
-              className="bg-error hover:bg-error/90 text-error-foreground"
-            />
+              data-testid={UserSessionListTestTags.REFRESH_BUTTON}
+              aria-label={commonStrings.ui.refresh}
+              onClick={onRefresh}
+              className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
+            </button>
           </div>
-        )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <ListingEmptyState />
-          </div>
-        ) : (
-          <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar
-              onRefreshClick={onRefresh}
-            />
+          <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={UserSessionListTestTags.SESSION_LIST}>
+            {actionError && (
+              <CoreErrorText
+                data-testid={UserSessionListTestTags.ACTION_ERROR_TEXT}
+                text={errorParser.parse(actionError) ?? ''}
+              />
+            )}
 
-            {paging.items.map((session) => (
-              session.id ? (
-                <SessionItem
-                  key={session.id}
-                  session={session}
-                  enabled={!actionLoading}
-                  onRevokeClick={() => onDeleteSessionClick(session.id!)}
-                  onSessionClick={() => onSessionClick(session)}
-                  isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
-                  strings={strings}
+            {paging.items.length > 1 && (
+              <div className="w-full mb-2">
+                <CoreButton
+                  type="button"
+                  data-testid={UserSessionListTestTags.REVOKE_ALL_BUTTON}
+                  label={strings.ui.revokeAllSessions}
+                  onClick={onDeleteAllSessionsClick}
+                  disabled={actionLoading || (deps.currentUserId != null && deps.userId === deps.currentUserId)}
+                  className="bg-error hover:bg-error/90 text-error-foreground"
                 />
-              ) : null
-            ))}
-
-            {paging.pageNumber < paging.totalPages && (
-              <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
-                {paging.isNextPageLoading && (
-                  <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                )}
               </div>
             )}
 
-            <PagingFooter
-              currentPage={paging.pageNumber}
-              totalPages={paging.totalPages}
-              totalCount={paging.totalCount}
-            />
+            {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
+              <div className="flex-1 flex items-center justify-center">
+                <ListingEmptyState />
+              </div>
+            ) : (
+              <div className="w-full flex flex-col gap-3">
+                <ListingHeaderBar
+                  onRefreshClick={onRefresh}
+                />
+
+                {paging.items.map((session) => {
+                  const sessionId = session.id
+                  if (!sessionId) {
+                    return null
+                  }
+                  return (
+                    <SessionItem
+                      key={sessionId}
+                      session={session}
+                      enabled={!actionLoading}
+                      onRevokeClick={() => onDeleteSessionClick(sessionId)}
+                      onSessionClick={() => onSessionClick(session)}
+                      isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
+                    />
+                  )
+                })}
+
+                {paging.pageNumber < paging.totalPages && (
+                  <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
+                    {paging.isNextPageLoading && (
+                      <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    )}
+                  </div>
+                )}
+
+                <PagingFooter
+                  currentPage={paging.pageNumber}
+                  totalPages={paging.totalPages}
+                  totalCount={paging.totalCount}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  )
+        </div>
+      )
+    }
+  }
 }
 
 const UserSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
@@ -185,7 +188,7 @@ export interface UserSessionListScreenProps extends React.HTMLAttributes<HTMLDiv
 
 /** Administrative screen component displaying paginated active sessions for a target user account. */
 export const UserSessionListScreen = forwardRef<HTMLDivElement, UserSessionListScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UserSessionListProvider dependencies={dependencies}>

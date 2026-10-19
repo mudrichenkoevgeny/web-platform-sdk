@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react'
-import { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
@@ -26,12 +26,10 @@ import {
 } from '@/ui/screens/management/session/global-list/globalSessionListSearchConverters'
 import {
   GlobalSessionListProvider,
+  GlobalSessionListStatus,
   useGlobalSessionListStore
 } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
-
-const defaultUserStrings = new UserModuleStrings()
-const defaultCommonStrings = new CommonModuleStrings()
 
 /** Automation test tags for {@link GlobalSessionListScreen}. */
 export const GlobalSessionListTestTags = {
@@ -45,7 +43,7 @@ export const GlobalSessionListTestTags = {
 }
 
 const GlobalSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const deps = useGlobalSessionListStore((s) => s.dependencies)
   const screenState = useGlobalSessionListStore((s) => s.screenState)
@@ -88,7 +86,7 @@ const GlobalSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     onToggleFilterPanel()
   }
 
-  const isContent = screenState.status === 'content'
+  const isContent = screenState.status === GlobalSessionListStatus.CONTENT
   const pagingState = isContent ? screenState.paging : undefined
 
   const sentinelRef = useInfiniteScroll<HTMLDivElement>({
@@ -97,123 +95,129 @@ const GlobalSessionListContent: React.FC<{ strings?: UserModuleStrings }> = ({
     isLoading: pagingState?.isNextPageLoading ?? false
   })
 
-  if (screenState.status === 'loading') {
-    return <FullscreenLoading />
-  }
+  switch (screenState.status) {
+    case GlobalSessionListStatus.LOADING:
+      return <FullscreenLoading />
 
-  if (screenState.status === 'error') {
-    return (
-      <FullscreenError
-        data-testid={GlobalSessionListTestTags.GLOBAL_ERROR_TEXT}
-        error={screenState.error}
-        onRetry={onRefresh}
-        onBack={onBackClick}
-        title={strings.ui.sessions}
-      />
-    )
-  }
-
-  const {
-    paging,
-    isFilterPanelExpanded,
-    actionError
-  } = screenState
-
-  const optionsConfig = getGlobalSessionListingOptionsConfig(defaultCommonStrings)
-
-  return (
-    <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton data-testid={GlobalSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
-        <CoreScreenTitleText
-          data-testid={GlobalSessionListTestTags.TITLE}
-          text={strings.ui.sessions}
-          className="absolute left-1/2 -translate-x-1/2"
+    case GlobalSessionListStatus.ERROR:
+      return (
+        <FullscreenError
+          data-testid={GlobalSessionListTestTags.GLOBAL_ERROR_TEXT}
+          error={screenState.error}
+          onRetry={onRefresh}
+          onBack={onBackClick}
+          title={strings.ui.sessions}
         />
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            data-testid={GlobalSessionListTestTags.FILTER_BUTTON}
-            aria-label={strings.ui.filter}
-            onClick={onToggleFilterPanel}
-            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <CoreIcon src={icons.filter} size={20} className="text-surface-foreground" />
-          </button>
-          <button
-            type="button"
-            data-testid={GlobalSessionListTestTags.REFRESH_BUTTON}
-            aria-label={defaultCommonStrings.ui.refresh}
-            onClick={onRefresh}
-            className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
-          >
-            <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
-          </button>
-        </div>
-      </div>
+      )
 
-      <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalSessionListTestTags.SESSION_LIST}>
-        {actionError && (
-          <CoreErrorText
-            data-testid={GlobalSessionListTestTags.ACTION_ERROR_TEXT}
-            text={errorParser.parse(actionError) ?? ''}
-          />
-        )}
+    case GlobalSessionListStatus.CONTENT: {
+      const {
+        paging,
+        isFilterPanelExpanded,
+        actionError
+      } = screenState
 
-        {isFilterPanelExpanded && (
-          <div className="w-full mb-2">
-            <ListingOptionsPanel
-              config={optionsConfig}
-              sortState={draftSortState}
-              filterStates={draftFilterStates}
-              onSortChanged={setDraftSortState}
-              onFilterChanged={handleFilterChanged}
-              onApplyClick={handleApplyFilters}
+      const optionsConfig = getGlobalSessionListingOptionsConfig(commonStrings)
+
+      return (
+        <div className="w-full h-full p-6 flex flex-col relative overflow-hidden">
+          <div className="w-full flex items-center justify-between relative mb-4">
+            <CoreBackButton data-testid={GlobalSessionListTestTags.BACK_BUTTON} onClick={onBackClick} />
+            <CoreScreenTitleText
+              data-testid={GlobalSessionListTestTags.TITLE}
+              text={strings.ui.sessions}
+              className="absolute left-1/2 -translate-x-1/2"
             />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                data-testid={GlobalSessionListTestTags.FILTER_BUTTON}
+                aria-label={strings.ui.filter}
+                onClick={onToggleFilterPanel}
+                className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <CoreIcon src={icons.filter} size={20} className="text-surface-foreground" />
+              </button>
+              <button
+                type="button"
+                data-testid={GlobalSessionListTestTags.REFRESH_BUTTON}
+                aria-label={commonStrings.ui.refresh}
+                onClick={onRefresh}
+                className="p-2 rounded-lg border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <CoreIcon src={icons.refresh} size={20} className="text-surface-foreground" />
+              </button>
+            </div>
           </div>
-        )}
 
-        {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
-          <div className="flex-1 flex items-center justify-center">
-            <ListingEmptyState />
-          </div>
-        ) : (
-          <div className="w-full flex flex-col gap-3">
-            <ListingHeaderBar
-              onRefreshClick={onRefresh}
-              onOptionsClick={onToggleFilterPanel}
-            />
+          <div className="w-full flex-1 overflow-y-auto flex flex-col gap-3 pr-1" data-testid={GlobalSessionListTestTags.SESSION_LIST}>
+            {actionError && (
+              <CoreErrorText
+                data-testid={GlobalSessionListTestTags.ACTION_ERROR_TEXT}
+                text={errorParser.parse(actionError) ?? ''}
+              />
+            )}
 
-            {paging.items.map((session) => (
-              session.id ? (
-                <SessionItem
-                  key={session.id}
-                  session={session}
-                  onSessionClick={() => onSessionClick(session)}
-                  onRevokeClick={() => onDeleteSessionClick(session.userId, session.id!)}
-                  isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
+            {isFilterPanelExpanded && (
+              <div className="w-full mb-2">
+                <ListingOptionsPanel
+                  config={optionsConfig}
+                  sortState={draftSortState}
+                  filterStates={draftFilterStates}
+                  onSortChanged={setDraftSortState}
+                  onFilterChanged={handleFilterChanged}
+                  onApplyClick={handleApplyFilters}
                 />
-              ) : null
-            ))}
-
-            {paging.pageNumber < paging.totalPages && (
-              <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
-                {paging.isNextPageLoading && (
-                  <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                )}
               </div>
             )}
 
-            <PagingFooter
-              currentPage={paging.pageNumber}
-              totalPages={paging.totalPages}
-              totalCount={paging.totalCount}
-            />
+            {paging.items.length === 0 && !paging.isInitialLoading && !paging.isNextPageLoading ? (
+              <div className="flex-1 flex items-center justify-center">
+                <ListingEmptyState />
+              </div>
+            ) : (
+              <div className="w-full flex flex-col gap-3">
+                <ListingHeaderBar
+                  onRefreshClick={onRefresh}
+                  onOptionsClick={onToggleFilterPanel}
+                />
+
+                {paging.items.map((session) => {
+                  const sessionId = session.id
+                  if (!sessionId) {
+                    return null
+                  }
+                  return (
+                    <SessionItem
+                      key={sessionId}
+                      session={session}
+                      onSessionClick={() => onSessionClick(session)}
+                      onRevokeClick={() => onDeleteSessionClick(session.userId, sessionId)}
+                      isCurrentSession={(deps.currentUserId != null && session.userId === deps.currentUserId) || (deps.currentSessionId != null && session.id === deps.currentSessionId)}
+                    />
+                  )
+                })}
+
+                {paging.pageNumber < paging.totalPages && (
+                  <div ref={sentinelRef} className="h-4 w-full flex items-center justify-center">
+                    {paging.isNextPageLoading && (
+                      <div role="status" className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    )}
+                  </div>
+                )}
+
+                <PagingFooter
+                  currentPage={paging.pageNumber}
+                  totalPages={paging.totalPages}
+                  totalCount={paging.totalCount}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  )
+        </div>
+      )
+    }
+  }
 }
 
 const GlobalSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
@@ -246,7 +250,7 @@ export interface GlobalSessionListScreenProps extends React.HTMLAttributes<HTMLD
 
 /** Screen displaying a paginated global list of user sessions across all accounts. */
 export const GlobalSessionListScreen = forwardRef<HTMLDivElement, GlobalSessionListScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <GlobalSessionListProvider dependencies={dependencies}>

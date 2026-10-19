@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ManagementGlobalSessionListParamsParser, managementGlobalSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementGlobalSessionListParamsParser } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSessionListParams, UserSessionSummary, UserSessionId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -14,27 +14,37 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
 import type { ManagementGetSessionsUseCase } from '@/usecase/session/management-get-sessions-use-case'
-import type { GlobalSessionListSearchParams } from '@/ui/screens/management/session/global-list/globalSessionListSearchSchema'
+import type { GlobalSessionListSearchParams } from './globalSessionListSearchSchema'
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null
+function toRecord(val: unknown): Record<string, unknown> {
+  if (typeof val === 'object' && val !== null) {
+    return { ...val }
+  }
+  return {}
+}
+
+/** Status values for {@link GlobalSessionListScreenState}. */
+export enum GlobalSessionListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
 }
 
 /** Discriminated union representing screen states for the global session list view. */
 export type GlobalSessionListScreenState =
   | {
       /** Loading state while sessions list is being loaded initially. */
-      status: 'loading'
+      status: GlobalSessionListStatus.LOADING
     }
   | {
       /** Error state when loading sessions list failed. */
-      status: 'error'
+      status: GlobalSessionListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated sessions. */
-      status: 'content'
+      status: GlobalSessionListStatus.CONTENT
       /** Current pagination state for session items. */
       paging: PaginationState<UserSessionSummary>
       /** Whether the filter panel drawer is expanded. */
@@ -48,9 +58,9 @@ export type GlobalSessionListScreenState =
 /** External dependencies required by {@link createGlobalSessionListStore}. */
 export interface GlobalSessionListStoreDependencies {
   /** Use case for loading paginated global user sessions. */
-  managementGetSessionsUseCase: ManagementGetSessionsUseCase
+  managementGetSessionsUseCase: Pick<ManagementGetSessionsUseCase, 'execute'>
   /** Use case for deleting a user session. */
-  managementDeleteSessionUseCase: ManagementDeleteSessionUseCase
+  managementDeleteSessionUseCase: Pick<ManagementDeleteSessionUseCase, 'execute'>
   /** Optional current session ID. */
   currentSessionId?: UserSessionId | null
   /** Optional current user ID. */
@@ -126,23 +136,21 @@ export const createGlobalSessionListStore = (
     try {
       const activeDeps = get().dependencies
       const rawParams = overrideParams ?? activeDeps.searchParams
-      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const searchRecord = toRecord(rawParams)
       const parsedParams = ManagementGlobalSessionListParamsParser.parse(searchRecord)
       const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const sessionsResult = await activeDeps.managementGetSessionsUseCase.execute(
-        managementGlobalSessionListParamsSchema.parse({
-          ...parsedParams,
-          pageNumber: effectivePageNumber
-        })
-      )
+      const sessionsResult = await activeDeps.managementGetSessionsUseCase.execute({
+        ...parsedParams,
+        pageNumber: effectivePageNumber
+      })
 
       if (isSuccess(sessionsResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSessionSummary>()
+        const currentPaging = current.status === GlobalSessionListStatus.CONTENT ? current.paging : createInitialPaginationState<UserSessionSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, sessionsResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === GlobalSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -152,7 +160,7 @@ export const createGlobalSessionListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: GlobalSessionListStatus.CONTENT,
               paging: nextPaging,
               isFilterPanelExpanded: false,
               actionLoading: false,
@@ -162,7 +170,7 @@ export const createGlobalSessionListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === GlobalSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -172,7 +180,7 @@ export const createGlobalSessionListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: GlobalSessionListStatus.ERROR,
               error: sessionsResult.error
             }
           })
@@ -185,37 +193,39 @@ export const createGlobalSessionListStore = (
 
   return createStore<GlobalSessionListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: GlobalSessionListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === GlobalSessionListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
-      const parsedParams = isRecord(searchParams) ? ManagementGlobalSessionListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      set({ screenState: { status: GlobalSessionListStatus.LOADING } })
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementGlobalSessionListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementGlobalSessionListParams | GlobalSessionListSearchParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: GlobalSessionListStatus.CONTENT,
           paging: createInitialPaginationState<UserSessionSummary>(),
           isFilterPanelExpanded: false,
           actionLoading: false,
           actionError: null
         }
       })
-      const parsedParams = isRecord(searchParams) ? ManagementGlobalSessionListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementGlobalSessionListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== GlobalSessionListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -226,13 +236,13 @@ export const createGlobalSessionListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: GlobalSessionListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
     onToggleFilterPanel: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === GlobalSessionListStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -252,7 +262,7 @@ export const createGlobalSessionListStore = (
 
     onDeleteSessionClick: async (userId: UserId, sessionId: UserSessionId) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== GlobalSessionListStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -268,7 +278,7 @@ export const createGlobalSessionListStore = (
 
       if (isSuccess(deleteSessionResult)) {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === GlobalSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...updated,
@@ -283,7 +293,7 @@ export const createGlobalSessionListStore = (
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === GlobalSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

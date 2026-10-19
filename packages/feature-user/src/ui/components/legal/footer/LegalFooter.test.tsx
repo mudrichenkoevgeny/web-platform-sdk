@@ -2,10 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LegalFooter } from '@/ui/components/legal/footer/LegalFooter'
-
-const userStrings = new UserModuleStrings()
 
 describe('LegalFooter', () => {
   it('renders both Privacy Policy and Terms of Service links and handles clicks', async () => {

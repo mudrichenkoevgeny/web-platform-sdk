@@ -1,26 +1,34 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { TotpRecoveryCodes } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetRecoveryCodesUseCase } from '@/usecase/user/security/get-recovery-codes-use-case'
 import type { RegenerateRecoveryCodesUseCase } from '@/usecase/user/security/regenerate-recovery-codes-use-case'
+
+/** Status values for {@link TotpRecoveryCodesScreenState}. */
+export enum TotpRecoveryCodesStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 /**
  * Discriminated union representing active screen state for {@link TotpRecoveryCodesScreen}.
  */
 export type TotpRecoveryCodesScreenState =
   | {
-      status: 'loading'
+      status: TotpRecoveryCodesStatus.LOADING
     }
   | {
-      status: 'content'
+      status: TotpRecoveryCodesStatus.CONTENT
       recoveryCodes: TotpRecoveryCodes
       showRegenerateConfirmation: boolean
       actionLoading: boolean
       actionError: AppError | null
     }
   | {
-      status: 'error'
+      status: TotpRecoveryCodesStatus.ERROR
       error: AppError
     }
 
@@ -45,6 +53,9 @@ export interface TotpRecoveryCodesStoreState {
   onBackClick: () => void
 }
 
+/**
+ * Type alias for the per-instance Zustand store.
+ */
 export type TotpRecoveryCodesStore = ReturnType<typeof createTotpRecoveryCodesStore>
 
 /**
@@ -55,7 +66,7 @@ export const createTotpRecoveryCodesStore = (
   initialState?: TotpRecoveryCodesScreenState
 ) => {
   const store = createStore<TotpRecoveryCodesStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: TotpRecoveryCodesStatus.LOADING },
 
     loadRecoveryCodes: async () => {
       const result = await deps.getRecoveryCodesUseCase.execute()
@@ -63,7 +74,7 @@ export const createTotpRecoveryCodesStore = (
       if (isSuccess(result)) {
         set({
           screenState: {
-            status: 'content',
+            status: TotpRecoveryCodesStatus.CONTENT,
             recoveryCodes: result.data,
             showRegenerateConfirmation: false,
             actionLoading: false,
@@ -73,7 +84,7 @@ export const createTotpRecoveryCodesStore = (
       } else {
         set({
           screenState: {
-            status: 'error',
+            status: TotpRecoveryCodesStatus.ERROR,
             error: result.error
           }
         })
@@ -82,7 +93,7 @@ export const createTotpRecoveryCodesStore = (
 
     onRegenerateClick: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== TotpRecoveryCodesStatus.CONTENT) {
         return
       }
       set({
@@ -95,7 +106,7 @@ export const createTotpRecoveryCodesStore = (
 
     onConfirmRegenerate: async () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== TotpRecoveryCodesStatus.CONTENT) {
         return
       }
 
@@ -113,7 +124,7 @@ export const createTotpRecoveryCodesStore = (
       if (isSuccess(result)) {
         set({
           screenState: {
-            status: 'content',
+            status: TotpRecoveryCodesStatus.CONTENT,
             recoveryCodes: result.data,
             showRegenerateConfirmation: false,
             actionLoading: false,
@@ -124,7 +135,6 @@ export const createTotpRecoveryCodesStore = (
         set({
           screenState: {
             ...current,
-            showRegenerateConfirmation: false,
             actionLoading: false,
             actionError: result.error
           }
@@ -134,7 +144,7 @@ export const createTotpRecoveryCodesStore = (
 
     onDismissDialogs: () => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== TotpRecoveryCodesStatus.CONTENT) {
         return
       }
       set({
@@ -172,13 +182,14 @@ export const TotpRecoveryCodesProvider: React.FC<TotpRecoveryCodesProviderProps>
   initialState,
   children
 }) => {
-  const storeRef = useRef<TotpRecoveryCodesStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createTotpRecoveryCodesStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createTotpRecoveryCodesStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <TotpRecoveryCodesContext.Provider value={storeRef.current}>
+    <TotpRecoveryCodesContext.Provider value={store}>
       {children}
     </TotpRecoveryCodesContext.Provider>
   )
@@ -187,9 +198,7 @@ export const TotpRecoveryCodesProvider: React.FC<TotpRecoveryCodesProviderProps>
 /**
  * Custom hook to select state from {@link TotpRecoveryCodesStore}.
  */
-export const useTotpRecoveryCodesStore = <T,>(
-  selector: (state: TotpRecoveryCodesStoreState) => T
-): T => {
+export const useTotpRecoveryCodesStore = <T,>(selector: (state: TotpRecoveryCodesStoreState) => T): T => {
   const store = useContext(TotpRecoveryCodesContext)
   if (!store) {
     throw new Error('useTotpRecoveryCodesStore must be used within TotpRecoveryCodesProvider')

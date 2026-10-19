@@ -7,12 +7,17 @@ import type { SendUnlockEmailConfirmationUseCase } from '@/usecase/auth/unlock/s
 import type { SendUnlockPhoneConfirmationUseCase } from '@/usecase/auth/unlock/send-unlock-phone-confirmation-use-case'
 import { FieldValidator } from '@/validator/field-validator'
 
+export enum UnlockTargetInputStatus {
+  LOADING = 'loading',
+  CONTENT = 'content'
+}
+
 export type UnlockTargetInputScreenState =
   | {
-      status: 'loading'
+      status: UnlockTargetInputStatus.LOADING
     }
   | {
-      status: 'content'
+      status: UnlockTargetInputStatus.CONTENT
       input: string
       actionLoading: boolean
       actionError: AppError | null
@@ -44,7 +49,7 @@ export const createUnlockTargetInputStore = (
   initialState?: UnlockTargetInputScreenState
 ) => {
   const defaultContentState: UnlockTargetInputScreenState = {
-    status: 'content',
+    status: UnlockTargetInputStatus.CONTENT,
     input: deps.prefilledInput ?? '',
     actionLoading: false,
     actionError: null
@@ -58,7 +63,7 @@ export const createUnlockTargetInputStore = (
       const activeDeps = get().dependencies
       activeDeps.onMethodChange?.(method)
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === UnlockTargetInputStatus.CONTENT) {
         set({
           screenState: {
             ...current,
@@ -71,7 +76,7 @@ export const createUnlockTargetInputStore = (
 
     onInputChanged: (value: string) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UnlockTargetInputStatus.CONTENT) {
         return
       }
 
@@ -86,7 +91,7 @@ export const createUnlockTargetInputStore = (
 
     onSendCodeClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== UnlockTargetInputStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -118,12 +123,12 @@ export const createUnlockTargetInputStore = (
       if (isSuccess(result)) {
         activeDeps.onNavigateToOtp(target, result.data.retryAfterSeconds, activeMethod)
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockTargetInputStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false } })
         }
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UnlockTargetInputStatus.CONTENT) {
           set({
             screenState: {
               ...updated,

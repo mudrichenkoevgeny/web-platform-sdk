@@ -1,10 +1,8 @@
 import { forwardRef } from 'react'
-import { UserAuthProvider, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { icons } from '@/assets/icons/index'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
-
-const defaultUserStrings = new UserModuleStrings()
 
 /**
  * Props for the {@link AuthProviderButton} component.
@@ -22,7 +20,7 @@ export interface AuthProviderButtonProps extends Omit<React.ButtonHTMLAttributes
    * Disabled state of the button.
    */
   disabled?: boolean
-  /**
+  /**9
    * Label formatting mode (sign-in vs add identifier).
    */
   mode?: AuthProviderButtonMode
@@ -32,6 +30,12 @@ export interface AuthProviderButtonProps extends Omit<React.ButtonHTMLAttributes
   strings?: UserModuleStrings
 }
 
+/**
+ * Resolves the icon component associated with an authentication provider.
+ *
+ * @param authProvider - Target authentication provider
+ * @returns SVG Icon component for the specified provider
+ */
 function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentType<React.SVGProps<SVGSVGElement>> {
   switch (authProvider) {
     case UserAuthProvider.EMAIL:
@@ -47,6 +51,14 @@ function getAuthProviderIcon(authProvider: UserAuthProvider): React.ComponentTyp
   }
 }
 
+/**
+ * Resolves localized button label text for an authentication provider and button mode.
+ *
+ * @param authProvider - Target authentication provider
+ * @param mode - Button display mode (Sign-in or Add identifier)
+ * @param strings - User module localized strings dictionary
+ * @returns Localized button label string
+ */
 function getAuthProviderText(
   authProvider: UserAuthProvider,
   mode: AuthProviderButtonMode,
@@ -91,7 +103,7 @@ export const AuthProviderButton = forwardRef<HTMLButtonElement, AuthProviderButt
       onClick,
       disabled = false,
       mode = AuthProviderButtonMode.SIGN_IN,
-      strings = defaultUserStrings,
+      strings = userStrings,
       className,
       type = 'button',
       ...rest

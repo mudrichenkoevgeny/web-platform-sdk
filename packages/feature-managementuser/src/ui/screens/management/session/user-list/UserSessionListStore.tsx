@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { managementUserSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserSessionListParams, UserSessionSummary, UserSessionId, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -16,21 +15,28 @@ import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/m
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
 import type { ManagementGetSessionsUseCase } from '@/usecase/session/management-get-sessions-use-case'
 
+/** Status values for {@link UserSessionListScreenState}. */
+export enum UserSessionListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 /** Discriminated union representing screen states for user-specific session list view. */
 export type UserSessionListScreenState =
   | {
       /** Loading state while user sessions list is being loaded initially. */
-      status: 'loading'
+      status: UserSessionListStatus.LOADING
     }
   | {
       /** Error state when loading user sessions list failed. */
-      status: 'error'
+      status: UserSessionListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated user sessions. */
-      status: 'content'
+      status: UserSessionListStatus.CONTENT
       /** Current pagination state for user session items. */
       paging: PaginationState<UserSessionSummary>
       /** Whether a background session deletion action is currently loading. */
@@ -48,11 +54,11 @@ export interface UserSessionListStoreDependencies {
   /** Optional current user ID. */
   currentUserId?: UserId | null
   /** Use case for fetching user sessions. */
-  managementGetSessionsUseCase: ManagementGetSessionsUseCase
+  managementGetSessionsUseCase: Pick<ManagementGetSessionsUseCase, 'execute'>
   /** Use case for deleting a user session. */
-  managementDeleteSessionUseCase: ManagementDeleteSessionUseCase
+  managementDeleteSessionUseCase: Pick<ManagementDeleteSessionUseCase, 'execute'>
   /** Use case for deleting all user sessions. */
-  managementDeleteAllUserSessionsUseCase: ManagementDeleteAllUserSessionsUseCase
+  managementDeleteAllUserSessionsUseCase: Pick<ManagementDeleteAllUserSessionsUseCase, 'execute'>
   /** Navigation callback to open session detail. */
   onNavigateToSessionDetail?: (session: UserSessionSummary) => void
   /** Navigation callback to return to previous screen. */
@@ -122,20 +128,18 @@ export const createUserSessionListStore = (
     try {
       const activeDeps = get().dependencies
       const searchParams = overrideParams ?? activeDeps.searchParams
-      const sessionsResult = await activeDeps.managementGetSessionsUseCase.execute(
-        managementUserSessionListParamsSchema.parse({
-          userId: activeDeps.userId,
-          ...searchParams,
-          pageNumber
-        })
-      )
+      const sessionsResult = await activeDeps.managementGetSessionsUseCase.execute({
+        userId: activeDeps.userId,
+        ...searchParams,
+        pageNumber
+      })
 
       if (isSuccess(sessionsResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSessionSummary>()
+        const currentPaging = current.status === UserSessionListStatus.CONTENT ? current.paging : createInitialPaginationState<UserSessionSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, sessionsResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === UserSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -146,7 +150,7 @@ export const createUserSessionListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: UserSessionListStatus.CONTENT,
               paging: nextPaging,
               actionLoading: false,
               actionError: null
@@ -155,7 +159,7 @@ export const createUserSessionListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === UserSessionListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -166,7 +170,7 @@ export const createUserSessionListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: UserSessionListStatus.ERROR,
               error: sessionsResult.error
             }
           })
@@ -179,14 +183,14 @@ export const createUserSessionListStore = (
 
   return createStore<UserSessionListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: UserSessionListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementUserSessionListParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === UserSessionListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: UserSessionListStatus.LOADING } })
       const startPage = searchParams?.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
@@ -194,7 +198,7 @@ export const createUserSessionListStore = (
     onSearchParamsUpdated: async (searchParams?: ManagementUserSessionListParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: UserSessionListStatus.CONTENT,
           paging: createInitialPaginationState<UserSessionSummary>(),
           actionLoading: false,
           actionError: null
@@ -206,7 +210,7 @@ export const createUserSessionListStore = (
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== UserSessionListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -217,7 +221,7 @@ export const createUserSessionListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: UserSessionListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
@@ -227,7 +231,7 @@ export const createUserSessionListStore = (
 
     onDeleteSessionClick: async (sessionId: string) => {
       const current = get().screenState
-      if (current.status !== 'content' || !deps.userId || current.actionLoading) {
+      if (current.status !== UserSessionListStatus.CONTENT || !deps.userId || current.actionLoading) {
         return
       }
 
@@ -238,7 +242,7 @@ export const createUserSessionListStore = (
         await fetchPage(set, get, 1)
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UserSessionListStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false, actionError: deleteSessionResult.error } })
         }
       }
@@ -246,7 +250,7 @@ export const createUserSessionListStore = (
 
     onDeleteAllSessionsClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !deps.userId || current.actionLoading) {
+      if (current.status !== UserSessionListStatus.CONTENT || !deps.userId || current.actionLoading) {
         return
       }
 
@@ -257,7 +261,7 @@ export const createUserSessionListStore = (
         await fetchPage(set, get, 1)
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === UserSessionListStatus.CONTENT) {
           set({ screenState: { ...updated, actionLoading: false, actionError: deleteAllSessionsResult.error } })
         }
       }
@@ -265,7 +269,7 @@ export const createUserSessionListStore = (
 
     onSessionRevoked: (sessionId: UserSessionId) => {
       const current = get().screenState
-      if (current.status !== 'content') {
+      if (current.status !== UserSessionListStatus.CONTENT) {
         return
       }
 

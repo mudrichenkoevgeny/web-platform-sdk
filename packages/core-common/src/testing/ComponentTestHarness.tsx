@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react'
+import { CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import { SdkProvider } from '@/context/SdkProvider'
 import { LocalizationProvider } from '@/context/LocalizationContext'
-import { ThemeProvider } from '@/theme/ThemeContext'
+import { ThemeMode, ThemeProvider } from '@/theme/ThemeContext'
 import type { CommonComponent } from '@/di/common-component'
 import { createMockCommonComponent } from '@/mock/di/common-component-mock'
 
@@ -18,11 +19,11 @@ export interface ComponentTestHarnessProps {
    */
   component?: CommonComponent
   /**
-   * Default theme mode ('light', 'dark', or 'system').
+   * Default theme mode (e.g. {@link ThemeMode.LIGHT}, {@link ThemeMode.DARK}, or {@link ThemeMode.SYSTEM}).
    */
-  defaultMode?: 'light' | 'dark' | 'system'
+  defaultMode?: ThemeMode
   /**
-   * Optional locale tag. Defaults to 'en'.
+   * Optional locale tag. Defaults to {@link CommonLocales.ENGLISH}.
    */
   locale?: string
 }
@@ -36,8 +37,8 @@ export interface ComponentTestHarnessProps {
 export const ComponentTestHarness: React.FC<ComponentTestHarnessProps> = ({
   children,
   component,
-  defaultMode = 'light',
-  locale = 'en'
+  defaultMode = ThemeMode.LIGHT,
+  locale = CommonLocales.ENGLISH
 }) => {
   const sdkComponent = useMemo(
     () => component ?? createMockCommonComponent(),

@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { UserModuleStrings, formatLocalizedString } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -15,11 +15,10 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   RegistrationByEmailProvider,
+  RegistrationByEmailStep,
   useRegistrationByEmailStore
 } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
 import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
-
-const defaultUserStrings = new UserModuleStrings()
 
 export const RegistrationByEmailTestTags = {
   BACK_BUTTON: 'RegistrationByEmail_BackButton',
@@ -35,7 +34,7 @@ export const RegistrationByEmailTestTags = {
 }
 
 const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = defaultUserStrings
+  strings = userStrings
 }) => {
   const screenState = useRegistrationByEmailStore((s) => s.screenState)
   const onEmailChanged = useRegistrationByEmailStore((s) => s.onEmailChanged)
@@ -55,34 +54,20 @@ const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (screenState.step === 'email_input') {
-      onSendCodeClick()
-    } else {
-      onRegisterClick()
+    switch (screenState.step) {
+      case RegistrationByEmailStep.EMAIL_INPUT:
+        void onSendCodeClick()
+        break
+      case RegistrationByEmailStep.REGISTRATION_INPUT:
+        void onRegisterClick()
+        break
     }
   }
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto"
-    >
-      <div className="w-full flex items-center justify-between relative mb-4">
-        <CoreBackButton
-          data-testid={RegistrationByEmailTestTags.BACK_BUTTON}
-          onClick={onBackClick}
-          disabled={actionLoading}
-        />
-        <CoreScreenTitleText
-          data-testid={RegistrationByEmailTestTags.TITLE}
-          text={strings.ui.registrationByEmail}
-          className="absolute left-1/2 -translate-x-1/2"
-        />
-        <div className="w-10" />
-      </div>
-
-      <div className="w-full flex-1 flex flex-col justify-center items-center gap-4 my-auto">
-        {screenState.step === 'email_input' ? (
+  const renderStepContent = () => {
+    switch (screenState.step) {
+      case RegistrationByEmailStep.EMAIL_INPUT:
+        return (
           <CoreEmailTextField
             id={emailId}
             data-testid={RegistrationByEmailTestTags.EMAIL_INPUT}
@@ -93,7 +78,9 @@ const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
             isError={Boolean(actionError)}
             disabled={actionLoading}
           />
-        ) : (
+        )
+      case RegistrationByEmailStep.REGISTRATION_INPUT:
+        return (
           <>
             <div className="text-xl font-bold text-center">
               {strings.ui.enterConfirmationCode}
@@ -144,7 +131,61 @@ const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
               />
             )}
           </>
-        )}
+        )
+    }
+  }
+
+  const renderStepButtons = () => {
+    switch (screenState.step) {
+      case RegistrationByEmailStep.EMAIL_INPUT:
+        return (
+          <CoreButton
+            type="submit"
+            data-testid={RegistrationByEmailTestTags.SEND_CODE_BUTTON}
+            label={strings.ui.sendCode}
+            disabled={!screenState.isEmailValid || actionLoading}
+            onClick={onSendCodeClick}
+          />
+        )
+      case RegistrationByEmailStep.REGISTRATION_INPUT:
+        return (
+          <CoreButton
+            type="submit"
+            data-testid={RegistrationByEmailTestTags.REGISTER_BUTTON}
+            label={strings.ui.register}
+            disabled={
+              screenState.code.length !== screenState.codeLength ||
+              !screenState.isPasswordValid ||
+              screenState.password.length === 0 ||
+              actionLoading
+            }
+            onClick={onRegisterClick}
+          />
+        )
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto"
+    >
+      <div className="w-full flex items-center justify-between relative mb-4">
+        <CoreBackButton
+          data-testid={RegistrationByEmailTestTags.BACK_BUTTON}
+          onClick={onBackClick}
+          disabled={actionLoading}
+        />
+        <CoreScreenTitleText
+          data-testid={RegistrationByEmailTestTags.TITLE}
+          text={strings.ui.registrationByEmail}
+          className="absolute left-1/2 -translate-x-1/2"
+        />
+        <div className="w-10" />
+      </div>
+
+      <div className="w-full flex-1 flex flex-col justify-center items-center gap-4 my-auto">
+        {renderStepContent()}
 
         <div
           className={cn(
@@ -162,28 +203,7 @@ const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
       </div>
 
       <div className="w-full flex flex-col gap-2 pt-4">
-        {screenState.step === 'email_input' ? (
-          <CoreButton
-            type="submit"
-            data-testid={RegistrationByEmailTestTags.SEND_CODE_BUTTON}
-            label={strings.ui.sendCode}
-            disabled={!screenState.isEmailValid || actionLoading}
-            onClick={onSendCodeClick}
-          />
-        ) : (
-          <CoreButton
-            type="submit"
-            data-testid={RegistrationByEmailTestTags.REGISTER_BUTTON}
-            label={strings.ui.register}
-            disabled={
-              screenState.code.length !== screenState.codeLength ||
-              !screenState.isPasswordValid ||
-              screenState.password.length === 0 ||
-              actionLoading
-            }
-            onClick={onRegisterClick}
-          />
-        )}
+        {renderStepButtons()}
       </div>
 
       {actionLoading && <FullscreenOverlayLoading />}
@@ -191,13 +211,19 @@ const RegistrationByEmailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   )
 }
 
+/** Props for {@link RegistrationByEmailScreen}. */
 export interface RegistrationByEmailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Injected store dependencies. */
   dependencies: RegistrationByEmailStoreDependencies
+  /** Optional localized strings override. */
   strings?: UserModuleStrings
 }
 
+/**
+ * Screen component for registering a new user account via email and password with OTP confirmation.
+ */
 export const RegistrationByEmailScreen = forwardRef<HTMLDivElement, RegistrationByEmailScreenProps>(
-  ({ dependencies, strings = defaultUserStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <RegistrationByEmailProvider dependencies={dependencies}>

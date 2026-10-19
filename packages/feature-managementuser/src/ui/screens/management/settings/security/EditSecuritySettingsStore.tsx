@@ -12,16 +12,23 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   return Number.isNaN(parsed) ? defaultValue : parsed
 }
 
+/** Status values for {@link EditSecuritySettingsScreenState}. */
+export enum EditSecuritySettingsStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
+}
+
 export type EditSecuritySettingsScreenState =
   | {
-      status: 'loading'
+      status: EditSecuritySettingsStatus.LOADING
     }
   | {
-      status: 'error'
+      status: EditSecuritySettingsStatus.ERROR
       error: AppError
     }
   | {
-      status: 'content'
+      status: EditSecuritySettingsStatus.CONTENT
       recentAuthenticationValiditySecondsForOpenUser: string
       recentAuthenticationValiditySecondsForManagementUser: string
       mfaTokenExpirationSeconds: string
@@ -115,17 +122,17 @@ export const createEditSecuritySettingsStore = (
   let isFetching = false
 
   return createStore<EditSecuritySettingsStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: EditSecuritySettingsStatus.LOADING },
 
     initScreen: async () => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === EditSecuritySettingsStatus.CONTENT) {
         return
       }
       isFetching = true
 
       try {
-        set({ screenState: { status: 'loading' } })
+        set({ screenState: { status: EditSecuritySettingsStatus.LOADING } })
         const result = await deps.getManagementSecuritySettingsUseCase.execute()
 
         if (isSuccess(result)) {
@@ -134,7 +141,7 @@ export const createEditSecuritySettingsStore = (
 
           set({
             screenState: {
-              status: 'content',
+              status: EditSecuritySettingsStatus.CONTENT,
               recentAuthenticationValiditySecondsForOpenUser: String(settings.recentAuthenticationValiditySecondsForOpenUser),
               recentAuthenticationValiditySecondsForManagementUser: String(settings.recentAuthenticationValiditySecondsForManagementUser),
               mfaTokenExpirationSeconds: String(settings.mfaTokenExpirationSeconds),
@@ -174,7 +181,7 @@ export const createEditSecuritySettingsStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: EditSecuritySettingsStatus.ERROR,
               error: result.error
             }
           })
@@ -190,252 +197,240 @@ export const createEditSecuritySettingsStore = (
 
     onRecentAuthenticationValidityForOpenUserChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, recentAuthenticationValiditySecondsForOpenUser: value, saveError: null } })
       }
     },
 
     onRecentAuthenticationValidityForManagementUserChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, recentAuthenticationValiditySecondsForManagementUser: value, saveError: null } })
       }
     },
 
     onMfaTokenExpirationSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, mfaTokenExpirationSeconds: value, saveError: null } })
       }
     },
 
     onPasswordMinLengthChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordMinLength: value, saveError: null } })
       }
     },
 
     onPasswordRequireLetterToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordRequireLetter: enabled, saveError: null } })
       }
     },
 
     onPasswordRequireUpperCaseToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordRequireUpperCase: enabled, saveError: null } })
       }
     },
 
     onPasswordRequireLowerCaseToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordRequireLowerCase: enabled, saveError: null } })
       }
     },
 
     onPasswordRequireDigitToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordRequireDigit: enabled, saveError: null } })
       }
     },
 
     onPasswordRequireSpecialCharToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, passwordRequireSpecialChar: enabled, saveError: null } })
       }
     },
 
     onCommonPasswordsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, commonPasswords: value, saveError: null } })
       }
     },
 
     onAccountLockoutMaxFailedPasswordAttemptsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutMaxFailedPasswordAttempts: value, saveError: null } })
       }
     },
 
     onAccountLockoutMaxFailedOtpAttemptsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutMaxFailedOtpAttempts: value, saveError: null } })
       }
     },
 
     onAccountLockoutMaxFailedTotpAttemptsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutMaxFailedTotpAttempts: value, saveError: null } })
       }
     },
 
     onAccountLockoutFailedAttemptsWindowSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutFailedAttemptsWindowSeconds: value, saveError: null } })
       }
     },
 
     onAccountLockoutDurationSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutDurationSeconds: value, saveError: null } })
       }
     },
 
     onAccountLockoutIndefiniteLockoutThresholdChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutIndefiniteLockoutThreshold: value, saveError: null } })
       }
     },
 
     onAccountLockoutIsSelfServiceUnlockEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutIsSelfServiceUnlockEnabled: enabled, saveError: null } })
       }
     },
 
     onAccountLockoutCheckIntervalSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, accountLockoutCheckIntervalSeconds: value, saveError: null } })
       }
     },
 
     onRefreshTokenRotationGracePeriodSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, refreshTokenRotationGracePeriodSeconds: value, saveError: null } })
       }
     },
 
     onOpenIpBlacklistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, openIpBlacklistEnabled: enabled, saveError: null } })
       }
     },
 
     onOpenIpBlacklistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, openIpBlacklist: value, saveError: null } })
       }
     },
 
     onOpenIpWhitelistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, openIpWhitelistEnabled: enabled, saveError: null } })
       }
     },
 
     onOpenIpWhitelistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, openIpWhitelist: value, saveError: null } })
       }
     },
 
     onManagementIpBlacklistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementIpBlacklistEnabled: enabled, saveError: null } })
       }
     },
 
     onManagementIpBlacklistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementIpBlacklist: value, saveError: null } })
       }
     },
 
     onManagementIpWhitelistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementIpWhitelistEnabled: enabled, saveError: null } })
       }
     },
 
     onManagementIpWhitelistChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, managementIpWhitelist: value, saveError: null } })
       }
     },
 
     onOtpRetryAfterSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, otpRetryAfterSeconds: value, saveError: null } })
       }
     },
 
     onOtpNumberOfSymbolsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, otpNumberOfSymbols: value, saveError: null } })
       }
     },
 
     onOtpExpirationSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, otpExpirationSeconds: value, saveError: null } })
       }
     },
 
     onMaxRequestsPerPeriodChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, maxRequestsPerPeriod: value, saveError: null } })
       }
     },
 
     onRateLimitPeriodSecondsChanged: (value: string) => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === EditSecuritySettingsStatus.CONTENT) {
         set({ screenState: { ...current, rateLimitPeriodSeconds: value, saveError: null } })
       }
     },
 
     onSaveClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditSecuritySettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
-      const commonPasses = new Set(
-        current.commonPasswords
-          .split(',')
-          .map((s) => s.trim())
-          .filter((s) => s.length > 0)
-      )
-
       const settings: ManagementSecuritySettings = {
-        recentAuthenticationValiditySecondsForOpenUser: parseIntegerOrDefault(
-          current.recentAuthenticationValiditySecondsForOpenUser,
-          300
-        ),
-        recentAuthenticationValiditySecondsForManagementUser: parseIntegerOrDefault(
-          current.recentAuthenticationValiditySecondsForManagementUser,
-          300
-        ),
+        recentAuthenticationValiditySecondsForOpenUser: parseIntegerOrDefault(current.recentAuthenticationValiditySecondsForOpenUser, 900),
+        recentAuthenticationValiditySecondsForManagementUser: parseIntegerOrDefault(current.recentAuthenticationValiditySecondsForManagementUser, 900),
+        mfaTokenExpirationSeconds: parseIntegerOrDefault(current.mfaTokenExpirationSeconds, 300),
         passwordPolicy: {
           minLength: parseIntegerOrDefault(current.passwordMinLength, 8),
           requireLetter: current.passwordRequireLetter,
@@ -443,23 +438,22 @@ export const createEditSecuritySettingsStore = (
           requireLowerCase: current.passwordRequireLowerCase,
           requireDigit: current.passwordRequireDigit,
           requireSpecialChar: current.passwordRequireSpecialChar,
-          commonPasswords: Array.from(commonPasses)
-        },
-        otpConfirmation: {
-          retryAfterSeconds: parseIntegerOrDefault(current.otpRetryAfterSeconds, 60),
-          numberOfSymbols: parseIntegerOrDefault(current.otpNumberOfSymbols, 6),
-          expirationSeconds: parseIntegerOrDefault(current.otpExpirationSeconds, 300)
+          commonPasswords: current.commonPasswords
+            .split(',')
+            .map((s) => s.trim())
+            .filter((s) => s.length > 0)
         },
         accountLockoutPolicy: {
           maxFailedPasswordAttempts: parseIntegerOrDefault(current.accountLockoutMaxFailedPasswordAttempts, 5),
           maxFailedOtpAttempts: parseIntegerOrDefault(current.accountLockoutMaxFailedOtpAttempts, 5),
           maxFailedTotpAttempts: parseIntegerOrDefault(current.accountLockoutMaxFailedTotpAttempts, 5),
-          failedAttemptsWindowSeconds: parseIntegerOrDefault(current.accountLockoutFailedAttemptsWindowSeconds, 300),
-          lockoutDurationSeconds: parseIntegerOrDefault(current.accountLockoutDurationSeconds, 300),
-          indefiniteLockoutThreshold: parseIntegerOrDefault(current.accountLockoutIndefiniteLockoutThreshold, 3),
+          failedAttemptsWindowSeconds: parseIntegerOrDefault(current.accountLockoutFailedAttemptsWindowSeconds, 600),
+          lockoutDurationSeconds: parseIntegerOrDefault(current.accountLockoutDurationSeconds, 1800),
+          indefiniteLockoutThreshold: parseIntegerOrDefault(current.accountLockoutIndefiniteLockoutThreshold, 10),
           isSelfServiceUnlockEnabled: current.accountLockoutIsSelfServiceUnlockEnabled
         },
         accountLockoutCheckIntervalSeconds: parseIntegerOrDefault(current.accountLockoutCheckIntervalSeconds, 60),
+        refreshTokenRotationGracePeriodSeconds: parseIntegerOrDefault(current.refreshTokenRotationGracePeriodSeconds, 30),
         openIpRestrictionPolicy: {
           isBlacklistEnabled: current.openIpBlacklistEnabled,
           blacklist: current.openIpBlacklist
@@ -484,10 +478,13 @@ export const createEditSecuritySettingsStore = (
             .map((s) => s.trim())
             .filter((s) => s.length > 0)
         },
-        mfaTokenExpirationSeconds: parseIntegerOrDefault(current.mfaTokenExpirationSeconds, 180),
+        otpConfirmation: {
+          retryAfterSeconds: parseIntegerOrDefault(current.otpRetryAfterSeconds, 60),
+          numberOfSymbols: parseIntegerOrDefault(current.otpNumberOfSymbols, 6),
+          expirationSeconds: parseIntegerOrDefault(current.otpExpirationSeconds, 300)
+        },
         maxRequestsPerPeriod: parseIntegerOrDefault(current.maxRequestsPerPeriod, 100),
-        rateLimitPeriodSeconds: parseIntegerOrDefault(current.rateLimitPeriodSeconds, 60),
-        refreshTokenRotationGracePeriodSeconds: parseIntegerOrDefault(current.refreshTokenRotationGracePeriodSeconds, 30)
+        rateLimitPeriodSeconds: parseIntegerOrDefault(current.rateLimitPeriodSeconds, 60)
       }
 
       const saveResult = await deps.saveRemoteSecuritySettingsUseCase.execute(settings)
@@ -495,7 +492,7 @@ export const createEditSecuritySettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditSecuritySettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: saveResult.error } })
         }
       }
@@ -503,7 +500,7 @@ export const createEditSecuritySettingsStore = (
 
     onResetClick: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.isSaving) {
+      if (current.status !== EditSecuritySettingsStatus.CONTENT || current.isSaving) {
         return
       }
 
@@ -514,7 +511,7 @@ export const createEditSecuritySettingsStore = (
         deps.onBack()
       } else {
         const updated = get().screenState
-        if (updated.status === 'content') {
+        if (updated.status === EditSecuritySettingsStatus.CONTENT) {
           set({ screenState: { ...updated, isSaving: false, saveError: result.error } })
         }
       }

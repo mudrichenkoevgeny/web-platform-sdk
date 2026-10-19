@@ -44,7 +44,7 @@ describe('SelfIdentifierListScreen', () => {
         })
       )
     } as unknown as SelfIdentifierListStoreDependencies['getAvailableUserAuthProvidersUseCase'],
-    onIdentifierSelect: vi.fn(),
+    onNavigateToIdentifierDetail: vi.fn(),
     onBack: vi.fn()
   })
 

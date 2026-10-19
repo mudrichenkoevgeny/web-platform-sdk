@@ -1,11 +1,9 @@
-import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserFilterValues, UserRole, UserSortValues, CommonModuleStrings, commonStrings as globalCommonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
-const defaultCommonStrings = new CommonModuleStrings()
-
 export const getGlobalUserListingOptionsConfig = (
-  commonStrings: CommonModuleStrings = defaultCommonStrings
+  commonStrings: CommonModuleStrings = globalCommonStrings
 ): ListingOptionsConfig => ({
   sortOptions: [
     {

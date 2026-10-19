@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
-import { ManagementUserListParamsParser, managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementUserListParamsParser } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementUserListParams, UserSummary, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
@@ -13,27 +13,37 @@ import {
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
-import type { GlobalUserListSearchParams } from '@/ui/screens/management/user/global-list/globalUserListSearchSchema'
+import type { GlobalUserListSearchParams } from './globalUserListSearchSchema'
 
-function isRecord(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null
+function toRecord(val: unknown): Record<string, unknown> {
+  if (typeof val === 'object' && val !== null) {
+    return { ...val }
+  }
+  return {}
+}
+
+/** Status values for {@link GlobalUserListScreenState}. */
+export enum GlobalUserListStatus {
+  LOADING = 'loading',
+  ERROR = 'error',
+  CONTENT = 'content'
 }
 
 /** Discriminated union representing screen states for the global user list view. */
 export type GlobalUserListScreenState =
   | {
       /** Loading state while user list is being loaded initially. */
-      status: 'loading'
+      status: GlobalUserListStatus.LOADING
     }
   | {
       /** Error state when loading user list failed. */
-      status: 'error'
+      status: GlobalUserListStatus.ERROR
       /** Error instance describing the failure. */
       error: AppError
     }
   | {
       /** Content state containing paginated user summaries. */
-      status: 'content'
+      status: GlobalUserListStatus.CONTENT
       /** Current pagination state for user items. */
       paging: PaginationState<UserSummary>
       /** Whether the filter panel drawer is expanded. */
@@ -47,7 +57,7 @@ export type GlobalUserListScreenState =
 /** External dependencies required by {@link createGlobalUserListStore}. */
 export interface GlobalUserListStoreDependencies {
   /** Use case for loading paginated global users. */
-  getUsersUseCase: GetUsersUseCase
+  getUsersUseCase: Pick<GetUsersUseCase, 'execute'>
   /** Optional currently logged in user ID. */
   currentUserId?: UserId | null
   /** Navigation callback to open user detail screen. */
@@ -119,23 +129,21 @@ export const createGlobalUserListStore = (
     try {
       const activeDeps = get().dependencies
       const rawParams = overrideParams ?? activeDeps.searchParams
-      const searchRecord = isRecord(rawParams) ? rawParams : {}
+      const searchRecord = toRecord(rawParams)
       const parsedParams = ManagementUserListParamsParser.parse(searchRecord)
       const effectivePageNumber = pageNumber !== 1 ? pageNumber : (parsedParams.pageNumber ?? pageNumber)
 
-      const usersResult = await activeDeps.getUsersUseCase.execute(
-        managementUserListParamsSchema.parse({
-          ...parsedParams,
-          pageNumber: effectivePageNumber
-        })
-      )
+      const usersResult = await activeDeps.getUsersUseCase.execute({
+        ...parsedParams,
+        pageNumber: effectivePageNumber
+      })
 
       if (isSuccess(usersResult)) {
         const current = get().screenState
-        const currentPaging = current.status === 'content' ? current.paging : createInitialPaginationState<UserSummary>()
+        const currentPaging = current.status === GlobalUserListStatus.CONTENT ? current.paging : createInitialPaginationState<UserSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, usersResult.data)
 
-        if (current.status === 'content') {
+        if (current.status === GlobalUserListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -145,7 +153,7 @@ export const createGlobalUserListStore = (
         } else {
           set({
             screenState: {
-              status: 'content',
+              status: GlobalUserListStatus.CONTENT,
               paging: nextPaging,
               isFilterPanelExpanded: false,
               actionLoading: false,
@@ -155,7 +163,7 @@ export const createGlobalUserListStore = (
         }
       } else {
         const current = get().screenState
-        if (current.status === 'content') {
+        if (current.status === GlobalUserListStatus.CONTENT) {
           set({
             screenState: {
               ...current,
@@ -165,7 +173,7 @@ export const createGlobalUserListStore = (
         } else {
           set({
             screenState: {
-              status: 'error',
+              status: GlobalUserListStatus.ERROR,
               error: usersResult.error
             }
           })
@@ -178,37 +186,39 @@ export const createGlobalUserListStore = (
 
   return createStore<GlobalUserListStoreState>()((set, get) => ({
     dependencies: deps,
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: GlobalUserListStatus.LOADING },
 
     initScreen: async (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => {
       const current = get().screenState
-      if (isFetching || current.status === 'content') {
+      if (isFetching || current.status === GlobalUserListStatus.CONTENT) {
         return
       }
-      set({ screenState: { status: 'loading' } })
-      const parsedParams = isRecord(searchParams) ? ManagementUserListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      set({ screenState: { status: GlobalUserListStatus.LOADING } })
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementUserListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onSearchParamsUpdated: async (searchParams?: ManagementUserListParams | GlobalUserListSearchParams) => {
       set({
         screenState: {
-          status: 'content',
+          status: GlobalUserListStatus.CONTENT,
           paging: createInitialPaginationState<UserSummary>(),
           isFilterPanelExpanded: false,
           actionLoading: false,
           actionError: null
         }
       })
-      const parsedParams = isRecord(searchParams) ? ManagementUserListParamsParser.parse(searchParams) : undefined
-      const startPage = parsedParams?.pageNumber ?? 1
+      const searchRecord = toRecord(searchParams)
+      const parsedParams = ManagementUserListParamsParser.parse(searchRecord)
+      const startPage = parsedParams.pageNumber ?? 1
       await fetchPage(set, get, startPage, searchParams)
     },
 
     onLoadNextPage: async () => {
       const current = get().screenState
-      if (current.status !== 'content' || !canLoadMorePages(current.paging)) {
+      if (current.status !== GlobalUserListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
       }
 
@@ -219,13 +229,13 @@ export const createGlobalUserListStore = (
     },
 
     onRefresh: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: GlobalUserListStatus.LOADING } })
       await fetchPage(set, get, 1)
     },
 
     onToggleFilterPanel: () => {
       const current = get().screenState
-      if (current.status === 'content') {
+      if (current.status === GlobalUserListStatus.CONTENT) {
         set({
           screenState: {
             ...current,

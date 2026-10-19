@@ -1,36 +1,47 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import {
   AccountLockoutType,
-  SecurityErrorArgs,
   SecurityErrorCodes,
   UserAccountStatus,
-  UserAuthProvider
+  UserAuthProvider,
+  UserErrorCodes
 } from '@mudrichenkoevgeny/shared-foundation'
 import {
   CommonError,
+  getAppErrorAccountLockoutType,
+  getAppErrorMfaToken,
+  getAppErrorTemporaryLockoutUntil,
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, ExternalLauncher } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
 import type { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
 import { UserError } from '@/error/model/user-error'
-import { UserErrorArgs, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import type { LoginByGoogleUseCase } from '@/usecase/auth/login/login-by-google-use-case'
 import type { GetAvailableUserAuthProvidersUseCase } from '@/usecase/auth/settings/get-available-user-auth-providers-use-case'
+/**
+ * Screen status values for {@link LoginWelcomeScreenState}.
+ */
+export enum LoginWelcomeStatus {
+  LOADING = 'loading',
+  INITIALIZATION_ERROR = 'initialization_error',
+  CONTENT = 'content'
+}
+
 /**
  * Union representing the active screen state for {@link LoginWelcomeScreen}.
  */
 export type LoginWelcomeScreenState =
   | {
-      status: 'loading'
+      status: LoginWelcomeStatus.LOADING
     }
   | {
-      status: 'initialization_error'
+      status: LoginWelcomeStatus.INITIALIZATION_ERROR
       error: AppError
     }
   | {
-      status: 'content'
+      status: LoginWelcomeStatus.CONTENT
       availableAuthProviders: AvailableAuthProviders
       privacyPolicyUrl: string | null
       termsOfServiceUrl: string | null
@@ -102,10 +113,10 @@ export const createLoginWelcomeStore = (
   initialState?: LoginWelcomeScreenState
 ) => {
   return createStore<LoginWelcomeStoreState>()((set, get) => ({
-    screenState: initialState ?? { status: 'loading' },
+    screenState: initialState ?? { status: LoginWelcomeStatus.LOADING },
 
     initScreen: async () => {
-      set({ screenState: { status: 'loading' } })
+      set({ screenState: { status: LoginWelcomeStatus.LOADING } })
 
       const [authProvidersRes, settingsRes] = await Promise.all([
         deps.getAvailableUserAuthProvidersUseCase.execute(),
@@ -115,7 +126,7 @@ export const createLoginWelcomeStore = (
       if (isSuccess(authProvidersRes) && isSuccess(settingsRes)) {
         set({
           screenState: {
-            status: 'content',
+            status: LoginWelcomeStatus.CONTENT,
             availableAuthProviders: authProvidersRes.data,
             privacyPolicyUrl: settingsRes.data.privacyPolicyUrl,
             termsOfServiceUrl: settingsRes.data.termsOfServiceUrl,
@@ -126,14 +137,14 @@ export const createLoginWelcomeStore = (
       } else if (!isSuccess(authProvidersRes)) {
         set({
           screenState: {
-            status: 'initialization_error',
+            status: LoginWelcomeStatus.INITIALIZATION_ERROR,
             error: authProvidersRes.error
           }
         })
       } else if (!isSuccess(settingsRes)) {
         set({
           screenState: {
-            status: 'initialization_error',
+            status: LoginWelcomeStatus.INITIALIZATION_ERROR,
             error: settingsRes.error
           }
         })
@@ -146,7 +157,7 @@ export const createLoginWelcomeStore = (
 
     onLoginClick: async (authProvider: UserAuthProvider) => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== LoginWelcomeStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -162,7 +173,7 @@ export const createLoginWelcomeStore = (
         case UserAuthProvider.EMAIL: {
           deps.onNavigateToLoginByEmail()
           const updated = get().screenState
-          if (updated.status === 'content') {
+          if (updated.status === LoginWelcomeStatus.CONTENT) {
             set({ screenState: { ...updated, actionLoading: false } })
           }
           break
@@ -170,7 +181,7 @@ export const createLoginWelcomeStore = (
         case UserAuthProvider.PHONE: {
           deps.onNavigateToLoginByPhone()
           const updated = get().screenState
-          if (updated.status === 'content') {
+          if (updated.status === LoginWelcomeStatus.CONTENT) {
             set({ screenState: { ...updated, actionLoading: false } })
           }
           break
@@ -181,7 +192,7 @@ export const createLoginWelcomeStore = (
               new Error('Login by Google is not supported.')
             )
             const updated = get().screenState
-            if (updated.status === 'content') {
+            if (updated.status === LoginWelcomeStatus.CONTENT) {
               set({
                 screenState: {
                   ...updated,
@@ -193,25 +204,25 @@ export const createLoginWelcomeStore = (
             return
           }
 
-          const result = await deps.loginByGoogleUseCase.execute()
-          if (isSuccess(result)) {
-            if (result.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
+          const googleLoginResult = await deps.loginByGoogleUseCase.execute()
+          if (isSuccess(googleLoginResult)) {
+            if (googleLoginResult.data.userPrivate.accountStatus === UserAccountStatus.PENDING_DELETION) {
               deps.onNavigateToPendingDeletion()
             } else {
               deps.onFinished()
             }
             const updated = get().screenState
-            if (updated.status === 'content') {
+            if (updated.status === LoginWelcomeStatus.CONTENT) {
               set({ screenState: { ...updated, actionLoading: false } })
             }
           } else {
-            const error = result.error
+            const error = googleLoginResult.error
             if (error.code === SecurityErrorCodes.MFA_CONFIRMATION_REQUIRED) {
-              const mfaToken = error.args?.[SecurityErrorArgs.MFA_TOKEN] as string | undefined
+              const mfaToken = getAppErrorMfaToken(error)
               if (mfaToken) {
                 deps.onNavigateToTotp(mfaToken)
                 const updated = get().screenState
-                if (updated.status === 'content') {
+                if (updated.status === LoginWelcomeStatus.CONTENT) {
                   set({ screenState: { ...updated, actionLoading: false } })
                 }
                 return
@@ -219,23 +230,19 @@ export const createLoginWelcomeStore = (
             }
 
             if (error.code === UserErrorCodes.USER_LOCKED) {
-              const lockoutTypeRaw = error.args?.[UserErrorArgs.ACCOUNT_LOCKOUT_TYPE] as string | undefined
-              const lockoutType = lockoutTypeRaw
-                ? (Object.values(AccountLockoutType).find((v) => v === lockoutTypeRaw) ?? null)
-                : null
-              const lockoutUntilRaw = error.args?.[UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL]
-              const lockoutUntil = lockoutUntilRaw ? Number(lockoutUntilRaw) : null
+              const lockoutType = getAppErrorAccountLockoutType(error)
+              const lockoutUntil = getAppErrorTemporaryLockoutUntil(error)
 
               deps.onNavigateToAccountUnlock?.(lockoutType, lockoutUntil)
               const updated = get().screenState
-              if (updated.status === 'content') {
+              if (updated.status === LoginWelcomeStatus.CONTENT) {
                 set({ screenState: { ...updated, actionLoading: false } })
               }
               return
             }
 
             const updated = get().screenState
-            if (updated.status === 'content') {
+            if (updated.status === LoginWelcomeStatus.CONTENT) {
               set({
                 screenState: {
                   ...updated,
@@ -250,7 +257,7 @@ export const createLoginWelcomeStore = (
         case UserAuthProvider.APPLE: {
           const appleErr = UserError.externalAuthFailed(new Error('Apple auth not supported'))
           const updated = get().screenState
-          if (updated.status === 'content') {
+          if (updated.status === LoginWelcomeStatus.CONTENT) {
             set({
               screenState: {
                 ...updated,
@@ -266,7 +273,7 @@ export const createLoginWelcomeStore = (
 
     onPrivacyPolicyClick: () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== LoginWelcomeStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -277,7 +284,7 @@ export const createLoginWelcomeStore = (
 
     onTermsOfServiceClick: () => {
       const current = get().screenState
-      if (current.status !== 'content' || current.actionLoading) {
+      if (current.status !== LoginWelcomeStatus.CONTENT || current.actionLoading) {
         return
       }
 
@@ -306,13 +313,14 @@ export const LoginWelcomeProvider: React.FC<LoginWelcomeProviderProps> = ({
   initialState,
   children
 }) => {
-  const storeRef = useRef<LoginWelcomeStore | undefined>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = createLoginWelcomeStore(dependencies, initialState)
-  }
+  const [store] = useState(() => createLoginWelcomeStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
-    <LoginWelcomeContext.Provider value={storeRef.current}>
+    <LoginWelcomeContext.Provider value={store}>
       {children}
     </LoginWelcomeContext.Provider>
   )

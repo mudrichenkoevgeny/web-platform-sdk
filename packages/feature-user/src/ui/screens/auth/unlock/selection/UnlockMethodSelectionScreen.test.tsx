@@ -1,12 +1,10 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { AccountLockoutType, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockMethodSelectionScreen } from '@/ui/screens/auth/unlock/selection/UnlockMethodSelectionScreen'
 import type { UnlockMethodSelectionStoreDependencies } from '@/ui/screens/auth/unlock/selection/unlock-method-selection-store'
-
-const userStrings = new UserModuleStrings()
 
 describe('UnlockMethodSelectionScreen', () => {
   const createMockDeps = (): UnlockMethodSelectionStoreDependencies => ({

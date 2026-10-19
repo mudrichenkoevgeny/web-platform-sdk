@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { describe, expect, it, beforeEach, vi } from 'vitest'
-import { ThemeProvider, useTheme } from '@/theme/ThemeContext.js'
+import { ThemeMode, ThemeProvider, useTheme } from '@/theme/ThemeContext.js'
 
 describe('ThemeContext', () => {
   beforeEach(() => {
@@ -34,8 +34,8 @@ describe('ThemeContext', () => {
       wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>
     })
 
-    expect(result.current.mode).toBe('system')
-    expect(result.current.resolvedTheme).toBe('light')
+    expect(result.current.mode).toBe(ThemeMode.SYSTEM)
+    expect(result.current.resolvedTheme).toBe(ThemeMode.LIGHT)
     expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 
@@ -45,26 +45,26 @@ describe('ThemeContext', () => {
     })
 
     act(() => {
-      result.current.setMode('dark')
+      result.current.setMode(ThemeMode.DARK)
     })
 
-    expect(result.current.mode).toBe('dark')
-    expect(result.current.resolvedTheme).toBe('dark')
+    expect(result.current.mode).toBe(ThemeMode.DARK)
+    expect(result.current.resolvedTheme).toBe(ThemeMode.DARK)
     expect(document.documentElement.classList.contains('dark')).toBe(true)
     expect(localStorage.getItem('web-platform-sdk-theme')).toBe('dark')
   })
 
   it('changes mode to light and removes dark class', () => {
     const { result } = renderHook(() => useTheme(), {
-      wrapper: ({ children }) => <ThemeProvider defaultMode="dark">{children}</ThemeProvider>
+      wrapper: ({ children }) => <ThemeProvider defaultMode={ThemeMode.DARK}>{children}</ThemeProvider>
     })
 
     act(() => {
-      result.current.setMode('light')
+      result.current.setMode(ThemeMode.LIGHT)
     })
 
-    expect(result.current.mode).toBe('light')
-    expect(result.current.resolvedTheme).toBe('light')
+    expect(result.current.mode).toBe(ThemeMode.LIGHT)
+    expect(result.current.resolvedTheme).toBe(ThemeMode.LIGHT)
     expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 })

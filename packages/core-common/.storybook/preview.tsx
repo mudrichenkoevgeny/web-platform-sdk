@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Preview } from '@storybook/react'
 import { ComponentTestHarness } from '../src/testing/ComponentTestHarness'
+import { ThemeMode } from '../src/theme/ThemeContext'
 import {
   ScreenSizePreviewSpecs,
   DialogSizePreviewSpecs
@@ -66,13 +67,13 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       description: 'Global theme for components',
-      defaultValue: 'light',
+      defaultValue: ThemeMode.LIGHT,
       toolbar: {
         title: 'Theme',
         icon: 'circlehollow',
         items: [
-          { value: 'light', title: 'Light' },
-          { value: 'dark', title: 'Dark' }
+          { value: ThemeMode.LIGHT, title: 'Light' },
+          { value: ThemeMode.DARK, title: 'Dark' }
         ],
         dynamicTitle: true
       }
@@ -80,7 +81,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => {
-      const mode = (context.globals.theme as 'light' | 'dark') ?? 'light'
+      const mode = (context.globals.theme as ThemeMode) ?? ThemeMode.LIGHT
       return (
         <ComponentTestHarness defaultMode={mode}>
           <Story />

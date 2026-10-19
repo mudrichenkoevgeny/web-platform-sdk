@@ -39,7 +39,7 @@ const createMockDeps = (): SelfIdentifierListStoreDependencies => ({
         secondary: [UserAuthProvider.GOOGLE]
       })
   } as unknown as SelfIdentifierListStoreDependencies['getAvailableUserAuthProvidersUseCase'],
-  onIdentifierSelect: () => {},
+  onNavigateToIdentifierDetail: () => {},
   onBack: () => {}
 })
 

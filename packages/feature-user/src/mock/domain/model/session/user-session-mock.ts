@@ -1,5 +1,6 @@
 import {
   ClientType,
+  CommonLocales,
   toClientDeviceIdOrThrow,
   toUserIdOrThrow,
   toUserIdentifierIdOrThrow,
@@ -27,7 +28,7 @@ export const userSessionPrivateMock = (
   identifierAuthProvider: UserAuthProvider.EMAIL,
   clientDeviceInfo: {
     clientType: ClientType.WEB,
-    language: 'en',
+    language: CommonLocales.ENGLISH,
     deviceId: toClientDeviceIdOrThrow('dev_123'),
     deviceName: 'Chrome',
     appVersion: '1.0.0',
@@ -57,7 +58,7 @@ export const userSessionSummaryMock = (
   userId: toUserIdOrThrow('usr_123'),
   clientDeviceInfo: {
     clientType: ClientType.WEB,
-    language: 'en',
+    language: CommonLocales.ENGLISH,
     deviceId: toClientDeviceIdOrThrow('dev_123'),
     deviceName: 'Chrome',
     appVersion: '1.0.0',

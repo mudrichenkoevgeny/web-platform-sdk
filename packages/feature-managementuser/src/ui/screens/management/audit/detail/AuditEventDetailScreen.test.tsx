@@ -1,13 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toAuditEventIdOrThrow, toUserIdOrThrow, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { toAuditEventIdOrThrow, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventDetailScreen, AuditEventDetailTestTags } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
-
-const userStrings = new UserModuleStrings()
 
 describe('AuditEventDetailScreen', () => {
   const currentUserId = toUserIdOrThrow('usr_current_123')
