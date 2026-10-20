@@ -1,23 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { GlobalUserListScreen } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
-
-const createMockDeps = (): GlobalUserListStoreDependencies => ({
-  getUsersUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userDetailsMock(), userDetailsMock()],
-        pageNumber: 1,
-        totalPages: 1,
-        totalCount: 2
-      })
-  } as unknown as GlobalUserListStoreDependencies['getUsersUseCase'],
-  onNavigateToUserDetail: () => {},
-  onNavigateToCreateUser: () => {},
-  onBack: () => {}
-})
+import { globalUserListDependenciesMock } from '@/mock/ui/screen/management/user/global-list/global-user-list-component-mock'
 
 const meta: Meta<typeof GlobalUserListScreen> = {
   title: 'Feature/ManagementUser/User/GlobalUserListScreen',
@@ -30,7 +14,7 @@ const meta: Meta<typeof GlobalUserListScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: globalUserListDependenciesMock()
   }
 }
 

@@ -1,37 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivate, TEST_USER_ID, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { TotpMainScreen } from '@/ui/screens/user/totp/main/TotpMainScreen'
-import type { TotpMainStoreDependencies } from '@/ui/screens/user/totp/main/totp-main-store'
-
-const createMockDeps = (user = {
-  id: 'usr_123',
-  isTotpEnabled: false
-}): TotpMainStoreDependencies => ({
-  userRepository: {
-    getCurrentUser: () => user as any,
-    observeCurrentUser: () => () => {},
-    refreshCurrentUser: async () => appResultSuccess(user)
-  } as any,
-  setupTotpUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        totpSecretKey: 'JBSWY3DPEHPK3PXP',
-        totpOtpAuthUrl: 'otpauth://totp/Test?secret=JBSWY3DPEHPK3PXP',
-        mfaToken: 'mfa_123'
-      })
-  } as any,
-  enableTotpUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        totpRecoveryCodes: ['1111-2222', '3333-4444']
-      })
-  } as any,
-  disableTotpUseCase: {
-    execute: async () => appResultSuccess(undefined)
-  } as any,
-  onNavigateToRecoveryCodes: () => {},
-  onBack: () => {}
-})
+import { totpMainDependenciesMock } from '@/mock/ui/screen/user/totp/main/totp-main-component-mock'
+import { UserRepositoryMock } from '@/mock/repository/user/user-repository-mock'
 
 const meta: Meta<typeof TotpMainScreen> = {
   title: 'Feature/User/Main/TOTP/Main/TotpMainScreen',
@@ -46,7 +18,7 @@ const meta: Meta<typeof TotpMainScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: totpMainDependenciesMock()
   }
 }
 
@@ -57,6 +29,15 @@ export const Disabled: Story = {}
 
 export const Enabled: Story = {
   args: {
-    dependencies: createMockDeps({ id: 'usr_123', isTotpEnabled: true })
+    dependencies: (() => {
+      const deps = totpMainDependenciesMock()
+      const userRepository = new UserRepositoryMock()
+      userRepository.emit(createTestUserPrivate({
+        id: toUserIdOrThrow(TEST_USER_ID),
+        isTotpEnabled: true
+      }))
+      deps.userRepository = userRepository
+      return deps
+    })()
   }
 }

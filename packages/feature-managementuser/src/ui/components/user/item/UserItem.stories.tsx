@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { createTestUserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { UserItem } from '@/ui/components/user/item/UserItem'
 
 const meta: Meta<typeof UserItem> = {
@@ -16,7 +16,7 @@ const meta: Meta<typeof UserItem> = {
     )
   ],
   args: {
-    user: userDetailsMock(),
+    user: createTestUserSummary(),
     onClick: () => {}
   }
 }

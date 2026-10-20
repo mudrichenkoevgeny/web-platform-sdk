@@ -1,30 +1,35 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestPagedResult, createTestUserIdentifierPrivateList, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalIdentifierListScreen, GlobalIdentifierListTestTags } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
+import { globalIdentifierListDependenciesMock } from '@/mock/ui/screen/management/identifier/global-list/global-identifier-list-component-mock'
+import { ManagementGetIdentifiersUseCaseMock } from '@/mock/usecase/identifier/management-get-identifiers-use-case-mock'
+import { ManagementDeleteIdentifierUseCaseMock } from '@/mock/usecase/identifier/management-delete-identifier-use-case-mock'
 import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
 
 describe('GlobalIdentifierListScreen', () => {
-  const createMockDeps = (): GlobalIdentifierListStoreDependencies => ({
-    managementGetIdentifiersUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [userIdentifierMock()],
-          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
-          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
-          totalItems: 1,
-          totalPages: 1
+  const createMockDeps = (): GlobalIdentifierListStoreDependencies => {
+    const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
+    managementGetIdentifiersUseCase.resultProvider = async () =>
+      appResultSuccess(
+        createTestPagedResult({
+          items: createTestUserIdentifierPrivateList(1)
         })
       )
-    },
-    managementDeleteIdentifierUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
-    },
-    onNavigateToIdentifierDetail: vi.fn(),
-    onBack: vi.fn()
-  })
+    vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+
+    const managementDeleteIdentifierUseCase = new ManagementDeleteIdentifierUseCaseMock()
+    managementDeleteIdentifierUseCase.resultProvider = async () => appResultSuccess(undefined)
+    vi.spyOn(managementDeleteIdentifierUseCase, 'execute').mockImplementation(managementDeleteIdentifierUseCase.execute.bind(managementDeleteIdentifierUseCase))
+
+    return globalIdentifierListDependenciesMock({
+      managementGetIdentifiersUseCase,
+      managementDeleteIdentifierUseCase,
+      onNavigateToIdentifierDetail: vi.fn(),
+      onBack: vi.fn()
+    })
+  }
 
   it('renders global identifiers list', async () => {
     const deps = createMockDeps()

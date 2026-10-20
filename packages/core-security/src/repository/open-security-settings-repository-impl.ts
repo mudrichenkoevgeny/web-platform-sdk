@@ -1,5 +1,5 @@
-import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError, WebSocketService, SocketFrame } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { toOpenSecuritySettings } from '@/domain/model/open-security-settings'
 import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
@@ -8,6 +8,7 @@ import type { OpenSecuritySettingsObserver } from '@/repository/open-security-se
 import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
 import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
 import { SecurityWebSocketEventTypes } from '@/network/contract/security-web-socket-event-types'
+
 /**
  * Implementation of {@link OpenSecuritySettingsRepository} handling API fetch, encrypted storage, and WebSocket updates.
  */
@@ -41,13 +42,13 @@ export class OpenSecuritySettingsRepositoryImpl implements OpenSecuritySettingsR
    */
   public async getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettings, AppError>> {
     if (this.inMemorySettings) {
-      return { success: true, data: this.inMemorySettings }
+      return appResultSuccess(this.inMemorySettings)
     }
 
     if (this.initializationPromise) {
       await this.initializationPromise
       if (this.inMemorySettings) {
-        return { success: true, data: this.inMemorySettings }
+        return appResultSuccess(this.inMemorySettings)
       }
     }
 

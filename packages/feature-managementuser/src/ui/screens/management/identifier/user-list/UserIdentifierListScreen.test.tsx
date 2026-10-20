@@ -1,28 +1,30 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ListingDefaultValues, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestPagedResult, createTestUserIdentifierPrivateList, TEST_USER_ID, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserIdentifierListScreen, UserIdentifierListTestTags } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
+import { userIdentifierListDependenciesMock } from '@/mock/ui/screen/management/identifier/user-list/user-identifier-list-component-mock'
+import { ManagementGetIdentifiersUseCaseMock } from '@/mock/usecase/identifier/management-get-identifiers-use-case-mock'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 describe('UserIdentifierListScreen', () => {
-  const createMockDeps = (): UserIdentifierListStoreDependencies => ({
-    userId: toUserIdOrThrow('usr_123'),
-    managementGetIdentifiersUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [userIdentifierMock()],
-          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
-          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
-          totalItems: 1,
-          totalPages: 1
+  const createMockDeps = (): UserIdentifierListStoreDependencies => {
+    const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
+    managementGetIdentifiersUseCase.resultProvider = async () =>
+      appResultSuccess(
+        createTestPagedResult({
+          items: createTestUserIdentifierPrivateList(1)
         })
       )
-    },
-    onIdentifierSelect: vi.fn(),
-    onBack: vi.fn()
-  })
+    vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+
+    return userIdentifierListDependenciesMock({
+      userId: toUserIdOrThrow(TEST_USER_ID),
+      managementGetIdentifiersUseCase,
+      onIdentifierSelect: vi.fn(),
+      onBack: vi.fn()
+    })
+  }
 
   it('renders user identifiers list', async () => {
     const deps = createMockDeps()

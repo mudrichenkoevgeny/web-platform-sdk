@@ -4,10 +4,10 @@ import { EncryptedManagementSecuritySettingsStorage } from '@/storage/security-s
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedManagementSecuritySettingsStorage', () => {
-  let mockSettings: EncryptedSettingsMock
+  let mockSettingsStorage: EncryptedSettingsMock
   let storage: EncryptedManagementSecuritySettingsStorage
 
-  const dummySettings: ManagementSecuritySettings = {
+  const mockSettings: ManagementSecuritySettings = {
     recentAuthenticationValiditySecondsForOpenUser: 300,
     recentAuthenticationValiditySecondsForManagementUser: 300,
     passwordPolicy: {
@@ -53,8 +53,8 @@ describe('EncryptedManagementSecuritySettingsStorage', () => {
   }
 
   beforeEach(() => {
-    mockSettings = new EncryptedSettingsMock()
-    storage = new EncryptedManagementSecuritySettingsStorage(mockSettings)
+    mockSettingsStorage = new EncryptedSettingsMock()
+    storage = new EncryptedManagementSecuritySettingsStorage(mockSettingsStorage)
   })
 
   it('returns null when storage is empty', async () => {
@@ -62,12 +62,12 @@ describe('EncryptedManagementSecuritySettingsStorage', () => {
   })
 
   it('saves and retrieves management security settings', async () => {
-    await storage.updateManagementSecuritySettings(dummySettings)
-    expect(await storage.getManagementSecuritySettings()).toEqual(dummySettings)
+    await storage.updateManagementSecuritySettings(mockSettings)
+    expect(await storage.getManagementSecuritySettings()).toEqual(mockSettings)
   })
 
   it('clears stored settings', async () => {
-    await storage.updateManagementSecuritySettings(dummySettings)
+    await storage.updateManagementSecuritySettings(mockSettings)
     await storage.clearManagementSecuritySettings()
     expect(await storage.getManagementSecuritySettings()).toBeNull()
   })

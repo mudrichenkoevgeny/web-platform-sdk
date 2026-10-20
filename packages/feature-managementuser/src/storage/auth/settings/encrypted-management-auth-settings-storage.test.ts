@@ -4,10 +4,10 @@ import { EncryptedManagementAuthSettingsStorage } from '@/storage/auth/settings/
 import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedManagementAuthSettingsStorage', () => {
-  let mockSettings: EncryptedSettingsMock
+  let mockSettingsStorage: EncryptedSettingsMock
   let storage: EncryptedManagementAuthSettingsStorage
 
-  const dummySettings: ManagementAuthSettings = {
+  const mockSettings: ManagementAuthSettings = {
     availableAuthProviders: { primary: [], secondary: [] },
     maxTotalIdentifiers: 10,
     maxEmailIdentifiers: 5,
@@ -25,8 +25,8 @@ describe('EncryptedManagementAuthSettingsStorage', () => {
   }
 
   beforeEach(() => {
-    mockSettings = new EncryptedSettingsMock()
-    storage = new EncryptedManagementAuthSettingsStorage(mockSettings)
+    mockSettingsStorage = new EncryptedSettingsMock()
+    storage = new EncryptedManagementAuthSettingsStorage(mockSettingsStorage)
   })
 
   it('returns null when storage is empty', async () => {
@@ -34,12 +34,12 @@ describe('EncryptedManagementAuthSettingsStorage', () => {
   })
 
   it('saves and retrieves management auth settings', async () => {
-    await storage.updateManagementAuthSettings(dummySettings)
-    expect(await storage.getManagementAuthSettings()).toEqual(dummySettings)
+    await storage.updateManagementAuthSettings(mockSettings)
+    expect(await storage.getManagementAuthSettings()).toEqual(mockSettings)
   })
 
   it('clears stored settings', async () => {
-    await storage.updateManagementAuthSettings(dummySettings)
+    await storage.updateManagementAuthSettings(mockSettings)
     await storage.clearManagementAuthSettings()
     expect(await storage.getManagementAuthSettings()).toBeNull()
   })

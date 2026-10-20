@@ -1,42 +1,39 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { TEST_USER_ID, createTestTotpSetupPayload, createTestTotpRecoveryCodesPayload, createTestUserPrivate, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserSecurityRepositoryImpl } from '@/repository/user/security/self-management-user-security-repository-impl'
-import type { UserSecurityApi, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SelfManagementUserSecurityApiMock } from '@/mock/network/api/user/security/self-management-user-security-api-mock'
+import { UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementUserSecurityRepositoryImpl', () => {
-  let mockApi: UserSecurityApi
-  let mockUserStorage: UserStorage
+  let mockApi: SelfManagementUserSecurityApiMock
+  let mockUserStorage: UserStorageMock
   let repository: SelfManagementUserSecurityRepositoryImpl
 
-  const dummyTotpSetupPayload = {
-    secret_key: 'secret',
-    uri: 'otpauth://uri'
-  } as any
-
-  const dummyTotpRecoveryCodesPayload = {
-    recovery_codes: ['code1', 'code2']
-  } as any
-
-  const dummyUser = {
-    id: 'usr_1',
+  const mockTotpSetupPayload = createTestTotpSetupPayload()
+  const mockTotpRecoveryCodesPayload = createTestTotpRecoveryCodesPayload()
+  const mockUser = createTestUserPrivate({
+    id: toUserIdOrThrow(TEST_USER_ID),
     isTotpEnabled: false
-  } as any
+  })
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    mockApi = new SelfManagementUserSecurityApiMock()
+    mockApi.setupTotpResult = appResultSuccess(mockTotpSetupPayload)
+    mockApi.enableTotpResult = appResultSuccess(mockTotpRecoveryCodesPayload)
+    mockApi.disableTotpResult = appResultSuccess(undefined)
+    mockApi.getRecoveryCodesResult = appResultSuccess(mockTotpRecoveryCodesPayload)
+    mockApi.regenerateRecoveryCodesResult = appResultSuccess(mockTotpRecoveryCodesPayload)
 
-    mockApi = {
-      setupTotp: vi.fn().mockResolvedValue(appResultSuccess(dummyTotpSetupPayload)),
-      enableTotp: vi.fn().mockResolvedValue(appResultSuccess(dummyTotpRecoveryCodesPayload)),
-      disableTotp: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      getRecoveryCodes: vi.fn().mockResolvedValue(appResultSuccess(dummyTotpRecoveryCodesPayload)),
-      regenerateRecoveryCodes: vi.fn().mockResolvedValue(appResultSuccess(dummyTotpRecoveryCodesPayload))
-    } as unknown as UserSecurityApi
+    vi.spyOn(mockApi, 'setupTotp').mockImplementation(mockApi.setupTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'enableTotp').mockImplementation(mockApi.enableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
+    vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
 
-    mockUserStorage = {
-      getCurrentUser: vi.fn().mockResolvedValue(dummyUser),
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockUserStorage = new UserStorageMock()
+    mockUserStorage.emit(mockUser)
+    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
 
     repository = new SelfManagementUserSecurityRepositoryImpl(mockApi, mockUserStorage)
   })
@@ -51,7 +48,7 @@ describe('SelfManagementUserSecurityRepositoryImpl', () => {
     const result = await repository.enableTotp('mfaToken', '123456')
     expect(mockApi.enableTotp).toHaveBeenCalledWith('mfaToken', '123456')
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith({
-      ...dummyUser,
+      ...mockUser,
       isTotpEnabled: true
     })
     expect(isSuccess(result)).toBe(true)
@@ -61,7 +58,7 @@ describe('SelfManagementUserSecurityRepositoryImpl', () => {
     const result = await repository.disableTotp()
     expect(mockApi.disableTotp).toHaveBeenCalled()
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith({
-      ...dummyUser,
+      ...mockUser,
       isTotpEnabled: false
     })
     expect(isSuccess(result)).toBe(true)

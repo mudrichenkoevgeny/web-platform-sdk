@@ -1,51 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   toManagementAuthSettings,
-  UserWebSocketEventTypes
+  UserWebSocketEventTypes,
+  createTestManagementAuthSettingsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuthSettingsRepositoryImpl } from '@/repository/auth/settings/management-auth-settings-repository-impl'
-import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
-import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
+import { ManagementAuthSettingsApiMock } from '@/mock/network/api/auth/settings/management-auth-settings-api-mock'
+import { ManagementAuthSettingsStorageMock } from '@/mock/storage/auth/settings/management-auth-settings-storage-mock'
 
 describe('ManagementAuthSettingsRepositoryImpl', () => {
-  let mockApi: ManagementAuthSettingsApi
-  let mockStorage: ManagementAuthSettingsStorage
+  let mockApi: ManagementAuthSettingsApiMock
+  let mockStorage: ManagementAuthSettingsStorageMock
   let mockWsService: WebSocketServiceMock
   let repository: ManagementAuthSettingsRepositoryImpl
 
-  const dummyPayload: ManagementAuthSettingsPayload = {
-    available_auth_providers: { primary: [], secondary: [] },
-    max_total_identifiers: 10,
-    max_email_identifiers: 5,
-    max_phone_identifiers: 5,
-    max_identifiers_per_external_provider: 3,
-    max_active_sessions_for_open_user: 5,
-    max_active_sessions_for_management_user: 5,
-    access_token_validity_seconds: 3600,
-    refresh_token_validity_seconds: 86400,
-    account_deletion_grace_period_seconds: 2592000,
-    account_deletion_check_interval_seconds: 3600,
-    is_registration_enabled: true,
-    open_email_restriction_policy: { is_blacklist_enabled: false, blacklist: [], is_whitelist_enabled: false, whitelist: [] },
-    management_email_restriction_policy: { is_blacklist_enabled: false, blacklist: [], is_whitelist_enabled: false, whitelist: [] }
-  }
-
-  const dummySettings = toManagementAuthSettings(dummyPayload)
+  const mockAuthSettingsPayload = createTestManagementAuthSettingsPayload()
+  const mockAuthSettings = toManagementAuthSettings(mockAuthSettingsPayload)
 
   beforeEach(() => {
-    mockApi = {
-      getManagementAuthSettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload)),
-      updateManagementAuthSettings: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      resetManagementAuthSettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload))
-    } as unknown as ManagementAuthSettingsApi
+    mockApi = new ManagementAuthSettingsApiMock()
+    mockApi.getManagementAuthSettingsResult = appResultSuccess(mockAuthSettingsPayload)
+    mockApi.updateManagementAuthSettingsResult = appResultSuccess(undefined)
+    mockApi.resetManagementAuthSettingsResult = appResultSuccess(mockAuthSettingsPayload)
 
-    mockStorage = {
-      getManagementAuthSettings: vi.fn().mockResolvedValue(null),
-      updateManagementAuthSettings: vi.fn().mockResolvedValue(undefined),
-      clearManagementAuthSettings: vi.fn().mockResolvedValue(undefined)
-    } as unknown as ManagementAuthSettingsStorage
+    vi.spyOn(mockApi, 'getManagementAuthSettings').mockImplementation(mockApi.getManagementAuthSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'updateManagementAuthSettings').mockImplementation(mockApi.updateManagementAuthSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'resetManagementAuthSettings').mockImplementation(mockApi.resetManagementAuthSettings.bind(mockApi))
+
+    mockStorage = new ManagementAuthSettingsStorageMock()
+    vi.spyOn(mockStorage, 'getManagementAuthSettings').mockImplementation(mockStorage.getManagementAuthSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'updateManagementAuthSettings').mockImplementation(mockStorage.updateManagementAuthSettings.bind(mockStorage))
 
     mockWsService = new WebSocketServiceMock()
 
@@ -60,9 +45,9 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementAuthSettings(dummySettings)
+    const result = await repository.saveRemoteManagementAuthSettings(mockAuthSettings)
     expect(mockApi.updateManagementAuthSettings).toHaveBeenCalled()
-    expect(mockStorage.updateManagementAuthSettings).toHaveBeenCalledWith(dummySettings)
+    expect(mockStorage.updateManagementAuthSettings).toHaveBeenCalledWith(mockAuthSettings)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -78,9 +63,9 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     repository.observeManagementAuthSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1',
+      id: toSocketFrameIdOrThrow('evt_1'),
       type: UserWebSocketEventTypes.MANAGEMENT_AUTH_SETTINGS_UPDATED,
-      payload: dummyPayload,
+      payload: mockAuthSettingsPayload,
       metadata: {},
       timestamp: Date.now()
     })

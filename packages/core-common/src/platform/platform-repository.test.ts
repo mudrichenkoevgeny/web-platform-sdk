@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { TEST_EMAIL } from '@mudrichenkoevgeny/shared-foundation'
 import { PlatformRepositoryImpl } from '@/platform/platform-repository'
 import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import type { ExternalLauncher } from '@/platform/external-launcher/external-launcher'
@@ -6,7 +7,7 @@ import { ClientType, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('PlatformRepository', () => {
-  const dummyInfo: ClientDeviceInfoPayload = {
+  const mockDeviceInfoPayload: ClientDeviceInfoPayload = {
     client_type: ClientType.WEB,
     language: CommonLocales.ENGLISH,
     device_id: null,
@@ -16,7 +17,7 @@ describe('PlatformRepository', () => {
   }
 
   const mockClientDeviceInfoProvider: ClientDeviceInfoProvider = {
-    getClientDeviceInfo: vi.fn().mockResolvedValue(dummyInfo)
+    getClientDeviceInfo: vi.fn().mockResolvedValue(mockDeviceInfoPayload)
   }
 
   const mockExternalLauncher: ExternalLauncher = {
@@ -29,7 +30,7 @@ describe('PlatformRepository', () => {
     const repository = new PlatformRepositoryImpl(mockClientDeviceInfoProvider, mockExternalLauncher)
     const info = await repository.getClientDeviceInfo()
 
-    expect(info).toEqual(dummyInfo)
+    expect(info).toEqual(mockDeviceInfoPayload)
     expect(mockClientDeviceInfoProvider.getClientDeviceInfo).toHaveBeenCalled()
   })
 
@@ -39,8 +40,8 @@ describe('PlatformRepository', () => {
     repository.openUrl('https://example.com')
     expect(mockExternalLauncher.openUrl).toHaveBeenCalledWith('https://example.com')
 
-    repository.openMail('test@example.com', 'Subject', 'Body')
-    expect(mockExternalLauncher.openMail).toHaveBeenCalledWith('test@example.com', 'Subject', 'Body')
+    repository.openMail(TEST_EMAIL, 'Subject', 'Body')
+    expect(mockExternalLauncher.openMail).toHaveBeenCalledWith(TEST_EMAIL, 'Subject', 'Body')
 
     repository.openFile('https://example.com/doc.pdf')
     expect(mockExternalLauncher.openFile).toHaveBeenCalledWith('https://example.com/doc.pdf')

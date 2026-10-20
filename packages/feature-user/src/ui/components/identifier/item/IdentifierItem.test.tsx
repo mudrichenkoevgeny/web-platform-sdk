@@ -2,17 +2,16 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, UserAuthProvider, createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
-import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 describe('IdentifierItem', () => {
   it('renders display name and provider and handles click', async () => {
     const onClick = vi.fn()
     const user = userEvent.setup()
 
-    const identifier = userIdentifierMock({
-      displayName: 'test@example.com',
+    const identifier = createTestUserIdentifierPrivate({
+      displayName: TEST_EMAIL,
       userAuthProvider: UserAuthProvider.EMAIL
     })
 
@@ -22,17 +21,17 @@ describe('IdentifierItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText('test@example.com')).toBeDefined()
+    expect(screen.getByText(TEST_EMAIL)).toBeDefined()
     expect(screen.getByText('email')).toBeDefined()
 
-    await user.click(screen.getByText('test@example.com'))
+    await user.click(screen.getByText(TEST_EMAIL))
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
   it('handles keyboard navigation with Enter key when onClick is provided', async () => {
     const onClick = vi.fn()
     const user = userEvent.setup()
-    const identifier = userIdentifierMock()
+    const identifier = createTestUserIdentifierPrivate()
 
     render(
       <ComponentTestHarness>
@@ -49,7 +48,7 @@ describe('IdentifierItem', () => {
   })
 
   it('applies highlighted current identifier styling when isCurrentIdentifier is true', () => {
-    const identifier = userIdentifierMock()
+    const identifier = createTestUserIdentifierPrivate()
 
     const { container } = render(
       <ComponentTestHarness>

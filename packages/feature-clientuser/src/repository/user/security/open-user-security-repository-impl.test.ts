@@ -1,31 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivatePayload, createTestTotpSetupPayload, createTestTotpRecoveryCodesPayload, TEST_USER_ID, toUserIdOrThrow, toUserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUserSecurityRepositoryImpl } from '@/repository/user/security/open-user-security-repository-impl'
-import type { UserSecurityApi, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UserSecurityApiMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenUserSecurityRepositoryImpl', () => {
-  let mockApi: UserSecurityApi
-  let mockStorage: UserStorage
+  let mockApi: UserSecurityApiMock
+  let mockStorage: UserStorageMock
   let repository: OpenUserSecurityRepositoryImpl
 
-  const dummyUser = {
-    id: 'usr_1',
-    isTotpEnabled: false
-  } as any
+  const mockUser = toUserPrivate(createTestUserPrivatePayload({
+    id: toUserIdOrThrow(TEST_USER_ID),
+    is_totp_enabled: false
+  }))
 
   beforeEach(() => {
-    mockApi = {
-      setupTotp: vi.fn().mockResolvedValue(appResultSuccess({ secret_key: 'secret', otp_auth_url: 'url', mfa_token: 'mfa1' })),
-      enableTotp: vi.fn().mockResolvedValue(appResultSuccess({ codes: ['c1'] })),
-      disableTotp: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      getRecoveryCodes: vi.fn().mockResolvedValue(appResultSuccess({ codes: ['c1'] })),
-      regenerateRecoveryCodes: vi.fn().mockResolvedValue(appResultSuccess({ codes: ['c2'] }))
-    } as unknown as UserSecurityApi
+    mockApi = new UserSecurityApiMock()
+    mockApi.setupTotpResult = appResultSuccess(createTestTotpSetupPayload())
+    mockApi.enableTotpResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
+    mockApi.disableTotpResult = appResultSuccess(undefined)
+    mockApi.getRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
+    mockApi.regenerateRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
 
-    mockStorage = {
-      getCurrentUser: vi.fn().mockResolvedValue(dummyUser),
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    vi.spyOn(mockApi, 'setupTotp').mockImplementation(mockApi.setupTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'enableTotp').mockImplementation(mockApi.enableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
+    vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
+
+    mockStorage = new UserStorageMock()
+    mockStorage.emit(mockUser)
+    vi.spyOn(mockStorage, 'updateCurrentUser').mockImplementation(mockStorage.updateCurrentUser.bind(mockStorage))
 
     repository = new OpenUserSecurityRepositoryImpl(mockApi, mockStorage)
   })

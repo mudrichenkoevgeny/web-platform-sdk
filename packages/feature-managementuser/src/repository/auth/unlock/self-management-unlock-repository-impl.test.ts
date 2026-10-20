@@ -1,27 +1,31 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { TEST_PHONE, createTestOtpConfirmationPayload, AuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUnlockRepositoryImpl } from '@/repository/auth/unlock/self-management-unlock-repository-impl'
-import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
-import type { ConfirmationRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SelfManagementUnlockApiMock } from '@/mock/network/api/auth/unlock/self-management-unlock-api-mock'
+import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementUnlockRepositoryImpl', () => {
-  let mockApi: SelfManagementUnlockApi
-  let mockConfirmationRepo: ConfirmationRepository
+  let mockApi: SelfManagementUnlockApiMock
+  let mockConfirmationRepo: ConfirmationRepositoryMock
   let repository: SelfManagementUnlockRepositoryImpl
 
   beforeEach(() => {
-    mockApi = {
-      sendUnlockEmailConfirmation: vi.fn().mockResolvedValue(appResultSuccess({ retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 })),
-      unlockByEmail: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      sendUnlockPhoneConfirmation: vi.fn().mockResolvedValue(appResultSuccess({ retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 })),
-      unlockByPhone: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      unlockByExternalAuthProvider: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as SelfManagementUnlockApi
+    mockApi = new SelfManagementUnlockApiMock()
+    mockApi.sendUnlockEmailConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
+    mockApi.unlockByEmailResult = appResultSuccess(undefined)
+    mockApi.sendUnlockPhoneConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
+    mockApi.unlockByPhoneResult = appResultSuccess(undefined)
+    mockApi.unlockByExternalAuthProviderResult = appResultSuccess(undefined)
 
-    mockConfirmationRepo = {
-      executeWithTimer: vi.fn().mockImplementation((_type, _identifier, action) => action()),
-      getRemainingDelay: vi.fn().mockReturnValue(0)
-    } as unknown as ConfirmationRepository
+    vi.spyOn(mockApi, 'sendUnlockEmailConfirmation').mockImplementation(mockApi.sendUnlockEmailConfirmation.bind(mockApi))
+    vi.spyOn(mockApi, 'unlockByEmail').mockImplementation(mockApi.unlockByEmail.bind(mockApi))
+    vi.spyOn(mockApi, 'sendUnlockPhoneConfirmation').mockImplementation(mockApi.sendUnlockPhoneConfirmation.bind(mockApi))
+    vi.spyOn(mockApi, 'unlockByPhone').mockImplementation(mockApi.unlockByPhone.bind(mockApi))
+    vi.spyOn(mockApi, 'unlockByExternalAuthProvider').mockImplementation(mockApi.unlockByExternalAuthProvider.bind(mockApi))
+
+    mockConfirmationRepo = new ConfirmationRepositoryMock()
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
 
     repository = new SelfManagementUnlockRepositoryImpl(mockApi, mockConfirmationRepo)
   })
@@ -43,24 +47,24 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
   })
 
   it('delegates sendUnlockPhoneConfirmation with timer', async () => {
-    const result = await repository.sendUnlockPhoneConfirmation('+1234567890')
+    const result = await repository.sendUnlockPhoneConfirmation(TEST_PHONE)
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('queries remaining phone unlock cooldown delay', () => {
-    expect(repository.getRemainingUnlockPhoneConfirmationDelayInSeconds('+1234567890')).toBe(0)
+    expect(repository.getRemainingUnlockPhoneConfirmationDelayInSeconds(TEST_PHONE)).toBe(0)
   })
 
   it('delegates unlockByPhone request', async () => {
-    const result = await repository.unlockByPhone('+1234567890', '123456')
-    expect(mockApi.unlockByPhone).toHaveBeenCalledWith('+1234567890', '123456')
+    const result = await repository.unlockByPhone(TEST_PHONE, '123456')
+    expect(mockApi.unlockByPhone).toHaveBeenCalledWith(TEST_PHONE, '123456')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates unlockByExternalAuthProvider request', async () => {
-    const result = await repository.unlockByExternalAuthProvider('GOOGLE', 'token_xyz')
-    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith('GOOGLE', 'token_xyz')
+    const result = await repository.unlockByExternalAuthProvider(AuthProvider.GOOGLE, 'token_xyz')
+    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith(AuthProvider.GOOGLE, 'token_xyz')
     expect(isSuccess(result)).toBe(true)
   })
 })

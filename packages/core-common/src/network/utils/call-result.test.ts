@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 import { callResult, isApiException } from '@/network/utils/call-result'
 import { ApiException } from '@/error/model/api-exception'
 import { ServerError } from '@/error/model/server-error'
@@ -17,12 +17,11 @@ describe('callResult', () => {
   })
 
   it('maps ApiException to ServerError in AppResultFailure', async () => {
-    const apiErrorResponse = {
-      id: '123e4567-e89b-12d3-a456-426614174000' as unknown as UserId,
+    const apiErrorResponse = createTestApiErrorResponse({
       code: 'UNAUTHORIZED',
       message: 'Not authorized',
       args: {}
-    }
+    })
     const result = await callResult(async () => {
       throw new ApiException(apiErrorResponse)
     }, true)
@@ -36,12 +35,7 @@ describe('callResult', () => {
   })
 
   it('correctly identifies ApiException objects via isApiException', () => {
-    const apiErrorResponse = {
-      id: 'err-123' as unknown as UserId,
-      code: 'INVALID_CREDENTIALS',
-      message: 'Invalid credentials',
-      args: {}
-    }
+    const apiErrorResponse = createTestApiErrorResponse()
     const apiException = new ApiException(apiErrorResponse)
     expect(isApiException(apiException)).toBe(true)
     expect(isApiException({ apiErrorResponse })).toBe(true)

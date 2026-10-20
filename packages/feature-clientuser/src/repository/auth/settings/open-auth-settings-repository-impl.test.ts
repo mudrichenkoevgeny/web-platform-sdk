@@ -1,39 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  appResultSuccess,
+  isSuccess,
+  WebSocketServiceMock,
+  toSocketFrameIdOrThrow
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  UserWebSocketEventTypes,
+  createTestOpenAuthSettingsPayload,
+  createTestOpenAuthSettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import { OpenAuthSettingsRepositoryImpl } from '@/repository/auth/settings/open-auth-settings-repository-impl'
-import type { OpenAuthSettingsApi } from '@/network/api/auth/settings/open-auth-settings-api'
-import type { OpenAuthSettingsStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { OpenAuthSettingsApiMock } from '@/mock/network/api/auth/settings/open-auth-settings-api-mock'
+import { OpenAuthSettingsStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenAuthSettingsRepositoryImpl', () => {
-  let mockApi: OpenAuthSettingsApi
-  let mockStorage: OpenAuthSettingsStorage
+  let mockApi: OpenAuthSettingsApiMock
+  let mockStorage: OpenAuthSettingsStorageMock
   let mockWsService: WebSocketServiceMock
   let repository: OpenAuthSettingsRepositoryImpl
 
-  const dummyPayload = {
-    available_auth_providers: { primary: ['email'], secondary: [] },
-    max_total_identifiers: 5,
-    max_email_identifiers: 3,
-    max_phone_identifiers: 2,
-    max_identifiers_per_external_provider: 1,
-    is_registration_enabled: true
-  } as any
-
-  const dummySettings = {
-    availableAuthProviders: { primary: [], secondary: [] }
-  } as any
+  const mockAuthSettingsPayload = createTestOpenAuthSettingsPayload()
+  const mockAuthSettings = createTestOpenAuthSettings()
 
   beforeEach(() => {
-    mockApi = {
-      getAuthSettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload))
-    } as unknown as OpenAuthSettingsApi
+    mockApi = new OpenAuthSettingsApiMock()
+    mockApi.getAuthSettingsResult = appResultSuccess(mockAuthSettingsPayload)
+    vi.spyOn(mockApi, 'getAuthSettings').mockImplementation(mockApi.getAuthSettings.bind(mockApi))
 
-    mockStorage = {
-      getOpenAuthSettings: vi.fn().mockResolvedValue(null),
-      updateOpenAuthSettings: vi.fn().mockResolvedValue(undefined),
-      clearOpenAuthSettings: vi.fn().mockResolvedValue(undefined)
-    } as unknown as OpenAuthSettingsStorage
+    mockStorage = new OpenAuthSettingsStorageMock()
+    vi.spyOn(mockStorage, 'getOpenAuthSettings').mockImplementation(mockStorage.getOpenAuthSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'updateOpenAuthSettings').mockImplementation(mockStorage.updateOpenAuthSettings.bind(mockStorage))
 
     mockWsService = new WebSocketServiceMock()
 
@@ -48,7 +45,7 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
   })
 
   it('uses stored settings if available', async () => {
-    vi.mocked(mockStorage.getOpenAuthSettings).mockResolvedValue(dummySettings)
+    mockStorage.getOpenAuthSettingsResult = mockAuthSettings
 
     const repositoryWithPreload = new OpenAuthSettingsRepositoryImpl(mockApi, mockStorage, mockWsService)
     const result = await repositoryWithPreload.getOpenAuthSettings()
@@ -73,9 +70,9 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
     repository.observeOpenAuthSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1' as any,
+      id: toSocketFrameIdOrThrow('evt_1'),
       type: UserWebSocketEventTypes.OPEN_AUTH_SETTINGS_UPDATED,
-      payload: dummyPayload,
+      payload: mockAuthSettingsPayload,
       metadata: {},
       timestamp: Date.now()
     })

@@ -1,9 +1,10 @@
-import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestOpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsObserver } from '@/repository/open-security-settings-repository'
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
-import { openSecuritySettingsMock } from '@/mock/domain/model/open-security-settings-mock'
+import { toOpenSecuritySettings, type OpenSecuritySettings } from '@/domain/model/open-security-settings'
+
 /**
  * Configuration options for {@link OpenSecuritySettingsRepositoryMock}.
  */
@@ -25,23 +26,23 @@ export class OpenSecuritySettingsRepositoryMock implements OpenSecuritySettingsR
   private readonly observers = new Set<OpenSecuritySettingsObserver>()
 
   public constructor(config?: OpenSecuritySettingsRepositoryMockConfig) {
-    this.settings = config?.initialSettings ?? openSecuritySettingsMock()
+    this.settings = config?.initialSettings ?? toOpenSecuritySettings(createTestOpenSecuritySettingsPayload())
     this.shouldFailGet = config?.shouldFailGet ?? false
   }
 
   public async getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettings, AppError>> {
     if (this.shouldFailGet) {
-      return { success: false, error: CommonError.unknown() }
+      return appResultFailure(CommonError.unknown())
     }
-    return { success: true, data: this.settings }
+    return appResultSuccess(this.settings)
   }
 
   public async refreshOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettings, AppError>> {
     this.refreshCallCount++
     if (this.shouldFailGet) {
-      return { success: false, error: CommonError.unknown() }
+      return appResultFailure(CommonError.unknown())
     }
-    return { success: true, data: this.settings }
+    return appResultSuccess(this.settings)
   }
 
   public async updateOpenSecuritySettings(securitySettings: OpenSecuritySettings): Promise<void> {

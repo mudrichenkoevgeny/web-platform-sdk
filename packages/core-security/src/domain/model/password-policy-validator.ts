@@ -13,7 +13,7 @@ export type PasswordPolicyFailReason =
 /** Result of a password policy validation check. */
 export type PasswordPolicyValidatorResult =
   | { readonly success: true }
-  | { readonly success: false; readonly reasons: PasswordPolicyFailReason[] }
+  | { readonly success: false; readonly reasons: [PasswordPolicyFailReason, ...PasswordPolicyFailReason[]] }
 
 /**
  * Validates a candidate password string against an {@link OpenPasswordPolicy}.
@@ -49,13 +49,13 @@ export class PasswordPolicyValidator {
       reasons.push('NO_DIGIT')
     }
 
-    // Special characters include standard symbols; adjust regex based on backend constraints if needed.
     if (policy.requireSpecialChar && !/[^a-zA-Z0-9]/.test(password)) {
       reasons.push('NO_SPECIAL_CHAR')
     }
 
-    if (reasons.length > 0) {
-      return { success: false, reasons }
+    const [firstReason, ...rest] = reasons
+    if (firstReason) {
+      return { success: false, reasons: [firstReason, ...rest] }
     }
 
     return { success: true }

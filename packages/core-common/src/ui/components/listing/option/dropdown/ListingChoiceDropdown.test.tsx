@@ -6,7 +6,7 @@ import type { ChoiceListingFilterDefinition } from '@/listing/listing-models'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('ListingChoiceDropdown', () => {
-  const dummyFilter: ChoiceListingFilterDefinition = {
+  const mockFilter: ChoiceListingFilterDefinition = {
     type: 'choice',
     id: 'status',
     title: 'Status',
@@ -23,7 +23,7 @@ describe('ListingChoiceDropdown', () => {
     render(
       <ComponentTestHarness>
         <ListingChoiceDropdown
-          filter={dummyFilter}
+          filter={mockFilter}
           selectedIds={new Set(['active'])}
           onSelectionChanged={onSelectionChanged}
         />
@@ -49,7 +49,7 @@ describe('ListingChoiceDropdown', () => {
         <div>
           <button type="button">Outside Element</button>
           <ListingChoiceDropdown
-            filter={dummyFilter}
+            filter={mockFilter}
             selectedIds={new Set(['active'])}
             onSelectionChanged={onSelectionChanged}
           />

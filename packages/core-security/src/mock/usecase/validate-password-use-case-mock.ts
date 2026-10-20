@@ -1,6 +1,9 @@
+import { appResultFailure, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
 import { SecurityError } from '@/error/model/security-error'
+import { OpenSecuritySettingsRepositoryMock } from '@/mock/repository/open-security-settings-repository-mock'
+import { PasswordPolicyValidator } from '@/domain/model/password-policy-validator'
 
 /**
  * Mock implementation of {@link ValidatePasswordUseCase} for testing UI components.
@@ -12,8 +15,7 @@ export class ValidatePasswordUseCaseMock extends ValidatePasswordUseCase {
    * @param shouldFail - If true, mock will always fail with passwordTooShort
    */
   public constructor(private readonly shouldFail: boolean = false) {
-    // Pass null casts to bypass constructor checks since we override the method
-    super(null as any, null as any)
+    super(new OpenSecuritySettingsRepositoryMock(), new PasswordPolicyValidator())
   }
 
   /**
@@ -24,8 +26,8 @@ export class ValidatePasswordUseCaseMock extends ValidatePasswordUseCase {
    */
   public async execute(_password: string): Promise<AppResult<void, AppError>> {
     if (this.shouldFail) {
-      return { success: false, error: SecurityError.passwordTooShort(8) }
+      return appResultFailure(SecurityError.passwordTooShort(8))
     }
-    return { success: true, data: undefined }
+    return appResultSuccess(undefined)
   }
 }

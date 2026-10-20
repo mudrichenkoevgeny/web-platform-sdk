@@ -8,7 +8,7 @@ import { generateErrorId } from '@/error/model/error-id'
 describe('CommonErrorParser', () => {
   const parser = new CommonErrorParser()
   const ruParser = new CommonErrorParser(new CommonModuleStrings(undefined, CommonLocales.RUSSIAN))
-  const dummyErrorId = generateErrorId()
+  const testErrorId = generateErrorId()
 
   it('parses UNKNOWN error to internal error message (en & ru)', () => {
     const error = CommonError.unknown()
@@ -23,7 +23,7 @@ describe('CommonErrorParser', () => {
   })
 
   it('parses NOT_FOUND error with resource arg', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.NOT_FOUND, '', {
+    const error = new ServerError(testErrorId, CommonErrorCodes.NOT_FOUND, '', {
       [CommonErrorArgs.RESOURCE]: 'User'
     }, false)
     expect(parser.parse(error)).toBe("Resource 'User' was not found.")
@@ -31,19 +31,19 @@ describe('CommonErrorParser', () => {
   })
 
   it('parses NOT_FOUND error without resource arg (fallback)', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.NOT_FOUND, '', {}, false)
+    const error = new ServerError(testErrorId, CommonErrorCodes.NOT_FOUND, '', {}, false)
     expect(parser.parse(error)).toBe('Resource not found.')
     expect(ruParser.parse(error)).toBe('Ресурс не найден.')
   })
 
   it('parses SERVICE_UNAVAILABLE error', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.SERVICE_UNAVAILABLE, '', {}, true)
+    const error = new ServerError(testErrorId, CommonErrorCodes.SERVICE_UNAVAILABLE, '', {}, true)
     expect(parser.parse(error)).toBe('The service is temporarily unavailable.')
     expect(ruParser.parse(error)).toBe('Сервис временно недоступен.')
   })
 
   it('parses TOO_MANY_REQUESTS error with retry_after_seconds arg', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.TOO_MANY_REQUESTS, '', {
+    const error = new ServerError(testErrorId, CommonErrorCodes.TOO_MANY_REQUESTS, '', {
       [CommonErrorArgs.RETRY_AFTER_SECONDS]: '30'
     }, true)
     expect(parser.parse(error)).toBe('Too many requests. Try again in 30 seconds.')
@@ -51,7 +51,7 @@ describe('CommonErrorParser', () => {
   })
 
   it('parses MISSING_REQUIRED_PARAMETER error with arg', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.MISSING_REQUIRED_PARAMETER, '', {
+    const error = new ServerError(testErrorId, CommonErrorCodes.MISSING_REQUIRED_PARAMETER, '', {
       [CommonErrorArgs.PARAMETER_NAME]: 'userId'
     }, false)
     expect(parser.parse(error)).toBe("The required parameter 'userId' is missing.")
@@ -59,7 +59,7 @@ describe('CommonErrorParser', () => {
   })
 
   it('parses MISSING_REQUIRED_FIELD error with arg', () => {
-    const error = new ServerError(dummyErrorId, CommonErrorCodes.MISSING_REQUIRED_FIELD, '', {
+    const error = new ServerError(testErrorId, CommonErrorCodes.MISSING_REQUIRED_FIELD, '', {
       [CommonErrorArgs.FIELD_NAME]: 'email'
     }, false)
     expect(parser.parse(error)).toBe("The required field 'email' is missing.")
@@ -79,11 +79,11 @@ describe('CommonErrorParser', () => {
   })
 
   it('returns unknown error message or custom error message for completely unknown error code', () => {
-    const errorWithoutMsg = new ServerError(dummyErrorId, 'UNKNOWN_CUSTOM_CODE', '', {}, false)
+    const errorWithoutMsg = new ServerError(testErrorId, 'UNKNOWN_CUSTOM_CODE', '', {}, false)
     expect(parser.parse(errorWithoutMsg)).toBe('An unknown error has occurred.')
     expect(ruParser.parse(errorWithoutMsg)).toBe('Произошла неизвестная ошибка.')
 
-    const errorWithMsg = new ServerError(dummyErrorId, 'UNKNOWN_CUSTOM_CODE', 'Custom error from server', {}, false)
+    const errorWithMsg = new ServerError(testErrorId, 'UNKNOWN_CUSTOM_CODE', 'Custom error from server', {}, false)
     expect(parser.parse(errorWithMsg)).toBe('Custom error from server')
   })
 })

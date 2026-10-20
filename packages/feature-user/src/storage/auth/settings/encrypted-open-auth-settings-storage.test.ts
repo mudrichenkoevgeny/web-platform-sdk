@@ -8,7 +8,7 @@ describe('EncryptedOpenAuthSettingsStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock
   let storage: EncryptedOpenAuthSettingsStorage
 
-  const dummySettings: OpenAuthSettings = {
+  const mockSettings: OpenAuthSettings = {
     availableAuthProviders: {
       primary: [UserAuthProvider.EMAIL, UserAuthProvider.PHONE],
       secondary: [UserAuthProvider.GOOGLE, UserAuthProvider.APPLE]
@@ -31,14 +31,14 @@ describe('EncryptedOpenAuthSettingsStorage', () => {
   })
 
   it('saves and retrieves open auth settings', async () => {
-    await storage.updateOpenAuthSettings(dummySettings)
+    await storage.updateOpenAuthSettings(mockSettings)
 
     const retrieved = await storage.getOpenAuthSettings()
-    expect(retrieved).toEqual(dummySettings)
+    expect(retrieved).toEqual(mockSettings)
   })
 
   it('clears stored open auth settings', async () => {
-    await storage.updateOpenAuthSettings(dummySettings)
+    await storage.updateOpenAuthSettings(mockSettings)
     await storage.clearOpenAuthSettings()
 
     const retrieved = await storage.getOpenAuthSettings()

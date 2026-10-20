@@ -1,79 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   SecurityWebSocketEventTypes,
-  toManagementSecuritySettings
+  toManagementSecuritySettings,
+  createTestManagementSecuritySettingsPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementSecuritySettingsRepositoryImpl } from '@/repository/security/settings/management-security-settings-repository-impl'
-import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
-import type { ManagementSecuritySettingsStorage } from '@/storage/security-settings/management-security-settings-storage'
+import { ManagementSecuritySettingsApiMock } from '@/mock/network/api/security/settings/management-security-settings-api-mock'
+import { ManagementSecuritySettingsStorageMock } from '@/mock/storage/security-settings/management-security-settings-storage-mock'
 
 describe('ManagementSecuritySettingsRepositoryImpl', () => {
-  let mockApi: ManagementSecuritySettingsApi
-  let mockStorage: ManagementSecuritySettingsStorage
+  let mockApi: ManagementSecuritySettingsApiMock
+  let mockStorage: ManagementSecuritySettingsStorageMock
   let mockWsService: WebSocketServiceMock
   let repository: ManagementSecuritySettingsRepositoryImpl
 
-  const dummyPayload: ManagementSecuritySettingsPayload = {
-    recent_authentication_validity_seconds_for_open_user: 300,
-    recent_authentication_validity_seconds_for_management_user: 300,
-    management_password_policy: {
-      min_length: 8,
-      require_letter: true,
-      require_upper_case: true,
-      require_lower_case: true,
-      require_digit: true,
-      require_special_char: true,
-      common_passwords: []
-    },
-    otp_confirmation: {
-      retry_after_seconds: 60,
-      number_of_symbols: 6,
-      expiration_seconds: 300
-    },
-    account_lockout_policy: {
-      max_failed_password_attempts: 5,
-      max_failed_otp_attempts: 5,
-      max_failed_totp_attempts: 5,
-      failed_attempts_window_seconds: 600,
-      lockout_duration_seconds: 1800,
-      indefinite_lockout_threshold: 10,
-      is_self_service_unlock_enabled: true
-    },
-    account_lockout_check_interval_seconds: 60,
-    open_ip_restriction_policy: {
-      is_blacklist_enabled: false,
-      blacklist: [],
-      is_whitelist_enabled: false,
-      whitelist: []
-    },
-    management_ip_restriction_policy: {
-      is_blacklist_enabled: false,
-      blacklist: [],
-      is_whitelist_enabled: false,
-      whitelist: []
-    },
-    expiration_seconds: 300,
-    max_requests_per_period: 100,
-    rate_limit_period_seconds: 60,
-    refresh_token_rotation_grace_period_seconds: 10
-  }
-
-  const dummySettings = toManagementSecuritySettings(dummyPayload)
+  const mockSettingsPayload = createTestManagementSecuritySettingsPayload()
+  const mockSettings = toManagementSecuritySettings(mockSettingsPayload)
 
   beforeEach(() => {
-    mockApi = {
-      getManagementSecuritySettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload)),
-      updateManagementSecuritySettings: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      resetManagementSecuritySettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload))
-    } as unknown as ManagementSecuritySettingsApi
+    mockApi = new ManagementSecuritySettingsApiMock()
+    mockApi.getManagementSecuritySettingsResult = appResultSuccess(mockSettingsPayload)
+    mockApi.updateManagementSecuritySettingsResult = appResultSuccess(undefined)
+    mockApi.resetManagementSecuritySettingsResult = appResultSuccess(mockSettingsPayload)
 
-    mockStorage = {
-      getManagementSecuritySettings: vi.fn().mockResolvedValue(null),
-      updateManagementSecuritySettings: vi.fn().mockResolvedValue(undefined),
-      clearManagementSecuritySettings: vi.fn().mockResolvedValue(undefined)
-    } as unknown as ManagementSecuritySettingsStorage
+    vi.spyOn(mockApi, 'getManagementSecuritySettings').mockImplementation(mockApi.getManagementSecuritySettings.bind(mockApi))
+    vi.spyOn(mockApi, 'updateManagementSecuritySettings').mockImplementation(mockApi.updateManagementSecuritySettings.bind(mockApi))
+    vi.spyOn(mockApi, 'resetManagementSecuritySettings').mockImplementation(mockApi.resetManagementSecuritySettings.bind(mockApi))
+
+    mockStorage = new ManagementSecuritySettingsStorageMock()
+    vi.spyOn(mockStorage, 'getManagementSecuritySettings').mockImplementation(mockStorage.getManagementSecuritySettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'updateManagementSecuritySettings').mockImplementation(mockStorage.updateManagementSecuritySettings.bind(mockStorage))
 
     mockWsService = new WebSocketServiceMock()
 
@@ -88,9 +45,9 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementSecuritySettings(dummySettings)
+    const result = await repository.saveRemoteManagementSecuritySettings(mockSettings)
     expect(mockApi.updateManagementSecuritySettings).toHaveBeenCalled()
-    expect(mockStorage.updateManagementSecuritySettings).toHaveBeenCalledWith(dummySettings)
+    expect(mockStorage.updateManagementSecuritySettings).toHaveBeenCalledWith(mockSettings)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -106,9 +63,9 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     repository.observeManagementSecuritySettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1',
+      id: toSocketFrameIdOrThrow('evt_1'),
       type: SecurityWebSocketEventTypes.MANAGEMENT_SECURITY_SETTINGS_UPDATED,
-      payload: dummyPayload,
+      payload: mockSettingsPayload,
       metadata: {},
       timestamp: Date.now()
     })

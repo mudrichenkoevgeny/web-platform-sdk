@@ -1,45 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { SocketFrame, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
-import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivatePayload, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
-import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
-import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SelfManagementUserApiMock } from '@/mock/network/api/user/self-management-user-api-mock'
+import { AuthStorageMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementUserRepositoryImpl', () => {
-  let mockUserStorage: UserStorage
-  let mockAuthStorage: AuthStorage
-  let mockApi: SelfManagementUserApi
-  let mockWs: WebSocketService
-  let wsCallback: ((frame: SocketFrame) => void) | undefined
+  let mockUserStorage: UserStorageMock
+  let mockAuthStorage: AuthStorageMock
+  let mockApi: SelfManagementUserApiMock
+  let mockWs: WebSocketServiceMock
   let repository: SelfManagementUserRepositoryImpl
 
-  const dummyUserPayload = userPrivatePayloadMock()
+  const mockUserPayload = createTestUserPrivatePayload()
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    wsCallback = undefined
+    mockUserStorage = new UserStorageMock()
+    vi.spyOn(mockUserStorage, 'observeCurrentUser').mockImplementation(mockUserStorage.observeCurrentUser.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'clear').mockImplementation(mockUserStorage.clear.bind(mockUserStorage))
 
-    mockUserStorage = {
-      observeCurrentUser: vi.fn().mockReturnValue(() => {}),
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined),
-      clear: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockAuthStorage = new AuthStorageMock()
+    vi.spyOn(mockAuthStorage, 'clearTokens').mockImplementation(mockAuthStorage.clearTokens.bind(mockAuthStorage))
 
-    mockAuthStorage = {
-      clearTokens: vi.fn().mockResolvedValue(undefined)
-    } as unknown as AuthStorage
+    mockApi = new SelfManagementUserApiMock()
+    mockApi.getUserResult = appResultSuccess(mockUserPayload)
+    vi.spyOn(mockApi, 'getUser').mockImplementation(mockApi.getUser.bind(mockApi))
 
-    mockApi = {
-      getUser: vi.fn().mockResolvedValue(appResultSuccess(dummyUserPayload))
-    } as unknown as SelfManagementUserApi
-
-    mockWs = {
-      observeEvents: vi.fn().mockImplementation((cb: (frame: SocketFrame) => void) => {
-        wsCallback = cb
-      })
-    } as unknown as WebSocketService
+    mockWs = new WebSocketServiceMock()
 
     repository = new SelfManagementUserRepositoryImpl(
       mockUserStorage,
@@ -69,11 +57,10 @@ describe('SelfManagementUserRepositoryImpl', () => {
   })
 
   it('handles USER_UPDATED WebSocket frame', async () => {
-    expect(wsCallback).toBeDefined()
-    wsCallback?.({
-      id: 'frame_1',
+    mockWs.emitFrameLocally({
+      id: toSocketFrameIdOrThrow('frame_1'),
       type: UserWebSocketEventTypes.USER_UPDATED,
-      payload: dummyUserPayload,
+      payload: mockUserPayload,
       timestamp: 1000
     })
     await new Promise((resolve) => setTimeout(resolve, 10))
@@ -81,9 +68,8 @@ describe('SelfManagementUserRepositoryImpl', () => {
   })
 
   it('handles SESSION_DELETED WebSocket frame', async () => {
-    expect(wsCallback).toBeDefined()
-    wsCallback?.({
-      id: 'frame_2',
+    mockWs.emitFrameLocally({
+      id: toSocketFrameIdOrThrow('frame_2'),
       type: UserWebSocketEventTypes.SESSION_DELETED,
       payload: null,
       timestamp: 1000

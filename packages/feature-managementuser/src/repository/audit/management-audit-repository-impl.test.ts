@@ -1,64 +1,51 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ManagementAuditRepositoryImpl } from '@/repository/audit/management-audit-repository-impl'
-import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
-import { managementAuditEventListParamsSchema, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuditApiMock } from '@/mock/network/api/audit/management-audit-api-mock'
+import { createTestAuditEventPrivatePayload, createTestPagedResultPayload, managementAuditEventListParamsSchema, TEST_AUDIT_EVENT_ID, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementAuditRepositoryImpl', () => {
-  let mockApi: ManagementAuditApi
+  let mockApi: ManagementAuditApiMock
   let repository: ManagementAuditRepositoryImpl
-  let dummyActionParser: any
-  let dummyResourceParser: any
-  let dummyMetadataParser: any
+  let mockActionParser: { fromValueOrThrow: ReturnType<typeof vi.fn> }
+  let mockResourceParser: { fromValueOrThrow: ReturnType<typeof vi.fn> }
+  let mockMetadataParser: { fromValueOrThrow: ReturnType<typeof vi.fn> }
 
-  const dummyAuditEventPayload = {
-    id: 'evt_1',
-    actor_id: 'usr_1',
-    actor_type: 'USER',
-    actor_user_role: 'SUPER_ADMIN',
-    action: 'CREATE_USER',
-    resource: 'USER',
-    resource_id: 'usr_2',
-    status: 'SUCCESS',
-    message: 'User created',
-    created_at: 1000,
-    metadata: [
-      {
-        key: 'IP_ADDRESS',
-        value: '127.0.0.1'
-      }
-    ]
-  } as any
+  const mockAuditEventPayload = createTestAuditEventPrivatePayload({
+    id: toAuditEventIdOrThrow(TEST_AUDIT_EVENT_ID)
+  })
 
   beforeEach(() => {
     vi.clearAllMocks()
 
-    dummyActionParser = {
+    mockActionParser = {
       fromValueOrThrow: vi.fn().mockImplementation((val) => val)
     }
-    dummyResourceParser = {
+    mockResourceParser = {
       fromValueOrThrow: vi.fn().mockImplementation((val) => val)
     }
-    dummyMetadataParser = {
+    mockMetadataParser = {
       fromValueOrThrow: vi.fn().mockImplementation((val) => val)
     }
 
-    mockApi = {
-      getAuditEvents: vi.fn().mockResolvedValue(appResultSuccess({
-        items: [dummyAuditEventPayload],
-        totalCount: 1,
-        pageNumber: 1,
-        pageSize: 10,
-        totalPages: 1
-      })),
-      getAuditEvent: vi.fn().mockResolvedValue(appResultSuccess(dummyAuditEventPayload))
-    } as unknown as ManagementAuditApi
+    mockApi = new ManagementAuditApiMock()
+    mockApi.getAuditEventsResult = appResultSuccess(createTestPagedResultPayload({
+      items: [mockAuditEventPayload],
+      total_count: 1,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 1
+    }))
+    mockApi.getAuditEventResult = appResultSuccess(mockAuditEventPayload)
+
+    vi.spyOn(mockApi, 'getAuditEvents').mockImplementation(mockApi.getAuditEvents.bind(mockApi))
+    vi.spyOn(mockApi, 'getAuditEvent').mockImplementation(mockApi.getAuditEvent.bind(mockApi))
 
     repository = new ManagementAuditRepositoryImpl(
       mockApi,
-      dummyActionParser,
-      dummyResourceParser,
-      dummyMetadataParser
+      mockActionParser,
+      mockResourceParser,
+      mockMetadataParser
     )
   })
 
@@ -67,19 +54,18 @@ describe('ManagementAuditRepositoryImpl', () => {
     const result = await repository.getAuditEvents(params)
     expect(mockApi.getAuditEvents).toHaveBeenCalledWith(params)
     expect(isSuccess(result)).toBe(true)
-    expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
-    expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledWith('CREATE_USER')
-    expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
-    expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledWith('USER')
+    expect(mockActionParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
+    expect(mockActionParser.fromValueOrThrow).toHaveBeenCalledWith(mockAuditEventPayload.action)
+    expect(mockResourceParser.fromValueOrThrow).toHaveBeenCalledTimes(1)
+    expect(mockResourceParser.fromValueOrThrow).toHaveBeenCalledWith(mockAuditEventPayload.resource)
   })
 
   it('delegates getAuditEvent and maps response to domain event using toAuditEventPrivate', async () => {
-    const id = toAuditEventIdOrThrow('evt_1')
+    const id = toAuditEventIdOrThrow(TEST_AUDIT_EVENT_ID)
     const result = await repository.getAuditEvent(id)
     expect(mockApi.getAuditEvent).toHaveBeenCalledWith(id)
     expect(isSuccess(result)).toBe(true)
-    expect(dummyActionParser.fromValueOrThrow).toHaveBeenCalledWith('CREATE_USER')
-    expect(dummyResourceParser.fromValueOrThrow).toHaveBeenCalledWith('USER')
-    expect(dummyMetadataParser.fromValueOrThrow).toHaveBeenCalledWith('IP_ADDRESS')
+    expect(mockActionParser.fromValueOrThrow).toHaveBeenCalledWith(mockAuditEventPayload.action)
+    expect(mockResourceParser.fromValueOrThrow).toHaveBeenCalledWith(mockAuditEventPayload.resource)
   })
 })

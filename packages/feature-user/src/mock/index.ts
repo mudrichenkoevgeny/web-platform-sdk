@@ -1,20 +1,6 @@
 export * from './auth/google/google-auth-service-mock.js'
 export * from './auth/user-auth-services-mock.js'
 
-export * from './domain/model/auth/settings/available-auth-providers-mock.js'
-export * from './domain/model/auth/settings/open-auth-settings-mock.js'
-export * from './domain/model/identifier/user-identifier-mock.js'
-export * from './domain/model/session/user-session-mock.js'
-export * from './domain/model/user/user-details-mock.js'
-
-export * from './network/model/auth/settings/available-auth-providers-payload-mock.js'
-export * from './network/model/auth/settings/open-auth-settings-payload-mock.js'
-export * from './network/model/identifier/user-identifier-payload-mock.js'
-export * from './network/model/session/user-session-payload-mock.js'
-export * from './network/model/token/session-token-payload-mock.js'
-export * from './network/model/user/user-details-payload-mock.js'
-export * from './network/model/auth/data/auth-data-payload-mock.js'
-
 export * from './network/api/auth/refresh-token/refresh-token-api-mock.js'
 export * from './network/api/auth/reset-password/reset-password-api-mock.js'
 export * from './network/api/session/session-api-mock.js'

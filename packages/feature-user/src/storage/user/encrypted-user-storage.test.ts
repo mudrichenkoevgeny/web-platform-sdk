@@ -1,28 +1,21 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import {
-  SortOrder,
-  toUserIdOrThrow,
-  toUserSessionIdOrThrow,
-  UserSessionSortBy
-} from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserPrivate, createTestUserSessionSummary, SortOrder, TEST_USER_ID, toUserIdOrThrow, toUserSessionIdOrThrow, UserSessionSortBy } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
-import { userPrivateMock } from '@/mock/domain/model/user/user-details-mock'
-import { userSessionSummaryMock } from '@/mock/domain/model/session/user-session-mock'
 
 describe('EncryptedUserStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock
   let storage: EncryptedUserStorage
 
-  const dummyUser = userPrivateMock({ id: toUserIdOrThrow('usr_123') })
+  const mockUser = createTestUserPrivate({ id: toUserIdOrThrow(TEST_USER_ID) })
 
-  const dummySession1 = userSessionSummaryMock({
+  const mockSession1 = createTestUserSessionSummary({
     id: toUserSessionIdOrThrow('sess_1'),
     lastAccessedAt: 100,
     expiresAt: 1000
   })
 
-  const dummySession2 = userSessionSummaryMock({
+  const mockSession2 = createTestUserSessionSummary({
     id: toUserSessionIdOrThrow('sess_2'),
     lastAccessedAt: 200,
     expiresAt: 2000
@@ -39,14 +32,14 @@ describe('EncryptedUserStorage', () => {
   })
 
   it('saves and retrieves current user', async () => {
-    await storage.updateCurrentUser(dummyUser)
+    await storage.updateCurrentUser(mockUser)
 
     const retrieved = await storage.getCurrentUser()
-    expect(retrieved).toEqual(dummyUser)
+    expect(retrieved).toEqual(mockUser)
   })
 
   it('clears stored user data', async () => {
-    await storage.updateCurrentUser(dummyUser)
+    await storage.updateCurrentUser(mockUser)
     await storage.clear()
 
     const retrieved = await storage.getCurrentUser()
@@ -75,15 +68,15 @@ describe('EncryptedUserStorage', () => {
   })
 
   it('sorts sessions by LAST_ACCESSED_AT and EXPIRES_AT', async () => {
-    await storage.addUserSession(dummySession1)
-    await storage.addUserSession(dummySession2)
+    await storage.addUserSession(mockSession1)
+    await storage.addUserSession(mockSession2)
 
     const sortedByAccessed = await storage.getUserSessionsList({
       pageNumber: 1,
       pageSize: 10,
       sortBy: UserSessionSortBy.LAST_ACCESSED_AT
     })
-    expect(sortedByAccessed.items[0]?.id).toBe('sess_1')
+    expect(sortedByAccessed.items[0]?.id).toBe(mockSession1.id)
 
     const sortedByExpiresDesc = await storage.getUserSessionsList({
       pageNumber: 1,
@@ -91,6 +84,6 @@ describe('EncryptedUserStorage', () => {
       sortBy: UserSessionSortBy.EXPIRES_AT,
       sortOrder: SortOrder.DESC
     })
-    expect(sortedByExpiresDesc.items[0]?.id).toBe('sess_2')
+    expect(sortedByExpiresDesc.items[0]?.id).toBe(mockSession2.id)
   })
 })

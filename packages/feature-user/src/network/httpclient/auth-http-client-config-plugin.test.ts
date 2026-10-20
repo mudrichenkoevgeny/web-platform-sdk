@@ -1,20 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, createTestSessionTokenPayload, createTestSessionToken } from '@mudrichenkoevgeny/shared-foundation'
 import { AuthHttpClientConfigPlugin } from '@/network/httpclient/auth-http-client-config-plugin'
-import type { AuthStorage } from '@/storage/auth/auth-storage'
+import { AuthStorageMock } from '@/mock/storage/auth/auth-storage-mock'
 
 describe('AuthHttpClientConfigPlugin', () => {
-  let mockAuthStorage: AuthStorage
+  let mockAuthStorage: AuthStorageMock
   let plugin: AuthHttpClientConfigPlugin
   const onSessionCleared = vi.fn()
 
   beforeEach(() => {
-    mockAuthStorage = {
-      getAccessTokenModel: vi.fn().mockResolvedValue('bearer-token-123'),
-      getRefreshToken: vi.fn().mockResolvedValue('refresh-token-123'),
-      updateTokens: vi.fn().mockResolvedValue(undefined),
-      clearTokens: vi.fn().mockResolvedValue(undefined)
-    } as unknown as AuthStorage
+    mockAuthStorage = new AuthStorageMock()
+    void mockAuthStorage.updateTokens(createTestSessionToken({
+      accessToken: 'bearer-token-123' as any,
+      refreshToken: 'refresh-token-123' as any
+    }))
+    vi.spyOn(mockAuthStorage, 'updateTokens')
+    vi.spyOn(mockAuthStorage, 'clearTokens')
 
     onSessionCleared.mockReset()
 
@@ -40,14 +41,10 @@ describe('AuthHttpClientConfigPlugin', () => {
     const mockFetch = vi.fn().mockImplementation(async (url: string) => {
       if (url.includes('/auth/refresh')) {
         return new Response(
-          JSON.stringify({
+          JSON.stringify(createTestSessionTokenPayload({
             access_token: 'new-access-token',
-            refresh_token: 'new-refresh-token',
-            expires_at: Date.now() + 3600000,
-            token_type: 'Bearer',
-            session_id: 'sess_1',
-            identifier_id: 'ident_1'
-          }),
+            refresh_token: 'new-refresh-token'
+          })),
           { status: 200 }
         )
       }

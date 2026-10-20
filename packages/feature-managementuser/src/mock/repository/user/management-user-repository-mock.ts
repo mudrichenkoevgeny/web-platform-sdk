@@ -1,32 +1,21 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type {
-  ManagementUserListParams,
-  PagedResult,
-  UserId,
-  UserPrivate,
-  UserSummary
-} from '@mudrichenkoevgeny/shared-foundation'
-import { userPrivateMock, userSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { createTestPagedResult, createTestUserPrivate, createTestUserSummaryList, type ManagementUserListParams, type PagedResult, type UserId, type UserPrivate, type UserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { CreateUserParams, ManagementUserRepository, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 /** Mock implementation of {@link ManagementUserRepository}. */
 export class ManagementUserRepositoryMock implements ManagementUserRepository {
   public createUserResultProvider: (
     params: CreateUserParams
-  ) => Promise<AppResult<UserPrivate, AppError>> = async () => appResultSuccess(userPrivateMock())
+  ) => Promise<AppResult<UserPrivate, AppError>> = async () => appResultSuccess(createTestUserPrivate())
 
   public getUsersResultProvider: () => Promise<AppResult<PagedResult<UserSummary>, AppError>> = async () =>
-    appResultSuccess({
-      items: [userSummaryMock()],
-      totalCount: 1,
-      pageNumber: 1,
-      pageSize: 20,
-      totalPages: 1
-    })
+    appResultSuccess(createTestPagedResult({
+      items: createTestUserSummaryList(2)
+    }))
 
   public getUserResultProvider: (userId: UserId) => Promise<AppResult<UserPrivate, AppError>> = async () =>
-    appResultSuccess(userPrivateMock())
+    appResultSuccess(createTestUserPrivate())
 
   public updateUserResultProvider: (
     userId: UserId,

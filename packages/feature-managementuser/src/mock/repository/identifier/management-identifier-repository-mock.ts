@@ -1,3 +1,4 @@
+import { createTestPagedResult, createTestUserIdentifierPrivate, createTestUserIdentifierSummaryList } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
@@ -9,22 +10,17 @@ import type {
   UserIdentifierPrivate,
   UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierPrivateMock, userIdentifierSummaryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementIdentifierRepository } from '@/repository/identifier/management-identifier-repository'
 
 /** Mock implementation of {@link ManagementIdentifierRepository}. */
 export class ManagementIdentifierRepositoryMock implements ManagementIdentifierRepository {
   public getIdentifiersResultProvider: () => Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> = async () =>
-    appResultSuccess({
-      items: [userIdentifierSummaryMock()],
-      totalCount: 1,
-      pageNumber: 1,
-      pageSize: 20,
-      totalPages: 1
-    })
+    appResultSuccess(createTestPagedResult({
+      items: createTestUserIdentifierSummaryList(2)
+    }))
 
   public getIdentifierResultProvider: (identifierId: UserIdentifierId) => Promise<AppResult<UserIdentifierPrivate, AppError>> =
-    async () => appResultSuccess(userIdentifierPrivateMock())
+    async () => appResultSuccess(createTestUserIdentifierPrivate())
 
   public deleteIdentifierResultProvider: (
     userId: UserId,

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { TEST_EMAIL } from '@mudrichenkoevgeny/shared-foundation'
 import { WebExternalLauncher, getExternalLauncher } from '@/platform/external-launcher/external-launcher'
 
 describe('WebExternalLauncher', () => {
@@ -15,15 +16,13 @@ describe('WebExternalLauncher', () => {
   it('openMail constructs mailto link with %20 for spaces', () => {
     const launcher = new WebExternalLauncher()
     const assignMock = vi.fn()
-    const originalLocation = window.location
-    delete (window as unknown as Record<string, unknown>).location
-    ;(window as unknown as Record<string, unknown>).location = { ...originalLocation, assign: assignMock }
+    vi.stubGlobal('location', { assign: assignMock })
 
-    launcher.openMail('test@example.com', 'Hello', 'World Body')
+    launcher.openMail(TEST_EMAIL, 'Hello', 'World Body')
 
-    expect(assignMock).toHaveBeenCalledWith('mailto:test@example.com?subject=Hello&body=World%20Body')
+    expect(assignMock).toHaveBeenCalledWith(`mailto:${TEST_EMAIL}?subject=Hello&body=World%20Body`)
 
-    ;(window as unknown as Record<string, unknown>).location = originalLocation
+    vi.unstubAllGlobals()
   })
 
   it('openFile calls window.open', () => {

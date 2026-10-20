@@ -13,7 +13,7 @@ describe('EncryptedAuthStorage', () => {
   let mockEncryptedSettings: EncryptedSettingsMock
   let storage: EncryptedAuthStorage
 
-  const dummySessionToken: SessionToken = {
+  const mockSessionToken: SessionToken = {
     accessToken: toAccessTokenOrThrow('test-access-token'),
     refreshToken: toRefreshTokenOrThrow('test-refresh-token'),
     expiresAt: Date.now() + 3600000,
@@ -37,7 +37,7 @@ describe('EncryptedAuthStorage', () => {
 
     expect(listener).toHaveBeenCalledWith(null)
 
-    await storage.updateTokens(dummySessionToken)
+    await storage.updateTokens(mockSessionToken)
 
     expect(storage.getAccessToken()).toBe('test-access-token')
     expect(await storage.getRefreshToken()).toBe('test-refresh-token')
@@ -48,7 +48,7 @@ describe('EncryptedAuthStorage', () => {
 
   it('clears tokens and notifies observers', async () => {
     const listener = vi.fn()
-    await storage.updateTokens(dummySessionToken)
+    await storage.updateTokens(mockSessionToken)
 
     storage.observeAccessToken(listener)
     await storage.clearTokens()
@@ -61,7 +61,7 @@ describe('EncryptedAuthStorage', () => {
 
   it('auto-clears expired tokens on access', async () => {
     const expiredToken: SessionToken = {
-      ...dummySessionToken,
+      ...mockSessionToken,
       expiresAt: Date.now() - 1000
     }
 

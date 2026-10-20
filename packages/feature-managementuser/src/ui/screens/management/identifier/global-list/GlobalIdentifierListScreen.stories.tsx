@@ -1,26 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { GlobalIdentifierListScreen } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListScreen'
-import type { GlobalIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
-
-const createMockDeps = (): GlobalIdentifierListStoreDependencies => ({
-  managementGetIdentifiersUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userIdentifierMock(), userIdentifierMock()],
-        pageNumber: 1,
-        pageSize: 20,
-        totalItems: 2,
-        totalPages: 1
-      })
-  } as unknown as GlobalIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
-  managementDeleteIdentifierUseCase: {
-    execute: async () => appResultSuccess({})
-  } as unknown as GlobalIdentifierListStoreDependencies['managementDeleteIdentifierUseCase'],
-  onNavigateToIdentifierDetail: () => {},
-  onBack: () => {}
-})
+import { globalIdentifierListDependenciesMock } from '@/mock/ui/screen/management/identifier/global-list/global-identifier-list-component-mock'
 
 const meta: Meta<typeof GlobalIdentifierListScreen> = {
   title: 'Feature/ManagementUser/Identifier/GlobalIdentifierListScreen',
@@ -33,7 +14,7 @@ const meta: Meta<typeof GlobalIdentifierListScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: globalIdentifierListDependenciesMock()
   }
 }
 

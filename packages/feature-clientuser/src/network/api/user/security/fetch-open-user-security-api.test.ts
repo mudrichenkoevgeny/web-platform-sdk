@@ -1,22 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenUserSecurityApi } from '@/network/api/user/security/fetch-open-user-security-api'
-import { OpenUserSecurityRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  OpenUserSecurityRoutes,
+  createTestTotpSetupPayload,
+  createTestTotpRecoveryCodesPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenUserSecurityApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchOpenUserSecurityApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchOpenUserSecurityApi(mockHttpClient)
   })
 
   it('dispatches setupTotp request', async () => {
-    const dummyPayload = { secretKey: 'secret' } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockTotpSetupPayload = createTestTotpSetupPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockTotpSetupPayload)
 
     const result = await api.setupTotp()
 
@@ -24,12 +27,12 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.SETUP_TOTP,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockTotpSetupPayload })
   })
 
   it('dispatches enableTotp request', async () => {
-    const dummyPayload = { codes: ['c1'] } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockTotpRecoveryCodesPayload = createTestTotpRecoveryCodesPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockTotpRecoveryCodesPayload)
 
     const result = await api.enableTotp('mfa1', '123456')
 
@@ -37,7 +40,7 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.ENABLE_TOTP,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa1', totp_code: '123456' }) })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
   })
 
   it('dispatches disableTotp request', async () => {
@@ -53,20 +56,20 @@ describe('FetchOpenUserSecurityApi', () => {
   })
 
   it('dispatches getRecoveryCodes request', async () => {
-    const dummyPayload = { codes: ['c1'] } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockTotpRecoveryCodesPayload = createTestTotpRecoveryCodesPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockTotpRecoveryCodesPayload)
 
     const result = await api.getRecoveryCodes()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserSecurityRoutes.GET_RECOVERY_CODES
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
   })
 
   it('dispatches regenerateRecoveryCodes request', async () => {
-    const dummyPayload = { codes: ['c2'] } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockTotpRecoveryCodesPayload = createTestTotpRecoveryCodesPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockTotpRecoveryCodesPayload)
 
     const result = await api.regenerateRecoveryCodes()
 
@@ -74,6 +77,6 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.REGENERATE_RECOVERY_CODES,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
   })
 })

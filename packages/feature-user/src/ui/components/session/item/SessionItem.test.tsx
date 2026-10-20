@@ -2,18 +2,17 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_IP_ADDRESS, userStrings, createTestUserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
-import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
 
 describe('SessionItem', () => {
   it('renders session details and handles revoke button click', async () => {
     const onRevokeClick = vi.fn()
     const user = userEvent.setup()
 
-    const session = userSessionMock({
-      identifierDisplayName: 'user@example.com',
-      ipAddress: '192.168.1.1'
+    const session = createTestUserSessionPrivate({
+      identifierDisplayName: TEST_EMAIL,
+      ipAddress: TEST_IP_ADDRESS
     })
 
     render(
@@ -22,7 +21,7 @@ describe('SessionItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText('user@example.com')).toBeDefined()
+    expect(screen.getByText(TEST_EMAIL)).toBeDefined()
 
     const revokeButton = screen.getByRole('button', { name: userStrings.ui.sessionRevoke })
     await user.click(revokeButton)
@@ -33,7 +32,7 @@ describe('SessionItem', () => {
   it('handles keyboard navigation with Enter key when onSessionClick is provided', async () => {
     const onSessionClick = vi.fn()
     const user = userEvent.setup()
-    const session = userSessionMock()
+    const session = createTestUserSessionPrivate()
 
     render(
       <ComponentTestHarness>
@@ -50,7 +49,7 @@ describe('SessionItem', () => {
   })
 
   it('hides revoke button when isCurrentSession is true', () => {
-    const session = userSessionMock()
+    const session = createTestUserSessionPrivate()
 
     render(
       <ComponentTestHarness>
@@ -65,7 +64,7 @@ describe('SessionItem', () => {
     const onRevokeClick = vi.fn()
     const user = userEvent.setup()
 
-    const session = userSessionMock()
+    const session = createTestUserSessionPrivate()
 
     render(
       <ComponentTestHarness>

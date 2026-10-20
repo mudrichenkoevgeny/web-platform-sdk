@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SortOrder, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, TEST_SESSION_ID, TEST_USER_ID_2, toUserSessionIdOrThrow, createTestUserSessionSummary, createTestUserSessionPrivatePayload, createTestUserSessionSummaryPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSessionRepositoryImpl } from '@/repository/session/open-session-repository-impl'
-import { AuthStorageMock, SessionApiMock, UserStorageMock, userSessionPayloadMock, userSessionSummaryMock, userSessionSummaryPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { AuthStorageMock, SessionApiMock, UserStorageMock} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenSessionRepositoryImpl', () => {
   let mockApi: SessionApiMock
@@ -12,27 +12,27 @@ describe('OpenSessionRepositoryImpl', () => {
 
   beforeEach(() => {
     mockApi = new SessionApiMock()
-    mockApi.getSessionResult = appResultSuccess(userSessionPayloadMock())
-    mockApi.getSessionsResult = appResultSuccess({ items: [userSessionSummaryPayloadMock()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
-    mockApi.deleteAllOtherSessionsResult = appResultSuccess({ deletedSessionIds: [toUserSessionIdOrThrow('sess_2')] })
+    mockApi.getSessionResult = appResultSuccess(createTestUserSessionPrivatePayload())
+    mockApi.getSessionsResult = appResultSuccess({ items: [createTestUserSessionSummaryPayload()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
+    mockApi.deleteAllOtherSessionsResult = appResultSuccess({ deletedSessionIds: [toUserSessionIdOrThrow(TEST_USER_ID_2)] })
 
     mockUserStorage = new UserStorageMock()
     mockAuthStorage = new AuthStorageMock()
 
-    vi.spyOn(mockApi, 'getSessions')
-    vi.spyOn(mockApi, 'getSession')
-    vi.spyOn(mockApi, 'logout')
-    vi.spyOn(mockApi, 'deleteSession')
-    vi.spyOn(mockApi, 'deleteAllOtherSessions')
-    vi.spyOn(mockApi, 'reauthenticateSession')
+    vi.spyOn(mockApi, 'getSessions').mockImplementation(mockApi.getSessions.bind(mockApi))
+    vi.spyOn(mockApi, 'getSession').mockImplementation(mockApi.getSession.bind(mockApi))
+    vi.spyOn(mockApi, 'logout').mockImplementation(mockApi.logout.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteSession').mockImplementation(mockApi.deleteSession.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteAllOtherSessions').mockImplementation(mockApi.deleteAllOtherSessions.bind(mockApi))
+    vi.spyOn(mockApi, 'reauthenticateSession').mockImplementation(mockApi.reauthenticateSession.bind(mockApi))
 
-    vi.spyOn(mockUserStorage, 'getUserSessionsList')
-    vi.spyOn(mockUserStorage, 'updateUserSessionsPayloadList')
-    vi.spyOn(mockUserStorage, 'removeUserSession')
-    vi.spyOn(mockUserStorage, 'removeUserSessions')
-    vi.spyOn(mockUserStorage, 'clear')
+    vi.spyOn(mockUserStorage, 'getUserSessionsList').mockImplementation(mockUserStorage.getUserSessionsList.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'updateUserSessionsPayloadList').mockImplementation(mockUserStorage.updateUserSessionsPayloadList.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'removeUserSession').mockImplementation(mockUserStorage.removeUserSession.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'removeUserSessions').mockImplementation(mockUserStorage.removeUserSessions.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'clear').mockImplementation(mockUserStorage.clear.bind(mockUserStorage))
 
-    vi.spyOn(mockAuthStorage, 'clearTokens')
+    vi.spyOn(mockAuthStorage, 'clearTokens').mockImplementation(mockAuthStorage.clearTokens.bind(mockAuthStorage))
 
     repository = new OpenSessionRepositoryImpl(mockApi, mockUserStorage, mockAuthStorage)
   })
@@ -80,14 +80,14 @@ describe('OpenSessionRepositoryImpl', () => {
       osVersions: []
     }
     mockApi.getSessionsResult = appResultFailure(CommonError.unknown())
-    vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({ items: [userSessionSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
+    vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({ items: [createTestUserSessionSummary()], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })
 
     const sessionsResult = await repository.getSessions(params)
     expect(isSuccess(sessionsResult)).toBe(true)
   })
 
   it('delegates getSession and maps to domain model on success', async () => {
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const sessionResult = await repository.getSession(id)
     expect(mockApi.getSession).toHaveBeenCalledWith(id)
     expect(isSuccess(sessionResult)).toBe(true)
@@ -102,7 +102,7 @@ describe('OpenSessionRepositoryImpl', () => {
   })
 
   it('delegates deleteSession and removes from storage', async () => {
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const deleteResult = await repository.deleteSession(id)
     expect(mockApi.deleteSession).toHaveBeenCalledWith(id)
     expect(mockUserStorage.removeUserSession).toHaveBeenCalledWith(id)
@@ -111,7 +111,7 @@ describe('OpenSessionRepositoryImpl', () => {
 
   it('delegates deleteAllOtherSessions and cleans up storage', async () => {
     vi.mocked(mockUserStorage.getUserSessionsList).mockResolvedValue({
-      items: [userSessionSummaryMock({ id: toUserSessionIdOrThrow('sess_2') })],
+      items: [createTestUserSessionSummary({ id: toUserSessionIdOrThrow(TEST_USER_ID_2) })],
       totalCount: 1,
       pageNumber: 1,
       pageSize: 10,
@@ -120,7 +120,7 @@ describe('OpenSessionRepositoryImpl', () => {
 
     const deleteResult = await repository.deleteAllOtherSessions()
     expect(mockApi.deleteAllOtherSessions).toHaveBeenCalled()
-    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith([toUserSessionIdOrThrow('sess_2')])
+    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith([toUserSessionIdOrThrow(TEST_USER_ID_2)])
     expect(isSuccess(deleteResult)).toBe(true)
   })
 

@@ -1,38 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenUserApi } from '@/network/api/user/fetch-open-user-api'
-import { OpenUserRoutes, toUserIdOrThrow, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
-import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { createTestUserPrivatePayload, OpenUserRoutes, TEST_USER_ID, toUserIdOrThrow, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenUserApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchOpenUserApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchOpenUserApi(mockHttpClient)
   })
 
   it('dispatches getUser request', async () => {
-    const dummyPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockUserPayload = createTestUserPrivatePayload({ id: toUserIdOrThrow(TEST_USER_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
     const result = await api.getUser()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserRoutes.GET_USER
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockUserPayload })
   })
 
   it('dispatches scheduleUserDeletion request', async () => {
-    const dummyPayload = userPrivatePayloadMock({
-      id: toUserIdOrThrow('usr_1'),
+    const mockUserPayload = createTestUserPrivatePayload({
+      id: toUserIdOrThrow(TEST_USER_ID),
       account_status: UserAccountStatus.PENDING_DELETION
     })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
     const result = await api.scheduleUserDeletion()
 
@@ -40,15 +38,15 @@ describe('FetchOpenUserApi', () => {
       OpenUserRoutes.SCHEDULE_DELETION,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockUserPayload })
   })
 
   it('dispatches restoreUser request', async () => {
-    const dummyPayload = userPrivatePayloadMock({
-      id: toUserIdOrThrow('usr_1'),
+    const mockUserPayload = createTestUserPrivatePayload({
+      id: toUserIdOrThrow(TEST_USER_ID),
       account_status: UserAccountStatus.ACTIVE
     })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
     const result = await api.restoreUser()
 
@@ -56,6 +54,6 @@ describe('FetchOpenUserApi', () => {
       OpenUserRoutes.RESTORE_USER,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockUserPayload })
   })
 })

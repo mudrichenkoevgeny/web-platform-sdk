@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ConfirmationRepositoryImpl } from '@/repository/confirmation/confirmation-repository-impl'
-import { ConfirmationType } from '@mudrichenkoevgeny/shared-foundation'
+import { ConfirmationType, TEST_EMAIL } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ConfirmationRepositoryImpl', () => {
@@ -17,11 +17,11 @@ describe('ConfirmationRepositoryImpl', () => {
       })
     )
 
-    const result = await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, 'test@example.com', action)
+    const result = await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, TEST_EMAIL, action)
 
     expect(isSuccess(result)).toBe(true)
     expect(action).toHaveBeenCalledOnce()
-    expect(repo.getRemainingDelay(ConfirmationType.ADD_EMAIL, 'test@example.com')).toBe(60)
+    expect(repo.getRemainingDelay(ConfirmationType.ADD_EMAIL, TEST_EMAIL)).toBe(60)
   })
 
   it('blocks execution when cooldown is active', async () => {
@@ -36,14 +36,14 @@ describe('ConfirmationRepositoryImpl', () => {
       })
     )
 
-    await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, 'test@example.com', action)
+    await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, TEST_EMAIL, action)
 
     now += 10000 // 10 seconds later
     const secondAction = vi.fn()
-    const secondResult = await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, 'test@example.com', secondAction)
+    const secondResult = await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, TEST_EMAIL, secondAction)
 
     expect(isSuccess(secondResult)).toBe(false)
     expect(secondAction).not.toHaveBeenCalled()
-    expect(repo.getRemainingDelay(ConfirmationType.ADD_EMAIL, 'test@example.com')).toBe(50)
+    expect(repo.getRemainingDelay(ConfirmationType.ADD_EMAIL, TEST_EMAIL)).toBe(50)
   })
 })

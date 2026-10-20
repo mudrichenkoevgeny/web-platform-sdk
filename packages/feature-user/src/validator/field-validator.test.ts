@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { FieldValidator } from '@/validator/field-validator'
+import { TEST_EMAIL, TEST_PHONE } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FieldValidator', () => {
   it('validates email addresses correctly', () => {
-    expect(FieldValidator.isValidEmail('test@example.com')).toBe(true)
+    expect(FieldValidator.isValidEmail(TEST_EMAIL)).toBe(true)
     expect(FieldValidator.isValidEmail('user.name+tag@sub.domain.org')).toBe(true)
     expect(FieldValidator.isValidEmail('invalid-email')).toBe(false)
     expect(FieldValidator.isValidEmail('')).toBe(false)
@@ -11,7 +12,7 @@ describe('FieldValidator', () => {
   })
 
   it('validates phone numbers correctly', () => {
-    expect(FieldValidator.isValidPhone('+1234567890')).toBe(true)
+    expect(FieldValidator.isValidPhone(TEST_PHONE)).toBe(true)
     expect(FieldValidator.isValidPhone('+7 (999) 123-45-67')).toBe(true)
     expect(FieldValidator.isValidPhone('123')).toBe(false)
     expect(FieldValidator.isValidPhone('')).toBe(false)

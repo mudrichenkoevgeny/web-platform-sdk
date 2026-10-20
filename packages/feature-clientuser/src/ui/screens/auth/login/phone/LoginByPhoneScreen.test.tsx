@@ -1,40 +1,20 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings, commonStrings, UserAccountStatus, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { userStrings, commonStrings, TEST_PHONE } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByPhoneScreen } from '@/ui/screens/auth/login/phone/LoginByPhoneScreen'
-import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
+import { loginByPhoneDependenciesMock } from '@/mock/ui/screen/auth/login/phone/login-by-phone-component-mock'
+import { SendLoginConfirmationToPhoneUseCaseMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('LoginByPhoneScreen', () => {
-  const createMockDeps = (): LoginByPhoneStoreDependencies => ({
-    loginRepository: {
-      getRemainingLoginConfirmationDelayInSeconds: vi.fn().mockReturnValue(0)
-    },
-    sendLoginConfirmationToPhoneUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({ retryAfterSeconds: 60 })
-      )
-    },
-    loginByPhoneUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          userPrivate: {
-            id: toUserIdOrThrow('usr_123'),
-            accountStatus: UserAccountStatus.ACTIVE
-          }
-        })
-      )
-    },
-    onNavigateToTotp: vi.fn(),
-    onNavigateToPendingDeletion: vi.fn(),
-    onNavigateToAccountUnlock: vi.fn(),
-    onBack: vi.fn(),
-    onFinished: vi.fn()
-  })
-
   it('renders phone input and enables send code button for valid phone number', async () => {
-    const deps = createMockDeps()
+    const sendLoginConfirmationToPhoneUseCase = new SendLoginConfirmationToPhoneUseCaseMock()
+    vi.spyOn(sendLoginConfirmationToPhoneUseCase, 'execute')
+
+    const deps = loginByPhoneDependenciesMock({
+      sendLoginConfirmationToPhoneUseCase
+    })
     const user = userEvent.setup()
 
     render(
@@ -47,18 +27,20 @@ describe('LoginByPhoneScreen', () => {
     expect(sendCodeButton.getAttribute('disabled')).not.toBeNull()
 
     const phoneInput = screen.getByPlaceholderText(userStrings.ui.phoneNumber)
-    await user.type(phoneInput, '+12345678901')
+    await user.type(phoneInput, TEST_PHONE)
 
     expect(sendCodeButton.getAttribute('disabled')).toBeNull()
 
     await user.click(sendCodeButton)
 
     expect(await screen.findByText(userStrings.ui.enterConfirmationCode)).toBeDefined()
-    expect(deps.sendLoginConfirmationToPhoneUseCase.execute).toHaveBeenCalledWith('+12345678901')
+    expect(sendLoginConfirmationToPhoneUseCase.execute).toHaveBeenCalledWith(TEST_PHONE)
   })
 
   it('triggers onBack when back button is clicked on phone step', async () => {
-    const deps = createMockDeps()
+    const deps = loginByPhoneDependenciesMock({
+      onBack: vi.fn()
+    })
     const user = userEvent.setup()
 
     render(

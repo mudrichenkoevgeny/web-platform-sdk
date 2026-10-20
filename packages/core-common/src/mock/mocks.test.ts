@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { AppErrorParserMock } from '@/mock/error/app-error-parser-mock'
+import { TEST_EMAIL } from '@mudrichenkoevgeny/shared-foundation'
 import { AccessTokenProviderMock } from '@/mock/network/access-token-provider-mock'
 import { HttpClientConfigPluginMock } from '@/mock/network/http-client-config-plugin-mock'
 import { WebSocketServiceMock } from '@/mock/network/web-socket-service-mock'
@@ -80,11 +81,11 @@ describe('Domain Mocks', () => {
   it('ExternalLauncherMock logs launch calls', () => {
     const launcher = new ExternalLauncherMock()
     launcher.openUrl('https://example.com')
-    launcher.openMail('test@example.com', 'Subj', 'Body')
+    launcher.openMail(TEST_EMAIL, 'Subj', 'Body')
     launcher.openFile('https://example.com/file.pdf')
 
     expect(launcher.openedUrls).toEqual(['https://example.com'])
-    expect(launcher.openedMails).toEqual([{ email: 'test@example.com', subject: 'Subj', body: 'Body' }])
+    expect(launcher.openedMails).toEqual([{ email: TEST_EMAIL, subject: 'Subj', body: 'Body' }])
     expect(launcher.openedFiles).toEqual(['https://example.com/file.pdf'])
   })
 

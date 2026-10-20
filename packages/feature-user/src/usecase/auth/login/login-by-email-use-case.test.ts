@@ -1,75 +1,35 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-  AccountLockoutType,
-  toAccessTokenOrThrow,
-  toRefreshTokenOrThrow,
-  toUserIdOrThrow,
-  toUserIdentifierIdOrThrow,
-  toUserSessionIdOrThrow,
-  UserAccountStatus,
-  UserRole
-} from '@mudrichenkoevgeny/shared-foundation'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { TEST_EMAIL, createTestAuthData } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { LoginByEmailUseCase } from '@/usecase/auth/login/login-by-email-use-case'
-import type { LoginRepository } from '@/repository/auth/login/login-repository'
-import type { AuthStorage } from '@/storage/auth/auth-storage'
-import type { UserStorage } from '@/storage/user/user-storage'
+import { LoginRepositoryMock } from '@/mock/repository/auth/login/login-repository-mock'
+import { AuthStorageMock } from '@/mock/storage/auth/auth-storage-mock'
+import { UserStorageMock } from '@/mock/storage/user/user-storage-mock'
 import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('LoginByEmailUseCase', () => {
-  let mockLoginRepository: LoginRepository
-  let mockAuthStorage: AuthStorage
-  let mockUserStorage: UserStorage
+  let mockLoginRepository: LoginRepositoryMock
+  let mockAuthStorage: AuthStorageMock
+  let mockUserStorage: UserStorageMock
   let useCase: LoginByEmailUseCase
 
-  const dummyAuthData: AuthData = {
-    userPrivate: {
-      id: toUserIdOrThrow('usr_1'),
-      role: UserRole.CLIENT_USER,
-      accountStatus: UserAccountStatus.ACTIVE,
-      accountStatusOnRestore: null,
-      authorityLevel: 1,
-      permissionCodes: [],
-      isTotpEnabled: false,
-      lastLoginAt: Date.now(),
-      lastActiveAt: Date.now(),
-      createdAt: Date.now(),
-      updatedAt: null,
-      scheduledPermanentDeletionAt: null,
-      lockoutType: AccountLockoutType.NONE,
-      temporaryLockoutUntil: null
-    },
-    sessionToken: {
-      accessToken: toAccessTokenOrThrow('access_123'),
-      refreshToken: toRefreshTokenOrThrow('refresh_123'),
-      expiresAt: Date.now() + 3600000,
-      tokenType: 'Bearer',
-      sessionId: toUserSessionIdOrThrow('sess_1'),
-      identifierId: toUserIdentifierIdOrThrow('ident_1')
-    }
-  }
+  const mockAuthData: AuthData = createTestAuthData()
 
   beforeEach(() => {
-    mockLoginRepository = {
-      loginByEmail: vi.fn().mockResolvedValue(appResultSuccess(dummyAuthData))
-    } as unknown as LoginRepository
+    mockLoginRepository = new LoginRepositoryMock()
+    mockLoginRepository.authDataResultProvider = async () => appResultSuccess(mockAuthData)
 
-    mockAuthStorage = {
-      updateTokens: vi.fn().mockResolvedValue(undefined)
-    } as unknown as AuthStorage
-
-    mockUserStorage = {
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockAuthStorage = new AuthStorageMock()
+    mockUserStorage = new UserStorageMock()
 
     useCase = new LoginByEmailUseCase(mockLoginRepository, mockAuthStorage, mockUserStorage)
   })
 
   it('updates authStorage and userStorage on successful login', async () => {
-    const result = await useCase.execute('test@example.com', 'password123')
+    const result = await useCase.execute(TEST_EMAIL, 'password123')
 
     expect(isSuccess(result)).toBe(true)
-    expect(mockAuthStorage.updateTokens).toHaveBeenCalledWith(dummyAuthData.sessionToken)
-    expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith(dummyAuthData.userPrivate)
+    expect(mockLoginRepository.lastEmail).toBe(TEST_EMAIL)
+    expect(mockLoginRepository.lastPassword).toBe('password123')
   })
 })

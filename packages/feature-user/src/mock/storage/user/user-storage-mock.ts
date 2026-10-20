@@ -8,7 +8,14 @@ import type {
   UserSessionSummary,
   UserSessionSummaryPayload
 } from '@mudrichenkoevgeny/shared-foundation'
-import { toUserIdentifierSummary, toUserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  createTestPagedResult,
+  createTestUserIdentifierSummary,
+  createTestUserPrivate,
+  createTestUserSessionSummary,
+  toUserIdentifierSummary,
+  toUserSessionSummary
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { UserStorage } from '@/storage/user/user-storage'
 import type {
   GetUserIdentifiersListParams,
@@ -19,24 +26,21 @@ import type {
 } from '@/storage/user/user-storage'
 
 /**
+ * Configuration options for initializing {@link UserStorageMock}.
+ */
+export interface UserStorageMockConfig {
+  initialUser?: UserPrivate | null
+  initialIdentifiers?: PagedResult<UserIdentifierSummary>
+  initialSessions?: PagedResult<UserSessionSummary>
+}
+
+/**
  * In-memory {@link UserStorage} mock for tests and previews.
  */
 export class UserStorageMock implements UserStorage {
-  private currentUserSnapshot: UserPrivate | null = null
-  private identifiersPagedResult: PagedResult<UserIdentifierSummary> = {
-    items: [],
-    totalCount: 0,
-    pageNumber: 1,
-    pageSize: 20,
-    totalPages: 0
-  }
-  private sessionsPagedResult: PagedResult<UserSessionSummary> = {
-    items: [],
-    totalCount: 0,
-    pageNumber: 1,
-    pageSize: 20,
-    totalPages: 0
-  }
+  private currentUserSnapshot: UserPrivate | null
+  private identifiersPagedResult: PagedResult<UserIdentifierSummary>
+  private sessionsPagedResult: PagedResult<UserSessionSummary>
 
   private readonly userListeners = new Set<UserChangeListener>()
   private readonly identifierListeners = new Set<UserIdentifiersListChangeListener>()
@@ -49,6 +53,24 @@ export class UserStorageMock implements UserStorage {
   public lastAddedSession: UserSessionSummary | null = null
   public lastRemovedSessionId: UserSessionId | null = null
   public lastRemovedSessionsList: UserSessionId[] | null = null
+
+  public constructor(config?: UserStorageMockConfig) {
+    this.currentUserSnapshot = config?.initialUser ?? null
+    this.identifiersPagedResult = config?.initialIdentifiers ?? createTestPagedResult<UserIdentifierSummary>({
+      items: [],
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 20,
+      totalPages: 0
+    })
+    this.sessionsPagedResult = config?.initialSessions ?? createTestPagedResult<UserSessionSummary>({
+      items: [],
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 20,
+      totalPages: 0
+    })
+  }
 
   public async getCurrentUser(): Promise<UserPrivate | null> {
     return this.currentUserSnapshot
@@ -89,38 +111,38 @@ export class UserStorageMock implements UserStorage {
   ): Promise<void> {
     this.lastUpdatedIdentifiersPayload = userIdentifiersList
     const mappedItems = userIdentifiersList.items.map((payload) => toUserIdentifierSummary(payload))
-    this.identifiersPagedResult = {
+    this.identifiersPagedResult = createTestPagedResult<UserIdentifierSummary>({
       items: mappedItems,
       totalCount: userIdentifiersList.totalCount,
       pageNumber: userIdentifiersList.pageNumber,
       pageSize: userIdentifiersList.pageSize,
       totalPages: userIdentifiersList.totalPages
-    }
+    })
     this.notifyIdentifierListeners()
   }
 
   public async addUserIdentifier(userIdentifier: UserIdentifierSummary): Promise<void> {
     const items = [...this.identifiersPagedResult.items, userIdentifier]
-    this.identifiersPagedResult = {
+    this.identifiersPagedResult = createTestPagedResult<UserIdentifierSummary>({
       items,
       totalCount: items.length,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
-    }
+    })
     this.notifyIdentifierListeners()
   }
 
   public async removeUserIdentifier(identifierId: UserIdentifierId): Promise<void> {
     this.lastRemovedIdentifierId = identifierId
     const items = this.identifiersPagedResult.items.filter((item) => item.id !== identifierId)
-    this.identifiersPagedResult = {
+    this.identifiersPagedResult = createTestPagedResult<UserIdentifierSummary>({
       items,
       totalCount: items.length,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
-    }
+    })
     this.notifyIdentifierListeners()
   }
 
@@ -146,26 +168,26 @@ export class UserStorageMock implements UserStorage {
   ): Promise<void> {
     this.lastUpdatedSessionsPayload = userSessionsList
     const mappedItems = userSessionsList.items.map((payload) => toUserSessionSummary(payload))
-    this.sessionsPagedResult = {
+    this.sessionsPagedResult = createTestPagedResult<UserSessionSummary>({
       items: mappedItems,
       totalCount: userSessionsList.totalCount,
       pageNumber: userSessionsList.pageNumber,
       pageSize: userSessionsList.pageSize,
       totalPages: userSessionsList.totalPages
-    }
+    })
     this.notifySessionListeners()
   }
 
   public async addUserSession(userSession: UserSessionSummary): Promise<void> {
     this.lastAddedSession = userSession
     const items = [...this.sessionsPagedResult.items, userSession]
-    this.sessionsPagedResult = {
+    this.sessionsPagedResult = createTestPagedResult<UserSessionSummary>({
       items,
       totalCount: items.length,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
-    }
+    })
     this.notifySessionListeners()
   }
 
@@ -178,32 +200,32 @@ export class UserStorageMock implements UserStorage {
     this.lastRemovedSessionsList = sessionIds
     const set = new Set(sessionIds)
     const items = this.sessionsPagedResult.items.filter((item) => item.id != null && !set.has(item.id))
-    this.sessionsPagedResult = {
+    this.sessionsPagedResult = createTestPagedResult<UserSessionSummary>({
       items,
       totalCount: items.length,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 1
-    }
+    })
     this.notifySessionListeners()
   }
 
   public async clear(): Promise<void> {
     this.currentUserSnapshot = null
-    this.identifiersPagedResult = {
+    this.identifiersPagedResult = createTestPagedResult<UserIdentifierSummary>({
       items: [],
       totalCount: 0,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 0
-    }
-    this.sessionsPagedResult = {
+    })
+    this.sessionsPagedResult = createTestPagedResult<UserSessionSummary>({
       items: [],
       totalCount: 0,
       pageNumber: 1,
       pageSize: 20,
       totalPages: 0
-    }
+    })
     this.isCleared = true
     this.notifyUserListeners()
     this.notifyIdentifierListeners()
@@ -227,4 +249,25 @@ export class UserStorageMock implements UserStorage {
       listener(this.sessionsPagedResult)
     }
   }
+}
+
+/**
+ * Helper factory for Storybook previews and UI testing requiring a pre-populated {@link UserStorageMock}.
+ *
+ * @returns Pre-populated UserStorageMock instance filled with default shared foundation test data.
+ */
+export const createPopulatedUserStorageMock = (): UserStorageMock => {
+  return new UserStorageMock({
+    initialUser: createTestUserPrivate(),
+    initialIdentifiers: createTestPagedResult<UserIdentifierSummary>({
+      items: [createTestUserIdentifierSummary()],
+      totalCount: 1,
+      totalPages: 1
+    }),
+    initialSessions: createTestPagedResult<UserSessionSummary>({
+      items: [createTestUserSessionSummary()],
+      totalCount: 1,
+      totalPages: 1
+    })
+  })
 }

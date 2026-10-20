@@ -1,34 +1,34 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
-  userSessionPrivatePayloadMock,
-  userSessionSummaryPayloadMock
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { createTestUserSessionPrivatePayload, createTestUserSessionSummaryPayload, createTestPagedResultPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementSessionRepositoryImpl } from '@/repository/session/management-session-repository-impl'
-import type { ManagementSessionApi } from '@/network/api/session/management-session-api'
-import { SortOrder } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementSessionApiMock } from '@/mock/network/api/session/management-session-api-mock'
+import { SortOrder, TEST_SESSION_ID, TEST_USER_ID, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementSessionRepositoryImpl', () => {
-  let mockApi: ManagementSessionApi
+  let mockApi: ManagementSessionApiMock
   let repository: ManagementSessionRepositoryImpl
 
-  const dummySummaryPayload = userSessionSummaryPayloadMock()
-  const dummyPrivatePayload = userSessionPrivatePayloadMock()
+  const mockSummaryPayload = createTestUserSessionSummaryPayload()
+  const mockPrivatePayload = createTestUserSessionPrivatePayload()
 
   beforeEach(() => {
-    mockApi = {
-      getSessions: vi.fn().mockResolvedValue(appResultSuccess({
-        items: [dummySummaryPayload],
-        totalCount: 1,
-        pageNumber: 1,
-        pageSize: 10,
-        totalPages: 1
-      })),
-      getSession: vi.fn().mockResolvedValue(appResultSuccess(dummyPrivatePayload)),
-      deleteSession: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      deleteAllUserSessions: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as ManagementSessionApi
+    mockApi = new ManagementSessionApiMock()
+    mockApi.getSessionsResult = appResultSuccess(createTestPagedResultPayload({
+      items: [mockSummaryPayload],
+      total_count: 1,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 1
+    }))
+    mockApi.getSessionResult = appResultSuccess(mockPrivatePayload)
+    mockApi.deleteSessionResult = appResultSuccess(undefined)
+    mockApi.deleteAllUserSessionsResult = appResultSuccess(undefined)
+
+    vi.spyOn(mockApi, 'getSessions').mockImplementation(mockApi.getSessions.bind(mockApi))
+    vi.spyOn(mockApi, 'getSession').mockImplementation(mockApi.getSession.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteSession').mockImplementation(mockApi.deleteSession.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteAllUserSessions').mockImplementation(mockApi.deleteAllUserSessions.bind(mockApi))
 
     repository = new ManagementSessionRepositoryImpl(mockApi)
   })
@@ -59,20 +59,20 @@ describe('ManagementSessionRepositoryImpl', () => {
   })
 
   it('delegates getSession and maps response to domain model', async () => {
-    const result = await repository.getSession('sess_1')
-    expect(mockApi.getSession).toHaveBeenCalledWith('sess_1')
+    const result = await repository.getSession(TEST_SESSION_ID)
+    expect(mockApi.getSession).toHaveBeenCalledWith(TEST_SESSION_ID)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates deleteSession', async () => {
-    const result = await repository.deleteSession('usr_1' as UserId, 'sess_1')
-    expect(mockApi.deleteSession).toHaveBeenCalledWith('usr_1', 'sess_1')
+    const result = await repository.deleteSession(toUserIdOrThrow(TEST_USER_ID), TEST_SESSION_ID)
+    expect(mockApi.deleteSession).toHaveBeenCalledWith(TEST_USER_ID, TEST_SESSION_ID)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates deleteAllUserSessions', async () => {
-    const result = await repository.deleteAllUserSessions('usr_1' as UserId)
-    expect(mockApi.deleteAllUserSessions).toHaveBeenCalledWith('usr_1')
+    const result = await repository.deleteAllUserSessions(toUserIdOrThrow(TEST_USER_ID))
+    expect(mockApi.deleteAllUserSessions).toHaveBeenCalledWith(TEST_USER_ID)
     expect(isSuccess(result)).toBe(true)
   })
 })

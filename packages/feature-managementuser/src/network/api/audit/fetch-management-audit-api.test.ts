@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
-import { ManagementAuditRoutes, SortOrder, toAuditEventIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { auditEventPrivatePayloadMock, pagedResultPayloadMock } from '@/mock'
+import { createTestAuditEventPrivatePayload, ManagementAuditRoutes, ManagementAuditEventListParamsParser, SortOrder, TEST_AUDIT_EVENT_ID, TEST_USER_ID, toAuditEventIdOrThrow, createTestPagedResultPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementAuditApi', () => {
   let mockHttpClient: HttpClientMock
@@ -15,8 +14,8 @@ describe('FetchManagementAuditApi', () => {
   })
 
   it('dispatches getAuditEvents request with query params', async () => {
-    const mockPayload = pagedResultPayloadMock()
-    const expectedAuditEventsPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
+    const expectedAuditEventsPagedResult = createTestPagedResult({ pageSize: 10 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
@@ -35,33 +34,38 @@ describe('FetchManagementAuditApi', () => {
     }
     const result = await api.getAuditEvents(params)
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(ManagementAuditRoutes.GET_AUDIT_EVENTS)
+    const expectedUrl = appendQueryParamsToPath(
+      ManagementAuditRoutes.GET_AUDIT_EVENTS,
+      ManagementAuditEventListParamsParser.toQueryMap(params)
     )
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
     expect(result).toEqual({ success: true, data: expectedAuditEventsPagedResult })
   })
 
   it('formats actorIds into actor_id query parameter', async () => {
-    const mockPayload = pagedResultPayloadMock()
+    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    await api.getAuditEvents({
-      actorIds: ['usr_123']
-    })
+    const params = { actorIds: [TEST_USER_ID] }
+    await api.getAuditEvents(params)
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('actor_id=usr_123')
+    const expectedUrl = appendQueryParamsToPath(
+      ManagementAuditRoutes.GET_AUDIT_EVENTS,
+      ManagementAuditEventListParamsParser.toQueryMap(params)
     )
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
   })
 
   it('dispatches getAuditEvent request', async () => {
-    const mockPayload = auditEventPrivatePayloadMock({ id: toAuditEventIdOrThrow('550e8400-e29b-41d4-a716-446655440000') })
+    const mockPayload = createTestAuditEventPrivatePayload({ id: toAuditEventIdOrThrow(TEST_AUDIT_EVENT_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const result = await api.getAuditEvent('550e8400-e29b-41d4-a716-446655440000')
+    const result = await api.getAuditEvent(TEST_AUDIT_EVENT_ID)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      ManagementAuditRoutes.GET_AUDIT_EVENT.replace('{event_id}', '550e8400-e29b-41d4-a716-446655440000')
+      ManagementAuditRoutes.GET_AUDIT_EVENT.replace('{event_id}', TEST_AUDIT_EVENT_ID)
     )
     expect(result).toEqual({ success: true, data: mockPayload })
   })

@@ -1,58 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_PHONE, UserAuthProvider, createTestAuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementLoginRepositoryImpl } from '@/repository/auth/login/self-management-login-repository-impl'
-import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
+import { SelfManagementLoginApiMock } from '@/mock/network/api/auth/login/self-management-login-api-mock'
 
 describe('SelfManagementLoginRepositoryImpl', () => {
-  let mockApi: SelfManagementLoginApi
+  let mockApi: SelfManagementLoginApiMock
   let repository: SelfManagementLoginRepositoryImpl
 
-  const dummyAuthPayload = {
-    user: {
-      id: 'usr_mgmt_1',
-      role: 'SUPER_ADMIN',
-      account_status: 'ACTIVE',
-      account_status_on_restore: null,
-      authority_level: 100,
-      permission_codes: [],
-      is_totp_enabled: false,
-      last_login_at: 1000,
-      last_active_at: 1000,
-      created_at: 500,
-      updated_at: null,
-      scheduled_permanent_deletion_at: null,
-      account_lockout_type: 'NONE',
-      temporary_lockout_until: null
-    },
-    session_token: {
-      access_token: 'access_123',
-      refresh_token: 'refresh_123',
-      expires_at: 3600,
-      token_type: 'Bearer',
-      session_id: 'sess_1',
-      identifier_id: 'ident_1'
-    }
-  } as any
+  const mockAuthPayload = createTestAuthDataPayload()
 
   beforeEach(() => {
-    mockApi = {
-      loginByEmail: vi.fn().mockResolvedValue(appResultSuccess(dummyAuthPayload)),
-      loginByTotp: vi.fn().mockResolvedValue(appResultSuccess(dummyAuthPayload)),
-      loginByTotpRecoveryCode: vi.fn().mockResolvedValue(appResultSuccess(dummyAuthPayload))
-    } as unknown as SelfManagementLoginApi
+    mockApi = new SelfManagementLoginApiMock()
+    mockApi.loginByEmailResult = appResultSuccess(mockAuthPayload)
+    mockApi.loginByTotpResult = appResultSuccess(mockAuthPayload)
+    mockApi.loginByTotpRecoveryCodeResult = appResultSuccess(mockAuthPayload)
+
+    vi.spyOn(mockApi, 'loginByEmail').mockImplementation(mockApi.loginByEmail.bind(mockApi))
+    vi.spyOn(mockApi, 'loginByTotp').mockImplementation(mockApi.loginByTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'loginByTotpRecoveryCode').mockImplementation(mockApi.loginByTotpRecoveryCode.bind(mockApi))
 
     repository = new SelfManagementLoginRepositoryImpl(mockApi)
   })
 
   it('delegates loginByEmail and maps response', async () => {
-    const result = await repository.loginByEmail('admin@example.com', 'secret')
-    expect(mockApi.loginByEmail).toHaveBeenCalledWith('admin@example.com', 'secret')
+    const result = await repository.loginByEmail(TEST_EMAIL, 'secret')
+    expect(mockApi.loginByEmail).toHaveBeenCalledWith(TEST_EMAIL, 'secret')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('returns contract violation for loginByPhone', async () => {
-    const result = await repository.loginByPhone('+1234567890', '123456')
+    const result = await repository.loginByPhone(TEST_PHONE, '123456')
     expect(isFailure(result)).toBe(true)
   })
 
@@ -74,11 +52,11 @@ describe('SelfManagementLoginRepositoryImpl', () => {
   })
 
   it('returns contract violation for sendLoginConfirmationToPhone', async () => {
-    const result = await repository.sendLoginConfirmationToPhone('+1234567890')
+    const result = await repository.sendLoginConfirmationToPhone(TEST_PHONE)
     expect(isFailure(result)).toBe(true)
   })
 
   it('returns 0 for remaining confirmation delay', () => {
-    expect(repository.getRemainingLoginConfirmationDelayInSeconds('+1234567890')).toBe(0)
+    expect(repository.getRemainingLoginConfirmationDelayInSeconds(TEST_PHONE)).toBe(0)
   })
 })

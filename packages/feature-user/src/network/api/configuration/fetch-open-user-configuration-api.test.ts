@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess, HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenUserConfigurationApi } from '@/network/api/configuration/fetch-open-user-configuration-api'
@@ -42,9 +41,8 @@ describe('FetchOpenUserConfigurationApi', () => {
       }
     }
 
-    const mockHttpClient = {
-      request: vi.fn().mockResolvedValue(mockPayload)
-    } as unknown as HttpClient
+    const mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request').mockResolvedValue(mockPayload)
 
     const api = new FetchOpenUserConfigurationApi(mockHttpClient)
     const result = await api.getOpenUserConfiguration()

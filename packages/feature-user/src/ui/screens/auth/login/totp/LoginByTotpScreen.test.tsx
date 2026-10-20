@@ -1,41 +1,22 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
-import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/login-by-totp-store'
+import { loginByTotpDependenciesMock } from '@/mock/ui/screen/auth/login/totp/login-by-totp-component-mock'
+import { LoginByTotpUseCaseMock } from '@/mock/usecase/auth/login/login-by-totp-use-case-mock'
 
 describe('LoginByTotpScreen', () => {
-  const createMockDeps = (): LoginByTotpStoreDependencies => ({
-    mfaToken: 'mock_mfa_token',
-    loginByTotpUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          userPrivate: {
-            id: 'usr_123',
-            accountStatus: 'ACTIVE'
-          }
-        })
-      )
-    } as any,
-    loginByTotpRecoveryCodeUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          userPrivate: {
-            id: 'usr_123',
-            accountStatus: 'ACTIVE'
-          }
-        })
-      )
-    } as any,
-    onNavigateToPendingDeletion: vi.fn(),
-    onBack: vi.fn(),
-    onFinished: vi.fn()
-  })
-
   it('renders TOTP mode by default and enables submit when 6 digits are typed', async () => {
-    const deps = createMockDeps()
+    const loginByTotpUseCase = new LoginByTotpUseCaseMock()
+    vi.spyOn(loginByTotpUseCase, 'execute').mockImplementation(loginByTotpUseCase.execute.bind(loginByTotpUseCase))
+
+    const onFinished = vi.fn()
+    const deps = loginByTotpDependenciesMock({
+      loginByTotpUseCase,
+      onFinished
+    })
     const user = userEvent.setup()
 
     render(
@@ -56,13 +37,13 @@ describe('LoginByTotpScreen', () => {
 
     await user.click(submitBtn)
 
-    expect(deps.loginByTotpUseCase.execute).toHaveBeenCalledWith('mock_mfa_token', '123456')
-    expect(deps.onFinished).toHaveBeenCalledTimes(1)
+    expect(loginByTotpUseCase.execute).toHaveBeenCalledWith('mock_mfa_token', '123456')
+    expect(onFinished).toHaveBeenCalledTimes(1)
   })
 
   it('toggles mode to recovery code when toggle button is clicked', async () => {
     const onModeChange = vi.fn()
-    const deps = { ...createMockDeps(), onModeChange }
+    const deps = loginByTotpDependenciesMock({ onModeChange })
     const user = userEvent.setup()
 
     render(

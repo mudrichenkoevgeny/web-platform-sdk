@@ -2,27 +2,29 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
-import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
+import { createTestAuditEventPrivateList, createTestPagedResult, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { AuditEventListScreen, AuditEventListTestTags } from '@/ui/screens/management/audit/list/AuditEventListScreen'
+import { auditEventListDependenciesMock } from '@/mock/ui/screen/management/audit/list/audit-event-list-component-mock'
+import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
 import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
 
 describe('AuditEventListScreen', () => {
-  const createMockDeps = (): AuditEventListStoreDependencies => ({
-    getAuditEventsUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [auditEventMock()],
-          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
-          pageSize: ListingDefaultValues.Pagination.PAGE_SIZE,
-          totalItems: 1,
-          totalPages: 1
+  const createMockDeps = (): AuditEventListStoreDependencies => {
+    const getAuditEventsUseCase = new GetAuditEventsUseCaseMock()
+    getAuditEventsUseCase.resultProvider = async () =>
+      appResultSuccess(
+        createTestPagedResult({
+          items: createTestAuditEventPrivateList(1)
         })
       )
-    },
-    onNavigateToEventDetail: vi.fn(),
-    onBack: vi.fn()
-  })
+    vi.spyOn(getAuditEventsUseCase, 'execute').mockImplementation(getAuditEventsUseCase.execute.bind(getAuditEventsUseCase))
+
+    return auditEventListDependenciesMock({
+      getAuditEventsUseCase,
+      onNavigateToEventDetail: vi.fn(),
+      onBack: vi.fn()
+    })
+  }
 
   it('renders audit events list and handles item click', async () => {
     const deps = createMockDeps()

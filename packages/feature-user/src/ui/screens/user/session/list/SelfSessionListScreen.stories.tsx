@@ -1,43 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ClientType, CommonLocales, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestPagedResult, createTestUserSessionSummaryList } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfSessionListScreen } from '@/ui/screens/user/session/list/SelfSessionListScreen'
 import type { SelfSessionListStoreDependencies } from '@/ui/screens/user/session/list/self-session-list-store'
-
-const session1: UserSessionSummary = {
-  id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440001'),
-  userId: toUserIdOrThrow('123e4567-e89b-12d3-a456-426614174000'),
-  clientDeviceInfo: {
-    clientType: ClientType.WEB,
-    language: CommonLocales.ENGLISH,
-    deviceId: null,
-    deviceName: 'Chrome on Windows',
-    appVersion: '1.0.0',
-    operationSystemVersion: 'Windows'
-  },
-  identifierDisplayName: 'user1@example.com',
-  identifierAuthProvider: UserAuthProvider.EMAIL,
-  lastAccessedAt: 1690000000000,
-  expiresAt: 1700000000000
-}
-
-const session2: UserSessionSummary = {
-  ...session1,
-  id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440002'),
-  identifierDisplayName: 'user2@example.com'
-}
 
 const createMockDeps = (): SelfSessionListStoreDependencies => ({
   getSessionsUseCase: {
     execute: async () =>
-      appResultSuccess({
-        items: [session1, session2],
-        totalCount: 2,
-        pageNumber: 1,
-        pageSize: 20,
-        totalPages: 1
-      })
+      appResultSuccess(createTestPagedResult({
+        items: createTestUserSessionSummaryList(2)
+      }))
   } as unknown as SelfSessionListStoreDependencies['getSessionsUseCase'],
   deleteSessionUseCase: {
     execute: async () => appResultSuccess(undefined)

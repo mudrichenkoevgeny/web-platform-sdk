@@ -1,9 +1,9 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierPrivateMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 /**
  * Mock implementation of {@link ResetPasswordRepository}.
@@ -15,7 +15,7 @@ export class ResetPasswordRepositoryMock implements ResetPasswordRepository {
     numberOfSymbols: 6,
     expirationSeconds: 300
   })
-  public resetResult: AppResult<UserIdentifierPrivate, AppError> = appResultSuccess(userIdentifierPrivateMock())
+  public resetResult: AppResult<UserIdentifierPrivate, AppError> = appResultSuccess(createTestUserIdentifierPrivate())
 
   public lastSendEmail: string | null = null
   public lastResetEmail: string | null = null

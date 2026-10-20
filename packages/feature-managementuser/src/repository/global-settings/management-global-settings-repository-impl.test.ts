@@ -1,48 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SettingsWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { SettingsWebSocketEventTypes, createTestManagementGlobalSettingsPayload, toManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementGlobalSettingsRepositoryImpl } from '@/repository/global-settings/management-global-settings-repository-impl'
-import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
-import type { ManagementGlobalSettingsStorage } from '@/storage/global-settings/management-global-settings-storage'
+import { ManagementGlobalSettingsApiMock } from '@/mock/network/api/global-settings/management-global-settings-api-mock'
+import { ManagementGlobalSettingsStorageMock } from '@/mock/storage/global-settings/management-global-settings-storage-mock'
 
 describe('ManagementGlobalSettingsRepositoryImpl', () => {
-  let mockApi: ManagementGlobalSettingsApi
-  let mockStorage: ManagementGlobalSettingsStorage
+  let mockApi: ManagementGlobalSettingsApiMock
+  let mockStorage: ManagementGlobalSettingsStorageMock
   let mockWsService: WebSocketServiceMock
   let repository: ManagementGlobalSettingsRepositoryImpl
 
-  const dummyPayload = {
-    privacy_policy_url: 'https://example.com/privacy',
-    terms_of_service_url: 'https://example.com/terms',
-    contact_support_email: 'support@example.com',
-    min_supported_app_versions: {},
-    is_tracing_enabled: true,
-    is_metrics_enabled: true,
-    is_verbose_logging_enabled: false
-  } as any
-
-  const dummySettings = {
-    privacyPolicyUrl: 'https://example.com/privacy',
-    termsOfServiceUrl: 'https://example.com/terms',
-    contactSupportEmail: 'support@example.com',
-    minSupportedAppVersions: {},
-    isTracingEnabled: true,
-    isMetricsEnabled: true,
-    isVerboseLoggingEnabled: false
-  } as any
+  const mockSettingsPayload = createTestManagementGlobalSettingsPayload()
+  const mockSettings = toManagementGlobalSettings(mockSettingsPayload)
 
   beforeEach(() => {
-    mockApi = {
-      getManagementGlobalSettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload)),
-      updateManagementGlobalSettings: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      resetManagementGlobalSettings: vi.fn().mockResolvedValue(appResultSuccess(dummyPayload))
-    } as unknown as ManagementGlobalSettingsApi
+    mockApi = new ManagementGlobalSettingsApiMock()
+    mockApi.getManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
+    mockApi.updateManagementGlobalSettingsResult = appResultSuccess(undefined)
+    mockApi.resetManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
 
-    mockStorage = {
-      getManagementGlobalSettings: vi.fn().mockResolvedValue(null),
-      updateManagementGlobalSettings: vi.fn().mockResolvedValue(undefined),
-      clearManagementGlobalSettings: vi.fn().mockResolvedValue(undefined)
-    } as unknown as ManagementGlobalSettingsStorage
+    vi.spyOn(mockApi, 'getManagementGlobalSettings').mockImplementation(mockApi.getManagementGlobalSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'updateManagementGlobalSettings').mockImplementation(mockApi.updateManagementGlobalSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'resetManagementGlobalSettings').mockImplementation(mockApi.resetManagementGlobalSettings.bind(mockApi))
+
+    mockStorage = new ManagementGlobalSettingsStorageMock()
+    vi.spyOn(mockStorage, 'getManagementGlobalSettings').mockImplementation(mockStorage.getManagementGlobalSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'updateManagementGlobalSettings').mockImplementation(mockStorage.updateManagementGlobalSettings.bind(mockStorage))
 
     mockWsService = new WebSocketServiceMock()
 
@@ -57,9 +41,9 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementGlobalSettings(dummySettings)
+    const result = await repository.saveRemoteManagementGlobalSettings(mockSettings)
     expect(mockApi.updateManagementGlobalSettings).toHaveBeenCalled()
-    expect(mockStorage.updateManagementGlobalSettings).toHaveBeenCalledWith(dummySettings)
+    expect(mockStorage.updateManagementGlobalSettings).toHaveBeenCalledWith(mockSettings)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -75,9 +59,9 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
     repository.observeManagementGlobalSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: 'evt_1' as any,
+      id: toSocketFrameIdOrThrow('evt_1'),
       type: SettingsWebSocketEventTypes.MANAGEMENT_GLOBAL_SETTINGS_UPDATED,
-      payload: dummyPayload,
+      payload: mockSettingsPayload,
       metadata: {},
       timestamp: Date.now()
     })

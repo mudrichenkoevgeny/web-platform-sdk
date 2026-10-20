@@ -1,5 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { createTestPagedResult, createTestUserSessionPrivate, createTestUserSessionSummaryList } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   PagedResult,
   SelfSessionListParams,
@@ -8,17 +9,16 @@ import type {
   UserSessionSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { SessionRepository } from '@/repository/session/session-repository'
-import { userSessionPrivateMock, userSessionSummaryMock } from '@/mock/domain/model/session/user-session-mock'
 
 /**
  * Mock implementation of {@link SessionRepository}.
  */
 export class SessionRepositoryMock implements SessionRepository {
   public getSessionsResultProvider: () => Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> = async () =>
-    appResultSuccess({ items: [userSessionSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
+    appResultSuccess(createTestPagedResult({ items: createTestUserSessionSummaryList(2) }))
 
   public getSessionResultProvider: (userSessionId: UserSessionId) => Promise<AppResult<UserSessionPrivate, AppError>> = async () =>
-    appResultSuccess(userSessionPrivateMock())
+    appResultSuccess(createTestUserSessionPrivate())
 
   public logoutResultProvider: () => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)

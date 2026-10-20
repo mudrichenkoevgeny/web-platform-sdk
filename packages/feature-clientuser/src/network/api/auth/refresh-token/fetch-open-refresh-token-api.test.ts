@@ -1,24 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-open-refresh-token-api'
-import { OpenRefreshTokenRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenRefreshTokenRoutes, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenRefreshTokenApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchOpenRefreshTokenApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchOpenRefreshTokenApi(mockHttpClient)
   })
 
   it('dispatches refreshToken request', async () => {
-    const dummyPayload = { accessToken: 'access', refreshToken: 'refresh' } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockSessionTokenPayload = createTestSessionTokenPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionTokenPayload)
 
-    const request = { refreshToken: 'refresh_token_123' } as any
+    const request = { refreshToken: 'refresh_token_123' }
     const result = await api.refreshToken(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
@@ -28,6 +27,6 @@ describe('FetchOpenRefreshTokenApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockSessionTokenPayload })
   })
 })

@@ -8,7 +8,7 @@ import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-c
 import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { AuthStorageMock, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ManagementUserComponent } from './management-user-component'
+import { managementUserComponentMock } from '@/mock/di/management-user-component-mock'
 
 describe('ManagementUserComponent', () => {
   it('instantiates successfully with required dependencies', () => {
@@ -18,12 +18,12 @@ describe('ManagementUserComponent', () => {
     const authStorage = new AuthStorageMock()
     const authServices = new UserAuthServicesMock()
 
-    const component = new ManagementUserComponent({
-      commonComponent: commonComponent as any,
-      settingsComponent: settingsComponent as any,
-      securityComponent: securityComponent as any,
-      authStorage: authStorage as any,
-      authServices: authServices as any,
+    const component = managementUserComponentMock({
+      commonComponent,
+      settingsComponent,
+      securityComponent,
+      authStorage,
+      authServices,
       compositeActionTypeParser: new CompositeAuditActionTypeParser([]),
       compositeResourceTypeParser: new CompositeAuditResourceTypeParser([]),
       compositeMetadataKeyParser: new CompositeAuditMetadataKeyParser([])

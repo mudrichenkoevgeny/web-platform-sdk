@@ -1,26 +1,31 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toAuditEventIdOrThrow, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { toAuditEventIdOrThrow, toUserIdOrThrow, userStrings, createTestAuditEventPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { auditEventMock } from '@/mock/audit/domain/model/event/audit-event-mock'
 import { AuditEventDetailScreen, AuditEventDetailTestTags } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
+import { auditEventDetailDependenciesMock } from '@/mock/ui/screen/management/audit/detail/audit-event-detail-component-mock'
+import { GetAuditEventUseCaseMock } from '@/mock/usecase/audit/get-audit-event-use-case-mock'
 import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
 
 describe('AuditEventDetailScreen', () => {
   const currentUserId = toUserIdOrThrow('usr_current_123')
   const otherUserId = toUserIdOrThrow('usr_other_456')
 
-  const createMockDeps = (overrides?: Partial<AuditEventDetailStoreDependencies>): AuditEventDetailStoreDependencies => ({
-    eventId: auditEventMock().id ?? toAuditEventIdOrThrow('evt_1'),
-    getAuditEventUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(auditEventMock()))
-    },
-    currentUserId,
-    onNavigateToUserDetail: vi.fn(),
-    onBack: vi.fn(),
-    ...overrides
-  })
+  const createMockDeps = (overrides?: Partial<AuditEventDetailStoreDependencies>): AuditEventDetailStoreDependencies => {
+    const getAuditEventUseCase = new GetAuditEventUseCaseMock()
+    getAuditEventUseCase.resultProvider = async () => appResultSuccess(createTestAuditEventPrivate())
+    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+
+    return auditEventDetailDependenciesMock({
+      eventId: createTestAuditEventPrivate().id ?? toAuditEventIdOrThrow('evt_1'),
+      getAuditEventUseCase,
+      currentUserId,
+      onNavigateToUserDetail: vi.fn(),
+      onBack: vi.fn(),
+      ...overrides
+    })
+  }
 
   it('renders event details and handles back button click', async () => {
     const deps = createMockDeps()
@@ -43,15 +48,17 @@ describe('AuditEventDetailScreen', () => {
   })
 
   it('navigates to user main when clicking resource representing current user', async () => {
-    const mockEvent = auditEventMock({
+    const mockEvent = createTestAuditEventPrivate({
       resource: 'user',
       resourceId: currentUserId
     })
 
+    const getAuditEventUseCase = new GetAuditEventUseCaseMock()
+    getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
+    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+
     const deps = createMockDeps({
-      getAuditEventUseCase: {
-        execute: vi.fn().mockResolvedValue(appResultSuccess(mockEvent))
-      }
+      getAuditEventUseCase
     })
     const user = userEvent.setup()
 
@@ -68,15 +75,17 @@ describe('AuditEventDetailScreen', () => {
   })
 
   it('navigates to user detail when clicking resource representing another user', async () => {
-    const mockEvent = auditEventMock({
+    const mockEvent = createTestAuditEventPrivate({
       resource: 'user',
       resourceId: otherUserId
     })
 
+    const getAuditEventUseCase = new GetAuditEventUseCaseMock()
+    getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
+    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+
     const deps = createMockDeps({
-      getAuditEventUseCase: {
-        execute: vi.fn().mockResolvedValue(appResultSuccess(mockEvent))
-      }
+      getAuditEventUseCase
     })
     const user = userEvent.setup()
 
@@ -93,15 +102,17 @@ describe('AuditEventDetailScreen', () => {
   })
 
   it('navigates to user detail when clicking subject representing current user actor', async () => {
-    const mockEvent = auditEventMock({
+    const mockEvent = createTestAuditEventPrivate({
       actorType: 'user',
       actorId: currentUserId
     })
 
+    const getAuditEventUseCase = new GetAuditEventUseCaseMock()
+    getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
+    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+
     const deps = createMockDeps({
-      getAuditEventUseCase: {
-        execute: vi.fn().mockResolvedValue(appResultSuccess(mockEvent))
-      }
+      getAuditEventUseCase
     })
     const user = userEvent.setup()
 
@@ -118,15 +129,17 @@ describe('AuditEventDetailScreen', () => {
   })
 
   it('navigates to user detail when clicking subject representing another user actor', async () => {
-    const mockEvent = auditEventMock({
+    const mockEvent = createTestAuditEventPrivate({
       actorType: 'user',
       actorId: otherUserId
     })
 
+    const getAuditEventUseCase = new GetAuditEventUseCaseMock()
+    getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
+    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+
     const deps = createMockDeps({
-      getAuditEventUseCase: {
-        execute: vi.fn().mockResolvedValue(appResultSuccess(mockEvent))
-      }
+      getAuditEventUseCase
     })
     const user = userEvent.setup()
 

@@ -1,26 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { createTestUserIdentifierPrivatePayload, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementResetPasswordRepositoryImpl } from '@/repository/auth/reset-password/self-management-reset-password-repository-impl'
-import type { ConfirmationRepository, ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SelfManagementResetPasswordApiMock } from '@/mock/network/api/auth/reset-password/self-management-reset-password-api-mock'
+import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('SelfManagementResetPasswordRepositoryImpl', () => {
-  let mockApi: ResetPasswordApi
-  let mockConfirmationRepo: ConfirmationRepository
+  let mockApi: SelfManagementResetPasswordApiMock
+  let mockConfirmationRepo: ConfirmationRepositoryMock
   let repository: SelfManagementResetPasswordRepositoryImpl
 
-  const dummyIdentifierPayload = userIdentifierPrivatePayloadMock()
+  const mockIdentifierPayload = createTestUserIdentifierPrivatePayload()
 
   beforeEach(() => {
-    mockApi = {
-      resetPassword: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      sendResetPasswordConfirmationToEmail: vi.fn().mockResolvedValue(appResultSuccess({ retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 }))
-    } as unknown as ResetPasswordApi
+    mockApi = new SelfManagementResetPasswordApiMock()
+    mockApi.resetPasswordResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.sendResetPasswordConfirmationToEmailResult = appResultSuccess(createTestOtpConfirmationPayload())
 
-    mockConfirmationRepo = {
-      executeWithTimer: vi.fn().mockImplementation((_type, _identifier, action) => action()),
-      getRemainingDelay: vi.fn().mockReturnValue(0)
-    } as unknown as ConfirmationRepository
+    vi.spyOn(mockApi, 'resetPassword').mockImplementation(mockApi.resetPassword.bind(mockApi))
+    vi.spyOn(mockApi, 'sendResetPasswordConfirmationToEmail').mockImplementation(mockApi.sendResetPasswordConfirmationToEmail.bind(mockApi))
+
+    mockConfirmationRepo = new ConfirmationRepositoryMock()
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
 
     repository = new SelfManagementResetPasswordRepositoryImpl(mockApi, mockConfirmationRepo)
   })

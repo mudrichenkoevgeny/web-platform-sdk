@@ -1,37 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { toUserIdOrThrow, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
-import type { GoogleAuthService } from '@/auth/google/google-auth-service'
-import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
+import { GoogleAuthServiceMock } from '@/mock/auth/google/google-auth-service-mock'
+import { IdentifierRepositoryMock } from '@/mock/repository/identifier/identifier-repository-mock'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('AddUserIdentifierGoogleUseCase', () => {
-  let mockAuthService: GoogleAuthService
-  let mockRepository: IdentifierRepository
+  let mockAuthService: GoogleAuthServiceMock
+  let mockRepository: IdentifierRepositoryMock
   let useCase: AddUserIdentifierGoogleUseCase
 
-  const dummyIdentifier: UserIdentifierPrivate = {
-    id: toUserIdentifierIdOrThrow('ident_1'),
-    userId: toUserIdOrThrow('usr_1'),
+  const mockIdentifier: UserIdentifierPrivate = createTestUserIdentifierPrivate({
     userAuthProvider: UserAuthProvider.GOOGLE,
-    identifier: 'user@google.com',
-    displayName: 'Google User',
-    externalProviderEmail: 'user@google.com',
-    isSensitiveValuesMasked: false,
-    createdAt: Date.now(),
-    updatedAt: null
-  }
+    displayName: 'Google User'
+  })
 
   beforeEach(() => {
-    mockAuthService = {
-      signIn: vi.fn().mockResolvedValue(appResultSuccess('google-id-token'))
-    } as unknown as GoogleAuthService
+    mockAuthService = new GoogleAuthServiceMock()
+    mockAuthService.signInResultProvider = async () => appResultSuccess('google-id-token')
 
-    mockRepository = {
-      addUserIdentifierExternalAuthProvider: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifier))
-    } as unknown as IdentifierRepository
+    mockRepository = new IdentifierRepositoryMock()
+    mockRepository.addUserIdentifierResultProvider = async () => appResultSuccess(mockIdentifier)
 
     useCase = new AddUserIdentifierGoogleUseCase(mockAuthService, mockRepository)
   })
@@ -40,10 +30,7 @@ describe('AddUserIdentifierGoogleUseCase', () => {
     const result = await useCase.execute()
 
     expect(isSuccess(result)).toBe(true)
-    expect(mockAuthService.signIn).toHaveBeenCalled()
-    expect(mockRepository.addUserIdentifierExternalAuthProvider).toHaveBeenCalledWith(
-      UserAuthProvider.GOOGLE,
-      'google-id-token'
-    )
+    expect(mockRepository.lastAuthProvider).toBe(UserAuthProvider.GOOGLE)
+    expect(mockRepository.lastToken).toBe('google-id-token')
   })
 })

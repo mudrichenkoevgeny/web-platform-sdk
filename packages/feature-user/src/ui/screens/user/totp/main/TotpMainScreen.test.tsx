@@ -1,49 +1,16 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivate, TEST_USER_ID, toUserIdOrThrow, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { TotpMainScreen, TotpMainTestTags } from '@/ui/screens/user/totp/main/TotpMainScreen'
-import type { TotpMainStoreDependencies } from '@/ui/screens/user/totp/main/totp-main-store'
+import { totpMainDependenciesMock } from '@/mock/ui/screen/user/totp/main/totp-main-component-mock'
+import { UserRepositoryMock } from '@/mock/repository/user/user-repository-mock'
 
 describe('TotpMainScreen', () => {
-  const createMockDeps = (user = {
-    id: 'usr_123',
-    isTotpEnabled: false
-  }): TotpMainStoreDependencies => ({
-    userRepository: {
-      getCurrentUser: () => user as any,
-      observeCurrentUser: vi.fn((listener) => {
-        listener(user as any)
-        return () => {}
-      }),
-      refreshCurrentUser: vi.fn().mockResolvedValue(appResultSuccess(user))
-    } as any,
-    setupTotpUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          secretKey: 'JBSWY3DPEHPK3PXP',
-          otpAuthUrl: 'otpauth://totp/Test?secret=JBSWY3DPEHPK3PXP',
-          mfaToken: 'mfa_123'
-        })
-      )
-    } as any,
-    enableTotpUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          totpRecoveryCodes: ['1111-2222', '3333-4444']
-        })
-      )
-    } as any,
-    disableTotpUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as any,
-    onNavigateToRecoveryCodes: vi.fn(),
-    onBack: vi.fn()
-  })
-
   it('renders disabled state and starts setup when setup button is clicked', async () => {
-    const deps = createMockDeps()
+    const deps = totpMainDependenciesMock()
+    vi.spyOn(deps.setupTotpUseCase, 'execute')
     const user = userEvent.setup()
 
     render(
@@ -62,7 +29,13 @@ describe('TotpMainScreen', () => {
   })
 
   it('renders enabled state when TOTP is active on user account', () => {
-    const deps = createMockDeps({ id: 'usr_123', isTotpEnabled: true })
+    const deps = totpMainDependenciesMock()
+    const userRepository = new UserRepositoryMock()
+    userRepository.emit(createTestUserPrivate({
+      id: toUserIdOrThrow(TEST_USER_ID),
+      isTotpEnabled: true
+    }))
+    deps.userRepository = userRepository
 
     render(
       <ComponentTestHarness>
@@ -76,7 +49,8 @@ describe('TotpMainScreen', () => {
   })
 
   it('triggers onBack when back button is clicked', async () => {
-    const deps = createMockDeps()
+    const deps = totpMainDependenciesMock()
+    vi.spyOn(deps, 'onBack')
     const user = userEvent.setup()
 
     render(

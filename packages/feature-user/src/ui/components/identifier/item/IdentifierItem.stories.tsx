@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, createTestUserIdentifierPrivate, TEST_PHONE } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
-import { userIdentifierMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 const meta: Meta<typeof IdentifierItem> = {
   title: 'Feature/User/Identifier/IdentifierItem',
@@ -17,7 +16,7 @@ const meta: Meta<typeof IdentifierItem> = {
     )
   ],
   args: {
-    identifier: userIdentifierMock()
+    identifier: createTestUserIdentifierPrivate()
   }
 }
 
@@ -34,10 +33,10 @@ export const CurrentIdentifier: Story = {
 
 export const PhoneIdentifier: Story = {
   args: {
-    identifier: userIdentifierMock({
+    identifier: createTestUserIdentifierPrivate({
       userAuthProvider: UserAuthProvider.PHONE,
-      displayName: '+1234567890',
-      identifier: '+1234567890'
+      displayName: TEST_PHONE,
+      identifier: TEST_PHONE
     })
   }
 }

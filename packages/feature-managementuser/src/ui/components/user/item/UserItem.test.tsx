@@ -2,15 +2,14 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserSummaryPayload, toUserSummary, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UserItem } from '@/ui/components/user/item/UserItem'
 
 describe('UserItem', () => {
   it('renders user details and handles click', async () => {
     const onClick = vi.fn()
     const user = userEvent.setup()
-    const userDetails = userDetailsMock()
+    const userDetails = toUserSummary(createTestUserSummaryPayload())
 
     render(
       <ComponentTestHarness>
@@ -18,7 +17,7 @@ describe('UserItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(userDetails.id!)).toBeDefined()
+    expect(screen.getByText(userDetails.id)).toBeDefined()
     expect(screen.getByText(`${userStrings.ui.userRole}: ${userDetails.role}`)).toBeDefined()
     expect(screen.getByText(`${userStrings.ui.userAccountStatus}: ${userDetails.accountStatus}`)).toBeDefined()
 

@@ -1,55 +1,52 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SortOrder, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, toUserIdentifierPrivatePayload, createTestUserIdentifierPrivate, createTestOtpConfirmationPayload, createTestPagedResultPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenIdentifierRepositoryImpl } from '@/repository/identifier/open-identifier-repository-impl'
-import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
-import type { ConfirmationRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { OpenIdentifiersApiMock } from '@/mock/network/api/identifier/open-identifiers-api-mock'
+import { ConfirmationRepositoryMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenIdentifierRepositoryImpl', () => {
-  let mockApi: OpenIdentifiersApi
-  let mockConfirmationRepo: ConfirmationRepository
-  let mockUserStorage: UserStorage
+  let mockApi: OpenIdentifiersApiMock
+  let mockConfirmationRepo: ConfirmationRepositoryMock
+  let mockUserStorage: UserStorageMock
   let repository: OpenIdentifierRepositoryImpl
 
-  const dummyIdentifierPayload = {
-    id: 'ident_1',
-    user_id: 'usr_1',
-    identifier: 'user@example.com',
-    user_auth_provider: 'EMAIL',
-    is_primary: true,
-    is_confirmed: true,
-    created_at: 1000,
-    updated_at: null
-  } as any
+  const mockIdentifierPayload = toUserIdentifierPrivatePayload(createTestUserIdentifierPrivate({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) }))
 
   beforeEach(() => {
-    mockApi = {
-      getUserIdentifier: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      getUserIdentifiers: vi.fn().mockResolvedValue(appResultSuccess({ items: [dummyIdentifierPayload], totalCount: 1, pageNumber: 1, pageSize: 10, totalPages: 1 })),
-      deleteUserIdentifier: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      addUserIdentifierEmail: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      addUserIdentifierPhone: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      addUserIdentifierExternalAuthProvider: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      sendAddEmailIdentifierConfirmation: vi.fn().mockResolvedValue(appResultSuccess({ retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 })),
-      sendAddPhoneIdentifierConfirmation: vi.fn().mockResolvedValue(appResultSuccess({ retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 })),
-      emailChangePassword: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as OpenIdentifiersApi
+    mockApi = new OpenIdentifiersApiMock()
+    mockApi.getUserIdentifierResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.getUserIdentifiersResult = appResultSuccess(createTestPagedResultPayload({ items: [mockIdentifierPayload] }))
+    mockApi.deleteUserIdentifierResult = appResultSuccess(undefined)
+    mockApi.addUserIdentifierEmailResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.addUserIdentifierPhoneResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.addUserIdentifierExternalAuthProviderResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.sendAddEmailIdentifierConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
+    mockApi.sendAddPhoneIdentifierConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
+    mockApi.emailChangePasswordResult = appResultSuccess(undefined)
 
-    mockConfirmationRepo = {
-      executeWithTimer: vi.fn().mockImplementation((_type, _identifier, action) => action()),
-      getRemainingDelay: vi.fn().mockReturnValue(0)
-    } as unknown as ConfirmationRepository
+    vi.spyOn(mockApi, 'getUserIdentifier').mockImplementation(mockApi.getUserIdentifier.bind(mockApi))
+    vi.spyOn(mockApi, 'getUserIdentifiers').mockImplementation(mockApi.getUserIdentifiers.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteUserIdentifier').mockImplementation(mockApi.deleteUserIdentifier.bind(mockApi))
+    vi.spyOn(mockApi, 'addUserIdentifierEmail').mockImplementation(mockApi.addUserIdentifierEmail.bind(mockApi))
+    vi.spyOn(mockApi, 'addUserIdentifierPhone').mockImplementation(mockApi.addUserIdentifierPhone.bind(mockApi))
+    vi.spyOn(mockApi, 'addUserIdentifierExternalAuthProvider').mockImplementation(mockApi.addUserIdentifierExternalAuthProvider.bind(mockApi))
+    vi.spyOn(mockApi, 'sendAddEmailIdentifierConfirmation').mockImplementation(mockApi.sendAddEmailIdentifierConfirmation.bind(mockApi))
+    vi.spyOn(mockApi, 'sendAddPhoneIdentifierConfirmation').mockImplementation(mockApi.sendAddPhoneIdentifierConfirmation.bind(mockApi))
+    vi.spyOn(mockApi, 'emailChangePassword').mockImplementation(mockApi.emailChangePassword.bind(mockApi))
 
-    mockUserStorage = {
-      addUserIdentifier: vi.fn().mockResolvedValue(undefined),
-      removeUserIdentifier: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockConfirmationRepo = new ConfirmationRepositoryMock()
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
+
+    mockUserStorage = new UserStorageMock()
+    vi.spyOn(mockUserStorage, 'addUserIdentifier').mockImplementation(mockUserStorage.addUserIdentifier.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'removeUserIdentifier').mockImplementation(mockUserStorage.removeUserIdentifier.bind(mockUserStorage))
 
     repository = new OpenIdentifierRepositoryImpl(mockApi, mockConfirmationRepo, mockUserStorage)
   })
 
   it('delegates getUserIdentifier and maps response', async () => {
-    const id = toUserIdentifierIdOrThrow('ident_1')
+    const id = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const result = await repository.getUserIdentifier(id)
     expect(mockApi.getUserIdentifier).toHaveBeenCalledWith(id)
     expect(isSuccess(result)).toBe(true)
@@ -70,7 +67,7 @@ describe('OpenIdentifierRepositoryImpl', () => {
   })
 
   it('delegates deleteUserIdentifier and removes from storage', async () => {
-    const id = toUserIdentifierIdOrThrow('ident_1')
+    const id = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const result = await repository.deleteUserIdentifier(id)
     expect(mockApi.deleteUserIdentifier).toHaveBeenCalledWith(id)
     expect(mockUserStorage.removeUserIdentifier).toHaveBeenCalledWith(id)
@@ -78,15 +75,15 @@ describe('OpenIdentifierRepositoryImpl', () => {
   })
 
   it('delegates addUserIdentifierEmail and updates storage', async () => {
-    const result = await repository.addUserIdentifierEmail('user@example.com', 'secret', '123456')
-    expect(mockApi.addUserIdentifierEmail).toHaveBeenCalledWith('user@example.com', 'secret', '123456')
+    const result = await repository.addUserIdentifierEmail(TEST_EMAIL, 'secret', '123456')
+    expect(mockApi.addUserIdentifierEmail).toHaveBeenCalledWith(TEST_EMAIL, 'secret', '123456')
     expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates addUserIdentifierPhone and updates storage', async () => {
-    const result = await repository.addUserIdentifierPhone('+1234567890', '123456')
-    expect(mockApi.addUserIdentifierPhone).toHaveBeenCalledWith('+1234567890', '123456')
+    const result = await repository.addUserIdentifierPhone(TEST_PHONE, '123456')
+    expect(mockApi.addUserIdentifierPhone).toHaveBeenCalledWith(TEST_PHONE, '123456')
     expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
@@ -99,26 +96,26 @@ describe('OpenIdentifierRepositoryImpl', () => {
   })
 
   it('delegates sendAddEmailIdentifierConfirmation with timer', async () => {
-    const result = await repository.sendAddEmailIdentifierConfirmation('user@example.com')
+    const result = await repository.sendAddEmailIdentifierConfirmation(TEST_EMAIL)
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates sendAddPhoneIdentifierConfirmation with timer', async () => {
-    const result = await repository.sendAddPhoneIdentifierConfirmation('+1234567890')
+    const result = await repository.sendAddPhoneIdentifierConfirmation(TEST_PHONE)
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates emailChangePassword request', async () => {
-    const identifierId = 'ident-123' as any
+    const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const result = await repository.emailChangePassword(identifierId, 'old', 'new')
     expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, 'old', 'new')
     expect(isSuccess(result)).toBe(true)
   })
 
   it('queries remaining confirmation delays', () => {
-    expect(repository.getRemainingEmailConfirmationDelayInSeconds('user@example.com')).toBe(0)
-    expect(repository.getRemainingPhoneNumberConfirmationDelayInSeconds('+1234567890')).toBe(0)
+    expect(repository.getRemainingEmailConfirmationDelayInSeconds(TEST_EMAIL)).toBe(0)
+    expect(repository.getRemainingPhoneNumberConfirmationDelayInSeconds(TEST_PHONE)).toBe(0)
   })
 })

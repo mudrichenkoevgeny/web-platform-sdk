@@ -1,8 +1,9 @@
 import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { createTestOpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
-import { openSecuritySettingsPayloadMock } from '@/mock/network/model/open-security-settings-payload-mock'
+
 /**
  * Mock implementation of {@link OpenSecuritySettingsApi}.
  */
@@ -29,10 +30,10 @@ export class OpenSecuritySettingsApiMock implements OpenSecuritySettingsApi {
     this.getSecuritySettingsCallCount++
 
     if (this.shouldFail) {
-      return { success: false, error: CommonError.unknown() }
+      return appResultFailure(CommonError.unknown())
     }
 
-    const payload = this.mockPayload ?? openSecuritySettingsPayloadMock()
-    return { success: true, data: payload }
+    const payload = this.mockPayload ?? createTestOpenSecuritySettingsPayload()
+    return appResultSuccess(payload)
   }
 }

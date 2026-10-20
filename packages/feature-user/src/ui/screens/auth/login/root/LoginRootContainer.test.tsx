@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { LoginRootContainer } from '@/ui/screens/auth/login/root/LoginRootContainer'
@@ -7,7 +7,6 @@ import { LoginRootContainer } from '@/ui/screens/auth/login/root/LoginRootContai
 describe('LoginRootContainer', () => {
   it('renders children content and triggers onDismiss when backdrop clicked', async () => {
     const onDismiss = vi.fn()
-    const user = userEvent.setup()
 
     render(
       <ComponentTestHarness>
@@ -20,7 +19,7 @@ describe('LoginRootContainer', () => {
     expect(screen.getByText('Screen Step Content')).toBeDefined()
 
     const dialogBackdrop = screen.getByRole('dialog')
-    await user.click(dialogBackdrop)
+    fireEvent.click(dialogBackdrop)
 
     expect(onDismiss).toHaveBeenCalledTimes(1)
   })

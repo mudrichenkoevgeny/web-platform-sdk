@@ -1,27 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { GlobalSessionListScreen } from '@/ui/screens/management/session/global-list/GlobalSessionListScreen'
-import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
-
-const createMockDeps = (): GlobalSessionListStoreDependencies => ({
-  managementGetSessionsUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userSessionMock(), userSessionMock()],
-        pageNumber: 1,
-        pageSize: 20,
-        totalItems: 2,
-        totalPages: 1
-      })
-  } as unknown as GlobalSessionListStoreDependencies['managementGetSessionsUseCase'],
-  managementDeleteSessionUseCase: {
-    execute: async () => appResultSuccess({})
-  } as unknown as GlobalSessionListStoreDependencies['managementDeleteSessionUseCase'],
-  onNavigateToSessionDetail: () => {},
-  onNavigateToUserDetail: () => {},
-  onBack: () => {}
-})
+import { globalSessionListDependenciesMock } from '@/mock/ui/screen/management/session/global-list/global-session-list-component-mock'
 
 const meta: Meta<typeof GlobalSessionListScreen> = {
   title: 'Feature/ManagementUser/Session/GlobalSessionListScreen',
@@ -34,7 +14,7 @@ const meta: Meta<typeof GlobalSessionListScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: globalSessionListDependenciesMock()
   }
 }
 

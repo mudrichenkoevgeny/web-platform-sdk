@@ -1,25 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserIdentifierListScreen } from '@/ui/screens/management/identifier/user-list/UserIdentifierListScreen'
-import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
-
-const createMockDeps = (): UserIdentifierListStoreDependencies => ({
-  userId: 'usr_123' as unknown as UserId,
-  managementGetIdentifiersUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userIdentifierMock(), userIdentifierMock()],
-        pageNumber: 1,
-        pageSize: 20,
-        totalItems: 2,
-        totalPages: 1
-      })
-  } as unknown as UserIdentifierListStoreDependencies['managementGetIdentifiersUseCase'],
-  onIdentifierSelect: () => {},
-  onBack: () => {}
-})
+import { userIdentifierListDependenciesMock } from '@/mock/ui/screen/management/identifier/user-list/user-identifier-list-component-mock'
 
 const meta: Meta<typeof UserIdentifierListScreen> = {
   title: 'Feature/ManagementUser/Identifier/UserIdentifierListScreen',
@@ -32,7 +14,7 @@ const meta: Meta<typeof UserIdentifierListScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: userIdentifierListDependenciesMock()
   }
 }
 

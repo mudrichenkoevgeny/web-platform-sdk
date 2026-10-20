@@ -1,35 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userPrivateMock } from '@/mock/index'
+import { AppType, createTestUserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { MainUserScreen } from '@/ui/screens/user/main/MainUserScreen'
+import { UserRepositoryMock } from '@/mock/repository/user/user-repository-mock'
+import { LogoutUseCaseMock } from '@/mock/usecase/session/logout-use-case-mock'
+import { ScheduleUserDeletionUseCaseMock } from '@/mock/usecase/user/schedule-user-deletion-use-case-mock'
 import type { MainUserStoreDependencies } from '@/ui/screens/user/main/main-user-store'
 
-const mockUser = userPrivateMock({
-  id: toUserIdOrThrow('usr_12345')
-})
+const mockUser = createTestUserPrivate()
 
-const createDummyDependencies = (
+const createMockDependencies = (
   overrides?: Partial<MainUserStoreDependencies>
-): MainUserStoreDependencies => ({
-  appType: AppType.CLIENT,
-  userRepository: {
-    getCurrentUser: () => mockUser,
-    observeCurrentUser: (cb: (user: any) => void) => {
-      cb(mockUser)
-      return () => {}
-    },
-    refreshCurrentUser: async () => appResultSuccess(mockUser),
-    clearSession: async () => {}
-  } as any,
-  logoutUseCase: { execute: async () => appResultSuccess(undefined) } as any,
-  scheduleUserDeletionUseCase: { execute: async () => appResultSuccess(undefined) } as any,
-  onNavigateToLogin: () => alert('Navigate to login'),
-  onNavigateToTotp: () => alert('Navigate to TOTP'),
-  onNavigateToSessions: () => alert('Navigate to sessions'),
-  onNavigateToIdentifiers: () => alert('Navigate to identifiers'),
-  ...overrides
-})
+): MainUserStoreDependencies => {
+  const userRepository = new UserRepositoryMock()
+  userRepository.emit(mockUser)
+
+  const logoutUseCase = new LogoutUseCaseMock()
+  logoutUseCase.resultProvider = async () => appResultSuccess(undefined)
+
+  const scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCaseMock()
+  scheduleUserDeletionUseCase.resultProvider = async () => appResultSuccess(mockUser)
+
+  return {
+    appType: AppType.CLIENT,
+    userRepository,
+    logoutUseCase,
+    scheduleUserDeletionUseCase,
+    onNavigateToLogin: () => alert('Navigate to login'),
+    onNavigateToTotp: () => alert('Navigate to TOTP'),
+    onNavigateToSessions: () => alert('Navigate to sessions'),
+    onNavigateToIdentifiers: () => alert('Navigate to identifiers'),
+    ...overrides
+  }
+}
 
 const meta: Meta<typeof MainUserScreen> = {
   title: 'Feature/User/Main/MainUserScreen',
@@ -38,7 +41,7 @@ const meta: Meta<typeof MainUserScreen> = {
     layout: 'fullscreen'
   },
   args: {
-    dependencies: createDummyDependencies()
+    dependencies: createMockDependencies()
   }
 }
 
@@ -49,22 +52,27 @@ export const Default: Story = {}
 
 export const ManagementContext: Story = {
   args: {
-    dependencies: createDummyDependencies({ appType: AppType.MANAGEMENT })
+    dependencies: createMockDependencies({ appType: AppType.MANAGEMENT })
   }
 }
 
 export const Unauthorized: Story = {
   args: {
-    dependencies: createDummyDependencies({
-      userRepository: {
-        getCurrentUser: () => null,
-        observeCurrentUser: (cb: (user: any) => void) => {
-          cb(null)
-          return () => {}
-        },
-        refreshCurrentUser: async () => appResultSuccess(null),
-        clearSession: async () => {}
-      } as any
-    })
+    dependencies: (() => {
+      const userRepository = new UserRepositoryMock()
+      userRepository.emit(null)
+      const logoutUseCase = new LogoutUseCaseMock()
+      const scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCaseMock()
+      return {
+        appType: AppType.CLIENT,
+        userRepository,
+        logoutUseCase,
+        scheduleUserDeletionUseCase,
+        onNavigateToLogin: () => {},
+        onNavigateToTotp: () => {},
+        onNavigateToSessions: () => {},
+        onNavigateToIdentifiers: () => {}
+      }
+    })()
   }
 }

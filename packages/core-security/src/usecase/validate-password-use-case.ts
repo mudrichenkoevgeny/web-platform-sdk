@@ -1,3 +1,4 @@
+import { appResultFailure, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/password-policy-validator'
@@ -45,14 +46,11 @@ export class ValidatePasswordUseCase {
     const validationResult = this.passwordPolicyValidator.validate(passwordPolicy, password)
 
     if (validationResult.success) {
-      return { success: true, data: undefined }
+      return appResultSuccess(undefined)
     }
 
-    const primaryReason = validationResult.reasons[0] as PasswordPolicyFailReason
-    return {
-      success: false,
-      error: this.toSecurityError(primaryReason, passwordPolicy.minLength)
-    }
+    const primaryReason = validationResult.reasons[0]
+    return appResultFailure(this.toSecurityError(primaryReason, passwordPolicy.minLength))
   }
 
   private toSecurityError(reason: PasswordPolicyFailReason, minLength: number): SecurityError {

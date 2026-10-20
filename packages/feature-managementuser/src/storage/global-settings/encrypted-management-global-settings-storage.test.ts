@@ -4,10 +4,10 @@ import { EncryptedManagementGlobalSettingsStorage } from '@/storage/global-setti
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('EncryptedManagementGlobalSettingsStorage', () => {
-  let mockSettings: EncryptedSettingsMock
+  let mockSettingsStorage: EncryptedSettingsMock
   let storage: EncryptedManagementGlobalSettingsStorage
 
-  const dummySettings: ManagementGlobalSettings = {
+  const mockSettings: ManagementGlobalSettings = {
     privacyPolicyUrl: 'https://example.com/privacy',
     termsOfServiceUrl: 'https://example.com/terms',
     contactSupportEmail: 'support@example.com',
@@ -18,8 +18,8 @@ describe('EncryptedManagementGlobalSettingsStorage', () => {
   }
 
   beforeEach(() => {
-    mockSettings = new EncryptedSettingsMock()
-    storage = new EncryptedManagementGlobalSettingsStorage(mockSettings)
+    mockSettingsStorage = new EncryptedSettingsMock()
+    storage = new EncryptedManagementGlobalSettingsStorage(mockSettingsStorage)
   })
 
   it('returns null when storage is empty', async () => {
@@ -27,12 +27,12 @@ describe('EncryptedManagementGlobalSettingsStorage', () => {
   })
 
   it('saves and retrieves management global settings', async () => {
-    await storage.updateManagementGlobalSettings(dummySettings)
-    expect(await storage.getManagementGlobalSettings()).toEqual(dummySettings)
+    await storage.updateManagementGlobalSettings(mockSettings)
+    expect(await storage.getManagementGlobalSettings()).toEqual(mockSettings)
   })
 
   it('clears stored settings', async () => {
-    await storage.updateManagementGlobalSettings(dummySettings)
+    await storage.updateManagementGlobalSettings(mockSettings)
     await storage.clearManagementGlobalSettings()
     expect(await storage.getManagementGlobalSettings()).toBeNull()
   })

@@ -1,28 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { LoginByEmailScreen } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
-import type { LoginByEmailStoreDependencies } from '@/ui/screens/auth/login/email/login-by-email-store'
-
-const createMockDeps = (): LoginByEmailStoreDependencies => ({
-  appType: AppType.CLIENT,
-  loginByEmailUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        userDetails: {
-          id: 'usr_123',
-          accountStatus: 'ACTIVE'
-        }
-      })
-  } as unknown as LoginByEmailStoreDependencies['loginByEmailUseCase'],
-  onNavigateToRegistrationByEmail: () => {},
-  onNavigateToForgotPassword: () => {},
-  onNavigateToTotp: () => {},
-  onNavigateToPendingDeletion: () => {},
-  onNavigateToAccountUnlock: () => {},
-  onBack: () => {},
-  onFinished: () => {}
-})
+import { loginByEmailDependenciesMock } from '@/mock/ui/screen/auth/login/email/login-by-email-component-mock'
 
 const meta: Meta<typeof LoginByEmailScreen> = {
   title: 'Feature/User/Auth/Login/Email/LoginByEmailScreen',
@@ -37,7 +16,7 @@ const meta: Meta<typeof LoginByEmailScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: loginByEmailDependenciesMock()
   }
 }
 

@@ -1,8 +1,8 @@
+import { createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OtpConfirmation, UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { ResetPasswordRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { userIdentifierPrivateMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 export class ResetPasswordRepositoryMock implements ResetPasswordRepository {
   public remainingDelaySeconds = 10
@@ -11,7 +11,7 @@ export class ResetPasswordRepositoryMock implements ResetPasswordRepository {
     numberOfSymbols: 6,
     expirationSeconds: 300
   })
-  public resetResult: AppResult<UserIdentifierPrivate, AppError> = appResultSuccess(userIdentifierPrivateMock())
+  public resetResult: AppResult<UserIdentifierPrivate, AppError> = appResultSuccess(createTestUserIdentifierPrivate())
 
   public lastSendEmail: string | null = null
   public lastResetEmail: string | null = null

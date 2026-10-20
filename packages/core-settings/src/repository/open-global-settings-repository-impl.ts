@@ -1,5 +1,5 @@
-import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError, WebSocketService, SocketFrame } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { toOpenGlobalSettings } from '@/domain/model/open-global-settings'
 import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
@@ -8,6 +8,7 @@ import type { OpenGlobalSettingsObserver } from '@/repository/open-global-settin
 import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
 import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
 import { SettingsWebSocketEventTypes } from '@/network/contract/settings-web-socket-event-types'
+
 /**
  * Implementation of {@link OpenGlobalSettingsRepository} handling API fetch, encrypted storage, and WebSocket updates.
  */
@@ -41,13 +42,13 @@ export class OpenGlobalSettingsRepositoryImpl implements OpenGlobalSettingsRepos
    */
   public async getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettings, AppError>> {
     if (this.inMemorySettings) {
-      return { success: true, data: this.inMemorySettings }
+      return appResultSuccess(this.inMemorySettings)
     }
 
     if (this.initializationPromise) {
       await this.initializationPromise
       if (this.inMemorySettings) {
-        return { success: true, data: this.inMemorySettings }
+        return appResultSuccess(this.inMemorySettings)
       }
     }
 

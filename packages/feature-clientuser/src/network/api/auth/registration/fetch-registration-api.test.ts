@@ -1,24 +1,28 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchRegistrationApi } from '@/network/api/auth/registration/fetch-registration-api'
-import { OpenRegistrationRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  OpenRegistrationRoutes,
+  TEST_EMAIL,
+  createTestAuthDataPayload,
+  createTestOtpConfirmationPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchRegistrationApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchRegistrationApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchRegistrationApi(mockHttpClient)
   })
 
   it('dispatches registerByEmail request', async () => {
-    const dummyPayload = { user_private: {} } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockAuthDataPayload = createTestAuthDataPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthDataPayload)
 
-    const request = { email: 'user@example.com', password: 'secret_pass', confirmation_code: '123456' }
+    const request = { email: TEST_EMAIL, password: 'secret_pass', confirmation_code: '123456' }
     const result = await api.registerByEmail(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
@@ -28,14 +32,14 @@ describe('FetchRegistrationApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockAuthDataPayload })
   })
 
   it('dispatches sendRegistrationConfirmationToEmail request', async () => {
-    const dummyPayload = { retryAfterSeconds: 60 } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockOtpConfirmationPayload = createTestOtpConfirmationPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockOtpConfirmationPayload)
 
-    const request = { email: 'user@example.com' } as any
+    const request = { email: TEST_EMAIL }
     const result = await api.sendRegistrationConfirmationToEmail(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
@@ -45,6 +49,6 @@ describe('FetchRegistrationApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
   })
 })

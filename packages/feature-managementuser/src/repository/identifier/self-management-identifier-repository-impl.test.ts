@@ -1,44 +1,37 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SelfManagementIdentifierRepositoryImpl } from '@/repository/identifier/self-management-identifier-repository-impl'
-import type { SelfManagementIdentifiersApi } from '@/network/api/identifier/self-management-identifiers-api'
-import { SortOrder, type UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementIdentifiersApiMock } from '@/mock/network/api/identifier/self-management-identifiers-api-mock'
+import { SortOrder, TEST_IDENTIFIER_ID, toUserIdentifierIdOrThrow, toUserIdentifierPrivatePayload, createTestUserIdentifierPrivate, createTestPagedResultPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('SelfManagementIdentifierRepositoryImpl', () => {
-  let mockApi: SelfManagementIdentifiersApi
+  let mockApi: SelfManagementIdentifiersApiMock
   let repository: SelfManagementIdentifierRepositoryImpl
 
-  const dummyIdentifierPayload = {
-    id: 'id_1',
-    user_id: 'usr_1',
-    auth_provider: 'EMAIL',
-    identifier: 'user@example.com',
-    confirmed_at: 1000,
-    created_at: 1000,
-    updated_at: 1000
-  } as any
+  const mockIdentifierPayload = toUserIdentifierPrivatePayload(createTestUserIdentifierPrivate())
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    mockApi = new SelfManagementIdentifiersApiMock()
+    mockApi.getUserIdentifierResult = appResultSuccess(mockIdentifierPayload)
+    mockApi.getUserIdentifiersResult = appResultSuccess(createTestPagedResultPayload({
+      items: [mockIdentifierPayload],
+      total_count: 1,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 1
+    }))
+    mockApi.emailChangePasswordResult = appResultSuccess(undefined)
 
-    mockApi = {
-      getUserIdentifier: vi.fn().mockResolvedValue(appResultSuccess(dummyIdentifierPayload)),
-      getUserIdentifiers: vi.fn().mockResolvedValue(appResultSuccess({
-        items: [dummyIdentifierPayload],
-        totalCount: 1,
-        pageNumber: 1,
-        pageSize: 10,
-        totalPages: 1
-      })),
-      emailChangePassword: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as SelfManagementIdentifiersApi
+    vi.spyOn(mockApi, 'getUserIdentifier').mockImplementation(mockApi.getUserIdentifier.bind(mockApi))
+    vi.spyOn(mockApi, 'getUserIdentifiers').mockImplementation(mockApi.getUserIdentifiers.bind(mockApi))
+    vi.spyOn(mockApi, 'emailChangePassword').mockImplementation(mockApi.emailChangePassword.bind(mockApi))
 
     repository = new SelfManagementIdentifierRepositoryImpl(mockApi)
   })
 
   it('delegates getUserIdentifier and maps payload to domain model', async () => {
-    const result = await repository.getUserIdentifier('id_1' as UserIdentifierId)
-    expect(mockApi.getUserIdentifier).toHaveBeenCalledWith('id_1')
+    const result = await repository.getUserIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+    expect(mockApi.getUserIdentifier).toHaveBeenCalledWith(TEST_IDENTIFIER_ID)
     expect(isSuccess(result)).toBe(true)
   })
 
@@ -57,7 +50,7 @@ describe('SelfManagementIdentifierRepositoryImpl', () => {
   })
 
   it('delegates emailChangePassword', async () => {
-    const identifierId = 'id_1' as UserIdentifierId
+    const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const result = await repository.emailChangePassword(identifierId, 'oldPass', 'newPass')
     expect(mockApi.emailChangePassword).toHaveBeenCalledWith(identifierId, {
       old_password: 'oldPass',

@@ -5,6 +5,7 @@ import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storag
 import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
 import { ApiException } from '@/error/model/api-exception'
 import { CommonHttpHeaders } from '@/network/contract/common-http-headers'
+import { createTestApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('HttpClient', () => {
   const createTestHttpClient = (customFetch: typeof fetch, logger?: (msg: string) => void) => {
@@ -38,12 +39,11 @@ describe('HttpClient', () => {
   })
 
   it('throws ApiException when response contains valid ApiErrorResponse', async () => {
-    const errorPayload = {
-      id: '123e4567-e89b-12d3-a456-426614174000',
+    const errorPayload = createTestApiErrorResponse({
       code: 'USER_NOT_FOUND',
       message: 'User does not exist',
       args: { userId: '123' }
-    }
+    })
     const mockResponse = new Response(JSON.stringify(errorPayload), { status: 404 })
     const fetchSpy = vi.fn().mockResolvedValue(mockResponse)
 

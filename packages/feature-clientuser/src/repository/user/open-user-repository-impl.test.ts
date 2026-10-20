@@ -1,53 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivatePayload, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUserRepositoryImpl } from '@/repository/user/open-user-repository-impl'
-import type { OpenUserApi } from '@/network/api/user/open-user-api'
-import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { OpenUserApiMock } from '@/mock/network/api/user/open-user-api-mock'
+import { AuthStorageMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenUserRepositoryImpl', () => {
-  let mockUserStorage: UserStorage
-  let mockAuthStorage: AuthStorage
-  let mockApi: OpenUserApi
+  let mockUserStorage: UserStorageMock
+  let mockAuthStorage: AuthStorageMock
+  let mockApi: OpenUserApiMock
   let mockWsService: WebSocketServiceMock
   let repository: OpenUserRepositoryImpl
 
-  const dummyUserPayload = {
-    id: 'usr_1',
-    role: 'user',
-    account_status: 'active',
-    account_status_on_restore: null,
-    authority_level: 1,
-    permission_codes: [],
-    is_totp_enabled: false,
-    last_login_at: 1000,
-    last_active_at: 1000,
-    created_at: 500,
-    updated_at: null,
-    scheduled_permanent_deletion_at: null,
-    account_lockout_type: 'none',
-    temporary_lockout_until: null
-  } as any
+  const mockUserPayload = createTestUserPrivatePayload()
 
   beforeEach(() => {
-    mockUserStorage = {
-      observeCurrentUser: vi.fn().mockImplementation((listener) => {
-        listener(null)
-        return () => {}
-      }),
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined),
-      clear: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    mockUserStorage = new UserStorageMock()
+    vi.spyOn(mockUserStorage, 'observeCurrentUser').mockImplementation(mockUserStorage.observeCurrentUser.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'clear').mockImplementation(mockUserStorage.clear.bind(mockUserStorage))
 
-    mockAuthStorage = {
-      clearTokens: vi.fn().mockResolvedValue(undefined)
-    } as unknown as AuthStorage
+    mockAuthStorage = new AuthStorageMock()
+    vi.spyOn(mockAuthStorage, 'clearTokens').mockImplementation(mockAuthStorage.clearTokens.bind(mockAuthStorage))
 
-    mockApi = {
-      getUser: vi.fn().mockResolvedValue(appResultSuccess(dummyUserPayload)),
-      scheduleUserDeletion: vi.fn().mockResolvedValue(appResultSuccess(dummyUserPayload)),
-      restoreUser: vi.fn().mockResolvedValue(appResultSuccess(dummyUserPayload))
-    } as unknown as OpenUserApi
+    mockApi = new OpenUserApiMock()
+    mockApi.getUserResult = appResultSuccess(mockUserPayload)
+    mockApi.scheduleUserDeletionResult = appResultSuccess(mockUserPayload)
+    mockApi.restoreUserResult = appResultSuccess(mockUserPayload)
+
+    vi.spyOn(mockApi, 'getUser').mockImplementation(mockApi.getUser.bind(mockApi))
+    vi.spyOn(mockApi, 'scheduleUserDeletion').mockImplementation(mockApi.scheduleUserDeletion.bind(mockApi))
+    vi.spyOn(mockApi, 'restoreUser').mockImplementation(mockApi.restoreUser.bind(mockApi))
 
     mockWsService = new WebSocketServiceMock()
 
@@ -105,9 +88,9 @@ describe('OpenUserRepositoryImpl', () => {
 
   it('handles USER_UPDATED WebSocket event', async () => {
     mockWsService.emitFrameLocally({
-      id: 'evt_1' as any,
+      id: toSocketFrameIdOrThrow('evt_1'),
       type: UserWebSocketEventTypes.USER_UPDATED,
-      payload: dummyUserPayload,
+      payload: mockUserPayload,
       metadata: {},
       timestamp: Date.now()
     })
@@ -118,7 +101,7 @@ describe('OpenUserRepositoryImpl', () => {
 
   it('handles SESSION_DELETED WebSocket event', async () => {
     mockWsService.emitFrameLocally({
-      id: 'evt_2' as any,
+      id: toSocketFrameIdOrThrow('evt_2'),
       type: UserWebSocketEventTypes.SESSION_DELETED,
       payload: null,
       metadata: {},

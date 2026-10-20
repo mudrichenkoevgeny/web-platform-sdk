@@ -1,30 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ManagementIdentifierRepositoryImpl } from '@/repository/identifier/management-identifier-repository-impl'
-import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
-import { userIdentifierPrivatePayloadMock, userIdentifierSummaryPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { SortOrder, toUserIdentifierIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementIdentifierApiMock } from '@/mock/network/api/identifier/management-identifier-api-mock'
+import { createTestUserIdentifierPrivatePayload, createTestUserIdentifierSummaryPayload, createTestPagedResultPayload, SortOrder, TEST_IDENTIFIER_ID, TEST_USER_ID, toUserIdentifierIdOrThrow, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementIdentifierRepositoryImpl', () => {
-  let mockApi: ManagementIdentifierApi
+  let mockApi: ManagementIdentifierApiMock
   let repository: ManagementIdentifierRepositoryImpl
 
-  const dummySummaryPayload = userIdentifierSummaryPayloadMock()
-  const dummyPrivatePayload = userIdentifierPrivatePayloadMock()
+  const mockSummaryPayload = createTestUserIdentifierSummaryPayload()
+  const mockPrivatePayload = createTestUserIdentifierPrivatePayload()
 
   beforeEach(() => {
-    mockApi = {
-      getIdentifiers: vi.fn().mockResolvedValue(appResultSuccess({
-        items: [dummySummaryPayload],
-        totalCount: 1,
-        pageNumber: 1,
-        pageSize: 10,
-        totalPages: 1
-      })),
-      getIdentifier: vi.fn().mockResolvedValue(appResultSuccess(dummyPrivatePayload)),
-      deleteIdentifier: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      deleteIdentifierPassword: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as ManagementIdentifierApi
+    mockApi = new ManagementIdentifierApiMock()
+    mockApi.getIdentifiersResult = appResultSuccess(createTestPagedResultPayload({
+      items: [mockSummaryPayload],
+      total_count: 1,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 1
+    }))
+    mockApi.getIdentifierResult = appResultSuccess(mockPrivatePayload)
+    mockApi.deleteIdentifierResult = appResultSuccess(undefined)
+    mockApi.deleteIdentifierPasswordResult = appResultSuccess(undefined)
+
+    vi.spyOn(mockApi, 'getIdentifiers').mockImplementation(mockApi.getIdentifiers.bind(mockApi))
+    vi.spyOn(mockApi, 'getIdentifier').mockImplementation(mockApi.getIdentifier.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteIdentifier').mockImplementation(mockApi.deleteIdentifier.bind(mockApi))
+    vi.spyOn(mockApi, 'deleteIdentifierPassword').mockImplementation(mockApi.deleteIdentifierPassword.bind(mockApi))
 
     repository = new ManagementIdentifierRepositoryImpl(mockApi)
   })
@@ -45,23 +48,23 @@ describe('ManagementIdentifierRepositoryImpl', () => {
   })
 
   it('delegates getIdentifier and maps response to domain model', async () => {
-    const identId = toUserIdentifierIdOrThrow('223e4567-e89b-12d3-a456-426614174001')
+    const identId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const result = await repository.getIdentifier(identId)
     expect(mockApi.getIdentifier).toHaveBeenCalledWith(identId)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates deleteIdentifier', async () => {
-    const identId = toUserIdentifierIdOrThrow('223e4567-e89b-12d3-a456-426614174001')
-    const userId = toUserIdOrThrow('usr_1')
+    const identId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
+    const userId = toUserIdOrThrow(TEST_USER_ID)
     const result = await repository.deleteIdentifier(userId, identId)
     expect(mockApi.deleteIdentifier).toHaveBeenCalledWith(userId, identId)
     expect(isSuccess(result)).toBe(true)
   })
 
   it('delegates deleteIdentifierPassword', async () => {
-    const identId = toUserIdentifierIdOrThrow('223e4567-e89b-12d3-a456-426614174001')
-    const userId = toUserIdOrThrow('usr_1')
+    const identId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
+    const userId = toUserIdOrThrow(TEST_USER_ID)
     const result = await repository.deleteIdentifierPassword(userId, identId)
     expect(mockApi.deleteIdentifierPassword).toHaveBeenCalledWith(userId, identId)
     expect(isSuccess(result)).toBe(true)

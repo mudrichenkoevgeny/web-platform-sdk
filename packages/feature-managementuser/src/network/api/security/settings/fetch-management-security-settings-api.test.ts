@@ -1,35 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementSecuritySettingsApi } from '@/network/api/security/settings/fetch-management-security-settings-api'
-import { ManagementSecuritySettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementSecuritySettingsRoutes, createTestAccountLockoutPolicyPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementSecuritySettingsApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchManagementSecuritySettingsApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchManagementSecuritySettingsApi(mockHttpClient)
   })
 
   it('dispatches getManagementSecuritySettings request', async () => {
-    const dummyPayload = { passwordPolicy: {} } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockSettingsPayload = {
+      password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false },
+      account_lockout_policy: createTestAccountLockoutPolicyPayload(),
+      otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 }
+    }
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSettingsPayload)
 
     const result = await api.getManagementSecuritySettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementSecuritySettingsRoutes.GET_MANAGEMENT_SECURITY_SETTINGS
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockSettingsPayload })
   })
 
   it('dispatches updateManagementSecuritySettings request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { passwordPolicy: {} } as any
+    const request = { password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false }, account_lockout_policy: createTestAccountLockoutPolicyPayload(), otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 } }
     const result = await api.updateManagementSecuritySettings(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
@@ -40,8 +43,12 @@ describe('FetchManagementSecuritySettingsApi', () => {
   })
 
   it('dispatches resetManagementSecuritySettings request', async () => {
-    const dummyPayload = { passwordPolicy: {} } as any
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockSettingsPayload = {
+      password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false },
+      account_lockout_policy: createTestAccountLockoutPolicyPayload(),
+      otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 }
+    }
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSettingsPayload)
 
     const result = await api.resetManagementSecuritySettings()
 
@@ -49,6 +56,6 @@ describe('FetchManagementSecuritySettingsApi', () => {
       ManagementSecuritySettingsRoutes.RESET_MANAGEMENT_SECURITY_SETTINGS,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockSettingsPayload })
   })
 })

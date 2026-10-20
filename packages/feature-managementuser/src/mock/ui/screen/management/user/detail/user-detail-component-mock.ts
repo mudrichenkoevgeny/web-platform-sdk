@@ -1,27 +1,28 @@
-import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_USER_ID, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { GetUserUseCaseMock } from '@/mock/usecase/user/get-user-use-case-mock'
+import { UpdateUserUseCaseMock } from '@/mock/usecase/user/update-user-use-case-mock'
+import { DeleteUserUseCaseMock } from '@/mock/usecase/user/delete-user-use-case-mock'
+import { ManagementDisableTotpUseCaseMock } from '@/mock/usecase/user/security/management-disable-totp-use-case-mock'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
 
 export const userDetailDependenciesMock = (
   overrides?: Partial<UserDetailStoreDependencies>
-): UserDetailStoreDependencies => ({
-  userId: 'usr_123' as unknown as UserId,
-  getUserUseCase: {
-    execute: async () => appResultSuccess(userDetailsMock())
-  } as unknown as UserDetailStoreDependencies['getUserUseCase'],
-  updateUserUseCase: {
-    execute: async () => appResultSuccess(userDetailsMock())
-  } as unknown as UserDetailStoreDependencies['updateUserUseCase'],
-  deleteUserUseCase: {
-    execute: async () => appResultSuccess({})
-  } as unknown as UserDetailStoreDependencies['deleteUserUseCase'],
-  managementDisableTotpUseCase: {
-    execute: async () => appResultSuccess({})
-  } as unknown as UserDetailStoreDependencies['managementDisableTotpUseCase'],
-  onNavigateToSessions: () => {},
-  onNavigateToIdentifiers: () => {},
-  onNavigateToAuditEvents: () => {},
-  onBack: () => {},
-  ...overrides
-})
+): UserDetailStoreDependencies => {
+  const getUserUseCase = new GetUserUseCaseMock()
+  const updateUserUseCase = new UpdateUserUseCaseMock()
+  const deleteUserUseCase = new DeleteUserUseCaseMock()
+  const managementDisableTotpUseCase = new ManagementDisableTotpUseCaseMock()
+
+  return {
+    userId: toUserIdOrThrow(TEST_USER_ID),
+    getUserUseCase,
+    updateUserUseCase,
+    deleteUserUseCase,
+    managementDisableTotpUseCase,
+    onNavigateToSessions: () => {},
+    onNavigateToIdentifiers: () => {},
+    onNavigateToAuditEvents: () => {},
+    onBack: () => {},
+    ...overrides
+  }
+}

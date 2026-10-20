@@ -1,50 +1,43 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettingsRepository } from '@/repository/global-settings/management-global-settings-repository'
 
 /** Mock implementation of {@link ManagementGlobalSettingsRepository}. */
 export class ManagementGlobalSettingsRepositoryMock implements ManagementGlobalSettingsRepository {
-  private settings: ManagementGlobalSettings | null = null
+  private settings: ManagementGlobalSettings
   private readonly listeners = new Set<(settings: ManagementGlobalSettings | null) => void>()
 
-  public getManagementGlobalSettingsResult: AppResult<ManagementGlobalSettings, AppError> | null = null
-  public refreshManagementGlobalSettingsResult: AppResult<ManagementGlobalSettings, AppError> | null = null
-  public saveRemoteGlobalSettingsResult: AppResult<void, AppError> | null = null
-  public resetRemoteGlobalSettingsResult: AppResult<ManagementGlobalSettings, AppError> | null = null
+  public resultProvider: () => Promise<AppResult<ManagementGlobalSettings, AppError>> = async () =>
+    appResultSuccess(this.settings)
+
+  public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)
+
+  public resetResultProvider: () => Promise<AppResult<ManagementGlobalSettings, AppError>> = async () =>
+    this.resultProvider()
 
   public constructor(initialSettings?: ManagementGlobalSettings | null) {
-    if (initialSettings) {
-      this.settings = initialSettings
-    }
+    this.settings = initialSettings ?? createTestManagementGlobalSettings()
   }
 
   public async getManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettings, AppError>> {
-    if (this.getManagementGlobalSettingsResult) {
-      return this.getManagementGlobalSettingsResult
-    }
-    if (this.settings) {
-      return appResultSuccess(this.settings)
-    }
-    return appResultSuccess({} as ManagementGlobalSettings)
+    return this.resultProvider()
   }
 
   public async saveRemoteManagementGlobalSettings(
     globalSettings: ManagementGlobalSettings
   ): Promise<AppResult<void, AppError>> {
-    if (this.saveRemoteGlobalSettingsResult) {
-      return this.saveRemoteGlobalSettingsResult
+    const result = await this.saveResultProvider()
+    if (result.success) {
+      this.settings = globalSettings
+      this.notifyListeners()
     }
-    this.settings = globalSettings
-    this.notifyListeners()
-    return appResultSuccess(undefined)
+    return result
   }
 
   public async refreshManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettings, AppError>> {
-    if (this.refreshManagementGlobalSettingsResult) {
-      return this.refreshManagementGlobalSettingsResult
-    }
-    return this.getManagementGlobalSettings()
+    return this.resultProvider()
   }
 
   public async updateManagementGlobalSettings(globalSettings: ManagementGlobalSettings): Promise<void> {
@@ -53,10 +46,12 @@ export class ManagementGlobalSettingsRepositoryMock implements ManagementGlobalS
   }
 
   public async resetRemoteManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettings, AppError>> {
-    if (this.resetRemoteGlobalSettingsResult) {
-      return this.resetRemoteGlobalSettingsResult
+    const result = await this.resetResultProvider()
+    if (result.success) {
+      this.settings = result.data
+      this.notifyListeners()
     }
-    return this.getManagementGlobalSettings()
+    return result
   }
 
   public observeManagementGlobalSettings(listener: (settings: ManagementGlobalSettings | null) => void): () => void {
@@ -67,7 +62,7 @@ export class ManagementGlobalSettingsRepositoryMock implements ManagementGlobalS
     }
   }
 
-  public emit(settings: ManagementGlobalSettings | null): void {
+  public emit(settings: ManagementGlobalSettings): void {
     this.settings = settings
     this.notifyListeners()
   }

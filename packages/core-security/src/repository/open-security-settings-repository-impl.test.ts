@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
-import { WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { appResultSuccess, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSecuritySettingsRepositoryImpl } from '@/repository/open-security-settings-repository-impl'
 import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
 import { EncryptedOpenSecuritySettingsStorage } from '@/storage/security-settings/encrypted-open-security-settings-storage'
 import { toOpenSecuritySettings } from '@/domain/model/open-security-settings'
 import { SecurityWebSocketEventTypes } from '@/network/contract/security-web-socket-event-types'
+
 describe('OpenSecuritySettingsRepositoryImpl', () => {
   const samplePayload: OpenSecuritySettingsPayload = {
     open_password_policy: {
@@ -30,7 +31,7 @@ describe('OpenSecuritySettingsRepositoryImpl', () => {
     public getSecuritySettingsCallCount = 0
     public async getSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
       this.getSecuritySettingsCallCount++
-      return { success: true, data: samplePayload }
+      return appResultSuccess(samplePayload)
     }
   }
 

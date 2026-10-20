@@ -7,13 +7,21 @@ import {
   selfIdentifierListParamsSchema,
   selfSessionListParamsSchema,
   SortOrder,
+  TEST_EMAIL,
+  TEST_USER_ID,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
-import { appendQueryParamsToPath, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createAuditEventListStore } from '@/ui/screens/management/audit/list/AuditEventListStore'
 import { createGlobalUserListStore } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 import { createGlobalSessionListStore } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 import { createGlobalIdentifierListStore } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
+import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
+import { GetUsersUseCaseMock } from '@/mock/usecase/user/get-users-use-case-mock'
+import { ManagementGetSessionsUseCaseMock } from '@/mock/usecase/session/management-get-sessions-use-case-mock'
+import { ManagementDeleteSessionUseCaseMock } from '@/mock/usecase/session/management-delete-session-use-case-mock'
+import { ManagementGetIdentifiersUseCaseMock } from '@/mock/usecase/identifier/management-get-identifiers-use-case-mock'
+import { ManagementDeleteIdentifierUseCaseMock } from '@/mock/usecase/identifier/management-delete-identifier-use-case-mock'
 
 describe('Unified Navigation Parameters & API Architecture Suite', () => {
   describe('Zod Search Parameter Schema Robustness & Defaults', () => {
@@ -171,15 +179,8 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
   describe('Store Integration with Typed KMP Search Params', () => {
     it('AuditEventListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const mockExecute = vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [],
-          pageNumber: 1,
-          pageSize: 20,
-          totalCount: 0,
-          totalPages: 0
-        })
-      )
+      const getAuditEventsUseCase = new GetAuditEventsUseCaseMock()
+      vi.spyOn(getAuditEventsUseCase, 'execute').mockImplementation(getAuditEventsUseCase.execute.bind(getAuditEventsUseCase))
 
       const typedParams = managementAuditEventListParamsSchema.parse({
         pageNumber: 2,
@@ -197,7 +198,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
       })
 
       const store = createAuditEventListStore({
-        getAuditEventsUseCase: { execute: mockExecute } as any,
+        getAuditEventsUseCase,
         onNavigateToEventDetail: vi.fn(),
         onBack: vi.fn(),
         searchParams: typedParams
@@ -205,19 +206,12 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
       await store.getState().initScreen()
 
-      expect(mockExecute).toHaveBeenCalledWith(typedParams)
+      expect(getAuditEventsUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
 
     it('GlobalUserListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const mockExecute = vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [],
-          pageNumber: 1,
-          pageSize: 20,
-          totalCount: 0,
-          totalPages: 0
-        })
-      )
+      const getUsersUseCase = new GetUsersUseCaseMock()
+      vi.spyOn(getUsersUseCase, 'execute').mockImplementation(getUsersUseCase.execute.bind(getUsersUseCase))
 
       const typedParams = managementUserListParamsSchema.parse({
         pageNumber: 3,
@@ -235,7 +229,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
       })
 
       const store = createGlobalUserListStore({
-        getUsersUseCase: { execute: mockExecute } as any,
+        getUsersUseCase,
         onNavigateToUserDetail: vi.fn(),
         onNavigateToCreateUser: vi.fn(),
         onBack: vi.fn(),
@@ -244,26 +238,20 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
       await store.getState().initScreen()
 
-      expect(mockExecute).toHaveBeenCalledWith(typedParams)
+      expect(getUsersUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
 
     it('GlobalSessionListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const mockExecute = vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [],
-          pageNumber: 1,
-          pageSize: 20,
-          totalCount: 0,
-          totalPages: 0
-        })
-      )
+      const managementGetSessionsUseCase = new ManagementGetSessionsUseCaseMock()
+      vi.spyOn(managementGetSessionsUseCase, 'execute').mockImplementation(managementGetSessionsUseCase.execute.bind(managementGetSessionsUseCase))
+      const managementDeleteSessionUseCase = new ManagementDeleteSessionUseCaseMock()
 
       const typedParams = managementGlobalSessionListParamsSchema.parse({
         pageNumber: 1,
         pageSize: 20,
         sortBy: 'created_at',
         sortOrder: SortOrder.DESC,
-        userIds: ['usr_123'],
+        userIds: [TEST_USER_ID],
         userRoles: [],
         identifiers: [],
         identifierIds: [],
@@ -279,8 +267,8 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
       })
 
       const store = createGlobalSessionListStore({
-        managementGetSessionsUseCase: { execute: mockExecute } as any,
-        managementDeleteSessionUseCase: { execute: vi.fn() } as any,
+        managementGetSessionsUseCase,
+        managementDeleteSessionUseCase,
         onNavigateToSessionDetail: vi.fn(),
         onNavigateToUserDetail: vi.fn(),
         onBack: vi.fn(),
@@ -289,19 +277,13 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
       await store.getState().initScreen()
 
-      expect(mockExecute).toHaveBeenCalledWith(typedParams)
+      expect(managementGetSessionsUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
 
     it('GlobalIdentifierListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const mockExecute = vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [],
-          pageNumber: 1,
-          pageSize: 20,
-          totalCount: 0,
-          totalPages: 0
-        })
-      )
+      const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
+      vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+      const managementDeleteIdentifierUseCase = new ManagementDeleteIdentifierUseCaseMock()
 
       const typedParams = managementGlobalIdentifierListParamsSchema.parse({
         pageNumber: 1,
@@ -310,12 +292,12 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
         sortOrder: SortOrder.DESC,
         userIds: [],
         userAuthProviders: [],
-        identifiers: ['user@example.com']
+        identifiers: [TEST_EMAIL]
       })
 
       const store = createGlobalIdentifierListStore({
-        managementGetIdentifiersUseCase: { execute: mockExecute } as any,
-        managementDeleteIdentifierUseCase: { execute: vi.fn() } as any,
+        managementGetIdentifiersUseCase,
+        managementDeleteIdentifierUseCase,
         onNavigateToIdentifierDetail: vi.fn(),
         onBack: vi.fn(),
         searchParams: typedParams
@@ -323,7 +305,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
       await store.getState().initScreen()
 
-      expect(mockExecute).toHaveBeenCalledWith(typedParams)
+      expect(managementGetIdentifiersUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
   })
 })

@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_USER_ID, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierDetailScreen } from '@/ui/screens/user/identifier/detail/IdentifierDetailScreen'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
 
 const mockIdentifier: UserIdentifierPrivate = {
-  id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),
-  userId: toUserIdOrThrow('usr_12345'),
+  id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID),
+  userId: toUserIdOrThrow(TEST_USER_ID),
   userAuthProvider: UserAuthProvider.EMAIL,
-  identifier: 'user@example.com',
-  displayName: 'user@example.com',
+  identifier: TEST_EMAIL,
+  displayName: TEST_EMAIL,
   externalProviderEmail: null,
   isSensitiveValuesMasked: false,
   createdAt: 1680000000000,

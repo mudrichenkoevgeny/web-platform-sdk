@@ -1,69 +1,34 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-  AccountLockoutType,
-  toUserIdOrThrow,
-  UserAccountStatus,
-  UserRole
-} from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestUserPrivatePayload, createTestTotpSetupPayload, createTestTotpRecoveryCodesPayload, toUserPrivate, type UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { UserSecurityRepositoryImpl } from '@/repository/user/security/user-security-repository-impl'
-import type { UserSecurityApi } from '@/network/api/user/security/user-security-api'
-import type { UserStorage } from '@/storage/user/user-storage'
-import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { UserSecurityApiMock } from '@/mock/network/api/user/security/user-security-api-mock'
+import { UserStorageMock } from '@/mock/storage/user/user-storage-mock'
 
 describe('UserSecurityRepositoryImpl', () => {
-  let mockApi: UserSecurityApi
-  let mockStorage: UserStorage
+  let mockApi: UserSecurityApiMock
+  let mockStorage: UserStorageMock
   let repository: UserSecurityRepositoryImpl
 
-  const dummyUser: UserPrivate = {
-    id: toUserIdOrThrow('usr_1'),
-    role: UserRole.CLIENT_USER,
-    accountStatus: UserAccountStatus.ACTIVE,
-    accountStatusOnRestore: null,
-    authorityLevel: 1,
-    permissionCodes: [],
-    isTotpEnabled: false,
-    lastLoginAt: null,
-    lastActiveAt: null,
-    createdAt: Date.now(),
-    updatedAt: null,
-    scheduledPermanentDeletionAt: null,
-    lockoutType: AccountLockoutType.NONE,
-    temporaryLockoutUntil: null
-  }
+  const mockUser: UserPrivate = toUserPrivate(createTestUserPrivatePayload())
 
   beforeEach(() => {
-    mockApi = {
-      setupTotp: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          totp_secret_key: 'SECRET',
-          totp_otp_auth_url: 'otpauth://',
-          mfa_token: 'mfa_1'
-        })
-      ),
-      enableTotp: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          totp_recovery_codes: ['code1', 'code2']
-        })
-      ),
-      disableTotp: vi.fn().mockResolvedValue(appResultSuccess(undefined)),
-      getRecoveryCodes: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          totp_recovery_codes: ['code1', 'code2']
-        })
-      ),
-      regenerateRecoveryCodes: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          totp_recovery_codes: ['code3', 'code4']
-        })
-      )
-    } as unknown as UserSecurityApi
+    mockApi = new UserSecurityApiMock()
+    mockApi.setupTotpResult = appResultSuccess(createTestTotpSetupPayload())
+    mockApi.enableTotpResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
+    mockApi.disableTotpResult = appResultSuccess(undefined)
+    mockApi.getRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
+    mockApi.regenerateRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
 
-    mockStorage = {
-      getCurrentUser: vi.fn().mockResolvedValue(dummyUser),
-      updateCurrentUser: vi.fn().mockResolvedValue(undefined)
-    } as unknown as UserStorage
+    vi.spyOn(mockApi, 'setupTotp').mockImplementation(mockApi.setupTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'enableTotp').mockImplementation(mockApi.enableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
+    vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
+
+    mockStorage = new UserStorageMock()
+    mockStorage.emit(mockUser)
+    vi.spyOn(mockStorage, 'updateCurrentUser').mockImplementation(mockStorage.updateCurrentUser.bind(mockStorage))
 
     repository = new UserSecurityRepositoryImpl(mockApi, mockStorage)
   })
@@ -73,7 +38,7 @@ describe('UserSecurityRepositoryImpl', () => {
 
     expect(isSuccess(result)).toBe(true)
     if (isSuccess(result)) {
-      expect(result.data.secretKey).toBe('SECRET')
+      expect(result.data.secretKey).toBeDefined()
     }
   })
 

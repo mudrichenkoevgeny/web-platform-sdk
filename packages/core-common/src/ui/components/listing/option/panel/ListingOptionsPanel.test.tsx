@@ -6,7 +6,7 @@ import type { ListingOptionsConfig } from '@/listing/listing-models'
 import { ComponentTestHarness } from '@/testing/ComponentTestHarness'
 
 describe('ListingOptionsPanel', () => {
-  const dummyConfig: ListingOptionsConfig = {
+  const mockConfig: ListingOptionsConfig = {
     sortOptions: [
       { id: 'created_at', title: 'Created Date' }
     ],
@@ -22,7 +22,7 @@ describe('ListingOptionsPanel', () => {
     render(
       <ComponentTestHarness>
         <ListingOptionsPanel
-          config={dummyConfig}
+          config={mockConfig}
           sortState={{ optionId: 'created_at', isAscending: true }}
           filterStates={{}}
           onSortChanged={() => undefined}

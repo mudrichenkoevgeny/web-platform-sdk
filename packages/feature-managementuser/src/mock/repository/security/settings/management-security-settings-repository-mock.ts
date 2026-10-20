@@ -1,50 +1,43 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestManagementSecuritySettingsPayload, toManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSecuritySettingsRepository } from '@/repository/security/settings/management-security-settings-repository'
 
 /** Mock implementation of {@link ManagementSecuritySettingsRepository}. */
 export class ManagementSecuritySettingsRepositoryMock implements ManagementSecuritySettingsRepository {
-  private settings: ManagementSecuritySettings | null = null
+  private settings: ManagementSecuritySettings
   private readonly listeners = new Set<(settings: ManagementSecuritySettings | null) => void>()
 
-  public getManagementSecuritySettingsResult: AppResult<ManagementSecuritySettings, AppError> | null = null
-  public refreshManagementSecuritySettingsResult: AppResult<ManagementSecuritySettings, AppError> | null = null
-  public saveRemoteSecuritySettingsResult: AppResult<void, AppError> | null = null
-  public resetRemoteSecuritySettingsResult: AppResult<ManagementSecuritySettings, AppError> | null = null
+  public resultProvider: () => Promise<AppResult<ManagementSecuritySettings, AppError>> = async () =>
+    appResultSuccess(this.settings)
+
+  public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)
+
+  public resetResultProvider: () => Promise<AppResult<ManagementSecuritySettings, AppError>> = async () =>
+    this.resultProvider()
 
   public constructor(initialSettings?: ManagementSecuritySettings | null) {
-    if (initialSettings) {
-      this.settings = initialSettings
-    }
+    this.settings = initialSettings ?? toManagementSecuritySettings(createTestManagementSecuritySettingsPayload())
   }
 
   public async getManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettings, AppError>> {
-    if (this.getManagementSecuritySettingsResult) {
-      return this.getManagementSecuritySettingsResult
-    }
-    if (this.settings) {
-      return appResultSuccess(this.settings)
-    }
-    return appResultSuccess({} as ManagementSecuritySettings)
+    return this.resultProvider()
   }
 
   public async saveRemoteManagementSecuritySettings(
     securitySettings: ManagementSecuritySettings
   ): Promise<AppResult<void, AppError>> {
-    if (this.saveRemoteSecuritySettingsResult) {
-      return this.saveRemoteSecuritySettingsResult
+    const result = await this.saveResultProvider()
+    if (result.success) {
+      this.settings = securitySettings
+      this.notifyListeners()
     }
-    this.settings = securitySettings
-    this.notifyListeners()
-    return appResultSuccess(undefined)
+    return result
   }
 
   public async refreshManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettings, AppError>> {
-    if (this.refreshManagementSecuritySettingsResult) {
-      return this.refreshManagementSecuritySettingsResult
-    }
-    return this.getManagementSecuritySettings()
+    return this.resultProvider()
   }
 
   public async updateManagementSecuritySettings(securitySettings: ManagementSecuritySettings): Promise<void> {
@@ -53,10 +46,12 @@ export class ManagementSecuritySettingsRepositoryMock implements ManagementSecur
   }
 
   public async resetRemoteManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettings, AppError>> {
-    if (this.resetRemoteSecuritySettingsResult) {
-      return this.resetRemoteSecuritySettingsResult
+    const result = await this.resetResultProvider()
+    if (result.success) {
+      this.settings = result.data
+      this.notifyListeners()
     }
-    return this.getManagementSecuritySettings()
+    return result
   }
 
   public observeManagementSecuritySettings(
@@ -69,7 +64,7 @@ export class ManagementSecuritySettingsRepositoryMock implements ManagementSecur
     }
   }
 
-  public emit(settings: ManagementSecuritySettings | null): void {
+  public emit(settings: ManagementSecuritySettings): void {
     this.settings = settings
     this.notifyListeners()
   }

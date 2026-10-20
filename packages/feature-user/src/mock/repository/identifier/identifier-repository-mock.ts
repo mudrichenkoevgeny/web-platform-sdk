@@ -1,5 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { createTestPagedResult, createTestUserIdentifierPrivate, createTestUserIdentifierSummaryList } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   PagedResult,
   SelfIdentifierListParams,
@@ -9,17 +10,16 @@ import type {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
-import { userIdentifierPrivateMock, userIdentifierSummaryMock } from '@/mock/domain/model/identifier/user-identifier-mock'
 
 /**
  * Mock implementation of {@link IdentifierRepository}.
  */
 export class IdentifierRepositoryMock implements IdentifierRepository {
   public getUserIdentifierResultProvider: (userIdentifierId: UserIdentifierId) => Promise<AppResult<UserIdentifierPrivate, AppError>> = async () =>
-    appResultSuccess(userIdentifierPrivateMock())
+    appResultSuccess(createTestUserIdentifierPrivate())
 
   public getUserIdentifiersResultProvider: () => Promise<AppResult<PagedResult<UserIdentifierSummary>, AppError>> = async () =>
-    appResultSuccess({ items: [userIdentifierSummaryMock()], totalCount: 1, pageNumber: 1, pageSize: 20, totalPages: 1 })
+    appResultSuccess(createTestPagedResult({ items: createTestUserIdentifierSummaryList(2) }))
 
   public deleteUserIdentifierResultProvider: (identifierId: UserIdentifierId) => Promise<AppResult<void, AppError>> = async () =>
     appResultSuccess(undefined)
@@ -28,7 +28,7 @@ export class IdentifierRepositoryMock implements IdentifierRepository {
     appResultSuccess(undefined)
 
   public addUserIdentifierResultProvider: () => Promise<AppResult<UserIdentifierPrivate, AppError>> = async () =>
-    appResultSuccess(userIdentifierPrivateMock())
+    appResultSuccess(createTestUserIdentifierPrivate())
 
   public otpConfirmationResultProvider: () => Promise<AppResult<OtpConfirmation, AppError>> = async () =>
     appResultSuccess({ retryAfterSeconds: 0, numberOfSymbols: 6, expirationSeconds: 300 })

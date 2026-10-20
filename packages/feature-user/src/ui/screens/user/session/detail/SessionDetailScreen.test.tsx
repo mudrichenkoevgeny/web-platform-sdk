@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ClientType, CommonLocales, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, CommonLocales, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_IP_ADDRESS, TEST_SESSION_ID, TEST_USER_AGENT, TEST_USER_ID, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { SessionDetailScreen, SessionDetailTestTags } from '@/ui/screens/user/session/detail/SessionDetailScreen'
@@ -9,12 +9,12 @@ import type { SessionDetailStoreDependencies } from '@/ui/screens/user/session/d
 
 describe('SessionDetailScreen', () => {
   const mockSession: UserSessionPrivate = {
-    id: toUserSessionIdOrThrow('550e8400-e29b-41d4-a716-446655440000'),
-    userId: toUserIdOrThrow('usr_12345'),
+    id: toUserSessionIdOrThrow(TEST_SESSION_ID),
+    userId: toUserIdOrThrow(TEST_USER_ID),
     userRole: UserRole.CLIENT_USER,
-    identifier: 'user@example.com',
-    identifierId: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440000'),
-    identifierDisplayName: 'user@example.com',
+    identifier: TEST_EMAIL,
+    identifierId: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID),
+    identifierDisplayName: TEST_EMAIL,
     identifierAuthProvider: UserAuthProvider.EMAIL,
     clientDeviceInfo: {
       clientType: ClientType.WEB,
@@ -24,8 +24,8 @@ describe('SessionDetailScreen', () => {
       appVersion: '1.0.0',
       operationSystemVersion: 'Windows 11'
     },
-    userAgent: 'Mozilla/5.0',
-    ipAddress: '192.168.1.1',
+    userAgent: TEST_USER_AGENT,
+    ipAddress: TEST_IP_ADDRESS,
     expiresAt: 1700000000000,
     lastAccessedAt: 1690000000000,
     lastReauthenticatedAt: 1690000000000,
@@ -57,7 +57,7 @@ describe('SessionDetailScreen', () => {
     )
 
     expect(screen.getByTestId(SessionDetailTestTags.TITLE).textContent).toBe(userStrings.ui.sessionDetailTitleSession)
-    expect(screen.getByTestId(SessionDetailTestTags.IDENTIFIER_DISPLAY_NAME).textContent).toBe('user@example.com')
+    expect(screen.getByTestId(SessionDetailTestTags.IDENTIFIER_DISPLAY_NAME).textContent).toBe(TEST_EMAIL)
     expect(screen.getByTestId(SessionDetailTestTags.DEVICE_NAME).textContent).toContain('Chrome on Windows')
     expect(screen.getByTestId(SessionDetailTestTags.REVOKE_BUTTON)).not.toBeNull()
   })

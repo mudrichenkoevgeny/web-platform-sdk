@@ -4,8 +4,8 @@ import type { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core
 import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import type { AuthStorage, UserAuthServices } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AuthStorageMock, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { AuthStorage, UserAuthServices, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { AuthStorageMock, createPopulatedUserStorageMock, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ClientUserComponent } from '@/di/client-user-component'
 import type { ClientUserComponentConfig } from '@/di/client-user-component'
 
@@ -22,6 +22,7 @@ export const clientUserComponentMock = (
   const settingsComponent: SettingsComponent = config?.settingsComponent ?? createMockSettingsComponent()
   const securityComponent: SecurityComponent = config?.securityComponent ?? createMockSecurityComponent()
   const authStorage: AuthStorage = config?.authStorage ?? new AuthStorageMock()
+  const userStorage: UserStorage = config?.userStorage ?? createPopulatedUserStorageMock()
   const authServices: UserAuthServices = config?.authServices ?? new UserAuthServicesMock()
 
   return new ClientUserComponent({
@@ -29,6 +30,7 @@ export const clientUserComponentMock = (
     settingsComponent,
     securityComponent,
     authStorage,
+    userStorage,
     authServices,
     ...config
   })

@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
-import { ManagementUsersRoutes, SortOrder, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userPrivatePayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { pagedResultPayloadMock } from '@/mock'
+import { createTestUserPrivatePayload, ManagementUsersRoutes, ManagementUserListParamsParser, UserApiPaths, SortOrder, TEST_EMAIL, TEST_USER_ID, toUserIdOrThrow, createTestPagedResultPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 describe('FetchManagementUserApi', () => {
@@ -17,10 +15,10 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches createUser request', async () => {
-    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
+    const mockPayload = createTestUserPrivatePayload({ id: toUserIdOrThrow(TEST_USER_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const createUserParams: CreateUserParams = { email: 'user@example.com', password: 'secret' }
+    const createUserParams: CreateUserParams = { email: TEST_EMAIL, password: 'secret' }
     const result = await api.createUser(createUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
@@ -31,8 +29,8 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches getUsers request with query params', async () => {
-    const mockPayload = pagedResultPayloadMock()
-    const expectedUserListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
+    const expectedUserListPagedResult = createTestPagedResult({ pageSize: 10 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const params = {
@@ -51,21 +49,24 @@ describe('FetchManagementUserApi', () => {
     }
     const result = await api.getUsers(params)
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(ManagementUsersRoutes.GET_USERS)
+    const expectedUrl = appendQueryParamsToPath(
+      ManagementUsersRoutes.GET_USERS,
+      ManagementUserListParamsParser.toQueryMap(params)
     )
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
     expect(result).toEqual({ success: true, data: expectedUserListPagedResult })
   })
 
   it('dispatches getUser request', async () => {
-    const mockPayload = userPrivatePayloadMock({ id: toUserIdOrThrow('usr_1') })
+    const mockPayload = createTestUserPrivatePayload({ id: toUserIdOrThrow(TEST_USER_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const userId = toUserIdOrThrow('usr_1')
+    const userId = toUserIdOrThrow(TEST_USER_ID)
     const result = await api.getUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('/management/users/usr_1')
+      ManagementUsersRoutes.GET_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID)
     )
     expect(result).toEqual({ success: true, data: mockPayload })
   })
@@ -73,12 +74,12 @@ describe('FetchManagementUserApi', () => {
   it('dispatches updateUser request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const userId = toUserIdOrThrow('usr_1')
+    const userId = toUserIdOrThrow(TEST_USER_ID)
     const updateUserParams: UpdateUserParams = { authorityLevel: 10 }
     const result = await api.updateUser(userId, updateUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('/management/users/usr_1'),
+      ManagementUsersRoutes.UPDATE_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID),
       expect.objectContaining({ method: 'PATCH' })
     )
     expect(result).toEqual({ success: true, data: undefined })
@@ -87,11 +88,11 @@ describe('FetchManagementUserApi', () => {
   it('dispatches deleteUser request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const userId = toUserIdOrThrow('usr_1')
+    const userId = toUserIdOrThrow(TEST_USER_ID)
     const result = await api.deleteUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining('/management/users/usr_1'),
+      ManagementUsersRoutes.DELETE_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })

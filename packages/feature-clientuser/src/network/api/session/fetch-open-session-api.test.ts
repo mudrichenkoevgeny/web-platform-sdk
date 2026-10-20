@@ -1,24 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
-import { OpenSessionRoutes, selfSessionListParamsSchema, SortOrder, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import {
+  OpenSessionRoutes,
+  selfSessionListParamsSchema,
+  SortOrder,
+  TEST_SESSION_ID,
+  TEST_USER_ID_2,
+  toUserSessionIdOrThrow,
+  createTestUserSessionPrivatePayload,
+  createTestPagedResultPayload,
+  createTestPagedResult
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenSessionApi', () => {
-  let mockHttpClient: HttpClient
+  let mockHttpClient: HttpClientMock
   let api: FetchOpenSessionApi
 
   beforeEach(() => {
-    mockHttpClient = {
-      request: vi.fn()
-    } as unknown as HttpClient
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
     api = new FetchOpenSessionApi(mockHttpClient)
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const dummyPayload = { items: [], total_count: 0, page_number: 1, page_size: 10, total_pages: 0 } as any
-    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockPagedResultPayload = createTestPagedResultPayload({
+      items: [],
+      total_count: 0,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 0
+    })
+    const expectedData = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPagedResultPayload)
 
     const result = await api.getSessions(
       selfSessionListParamsSchema.parse({
@@ -47,16 +61,16 @@ describe('FetchOpenSessionApi', () => {
   })
 
   it('dispatches getSession request', async () => {
-    const dummyPayload = userSessionPayloadMock({ id: toUserSessionIdOrThrow('sess_1') })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockSessionPayload = createTestUserSessionPrivatePayload({ id: toUserSessionIdOrThrow(TEST_SESSION_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionPayload)
 
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const result = await api.getSession(id)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenSessionRoutes.GET_SESSION.replace('{session_id}', 'sess_1')
+      OpenSessionRoutes.GET_SESSION.replace('{session_id}', TEST_SESSION_ID)
     )
-    expect(result).toEqual({ success: true, data: dummyPayload })
+    expect(result).toEqual({ success: true, data: mockSessionPayload })
   })
 
   it('dispatches logout request', async () => {
@@ -74,19 +88,19 @@ describe('FetchOpenSessionApi', () => {
   it('dispatches deleteSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const result = await api.deleteSession(id)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenSessionRoutes.DELETE_SESSION.replace('{session_id}', 'sess_1'),
+      OpenSessionRoutes.DELETE_SESSION.replace('{session_id}', TEST_SESSION_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
-    const dummyPayload = { deleted_session_ids: ['sess_2'] }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(dummyPayload)
+    const mockDeletedSessionsPayload = { deleted_session_ids: [TEST_USER_ID_2] }
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockDeletedSessionsPayload)
 
     const result = await api.deleteAllOtherSessions()
 
@@ -94,7 +108,7 @@ describe('FetchOpenSessionApi', () => {
       OpenSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow('sess_2')] } })
+    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow(TEST_USER_ID_2)] } })
   })
 
   it('dispatches reauthenticateSession request', async () => {

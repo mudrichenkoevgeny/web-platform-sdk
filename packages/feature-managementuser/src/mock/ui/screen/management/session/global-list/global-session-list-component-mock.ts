@@ -1,25 +1,19 @@
-import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userSessionMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ManagementGetSessionsUseCaseMock } from '@/mock/usecase/session/management-get-sessions-use-case-mock'
+import { ManagementDeleteSessionUseCaseMock } from '@/mock/usecase/session/management-delete-session-use-case-mock'
 import type { GlobalSessionListStoreDependencies } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
 
 export const globalSessionListDependenciesMock = (
   overrides?: Partial<GlobalSessionListStoreDependencies>
-): GlobalSessionListStoreDependencies => ({
-  managementGetSessionsUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userSessionMock()],
-        pageNumber: 1,
-        pageSize: 20,
-        totalItems: 1,
-        totalPages: 1
-      })
-  } as unknown as GlobalSessionListStoreDependencies['managementGetSessionsUseCase'],
-  managementDeleteSessionUseCase: {
-    execute: async () => appResultSuccess({})
-  } as unknown as GlobalSessionListStoreDependencies['managementDeleteSessionUseCase'],
-  onNavigateToSessionDetail: () => {},
-  onNavigateToUserDetail: () => {},
-  onBack: () => {},
-  ...overrides
-})
+): GlobalSessionListStoreDependencies => {
+  const managementGetSessionsUseCase = new ManagementGetSessionsUseCaseMock()
+  const managementDeleteSessionUseCase = new ManagementDeleteSessionUseCaseMock()
+
+  return {
+    managementGetSessionsUseCase,
+    managementDeleteSessionUseCase,
+    onNavigateToSessionDetail: () => {},
+    onNavigateToUserDetail: () => {},
+    onBack: () => {},
+    ...overrides
+  }
+}

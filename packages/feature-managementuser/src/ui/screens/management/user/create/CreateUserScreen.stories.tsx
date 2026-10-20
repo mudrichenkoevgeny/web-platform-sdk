@@ -1,15 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { CreateUserScreen } from '@/ui/screens/management/user/create/CreateUserScreen'
-import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
-
-const createMockDeps = (): CreateUserStoreDependencies => ({
-  createUserUseCase: {
-    execute: async () => ({ isSuccess: true, data: undefined })
-  } as unknown as CreateUserStoreDependencies['createUserUseCase'],
-  onSuccess: () => {},
-  onBack: () => {}
-})
+import { createUserDependenciesMock } from '@/mock/ui/screen/management/user/create/create-user-component-mock'
 
 const meta: Meta<typeof CreateUserScreen> = {
   title: 'Feature/ManagementUser/User/CreateUserScreen',
@@ -22,7 +14,7 @@ const meta: Meta<typeof CreateUserScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: createUserDependenciesMock()
   }
 }
 

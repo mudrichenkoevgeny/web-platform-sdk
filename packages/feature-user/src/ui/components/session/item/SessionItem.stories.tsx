@@ -1,7 +1,7 @@
+import { createTestUserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SessionItem } from '@/ui/components/session/item/SessionItem'
-import { userSessionMock } from '@/mock/domain/model/session/user-session-mock'
 
 const meta: Meta<typeof SessionItem> = {
   title: 'Feature/User/Session/SessionItem',
@@ -16,7 +16,7 @@ const meta: Meta<typeof SessionItem> = {
     )
   ],
   args: {
-    session: userSessionMock(),
+    session: createTestUserSessionPrivate(),
     enabled: true
   }
 }

@@ -1,32 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
-import type { LoginByTotpStoreDependencies } from '@/ui/screens/auth/login/totp/login-by-totp-store'
-
-const createMockDeps = (): LoginByTotpStoreDependencies => ({
-  mfaToken: 'mock_mfa_token',
-  loginByTotpUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        userDetails: {
-          id: 'usr_123',
-          accountStatus: 'ACTIVE'
-        }
-      })
-  } as any,
-  loginByTotpRecoveryCodeUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        userDetails: {
-          id: 'usr_123',
-          accountStatus: 'ACTIVE'
-        }
-      })
-  } as any,
-  onNavigateToPendingDeletion: () => {},
-  onBack: () => {},
-  onFinished: () => {}
-})
+import { loginByTotpDependenciesMock } from '@/mock/ui/screen/auth/login/totp/login-by-totp-component-mock'
 
 const meta: Meta<typeof LoginByTotpScreen> = {
   title: 'Feature/User/Auth/Login/TOTP/LoginByTotpScreen',
@@ -41,7 +16,7 @@ const meta: Meta<typeof LoginByTotpScreen> = {
     )
   ],
   args: {
-    dependencies: createMockDeps()
+    dependencies: loginByTotpDependenciesMock()
   }
 }
 

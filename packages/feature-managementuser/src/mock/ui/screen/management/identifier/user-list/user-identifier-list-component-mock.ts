@@ -1,22 +1,17 @@
-import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userIdentifierMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { TEST_USER_ID, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementGetIdentifiersUseCaseMock } from '@/mock/usecase/identifier/management-get-identifiers-use-case-mock'
 import type { UserIdentifierListStoreDependencies } from '@/ui/screens/management/identifier/user-list/UserIdentifierListStore'
 
 export const userIdentifierListDependenciesMock = (
   overrides?: Partial<UserIdentifierListStoreDependencies>
-): UserIdentifierListStoreDependencies => ({
-  userId: 'usr_123' as any,
-  managementGetIdentifiersUseCase: {
-    execute: async () =>
-      appResultSuccess({
-        items: [userIdentifierMock()],
-        pageNumber: 1,
-        pageSize: 20,
-        totalItems: 1,
-        totalPages: 1
-      })
-  } as any,
-  onIdentifierSelect: () => {},
-  onBack: () => {},
-  ...overrides
-})
+): UserIdentifierListStoreDependencies => {
+  const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
+
+  return {
+    userId: toUserIdOrThrow(TEST_USER_ID),
+    managementGetIdentifiersUseCase,
+    onIdentifierSelect: () => {},
+    onBack: () => {},
+    ...overrides
+  }
+}

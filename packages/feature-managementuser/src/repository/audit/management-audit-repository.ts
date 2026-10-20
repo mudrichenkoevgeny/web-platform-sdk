@@ -1,15 +1,10 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AuditActorType,
   AuditEventId,
   AuditEventPrivate,
-  AuditEventSortBy,
   AuditEventSummary,
-  AuditStatus,
   ManagementAuditEventListParams,
-  PagedResult,
-  SortOrder,
-  UserRole
+  PagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
@@ -19,22 +14,11 @@ export interface ManagementAuditRepository {
   /**
    * Retrieves a paginated list of domain audit event summaries.
    *
-   * @param params - Management audit event list parameters or pageNumber
+   * @param params - Management audit event list parameters
    * @returns Paginated result containing domain audit event summaries, or a failure
    */
   getAuditEvents(
-    params?: ManagementAuditEventListParams | number | null,
-    pageSize?: number | null,
-    sortBy?: AuditEventSortBy | null,
-    sortOrder?: SortOrder | null,
-    actorIds?: string[] | null,
-    actorTypes?: AuditActorType[] | null,
-    actorUserRoles?: UserRole[] | null,
-    actions?: string[] | null,
-    resources?: string[] | null,
-    resourceIds?: string[] | null,
-    statuses?: AuditStatus[] | null,
-    messages?: string[] | null
+    params?: ManagementAuditEventListParams | null
   ): Promise<AppResult<PagedResult<AuditEventSummary>, AppError>>
 
   /**

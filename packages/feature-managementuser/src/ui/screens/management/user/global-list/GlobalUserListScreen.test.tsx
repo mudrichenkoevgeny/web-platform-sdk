@@ -1,27 +1,30 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userDetailsMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ListingDefaultValues, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestPagedResult, createTestUserSummaryList, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { GlobalUserListScreen, GlobalUserListTestTags } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
+import { globalUserListDependenciesMock } from '@/mock/ui/screen/management/user/global-list/global-user-list-component-mock'
+import { GetUsersUseCaseMock } from '@/mock/usecase/user/get-users-use-case-mock'
 import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
 
 describe('GlobalUserListScreen', () => {
-  const createMockDeps = (): GlobalUserListStoreDependencies => ({
-    getUsersUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess({
-          items: [userDetailsMock()],
-          pageNumber: ListingDefaultValues.Pagination.PAGE_NUMBER,
-          totalPages: 1,
-          totalCount: 1
+  const createMockDeps = (): GlobalUserListStoreDependencies => {
+    const getUsersUseCase = new GetUsersUseCaseMock()
+    getUsersUseCase.resultProvider = async () =>
+      appResultSuccess(
+        createTestPagedResult({
+          items: createTestUserSummaryList(1)
         })
       )
-    },
-    onNavigateToUserDetail: vi.fn(),
-    onNavigateToCreateUser: vi.fn(),
-    onBack: vi.fn()
-  })
+    vi.spyOn(getUsersUseCase, 'execute').mockImplementation(getUsersUseCase.execute.bind(getUsersUseCase))
+
+    return globalUserListDependenciesMock({
+      getUsersUseCase,
+      onNavigateToUserDetail: vi.fn(),
+      onNavigateToCreateUser: vi.fn(),
+      onBack: vi.fn()
+    })
+  }
 
   it('renders global user list screen', async () => {
     const deps = createMockDeps()
@@ -54,7 +57,10 @@ describe('GlobalUserListScreen', () => {
   })
 
   it('navigates to user detail when clicking own user card', async () => {
-    const mockUser = userDetailsMock()
+    const users = createTestUserSummaryList(1)
+    const mockUser = users.at(0)
+    if (!mockUser) throw new Error('Mock user required')
+
     const deps = createMockDeps()
     deps.currentUserId = mockUser.id
 

@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
-import { WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppResult, AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { appResultSuccess, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenGlobalSettingsRepositoryImpl } from '@/repository/open-global-settings-repository-impl'
 import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
 import { EncryptedOpenGlobalSettingsStorage } from '@/storage/global-settings/encrypted-open-global-settings-storage'
 import { toOpenGlobalSettings } from '@/domain/model/open-global-settings'
 import { SettingsWebSocketEventTypes } from '@/network/contract/settings-web-socket-event-types'
+
 describe('OpenGlobalSettingsRepositoryImpl', () => {
   const samplePayload: OpenGlobalSettingsPayload = {
     privacy_policy_url: 'https://example.com/privacy',
@@ -24,7 +25,7 @@ describe('OpenGlobalSettingsRepositoryImpl', () => {
     public getOpenGlobalSettingsCallCount = 0
     public async getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettingsPayload, AppError>> {
       this.getOpenGlobalSettingsCallCount++
-      return { success: true, data: samplePayload }
+      return appResultSuccess(samplePayload)
     }
   }
 

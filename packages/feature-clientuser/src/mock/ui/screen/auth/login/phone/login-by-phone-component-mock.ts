@@ -1,27 +1,41 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestAuthData, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  LoginRepositoryMock,
+  LoginByPhoneUseCaseMock,
+  SendLoginConfirmationToPhoneUseCaseMock
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
 
 export const loginByPhoneDependenciesMock = (
   overrides?: Partial<LoginByPhoneStoreDependencies>
-): LoginByPhoneStoreDependencies => ({
-  loginRepository: {
-    getRemainingLoginConfirmationDelayInSeconds: () => 0
-  } as any,
-  sendLoginConfirmationToPhoneUseCase: {
-    execute: async () => appResultSuccess({ retryAfterSeconds: 60 })
-  } as any,
-  loginByPhoneUseCase: {
-    execute: async () => appResultSuccess({
-      userPrivate: {
-        id: 'usr_123',
-        accountStatus: 'ACTIVE'
-      }
-    })
-  } as any,
-  onNavigateToTotp: () => {},
-  onNavigateToPendingDeletion: () => {},
-  onNavigateToAccountUnlock: () => {},
-  onBack: () => {},
-  onFinished: () => {},
-  ...overrides
-})
+): LoginByPhoneStoreDependencies => {
+  const loginRepository = new LoginRepositoryMock()
+  loginRepository.remainingDelayProvider = () => 0
+
+  const sendLoginConfirmationToPhoneUseCase = new SendLoginConfirmationToPhoneUseCaseMock()
+  sendLoginConfirmationToPhoneUseCase.resultProvider = async () =>
+    appResultSuccess({ retryAfterSeconds: 60, numberOfSymbols: 6, expirationSeconds: 300 })
+
+  const loginByPhoneUseCase = new LoginByPhoneUseCaseMock()
+  loginByPhoneUseCase.resultProvider = async () =>
+    appResultSuccess(
+      createTestAuthData({
+        userPrivate: {
+          accountStatus: UserAccountStatus.ACTIVE
+        }
+      })
+    )
+
+  return {
+    loginRepository,
+    sendLoginConfirmationToPhoneUseCase,
+    loginByPhoneUseCase,
+    onNavigateToTotp: () => {},
+    onNavigateToPendingDeletion: () => {},
+    onNavigateToAccountUnlock: () => {},
+    onBack: () => {},
+    onFinished: () => {},
+    ...overrides
+  }
+}

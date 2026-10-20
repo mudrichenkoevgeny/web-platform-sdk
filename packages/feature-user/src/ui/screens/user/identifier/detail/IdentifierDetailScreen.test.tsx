@@ -1,40 +1,49 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_USER_ID, toUserIdentifierIdOrThrow, toUserIdOrThrow, UserAuthProvider, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { IdentifierDetailScreen, IdentifierDetailTestTags } from '@/ui/screens/user/identifier/detail/IdentifierDetailScreen'
+import { DeleteUserIdentifierUseCaseMock } from '@/mock/usecase/identifier/delete-user-identifier-use-case-mock'
+import { EmailChangePasswordUseCaseMock } from '@/mock/usecase/identifier/email-change-password-use-case-mock'
+import { GetUserIdentifierUseCaseMock } from '@/mock/usecase/identifier/get-user-identifier-use-case-mock'
 import type { IdentifierDetailStoreDependencies } from '@/ui/screens/user/identifier/detail/identifier-detail-store'
 
 describe('IdentifierDetailScreen', () => {
   const mockIdentifier: UserIdentifierPrivate = {
-    id: toUserIdentifierIdOrThrow('660e8400-e29b-41d4-a716-446655440001'),
-    userId: toUserIdOrThrow('usr_12345'),
+    id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID),
+    userId: toUserIdOrThrow(TEST_USER_ID),
     userAuthProvider: UserAuthProvider.EMAIL,
-    identifier: 'user@example.com',
-    displayName: 'user@example.com',
+    identifier: TEST_EMAIL,
+    displayName: TEST_EMAIL,
     externalProviderEmail: null,
     isSensitiveValuesMasked: false,
     createdAt: 1680000000000,
     updatedAt: null
   }
 
-  const createMockDeps = (isCurrent = false): IdentifierDetailStoreDependencies => ({
-    identifier: mockIdentifier,
-    isCurrentIdentifier: isCurrent,
-    deleteUserIdentifierUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    },
-    emailChangePasswordUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    },
-    deletePassword: vi.fn().mockResolvedValue(undefined),
-    onIdentifierDeleted: vi.fn(),
-    onNavigateToUserDetail: vi.fn(),
-    onNavigateToUserMain: vi.fn(),
-    onBack: vi.fn()
-  })
+  const createMockDeps = (isCurrent = false): IdentifierDetailStoreDependencies => {
+    const deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCaseMock()
+    deleteUserIdentifierUseCase.resultProvider = async () => appResultSuccess(undefined)
+    vi.spyOn(deleteUserIdentifierUseCase, 'execute').mockImplementation(deleteUserIdentifierUseCase.execute.bind(deleteUserIdentifierUseCase))
+
+    const emailChangePasswordUseCase = new EmailChangePasswordUseCaseMock()
+    emailChangePasswordUseCase.resultProvider = async () => appResultSuccess(undefined)
+    vi.spyOn(emailChangePasswordUseCase, 'execute').mockImplementation(emailChangePasswordUseCase.execute.bind(emailChangePasswordUseCase))
+
+    return {
+      identifier: mockIdentifier,
+      isCurrentIdentifier: isCurrent,
+      deleteUserIdentifierUseCase,
+      emailChangePasswordUseCase,
+      deletePassword: vi.fn().mockResolvedValue(undefined),
+      onIdentifierDeleted: vi.fn(),
+      onNavigateToUserDetail: vi.fn(),
+      onNavigateToUserMain: vi.fn(),
+      onBack: vi.fn()
+    }
+  }
 
   it('renders identifier detail card and buttons', () => {
     const deps = createMockDeps(false)
@@ -132,12 +141,14 @@ describe('IdentifierDetailScreen', () => {
   })
 
   it('detects own identifier when fetching via getUserIdentifierUseCase and currentUserId matches', async () => {
+    const getUserIdentifierUseCase = new GetUserIdentifierUseCaseMock()
+    getUserIdentifierUseCase.resultProvider = async () => appResultSuccess(mockIdentifier)
+    vi.spyOn(getUserIdentifierUseCase, 'execute').mockImplementation(getUserIdentifierUseCase.execute.bind(getUserIdentifierUseCase))
+
     const deps: IdentifierDetailStoreDependencies = {
       identifierId: mockIdentifier.id,
       currentUserId: mockIdentifier.userId,
-      getUserIdentifierUseCase: {
-        execute: vi.fn().mockResolvedValue(appResultSuccess(mockIdentifier))
-      },
+      getUserIdentifierUseCase,
       onBack: vi.fn()
     }
 
@@ -148,6 +159,6 @@ describe('IdentifierDetailScreen', () => {
     )
 
     expect(await screen.findByTestId(IdentifierDetailTestTags.TITLE)).not.toBeNull()
-    expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).toBeNull()
+    expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).not.toBeNull()
   })
 })

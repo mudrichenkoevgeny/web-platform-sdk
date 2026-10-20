@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
-import { SelfManagementSessionRoutes, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { userSessionPayloadMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { pagedResultPayloadMock } from '@/mock'
+import { SelfManagementSessionRoutes, SelfSessionListParamsParser, TEST_SESSION_ID, TEST_USER_ID_2, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestPagedResultPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementSessionApi', () => {
   let mockHttpClient: HttpClientMock
@@ -16,27 +14,47 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const mockPayload = pagedResultPayloadMock()
-    const expectedSessionListPagedResult = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
+    const expectedSessionListPagedResult = createTestPagedResult({ pageSize: 10 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const result = await api.getSessions(1, 10)
+    const params = {
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at' as const,
+      sortOrder: 'desc' as const,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    }
+    const result = await api.getSessions(params)
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(SelfManagementSessionRoutes.GET_SESSIONS)
+    const expectedUrl = appendQueryParamsToPath(
+      SelfManagementSessionRoutes.GET_SESSIONS,
+      SelfSessionListParamsParser.toQueryMap(params)
     )
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
     expect(result).toEqual({ success: true, data: expectedSessionListPagedResult })
   })
 
   it('dispatches getSession request', async () => {
-    const mockPayload = userSessionPayloadMock({ id: toUserSessionIdOrThrow('sess_1') })
+    const mockPayload = createTestUserSessionPrivatePayload({ id: toUserSessionIdOrThrow(TEST_SESSION_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const result = await api.getSession(id)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      SelfManagementSessionRoutes.GET_SESSION.replace('{session_id}', 'sess_1')
+      SelfManagementSessionRoutes.GET_SESSION.replace('{session_id}', TEST_SESSION_ID)
     )
     expect(result).toEqual({ success: true, data: mockPayload })
   })
@@ -56,18 +74,18 @@ describe('FetchSelfManagementSessionApi', () => {
   it('dispatches deleteSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const id = toUserSessionIdOrThrow('sess_1')
+    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
     const result = await api.deleteSession(id)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
-      SelfManagementSessionRoutes.DELETE_SESSION.replace('{session_id}', 'sess_1'),
+      SelfManagementSessionRoutes.DELETE_SESSION.replace('{session_id}', TEST_SESSION_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
     expect(result).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
-    const mockPayload = { deleted_session_ids: ['sess_2'] }
+    const mockPayload = { deleted_session_ids: [TEST_USER_ID_2] }
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.deleteAllOtherSessions()
@@ -76,7 +94,7 @@ describe('FetchSelfManagementSessionApi', () => {
       SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow('sess_2')] } })
+    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow(TEST_USER_ID_2)] } })
   })
 
   it('dispatches reauthenticateSession request', async () => {
