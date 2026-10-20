@@ -28,8 +28,7 @@ describe('OpenUserSecurityRepositoryImpl', () => {
     vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
     vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
 
-    mockStorage = new UserStorageMock()
-    mockStorage.emit(mockUser)
+    mockStorage = new UserStorageMock({ initialUser: mockUser })
     vi.spyOn(mockStorage, 'updateCurrentUser').mockImplementation(mockStorage.updateCurrentUser.bind(mockStorage))
 
     repository = new OpenUserSecurityRepositoryImpl(mockApi, mockStorage)

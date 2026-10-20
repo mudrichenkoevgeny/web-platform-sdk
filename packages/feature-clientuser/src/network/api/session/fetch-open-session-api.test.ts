@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
 import {
   OpenSessionRoutes,
+  SelfSessionListParamsParser,
   selfSessionListParamsSchema,
   SortOrder,
   TEST_SESSION_ID,
   TEST_USER_ID_2,
   toUserSessionIdOrThrow,
   createTestUserSessionPrivatePayload,
-  createTestPagedResultPayload,
   createTestPagedResult
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -24,39 +24,41 @@ describe('FetchOpenSessionApi', () => {
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const mockPagedResultPayload = createTestPagedResultPayload({
+    const mockPagedResultPayload = createTestPagedResult({
       items: [],
-      total_count: 0,
-      page_number: 1,
-      page_size: 10,
-      total_pages: 0
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 0
     })
     const expectedData = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPagedResultPayload)
 
-    const result = await api.getSessions(
-      selfSessionListParamsSchema.parse({
-        pageNumber: 1,
-        pageSize: 10,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        identifiers: [],
-        identifierIds: [],
-        userAuthProviders: [],
-        clientTypes: [],
-        userAgents: [],
-        ipAddresses: [],
-        languages: [],
-        deviceIds: [],
-        deviceNames: [],
-        appVersions: [],
-        osVersions: []
-      })
+    const params = selfSessionListParamsSchema.parse({
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at',
+      sortOrder: SortOrder.DESC,
+      identifiers: [],
+      identifierIds: [],
+      userAuthProviders: [],
+      clientTypes: [],
+      userAgents: [],
+      ipAddresses: [],
+      languages: [],
+      deviceIds: [],
+      deviceNames: [],
+      appVersions: [],
+      osVersions: []
+    })
+    const result = await api.getSessions(params)
+
+    const expectedUrl = appendQueryParamsToPath(
+      OpenSessionRoutes.GET_SESSIONS,
+      SelfSessionListParamsParser.toQueryMap(params)
     )
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(OpenSessionRoutes.GET_SESSIONS)
-    )
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
     expect(result).toEqual({ success: true, data: expectedData })
   })
 

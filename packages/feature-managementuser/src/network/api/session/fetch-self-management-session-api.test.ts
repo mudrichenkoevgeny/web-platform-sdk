@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
-import { SelfManagementSessionRoutes, SelfSessionListParamsParser, TEST_SESSION_ID, TEST_USER_ID_2, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestPagedResultPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementSessionRoutes, SelfSessionListParamsParser, SortOrder, TEST_SESSION_ID, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementSessionApi', () => {
   let mockHttpClient: HttpClientMock
   let api: FetchSelfManagementSessionApi
+
+  const TEST_SESSION_ID_2 = 'sess_456'
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
@@ -14,15 +16,15 @@ describe('FetchSelfManagementSessionApi', () => {
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
+    const mockSessionListPayload = createTestPagedResult({ pageSize: 10 })
     const expectedSessionListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionListPayload)
 
-    const params = {
+    const selfSessionListParams = {
       pageNumber: 1,
       pageSize: 10,
       sortBy: 'created_at' as const,
-      sortOrder: 'desc' as const,
+      sortOrder: SortOrder.DESC,
       identifiers: [],
       identifierIds: [],
       userAuthProviders: [],
@@ -35,77 +37,77 @@ describe('FetchSelfManagementSessionApi', () => {
       appVersions: [],
       osVersions: []
     }
-    const result = await api.getSessions(params)
+    const selfSessionListResult = await api.getSessions(selfSessionListParams)
 
     const expectedUrl = appendQueryParamsToPath(
       SelfManagementSessionRoutes.GET_SESSIONS,
-      SelfSessionListParamsParser.toQueryMap(params)
+      SelfSessionListParamsParser.toQueryMap(selfSessionListParams)
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(result).toEqual({ success: true, data: expectedSessionListPagedResult })
+    expect(selfSessionListResult).toEqual({ success: true, data: expectedSessionListPagedResult })
   })
 
   it('dispatches getSession request', async () => {
-    const mockPayload = createTestUserSessionPrivatePayload({ id: toUserSessionIdOrThrow(TEST_SESSION_ID) })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const mockSessionPayload = createTestUserSessionPrivatePayload({ id: toUserSessionIdOrThrow(TEST_SESSION_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionPayload)
 
-    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
-    const result = await api.getSession(id)
+    const sessionId = toUserSessionIdOrThrow(TEST_SESSION_ID)
+    const sessionResult = await api.getSession(sessionId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.GET_SESSION.replace('{session_id}', TEST_SESSION_ID)
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(sessionResult).toEqual({ success: true, data: mockSessionPayload })
   })
 
   it('dispatches logout request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.logout()
+    const logoutResult = await api.logout()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.LOGOUT,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(logoutResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const id = toUserSessionIdOrThrow(TEST_SESSION_ID)
-    const result = await api.deleteSession(id)
+    const sessionId = toUserSessionIdOrThrow(TEST_SESSION_ID)
+    const deleteSessionResult = await api.deleteSession(sessionId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.DELETE_SESSION.replace('{session_id}', TEST_SESSION_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(deleteSessionResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deleteAllOtherSessions request', async () => {
-    const mockPayload = { deleted_session_ids: [TEST_USER_ID_2] }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const mockDeletedSessionsPayload = { deleted_session_ids: [TEST_SESSION_ID_2] }
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockDeletedSessionsPayload)
 
-    const result = await api.deleteAllOtherSessions()
+    const deleteAllOtherSessionsResult = await api.deleteAllOtherSessions()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.DELETE_ALL_OTHER_SESSIONS,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow(TEST_USER_ID_2)] } })
+    expect(deleteAllOtherSessionsResult).toEqual({ success: true, data: { deletedSessionIds: [toUserSessionIdOrThrow(TEST_SESSION_ID_2)] } })
   })
 
   it('dispatches reauthenticateSession request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.reauthenticateSession('mfa123', '123456')
+    const reauthenticateResult = await api.reauthenticateSession('mfa123', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementSessionRoutes.REAUTHENTICATE_SESSION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa123', totp_code: '123456' }) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(reauthenticateResult).toEqual({ success: true, data: undefined })
   })
 })

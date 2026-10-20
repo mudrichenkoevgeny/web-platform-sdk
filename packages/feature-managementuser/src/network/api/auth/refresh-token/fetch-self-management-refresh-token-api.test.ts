@@ -17,16 +17,16 @@ describe('FetchSelfManagementRefreshTokenApi', () => {
     const mockSessionTokenPayload = createTestSessionTokenPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionTokenPayload)
 
-    const request = { refreshToken: 'refresh_token_123' }
-    const result = await api.refreshToken(request)
+    const refreshTokenRequest = { refresh_token: 'refresh_token_123' }
+    const refreshTokenResult = await api.refreshToken(refreshTokenRequest)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementRefreshTokenRoutes.REFRESH_TOKEN,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify(request)
+        body: JSON.stringify(refreshTokenRequest)
       })
     )
-    expect(result).toEqual({ success: true, data: mockSessionTokenPayload })
+    expect(refreshTokenResult).toEqual({ success: true, data: mockSessionTokenPayload })
   })
 })

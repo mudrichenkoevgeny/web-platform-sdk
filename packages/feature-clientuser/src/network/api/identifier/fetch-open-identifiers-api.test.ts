@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenIdentifiersApi, OPEN_IDENTIFIER_DELETE_PASSWORD_ROUTE } from '@/network/api/identifier/fetch-open-identifiers-api'
-import { createTestUserIdentifierPrivatePayload, OpenIdentifierRoutes, selfIdentifierListParamsSchema, SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, createTestPagedResultPayload, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserIdentifierPrivatePayload, OpenIdentifierRoutes, SelfIdentifierListParamsParser, selfIdentifierListParamsSchema, SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, createTestPagedResult, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenIdentifiersApi', () => {
   let mockHttpClient: HttpClientMock
@@ -27,24 +27,26 @@ describe('FetchOpenIdentifiersApi', () => {
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
-    const mockPayload = createTestPagedResultPayload({ page_size: 10 })
-    const expectedData = { items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 }
+    const mockPayload = createTestPagedResult({ pageSize: 10 })
+    const expectedData = createTestPagedResult({ pageSize: 10 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const result = await api.getUserIdentifiers(
-      selfIdentifierListParamsSchema.parse({
-        pageNumber: 1,
-        pageSize: 10,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        userAuthProviders: [],
-        identifiers: []
-      })
+    const params = selfIdentifierListParamsSchema.parse({
+      pageNumber: 1,
+      pageSize: 10,
+      sortBy: 'created_at',
+      sortOrder: SortOrder.DESC,
+      userAuthProviders: [],
+      identifiers: []
+    })
+    const result = await api.getUserIdentifiers(params)
+
+    const expectedUrl = appendQueryParamsToPath(
+      OpenIdentifierRoutes.GET_IDENTIFIERS,
+      SelfIdentifierListParamsParser.toQueryMap(params)
     )
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      expect.stringContaining(OpenIdentifierRoutes.GET_IDENTIFIERS)
-    )
+    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
     expect(result).toEqual({ success: true, data: expectedData })
   })
 

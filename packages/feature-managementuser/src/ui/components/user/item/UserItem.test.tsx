@@ -17,11 +17,11 @@ describe('UserItem', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText(userDetails.id)).toBeDefined()
+    expect(screen.getByText(String(userDetails.id))).toBeDefined()
     expect(screen.getByText(`${userStrings.ui.userRole}: ${userDetails.role}`)).toBeDefined()
     expect(screen.getByText(`${userStrings.ui.userAccountStatus}: ${userDetails.accountStatus}`)).toBeDefined()
 
-    const item = screen.getByTestId(`UserItem_${userDetails.id}`)
+    const item = screen.getByTestId(`UserItem_${String(userDetails.id)}`)
     await user.click(item)
 
     expect(onClick).toHaveBeenCalledTimes(1)

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementSecuritySettingsApi } from '@/network/api/security/settings/fetch-management-security-settings-api'
-import { ManagementSecuritySettingsRoutes, createTestAccountLockoutPolicyPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementSecuritySettingsRoutes, createTestManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementSecuritySettingsApi', () => {
   let mockHttpClient: HttpClientMock
@@ -14,48 +14,40 @@ describe('FetchManagementSecuritySettingsApi', () => {
   })
 
   it('dispatches getManagementSecuritySettings request', async () => {
-    const mockSettingsPayload = {
-      password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false },
-      account_lockout_policy: createTestAccountLockoutPolicyPayload(),
-      otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 }
-    }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSettingsPayload)
+    const mockSecuritySettingsPayload = createTestManagementSecuritySettingsPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSecuritySettingsPayload)
 
-    const result = await api.getManagementSecuritySettings()
+    const securitySettingsResult = await api.getManagementSecuritySettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementSecuritySettingsRoutes.GET_MANAGEMENT_SECURITY_SETTINGS
     )
-    expect(result).toEqual({ success: true, data: mockSettingsPayload })
+    expect(securitySettingsResult).toEqual({ success: true, data: mockSecuritySettingsPayload })
   })
 
   it('dispatches updateManagementSecuritySettings request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = { password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false }, account_lockout_policy: createTestAccountLockoutPolicyPayload(), otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 } }
-    const result = await api.updateManagementSecuritySettings(request)
+    const updateSecuritySettingsRequest = createTestManagementSecuritySettingsPayload()
+    const updateSecuritySettingsResult = await api.updateManagementSecuritySettings(updateSecuritySettingsRequest)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementSecuritySettingsRoutes.UPDATE_MANAGEMENT_SECURITY_SETTINGS,
-      expect.objectContaining({ method: 'PUT', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'PUT', body: JSON.stringify(updateSecuritySettingsRequest) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(updateSecuritySettingsResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches resetManagementSecuritySettings request', async () => {
-    const mockSettingsPayload = {
-      password_policy: { min_length: 8, require_letter: true, require_upper_case: true, require_lower_case: true, require_digit: true, require_special_char: false },
-      account_lockout_policy: createTestAccountLockoutPolicyPayload(),
-      otp_confirmation: { retry_after_seconds: 60, number_of_symbols: 6, expiration_seconds: 300 }
-    }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSettingsPayload)
+    const mockSecuritySettingsPayload = createTestManagementSecuritySettingsPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSecuritySettingsPayload)
 
-    const result = await api.resetManagementSecuritySettings()
+    const resetSecuritySettingsResult = await api.resetManagementSecuritySettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementSecuritySettingsRoutes.RESET_MANAGEMENT_SECURITY_SETTINGS,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockSettingsPayload })
+    expect(resetSecuritySettingsResult).toEqual({ success: true, data: mockSecuritySettingsPayload })
   })
 })

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuthSettingsApi } from '@/network/api/auth/settings/fetch-management-auth-settings-api'
-import { ManagementAuthSettingsRoutes, createTestManagementAuthSettingsPayload, createTestUpdateManagementAuthSettingsRequest } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuthSettingsRoutes, createTestManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementAuthSettingsApi', () => {
   let mockHttpClient: HttpClientMock
@@ -17,37 +17,37 @@ describe('FetchManagementAuthSettingsApi', () => {
     const mockAuthSettingsPayload = createTestManagementAuthSettingsPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthSettingsPayload)
 
-    const result = await api.getManagementAuthSettings()
+    const authSettingsResult = await api.getManagementAuthSettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementAuthSettingsRoutes.GET_MANAGEMENT_AUTH_SETTINGS
     )
-    expect(result).toEqual({ success: true, data: mockAuthSettingsPayload })
+    expect(authSettingsResult).toEqual({ success: true, data: mockAuthSettingsPayload })
   })
 
   it('dispatches updateManagementAuthSettings request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const request = createTestUpdateManagementAuthSettingsRequest()
-    const result = await api.updateManagementAuthSettings(request)
+    const updateSettingsRequest = createTestManagementAuthSettingsPayload()
+    const updateSettingsResult = await api.updateManagementAuthSettings(updateSettingsRequest)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementAuthSettingsRoutes.UPDATE_MANAGEMENT_AUTH_SETTINGS,
-      expect.objectContaining({ method: 'PUT', body: JSON.stringify(request) })
+      expect.objectContaining({ method: 'PUT', body: JSON.stringify(updateSettingsRequest) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(updateSettingsResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches resetManagementAuthSettings request', async () => {
     const mockAuthSettingsPayload = createTestManagementAuthSettingsPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthSettingsPayload)
 
-    const result = await api.resetManagementAuthSettings()
+    const resetSettingsResult = await api.resetManagementAuthSettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementAuthSettingsRoutes.RESET_MANAGEMENT_AUTH_SETTINGS,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockAuthSettingsPayload })
+    expect(resetSettingsResult).toEqual({ success: true, data: mockAuthSettingsPayload })
   })
 })

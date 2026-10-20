@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TEST_EMAIL, TEST_PHONE, createTestOtpConfirmationPayload, AuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_PHONE, createTestOtpConfirmationPayload, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUnlockRepositoryImpl } from '@/repository/auth/unlock/open-unlock-repository-impl'
 import { OpenUnlockApiMock } from '@/mock/network/api/auth/unlock/open-unlock-api-mock'
 import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -63,8 +63,8 @@ describe('OpenUnlockRepositoryImpl', () => {
   })
 
   it('delegates unlockByExternalAuthProvider request', async () => {
-    const result = await repository.unlockByExternalAuthProvider(AuthProvider.GOOGLE, 'token_xyz')
-    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith(AuthProvider.GOOGLE, 'token_xyz')
+    const result = await repository.unlockByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
+    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith(UserAuthProvider.GOOGLE, 'token_xyz')
     expect(isSuccess(result)).toBe(true)
   })
 })

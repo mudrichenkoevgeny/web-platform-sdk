@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   SecurityWebSocketEventTypes,
   toManagementSecuritySettings,
@@ -38,24 +38,24 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
   })
 
   it('fetches settings from network when cache and storage are empty', async () => {
-    const result = await repository.getManagementSecuritySettings()
+    const securitySettingsResult = await repository.getManagementSecuritySettings()
     expect(mockStorage.getManagementSecuritySettings).toHaveBeenCalled()
     expect(mockApi.getManagementSecuritySettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(securitySettingsResult)).toBe(true)
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementSecuritySettings(mockSettings)
+    const saveRemoteSettingsResult = await repository.saveRemoteManagementSecuritySettings(mockSettings)
     expect(mockApi.updateManagementSecuritySettings).toHaveBeenCalled()
     expect(mockStorage.updateManagementSecuritySettings).toHaveBeenCalledWith(mockSettings)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(saveRemoteSettingsResult)).toBe(true)
   })
 
   it('resets remote settings and updates storage', async () => {
-    const result = await repository.resetRemoteManagementSecuritySettings()
+    const resetRemoteSettingsResult = await repository.resetRemoteManagementSecuritySettings()
     expect(mockApi.resetManagementSecuritySettings).toHaveBeenCalled()
     expect(mockStorage.updateManagementSecuritySettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(resetRemoteSettingsResult)).toBe(true)
   })
 
   it('updates settings on WebSocket MANAGEMENT_SECURITY_SETTINGS_UPDATED event', async () => {
@@ -63,7 +63,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     repository.observeManagementSecuritySettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: toSocketFrameIdOrThrow('evt_1'),
+      id: 'evt_1',
       type: SecurityWebSocketEventTypes.MANAGEMENT_SECURITY_SETTINGS_UPDATED,
       payload: mockSettingsPayload,
       metadata: {},

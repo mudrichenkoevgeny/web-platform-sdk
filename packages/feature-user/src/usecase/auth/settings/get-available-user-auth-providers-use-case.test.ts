@@ -17,12 +17,12 @@ describe('GetAvailableUserAuthProvidersUseCase', () => {
 
   it('fetches providers from repository for CLIENT app type', async () => {
     const mockRepo = new OpenAuthSettingsRepositoryMock()
-    mockRepo.openAuthSettingsResult = createTestOpenAuthSettings({
+    mockRepo.emit(createTestOpenAuthSettings({
       availableAuthProviders: {
         primary: [UserAuthProvider.EMAIL, UserAuthProvider.PHONE],
         secondary: [UserAuthProvider.GOOGLE]
       }
-    })
+    }))
 
     const useCase = new GetAvailableUserAuthProvidersUseCase(AppType.CLIENT, mockRepo)
     const result = await useCase.execute()

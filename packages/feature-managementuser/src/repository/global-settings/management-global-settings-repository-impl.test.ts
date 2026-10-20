@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SettingsWebSocketEventTypes, createTestManagementGlobalSettingsPayload, toManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementGlobalSettingsRepositoryImpl } from '@/repository/global-settings/management-global-settings-repository-impl'
 import { ManagementGlobalSettingsApiMock } from '@/mock/network/api/global-settings/management-global-settings-api-mock'
@@ -34,24 +34,24 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
   })
 
   it('fetches settings from network when cache and storage are empty', async () => {
-    const result = await repository.getManagementGlobalSettings()
+    const globalSettingsResult = await repository.getManagementGlobalSettings()
     expect(mockStorage.getManagementGlobalSettings).toHaveBeenCalled()
     expect(mockApi.getManagementGlobalSettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(globalSettingsResult)).toBe(true)
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementGlobalSettings(mockSettings)
+    const saveRemoteSettingsResult = await repository.saveRemoteManagementGlobalSettings(mockSettings)
     expect(mockApi.updateManagementGlobalSettings).toHaveBeenCalled()
     expect(mockStorage.updateManagementGlobalSettings).toHaveBeenCalledWith(mockSettings)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(saveRemoteSettingsResult)).toBe(true)
   })
 
   it('resets remote settings and updates storage', async () => {
-    const result = await repository.resetRemoteManagementGlobalSettings()
+    const resetRemoteSettingsResult = await repository.resetRemoteManagementGlobalSettings()
     expect(mockApi.resetManagementGlobalSettings).toHaveBeenCalled()
     expect(mockStorage.updateManagementGlobalSettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(resetRemoteSettingsResult)).toBe(true)
   })
 
   it('updates settings on WebSocket MANAGEMENT_GLOBAL_SETTINGS_UPDATED event', async () => {
@@ -59,7 +59,7 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
     repository.observeManagementGlobalSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: toSocketFrameIdOrThrow('evt_1'),
+      id: 'evt_1',
       type: SettingsWebSocketEventTypes.MANAGEMENT_GLOBAL_SETTINGS_UPDATED,
       payload: mockSettingsPayload,
       metadata: {},

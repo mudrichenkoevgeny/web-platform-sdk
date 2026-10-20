@@ -7,6 +7,13 @@ import type { SelfManagementUserApi } from '@/network/api/user/self-management-u
 export class SelfManagementUserApiMock implements SelfManagementUserApi {
   public userResult: AppResult<UserPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
 
+  public get getUserResult() {
+    return this.userResult
+  }
+  public set getUserResult(val: AppResult<UserPrivatePayload, AppError>) {
+    this.userResult = val
+  }
+
   public async getUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return this.userResult
   }

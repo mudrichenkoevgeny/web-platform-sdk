@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, toUserIdentifierPrivatePayload, createTestUserIdentifierPrivate, createTestOtpConfirmationPayload, createTestPagedResultPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, toUserIdentifierPrivatePayload, createTestUserIdentifierPrivate, createTestOtpConfirmationPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenIdentifierRepositoryImpl } from '@/repository/identifier/open-identifier-repository-impl'
 import { OpenIdentifiersApiMock } from '@/mock/network/api/identifier/open-identifiers-api-mock'
 import { ConfirmationRepositoryMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -16,7 +16,7 @@ describe('OpenIdentifierRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new OpenIdentifiersApiMock()
     mockApi.getUserIdentifierResult = appResultSuccess(mockIdentifierPayload)
-    mockApi.getUserIdentifiersResult = appResultSuccess(createTestPagedResultPayload({ items: [mockIdentifierPayload] }))
+    mockApi.getUserIdentifiersResult = appResultSuccess(createTestPagedResult({ items: [mockIdentifierPayload] }))
     mockApi.deleteUserIdentifierResult = appResultSuccess(undefined)
     mockApi.addUserIdentifierEmailResult = appResultSuccess(mockIdentifierPayload)
     mockApi.addUserIdentifierPhoneResult = appResultSuccess(mockIdentifierPayload)

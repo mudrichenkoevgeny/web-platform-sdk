@@ -13,6 +13,13 @@ export class SelfManagementResetPasswordApiMock implements ResetPasswordApi {
   public resetPasswordResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
   public sendResetPasswordConfirmationResult: AppResult<OtpConfirmationPayload, AppError> = appResultFailure(CommonError.unknown())
 
+  public get sendResetPasswordConfirmationToEmailResult() {
+    return this.sendResetPasswordConfirmationResult
+  }
+  public set sendResetPasswordConfirmationToEmailResult(val: AppResult<OtpConfirmationPayload, AppError>) {
+    this.sendResetPasswordConfirmationResult = val
+  }
+
   public lastResetPasswordRequest: ResetPasswordRequest | null = null
   public lastSendResetPasswordConfirmationRequest: SendResetPasswordConfirmationRequest | null = null
 

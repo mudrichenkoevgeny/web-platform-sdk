@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-open-refresh-token-api'
 import { OpenRefreshTokenRoutes, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
@@ -17,7 +17,7 @@ describe('FetchOpenRefreshTokenApi', () => {
     const mockSessionTokenPayload = createTestSessionTokenPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionTokenPayload)
 
-    const request = { refreshToken: 'refresh_token_123' }
+    const request = { refresh_token: 'refresh_token_123' }
     const result = await api.refreshToken(request)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(

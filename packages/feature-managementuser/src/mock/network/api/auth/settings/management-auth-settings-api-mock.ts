@@ -19,6 +19,27 @@ export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi 
   public resetResultProvider: () => Promise<AppResult<ManagementAuthSettingsPayload, AppError>> = async () =>
     this.getResultProvider()
 
+  public get getManagementAuthSettingsResult() {
+    return this.getResultProvider()
+  }
+  public set getManagementAuthSettingsResult(val: Promise<AppResult<ManagementAuthSettingsPayload, AppError>> | AppResult<ManagementAuthSettingsPayload, AppError>) {
+    this.getResultProvider = async () => (val instanceof Promise ? val : val)
+  }
+
+  public get updateManagementAuthSettingsResult() {
+    return this.updateResultProvider()
+  }
+  public set updateManagementAuthSettingsResult(val: Promise<AppResult<void, AppError>> | AppResult<void, AppError>) {
+    this.updateResultProvider = async () => (val instanceof Promise ? val : val)
+  }
+
+  public get resetManagementAuthSettingsResult() {
+    return this.resetResultProvider()
+  }
+  public set resetManagementAuthSettingsResult(val: Promise<AppResult<ManagementAuthSettingsPayload, AppError>> | AppResult<ManagementAuthSettingsPayload, AppError>) {
+    this.resetResultProvider = async () => (val instanceof Promise ? val : val)
+  }
+
   public async getManagementAuthSettings(): Promise<AppResult<ManagementAuthSettingsPayload, AppError>> {
     this.getCallCount++
     return this.getResultProvider()

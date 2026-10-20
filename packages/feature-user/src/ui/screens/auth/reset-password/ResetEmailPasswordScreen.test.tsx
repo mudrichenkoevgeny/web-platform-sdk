@@ -13,27 +13,25 @@ import type { ResetEmailPasswordStoreDependencies } from '@/ui/screens/auth/rese
 describe('ResetEmailPasswordScreen', () => {
   const createMockDeps = (): ResetEmailPasswordStoreDependencies => {
     const resetPasswordRepository = new ResetPasswordRepositoryMock()
-    vi.spyOn(resetPasswordRepository, 'getRemainingResetPasswordConfirmationDelayInSeconds').mockReturnValue(0)
+    resetPasswordRepository.remainingDelaySeconds = 0
+    resetPasswordRepository.sendResult = appResultSuccess({
+      retryAfterSeconds: 30,
+      numberOfSymbols: 6,
+      expirationSeconds: 300
+    })
+    resetPasswordRepository.resetResult = appResultSuccess(createTestUserIdentifierPrivate())
 
     const sendResetPasswordConfirmationToEmailUseCase = new SendResetPasswordConfirmationToEmailUseCaseMock()
-    sendResetPasswordConfirmationToEmailUseCase.resultProvider = async () =>
-      appResultSuccess({
-        retryAfterSeconds: 30,
-        numberOfSymbols: 6,
-        expirationSeconds: 300
-      })
     vi.spyOn(sendResetPasswordConfirmationToEmailUseCase, 'execute').mockImplementation(
       sendResetPasswordConfirmationToEmailUseCase.execute.bind(sendResetPasswordConfirmationToEmailUseCase)
     )
 
     const resetEmailPasswordUseCase = new ResetEmailPasswordUseCaseMock()
-    resetEmailPasswordUseCase.resultProvider = async () => appResultSuccess(createTestUserIdentifierPrivate())
     vi.spyOn(resetEmailPasswordUseCase, 'execute').mockImplementation(
       resetEmailPasswordUseCase.execute.bind(resetEmailPasswordUseCase)
     )
 
-    const validatePasswordUseCase = new ValidatePasswordUseCaseMock()
-    validatePasswordUseCase.resultProvider = async () => appResultSuccess(undefined)
+    const validatePasswordUseCase = new ValidatePasswordUseCaseMock(false)
     vi.spyOn(validatePasswordUseCase, 'execute').mockImplementation(
       validatePasswordUseCase.execute.bind(validatePasswordUseCase)
     )
@@ -91,7 +89,7 @@ describe('ResetEmailPasswordScreen', () => {
     await user.click(sendCodeBtn)
 
     const codeInput = await screen.findByPlaceholderText(userStrings.ui.confirmationCode)
-    const passwordInput = screen.getByPlaceholderText(userStrings.ui.newPassword)
+    const passwordInput = await screen.findByPlaceholderText(userStrings.ui.newPassword)
 
     await user.type(codeInput, '123456')
     await user.type(passwordInput, 'NewPassword123!')

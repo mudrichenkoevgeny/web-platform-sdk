@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   toManagementAuthSettings,
   UserWebSocketEventTypes,
@@ -15,14 +15,14 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
   let mockWsService: WebSocketServiceMock
   let repository: ManagementAuthSettingsRepositoryImpl
 
-  const mockAuthSettingsPayload = createTestManagementAuthSettingsPayload()
-  const mockAuthSettings = toManagementAuthSettings(mockAuthSettingsPayload)
+  const mockManagementAuthSettingsPayload = createTestManagementAuthSettingsPayload()
+  const mockManagementAuthSettings = toManagementAuthSettings(mockManagementAuthSettingsPayload)
 
   beforeEach(() => {
     mockApi = new ManagementAuthSettingsApiMock()
-    mockApi.getManagementAuthSettingsResult = appResultSuccess(mockAuthSettingsPayload)
-    mockApi.updateManagementAuthSettingsResult = appResultSuccess(undefined)
-    mockApi.resetManagementAuthSettingsResult = appResultSuccess(mockAuthSettingsPayload)
+    mockApi.getResultProvider = async () => appResultSuccess(mockManagementAuthSettingsPayload)
+    mockApi.updateResultProvider = async () => appResultSuccess(undefined)
+    mockApi.resetResultProvider = async () => appResultSuccess(mockManagementAuthSettingsPayload)
 
     vi.spyOn(mockApi, 'getManagementAuthSettings').mockImplementation(mockApi.getManagementAuthSettings.bind(mockApi))
     vi.spyOn(mockApi, 'updateManagementAuthSettings').mockImplementation(mockApi.updateManagementAuthSettings.bind(mockApi))
@@ -38,24 +38,24 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
   })
 
   it('fetches settings from network when cache and storage are empty', async () => {
-    const result = await repository.getManagementAuthSettings()
+    const authSettingsResult = await repository.getManagementAuthSettings()
     expect(mockStorage.getManagementAuthSettings).toHaveBeenCalled()
     expect(mockApi.getManagementAuthSettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(authSettingsResult)).toBe(true)
   })
 
   it('saves remote settings and updates storage', async () => {
-    const result = await repository.saveRemoteManagementAuthSettings(mockAuthSettings)
+    const saveRemoteSettingsResult = await repository.saveRemoteManagementAuthSettings(mockManagementAuthSettings)
     expect(mockApi.updateManagementAuthSettings).toHaveBeenCalled()
-    expect(mockStorage.updateManagementAuthSettings).toHaveBeenCalledWith(mockAuthSettings)
-    expect(isSuccess(result)).toBe(true)
+    expect(mockStorage.updateManagementAuthSettings).toHaveBeenCalledWith(mockManagementAuthSettings)
+    expect(isSuccess(saveRemoteSettingsResult)).toBe(true)
   })
 
   it('resets remote settings and updates storage', async () => {
-    const result = await repository.resetRemoteManagementAuthSettings()
+    const resetRemoteSettingsResult = await repository.resetRemoteManagementAuthSettings()
     expect(mockApi.resetManagementAuthSettings).toHaveBeenCalled()
     expect(mockStorage.updateManagementAuthSettings).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(resetRemoteSettingsResult)).toBe(true)
   })
 
   it('updates settings on WebSocket MANAGEMENT_AUTH_SETTINGS_UPDATED event', async () => {
@@ -63,9 +63,9 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
     repository.observeManagementAuthSettings(listener)
 
     mockWsService.emitFrameLocally({
-      id: toSocketFrameIdOrThrow('evt_1'),
+      id: 'evt_1',
       type: UserWebSocketEventTypes.MANAGEMENT_AUTH_SETTINGS_UPDATED,
-      payload: mockAuthSettingsPayload,
+      payload: mockManagementAuthSettingsPayload,
       metadata: {},
       timestamp: Date.now()
     })

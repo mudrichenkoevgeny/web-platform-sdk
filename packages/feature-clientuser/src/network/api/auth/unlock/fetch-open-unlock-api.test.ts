@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenUnlockApi } from '@/network/api/auth/unlock/fetch-open-unlock-api'
-import { OpenUnlockRoutes, TEST_EMAIL, TEST_PHONE, createTestOtpConfirmationPayload, AuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenUnlockRoutes, TEST_EMAIL, TEST_PHONE, createTestOtpConfirmationPayload, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenUnlockApi', () => {
   let mockHttpClient: HttpClientMock
@@ -78,7 +78,7 @@ describe('FetchOpenUnlockApi', () => {
   it('dispatches unlockByExternalAuthProvider request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.unlockByExternalAuthProvider(AuthProvider.GOOGLE, 'token123')
+    const result = await api.unlockByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,

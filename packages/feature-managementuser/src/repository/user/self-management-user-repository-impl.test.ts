@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess, WebSocketServiceMock, toSocketFrameIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, isSuccess, WebSocketServiceMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestUserPrivatePayload, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUserRepositoryImpl } from '@/repository/user/self-management-user-repository-impl'
 import { SelfManagementUserApiMock } from '@/mock/network/api/user/self-management-user-api-mock'
@@ -44,10 +44,10 @@ describe('SelfManagementUserRepositoryImpl', () => {
   })
 
   it('refreshCurrentUser fetches user from API and updates storage on success', async () => {
-    const result = await repository.refreshCurrentUser()
+    const refreshUserResult = await repository.refreshCurrentUser()
     expect(mockApi.getUser).toHaveBeenCalled()
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(refreshUserResult)).toBe(true)
   })
 
   it('clearSession clears UserStorage and AuthStorage', async () => {
@@ -58,7 +58,7 @@ describe('SelfManagementUserRepositoryImpl', () => {
 
   it('handles USER_UPDATED WebSocket frame', async () => {
     mockWs.emitFrameLocally({
-      id: toSocketFrameIdOrThrow('frame_1'),
+      id: 'frame_1',
       type: UserWebSocketEventTypes.USER_UPDATED,
       payload: mockUserPayload,
       timestamp: 1000
@@ -69,7 +69,7 @@ describe('SelfManagementUserRepositoryImpl', () => {
 
   it('handles SESSION_DELETED WebSocket frame', async () => {
     mockWs.emitFrameLocally({
-      id: toSocketFrameIdOrThrow('frame_2'),
+      id: 'frame_2',
       type: UserWebSocketEventTypes.SESSION_DELETED,
       payload: null,
       timestamp: 1000

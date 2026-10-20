@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { ManagementUserRepositoryImpl } from '@/repository/user/management-user-repository-impl'
+import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 import { ManagementUserApiMock } from '@/mock/network/api/user/management-user-api-mock'
-import { createTestUserPrivatePayload, createTestPagedResultPayload, SortOrder, TEST_EMAIL, TEST_USER_ID, toUserIdOrThrow, UserRole, createTestCreateUserRequest, createTestUpdateUserRequest } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserPrivatePayload, createTestPagedResult, SortOrder, TEST_EMAIL, TEST_USER_ID, toUserIdOrThrow, UserRole, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('ManagementUserRepositoryImpl', () => {
   let mockApi: ManagementUserApiMock
@@ -16,12 +17,12 @@ describe('ManagementUserRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new ManagementUserApiMock()
     mockApi.createUserResult = appResultSuccess(mockUserPayload)
-    mockApi.getUsersResult = appResultSuccess(createTestPagedResultPayload({
+    mockApi.getUsersResult = appResultSuccess(createTestPagedResult({
       items: [mockUserPayload],
-      total_count: 1,
-      page_number: 1,
-      page_size: 10,
-      total_pages: 1
+      totalCount: 1,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 1
     }))
     mockApi.getUserResult = appResultSuccess(mockUserPayload)
     mockApi.updateUserResult = appResultSuccess(undefined)
@@ -37,14 +38,14 @@ describe('ManagementUserRepositoryImpl', () => {
   })
 
   it('delegates createUser to API and maps result', async () => {
-    const request = createTestCreateUserRequest({ email: TEST_EMAIL })
-    const result = await repository.createUser(request)
-    expect(mockApi.createUser).toHaveBeenCalledWith(request)
-    expect(isSuccess(result)).toBe(true)
+    const createUserRequest: CreateUserParams = { email: TEST_EMAIL, password: 'password123' }
+    const createUserResult = await repository.createUser(createUserRequest)
+    expect(mockApi.createUser).toHaveBeenCalledWith(createUserRequest)
+    expect(isSuccess(createUserResult)).toBe(true)
   })
 
   it('delegates getUsers to API and maps paged result', async () => {
-    const params = {
+    const managementUserListParams = {
       pageNumber: 1,
       pageSize: 10,
       sortBy: 'created_at' as const,
@@ -58,27 +59,27 @@ describe('ManagementUserRepositoryImpl', () => {
       isTotpEnabled: null,
       permissionCodes: []
     }
-    const result = await repository.getUsers(params)
-    expect(mockApi.getUsers).toHaveBeenCalledWith(params)
-    expect(isSuccess(result)).toBe(true)
+    const userListResult = await repository.getUsers(managementUserListParams)
+    expect(mockApi.getUsers).toHaveBeenCalledWith(managementUserListParams)
+    expect(isSuccess(userListResult)).toBe(true)
   })
 
   it('delegates getUser to API and maps result', async () => {
-    const result = await repository.getUser(toUserIdOrThrow(TEST_USER_ID))
+    const userResult = await repository.getUser(toUserIdOrThrow(TEST_USER_ID))
     expect(mockApi.getUser).toHaveBeenCalledWith(TEST_USER_ID)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(userResult)).toBe(true)
   })
 
   it('delegates updateUser to API', async () => {
-    const request = createTestUpdateUserRequest({ email: 'new@example.com' })
-    const result = await repository.updateUser(toUserIdOrThrow(TEST_USER_ID), request)
-    expect(mockApi.updateUser).toHaveBeenCalledWith(TEST_USER_ID, request)
-    expect(isSuccess(result)).toBe(true)
+    const updateUserRequest: UpdateUserParams = { accountStatus: UserAccountStatus.ACTIVE }
+    const updateUserResult = await repository.updateUser(toUserIdOrThrow(TEST_USER_ID), updateUserRequest)
+    expect(mockApi.updateUser).toHaveBeenCalledWith(TEST_USER_ID, updateUserRequest)
+    expect(isSuccess(updateUserResult)).toBe(true)
   })
 
   it('delegates deleteUser to API', async () => {
-    const result = await repository.deleteUser(toUserIdOrThrow(TEST_USER_ID))
+    const deleteUserResult = await repository.deleteUser(toUserIdOrThrow(TEST_USER_ID))
     expect(mockApi.deleteUser).toHaveBeenCalledWith(TEST_USER_ID)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(deleteUserResult)).toBe(true)
   })
 })

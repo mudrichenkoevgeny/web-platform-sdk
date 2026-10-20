@@ -32,47 +32,47 @@ describe('SelfManagementUserSecurityRepositoryImpl', () => {
     vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
 
     mockUserStorage = new UserStorageMock()
-    mockUserStorage.emit(mockUser)
+    mockUserStorage.updateCurrentUser(mockUser)
     vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
 
     repository = new SelfManagementUserSecurityRepositoryImpl(mockApi, mockUserStorage)
   })
 
   it('delegates setupTotp to API', async () => {
-    const result = await repository.setupTotp()
+    const setupTotpResult = await repository.setupTotp()
     expect(mockApi.setupTotp).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(setupTotpResult)).toBe(true)
   })
 
   it('delegates enableTotp and updates TOTP status in storage', async () => {
-    const result = await repository.enableTotp('mfaToken', '123456')
+    const enableTotpResult = await repository.enableTotp('mfaToken', '123456')
     expect(mockApi.enableTotp).toHaveBeenCalledWith('mfaToken', '123456')
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith({
       ...mockUser,
       isTotpEnabled: true
     })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(enableTotpResult)).toBe(true)
   })
 
   it('delegates disableTotp and updates TOTP status in storage', async () => {
-    const result = await repository.disableTotp()
+    const disableTotpResult = await repository.disableTotp()
     expect(mockApi.disableTotp).toHaveBeenCalled()
     expect(mockUserStorage.updateCurrentUser).toHaveBeenCalledWith({
       ...mockUser,
       isTotpEnabled: false
     })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(disableTotpResult)).toBe(true)
   })
 
   it('delegates getRecoveryCodes to API', async () => {
-    const result = await repository.getRecoveryCodes()
+    const getRecoveryCodesResult = await repository.getRecoveryCodes()
     expect(mockApi.getRecoveryCodes).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(getRecoveryCodesResult)).toBe(true)
   })
 
   it('delegates regenerateRecoveryCodes to API', async () => {
-    const result = await repository.regenerateRecoveryCodes()
+    const regenerateRecoveryCodesResult = await repository.regenerateRecoveryCodes()
     expect(mockApi.regenerateRecoveryCodes).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(regenerateRecoveryCodesResult)).toBe(true)
   })
 })

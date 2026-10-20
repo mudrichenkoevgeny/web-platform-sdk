@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createTestAuthData, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestAuthData, createTestUserPrivate, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import {
   LoginRepositoryMock,
   LoginByPhoneUseCaseMock,
@@ -21,9 +21,9 @@ export const loginByPhoneDependenciesMock = (
   loginByPhoneUseCase.resultProvider = async () =>
     appResultSuccess(
       createTestAuthData({
-        userPrivate: {
+        userPrivate: createTestUserPrivate({
           accountStatus: UserAccountStatus.ACTIVE
-        }
+        })
       })
     )
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { TEST_EMAIL, UnlockMethod, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockOtpScreen } from '@/ui/screens/auth/unlock/otp/UnlockOtpScreen'
 import { UnlockByEmailUseCaseMock } from '@/mock/usecase/auth/unlock/unlock-by-email-use-case-mock'
@@ -13,19 +13,15 @@ import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/un
 describe('UnlockOtpScreen', () => {
   const createMockDeps = (): UnlockOtpStoreDependencies => {
     const unlockByEmailUseCase = new UnlockByEmailUseCaseMock()
-    unlockByEmailUseCase.resultProvider = async () => appResultSuccess(undefined)
     vi.spyOn(unlockByEmailUseCase, 'execute').mockImplementation(unlockByEmailUseCase.execute.bind(unlockByEmailUseCase))
 
     const unlockByPhoneUseCase = new UnlockByPhoneUseCaseMock()
-    unlockByPhoneUseCase.resultProvider = async () => appResultSuccess(undefined)
     vi.spyOn(unlockByPhoneUseCase, 'execute').mockImplementation(unlockByPhoneUseCase.execute.bind(unlockByPhoneUseCase))
 
     const sendUnlockEmailConfirmationUseCase = new SendUnlockEmailConfirmationUseCaseMock()
-    sendUnlockEmailConfirmationUseCase.resultProvider = async () => appResultSuccess({ retryAfterSeconds: 30, numberOfSymbols: 6, expirationSeconds: 300 })
     vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute').mockImplementation(sendUnlockEmailConfirmationUseCase.execute.bind(sendUnlockEmailConfirmationUseCase))
 
     const sendUnlockPhoneConfirmationUseCase = new SendUnlockPhoneConfirmationUseCaseMock()
-    sendUnlockPhoneConfirmationUseCase.resultProvider = async () => appResultSuccess({ retryAfterSeconds: 30, numberOfSymbols: 6, expirationSeconds: 300 })
     vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute').mockImplementation(sendUnlockPhoneConfirmationUseCase.execute.bind(sendUnlockPhoneConfirmationUseCase))
 
     return {

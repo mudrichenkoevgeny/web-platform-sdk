@@ -5,7 +5,6 @@ import {
   OpenLoginRoutes,
   TEST_EMAIL,
   TEST_PHONE,
-  AuthProvider,
   createTestAuthDataPayload,
   createTestOtpConfirmationPayload
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -56,7 +55,7 @@ describe('FetchOpenLoginApi', () => {
     const mockAuthDataPayload = createTestAuthDataPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthDataPayload)
 
-    const result = await api.loginByExternalAuthProvider(AuthProvider.GOOGLE, 'token123')
+    const result = await api.loginByExternalAuthProvider('google', 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_EXTERNAL_AUTH_PROVIDER,

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { TEST_REFRESH_TOKEN, toSessionToken, UserErrorCodes, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_REFRESH_TOKEN, toSessionToken, toRefreshTokenOrThrow, UserErrorCodes, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { RefreshTokenUseCase } from '@/usecase/auth/refresh-token/refresh-token-use-case'
 import { RefreshTokenRepositoryMock } from '@/mock/repository/auth/refresh-token/refresh-token-repository-mock'
@@ -18,7 +18,7 @@ describe('RefreshTokenUseCase', () => {
     mockRepository.refreshTokenResultProvider = async () => appResultSuccess(mockSessionToken)
 
     mockAuthStorage = new AuthStorageMock()
-    vi.spyOn(mockAuthStorage, 'getRefreshToken').mockResolvedValue(TEST_REFRESH_TOKEN)
+    vi.spyOn(mockAuthStorage, 'getRefreshToken').mockResolvedValue(toRefreshTokenOrThrow(TEST_REFRESH_TOKEN))
     vi.spyOn(mockAuthStorage, 'updateTokens').mockResolvedValue(undefined)
 
     useCase = new RefreshTokenUseCase(mockRepository, mockAuthStorage)
@@ -39,7 +39,7 @@ describe('RefreshTokenUseCase', () => {
     const result = await useCase.execute()
 
     expect(isSuccess(result)).toBe(true)
-    expect(mockRepository.lastRefreshToken).toBe(TEST_REFRESH_TOKEN)
+    expect(mockRepository.lastRefreshToken).toBe(toRefreshTokenOrThrow(TEST_REFRESH_TOKEN))
     expect(mockAuthStorage.isTokensCleared).toBe(false)
   })
 })

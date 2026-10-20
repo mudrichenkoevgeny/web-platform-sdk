@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { TEST_EMAIL, TEST_PHONE, UnlockMethod, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockTargetInputScreen } from '@/ui/screens/auth/unlock/target/UnlockTargetInputScreen'
 import { SendUnlockEmailConfirmationUseCaseMock } from '@/mock/usecase/auth/unlock/send-unlock-email-confirmation-use-case-mock'
@@ -11,11 +11,9 @@ import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unloc
 describe('UnlockTargetInputScreen', () => {
   const createMockDeps = (method: UnlockMethod = UnlockMethod.EMAIL): UnlockTargetInputStoreDependencies => {
     const sendUnlockEmailConfirmationUseCase = new SendUnlockEmailConfirmationUseCaseMock()
-    sendUnlockEmailConfirmationUseCase.resultProvider = async () => appResultSuccess({ retryAfterSeconds: 30, numberOfSymbols: 6, expirationSeconds: 300 })
     vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute').mockImplementation(sendUnlockEmailConfirmationUseCase.execute.bind(sendUnlockEmailConfirmationUseCase))
 
     const sendUnlockPhoneConfirmationUseCase = new SendUnlockPhoneConfirmationUseCaseMock()
-    sendUnlockPhoneConfirmationUseCase.resultProvider = async () => appResultSuccess({ retryAfterSeconds: 30, numberOfSymbols: 6, expirationSeconds: 300 })
     vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute').mockImplementation(sendUnlockPhoneConfirmationUseCase.execute.bind(sendUnlockPhoneConfirmationUseCase))
 
     return {

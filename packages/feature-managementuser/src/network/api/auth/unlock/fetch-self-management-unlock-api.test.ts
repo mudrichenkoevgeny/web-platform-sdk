@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementUnlockApi } from '@/network/api/auth/unlock/fetch-self-management-unlock-api'
-import { SelfManagementUnlockRoutes, TEST_PHONE, createTestOtpConfirmationPayload, AuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementUnlockRoutes, TEST_PHONE, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementUnlockApi', () => {
   let mockHttpClient: HttpClientMock
@@ -17,61 +17,61 @@ describe('FetchSelfManagementUnlockApi', () => {
     const mockOtpConfirmationPayload = createTestOtpConfirmationPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockOtpConfirmationPayload)
 
-    const result = await api.sendUnlockEmailConfirmation('admin@example.com')
+    const emailConfirmationResult = await api.sendUnlockEmailConfirmation('admin@example.com')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.SEND_UNLOCK_EMAIL_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: 'admin@example.com' }) })
     )
-    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
+    expect(emailConfirmationResult).toEqual({ success: true, data: mockOtpConfirmationPayload })
   })
 
   it('dispatches unlockByEmail request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.unlockByEmail('admin@example.com', '123456')
+    const unlockByEmailResult = await api.unlockByEmail('admin@example.com', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.UNLOCK_BY_EMAIL,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ email: 'admin@example.com', confirmation_code: '123456' }) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(unlockByEmailResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches sendUnlockPhoneConfirmation request', async () => {
     const mockOtpConfirmationPayload = createTestOtpConfirmationPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockOtpConfirmationPayload)
 
-    const result = await api.sendUnlockPhoneConfirmation(TEST_PHONE)
+    const phoneConfirmationResult = await api.sendUnlockPhoneConfirmation(TEST_PHONE)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.SEND_UNLOCK_PHONE_CONFIRMATION,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ phone_number: TEST_PHONE }) })
     )
-    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
+    expect(phoneConfirmationResult).toEqual({ success: true, data: mockOtpConfirmationPayload })
   })
 
   it('dispatches unlockByPhone request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.unlockByPhone(TEST_PHONE, '123456')
+    const unlockByPhoneResult = await api.unlockByPhone(TEST_PHONE, '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.UNLOCK_BY_PHONE,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ phone_number: TEST_PHONE, confirmation_code: '123456' }) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(unlockByPhoneResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches unlockByExternalAuthProvider request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const result = await api.unlockByExternalAuthProvider(AuthProvider.GOOGLE, 'token123')
+    const unlockByProviderResult = await api.unlockByExternalAuthProvider('google', 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,
       expect.objectContaining({ method: 'POST', body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' }) })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(unlockByProviderResult).toEqual({ success: true, data: undefined })
   })
 })

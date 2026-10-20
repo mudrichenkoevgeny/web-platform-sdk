@@ -9,6 +9,25 @@ export class ManagementSecuritySettingsApiMock implements ManagementSecuritySett
   public updateResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
   public resetResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
 
+  public get getManagementSecuritySettingsResult() {
+    return this.getResult
+  }
+  public set getManagementSecuritySettingsResult(val: AppResult<ManagementSecuritySettingsPayload, AppError>) {
+    this.getResult = val
+  }
+  public get updateManagementSecuritySettingsResult() {
+    return this.updateResult
+  }
+  public set updateManagementSecuritySettingsResult(val: AppResult<void, AppError>) {
+    this.updateResult = val
+  }
+  public get resetManagementSecuritySettingsResult() {
+    return this.resetResult
+  }
+  public set resetManagementSecuritySettingsResult(val: AppResult<ManagementSecuritySettingsPayload, AppError>) {
+    this.resetResult = val
+  }
+
   public async getManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>> {
     return this.getResult
   }

@@ -31,6 +31,7 @@ export * from './usecase/auth/registration/registration-by-email-use-case-mock.j
 export * from './usecase/auth/registration/send-registration-confirmation-to-email-use-case-mock.js'
 export * from './usecase/auth/reset-password/reset-email-password-use-case-mock.js'
 export * from './usecase/auth/reset-password/send-reset-password-confirmation-to-email-use-case-mock.js'
+export * from './usecase/auth/refresh-token/refresh-token-use-case-mock.js'
 export * from './usecase/auth/unlock/send-unlock-email-confirmation-use-case-mock.js'
 export * from './usecase/auth/unlock/send-unlock-phone-confirmation-use-case-mock.js'
 export * from './usecase/auth/unlock/unlock-by-email-use-case-mock.js'

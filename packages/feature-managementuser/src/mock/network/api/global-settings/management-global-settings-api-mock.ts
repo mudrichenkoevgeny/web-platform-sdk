@@ -9,6 +9,25 @@ export class ManagementGlobalSettingsApiMock implements ManagementGlobalSettings
   public updateResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
   public resetResult: AppResult<ManagementGlobalSettingsPayload, AppError> = appResultFailure(CommonError.unknown())
 
+  public get getManagementGlobalSettingsResult() {
+    return this.getResult
+  }
+  public set getManagementGlobalSettingsResult(val: AppResult<ManagementGlobalSettingsPayload, AppError>) {
+    this.getResult = val
+  }
+  public get updateManagementGlobalSettingsResult() {
+    return this.updateResult
+  }
+  public set updateManagementGlobalSettingsResult(val: AppResult<void, AppError>) {
+    this.updateResult = val
+  }
+  public get resetManagementGlobalSettingsResult() {
+    return this.resetResult
+  }
+  public set resetManagementGlobalSettingsResult(val: AppResult<ManagementGlobalSettingsPayload, AppError>) {
+    this.resetResult = val
+  }
+
   public async getManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>> {
     return this.getResult
   }
