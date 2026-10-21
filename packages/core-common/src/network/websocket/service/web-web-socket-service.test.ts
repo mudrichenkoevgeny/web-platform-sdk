@@ -69,6 +69,7 @@ describe('WebWebSocketService', () => {
     expect(mockWs.sentMessages.length).toBeGreaterThan(0)
     const initFrame = JSON.parse(mockWs.sentMessages[0]!) as SocketFrame
     expect(initFrame.type).toBe(CommonWebSocketEventTypes.INITIALIZE)
+    expect((initFrame.payload as { api_version?: string }).api_version).toBe('1.0.0')
   })
 
   it('routes incoming PING frame to CommonWebSocketMessageHandler and sends PONG', async () => {

@@ -43,6 +43,7 @@ export interface ManagementAppComponentConfig {
   compositeMetadataKeyParser: CompositeAuditMetadataKeyParser
   authServices?: UserAuthServices
   appVersion?: string
+  apiVersion?: string
   mockCommonComponent?: CommonComponent
   mockSettingsComponent?: SettingsComponent
   mockSecurityComponent?: SecurityComponent
@@ -129,7 +130,8 @@ export class ManagementAppComponent {
           authHttpClientConfigPlugin,
           mfaStepUpHttpClientConfigPlugin
         ],
-        appVersion: config.appVersion
+        appVersion: config.appVersion,
+        apiVersion: config.apiVersion
       })
 
       this.settingsComponent = new SettingsComponent({

@@ -1,3 +1,4 @@
+import type { WebSocketInitializePayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { AccessTokenProvider } from '@/network/provider/access-token-provider'
 import type { ClientDeviceInfoProvider } from '@/platform/device-info/client-device-info-provider'
 import type { SocketFrame } from '@/network/model/websocket/socket-frame'
@@ -21,6 +22,8 @@ export interface WebWebSocketServiceConfig {
   accessTokenProvider: AccessTokenProvider
   /** Provider for device info payload. */
   clientDeviceInfoProvider: ClientDeviceInfoProvider
+  /** Negotiated client API version. */
+  apiVersion?: string | null
   /** Optional diagnostic logging function. */
   logger?: (msg: string) => void
   /** Optional custom WebSocket factory for unit testing. */
@@ -35,6 +38,7 @@ export class WebWebSocketService implements WebSocketService {
   private readonly webSocketPath: string
   private readonly accessTokenProvider: AccessTokenProvider
   public readonly clientDeviceInfoProvider: ClientDeviceInfoProvider
+  private readonly apiVersion: string | null
   private readonly logger?: (msg: string) => void
   private readonly webSocketFactory: (url: string) => WebSocket
 
@@ -61,6 +65,7 @@ export class WebWebSocketService implements WebSocketService {
     this.webSocketPath = config.webSocketPath
     this.accessTokenProvider = config.accessTokenProvider
     this.clientDeviceInfoProvider = config.clientDeviceInfoProvider
+    this.apiVersion = config.apiVersion ?? '1.0.0'
     this.logger = config.logger
     this.webSocketFactory =
       config.webSocketFactory ??
@@ -279,7 +284,11 @@ export class WebWebSocketService implements WebSocketService {
 
   private async sendInitializeFrame(): Promise<void> {
     const clientDeviceInfo = await this.clientDeviceInfoProvider.getClientDeviceInfo()
-    await this.sendEvent(CommonWebSocketEventTypes.INITIALIZE, clientDeviceInfo)
+    const initializePayload: WebSocketInitializePayload = {
+      ...clientDeviceInfo,
+      api_version: this.apiVersion
+    }
+    await this.sendEvent(CommonWebSocketEventTypes.INITIALIZE, initializePayload)
   }
 
   private flushOutgoingQueue(): void {

@@ -34,6 +34,8 @@ export interface CommonComponentConfig {
   clientDeviceInfoProvider?: ClientDeviceInfoProvider
   /** Optional application version string. Defaults to '1.0.0'. */
   appVersion?: string
+  /** Optional client API version string. Defaults to '1.0.0'. */
+  apiVersion?: string
   /** Optional array of HTTP client configuration plugins. */
   httpClientConfigPlugins?: HttpClientConfigPlugin[]
   /** Optional custom fetch implementation. */
@@ -102,6 +104,7 @@ export class CommonComponent {
       webSocketPath: config.webSocketPath,
       accessTokenProvider: config.accessTokenProvider,
       clientDeviceInfoProvider: this.clientDeviceInfoProvider,
+      apiVersion: config.apiVersion,
       webSocketFactory: config.webSocketFactory,
       logger: config.logger
     })

@@ -37,6 +37,7 @@ export interface ClientAppComponentConfig {
   googleClientId?: string
   authServices?: UserAuthServices
   appVersion?: string
+  apiVersion?: string
   mockCommonComponent?: CommonComponent
   mockSettingsComponent?: SettingsComponent
   mockSecurityComponent?: SecurityComponent
@@ -123,7 +124,8 @@ export class ClientAppComponent {
           authHttpClientConfigPlugin,
           mfaStepUpHttpClientConfigPlugin
         ],
-        appVersion: config.appVersion
+        appVersion: config.appVersion,
+        apiVersion: config.apiVersion
       })
 
       this.settingsComponent = new SettingsComponent({
