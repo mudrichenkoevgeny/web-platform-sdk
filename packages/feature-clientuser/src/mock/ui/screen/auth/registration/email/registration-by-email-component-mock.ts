@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createTestAuthData, createTestUserPrivate, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestAuthData, createTestUserPrivate, UserAccountStatus, createTestOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import {
   RegistrationRepositoryMock,
   RegistrationByEmailUseCaseMock,
@@ -16,7 +16,7 @@ export const registrationByEmailDependenciesMock = (
 
   const sendRegistrationConfirmationToEmailUseCase = new SendRegistrationConfirmationToEmailUseCaseMock()
   sendRegistrationConfirmationToEmailUseCase.resultProvider = async () =>
-    appResultSuccess({ retryAfterSeconds: 60, numberOfSymbols: 6, expirationSeconds: 300 })
+    appResultSuccess(createTestOtpConfirmation())
 
   const registrationByEmailUseCase = new RegistrationByEmailUseCaseMock()
   registrationByEmailUseCase.resultProvider = async () =>

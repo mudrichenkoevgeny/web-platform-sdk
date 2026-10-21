@@ -9,7 +9,7 @@ import type { SocketFrame } from '@/network/model/websocket/socket-frame'
 import { CommonWebSocketEventTypes } from '@/network/contract/common-web-socket-event-types'
 
 class MockWebSocket {
-  public readyState = 1 // OPEN
+  public readyState = 1
   public sentMessages: string[] = []
   public onopen: (() => void) | null = null
   public onmessage: ((event: { data: string }) => void) | null = null
@@ -21,7 +21,7 @@ class MockWebSocket {
   }
 
   public close(): void {
-    this.readyState = 3 // CLOSED
+    this.readyState = 3
     if (this.onclose) {
       this.onclose()
     }

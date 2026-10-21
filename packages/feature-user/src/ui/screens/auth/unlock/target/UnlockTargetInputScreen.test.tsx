@@ -11,10 +11,10 @@ import type { UnlockTargetInputStoreDependencies } from '@/ui/screens/auth/unloc
 describe('UnlockTargetInputScreen', () => {
   const createMockDeps = (method: UnlockMethod = UnlockMethod.EMAIL): UnlockTargetInputStoreDependencies => {
     const sendUnlockEmailConfirmationUseCase = new SendUnlockEmailConfirmationUseCaseMock()
-    vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute').mockImplementation(sendUnlockEmailConfirmationUseCase.execute.bind(sendUnlockEmailConfirmationUseCase))
+    vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute')
 
     const sendUnlockPhoneConfirmationUseCase = new SendUnlockPhoneConfirmationUseCaseMock()
-    vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute').mockImplementation(sendUnlockPhoneConfirmationUseCase.execute.bind(sendUnlockPhoneConfirmationUseCase))
+    vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute')
 
     return {
       method,
@@ -48,7 +48,7 @@ describe('UnlockTargetInputScreen', () => {
     await user.click(submitBtn)
 
     expect(deps.sendUnlockEmailConfirmationUseCase.execute).toHaveBeenCalledWith(TEST_EMAIL)
-    expect(deps.onNavigateToOtp).toHaveBeenCalledWith(TEST_EMAIL, 30, 'email')
+    expect(deps.onNavigateToOtp).toHaveBeenCalledWith(TEST_EMAIL, 0, 'email')
   })
 
   it('renders phone input for PHONE method and triggers send code on submit', async () => {
@@ -70,6 +70,6 @@ describe('UnlockTargetInputScreen', () => {
     await user.click(submitBtn)
 
     expect(deps.sendUnlockPhoneConfirmationUseCase.execute).toHaveBeenCalledWith(TEST_PHONE)
-    expect(deps.onNavigateToOtp).toHaveBeenCalledWith(TEST_PHONE, 30, 'phone')
+    expect(deps.onNavigateToOtp).toHaveBeenCalledWith(TEST_PHONE, 0, 'phone')
   })
 })

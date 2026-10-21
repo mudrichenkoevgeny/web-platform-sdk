@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { Mock } from 'vitest'
 import { SecurityErrorArgs, SecurityErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { MfaStepUpHttpClientConfigPlugin } from '@/network/httpclient/mfa/mfa-step-up-http-client-config-plugin'
 import type { MfaChallengeHandler } from '@/network/httpclient/mfa/mfa-challenge-handler'
 
 describe('MfaStepUpHttpClientConfigPlugin', () => {
   let mockChallengeHandler: MfaChallengeHandler
-  let reauthenticateAction: ReturnType<typeof vi.fn>
+  let reauthenticateAction: Mock<(mfaToken: string, code: string) => Promise<AppResult<void, AppError>>>
   let plugin: MfaStepUpHttpClientConfigPlugin
 
   beforeEach(() => {
@@ -14,13 +16,13 @@ describe('MfaStepUpHttpClientConfigPlugin', () => {
       onRequestMfaCode: vi.fn().mockResolvedValue('654321')
     }
 
-    reauthenticateAction = vi.fn().mockResolvedValue(appResultSuccess(undefined))
+    reauthenticateAction = vi.fn<(mfaToken: string, code: string) => Promise<AppResult<void, AppError>>>().mockResolvedValue(appResultSuccess(undefined))
 
     plugin = new MfaStepUpHttpClientConfigPlugin({
       baseUrl: 'https://api.example.com',
       reauthenticateRoute: '/auth/reauthenticate',
       mfaChallengeHandler: mockChallengeHandler,
-      reauthenticateAction: reauthenticateAction as any
+      reauthenticateAction
     })
   })
 

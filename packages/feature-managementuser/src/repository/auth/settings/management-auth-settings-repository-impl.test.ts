@@ -20,17 +20,17 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
 
   beforeEach(() => {
     mockApi = new ManagementAuthSettingsApiMock()
-    mockApi.getResultProvider = async () => appResultSuccess(mockManagementAuthSettingsPayload)
-    mockApi.updateResultProvider = async () => appResultSuccess(undefined)
-    mockApi.resetResultProvider = async () => appResultSuccess(mockManagementAuthSettingsPayload)
+    mockApi.getManagementAuthSettingsResult = appResultSuccess(mockManagementAuthSettingsPayload)
+    mockApi.updateManagementAuthSettingsResult = appResultSuccess(undefined)
+    mockApi.resetManagementAuthSettingsResult = appResultSuccess(mockManagementAuthSettingsPayload)
 
-    vi.spyOn(mockApi, 'getManagementAuthSettings').mockImplementation(mockApi.getManagementAuthSettings.bind(mockApi))
-    vi.spyOn(mockApi, 'updateManagementAuthSettings').mockImplementation(mockApi.updateManagementAuthSettings.bind(mockApi))
-    vi.spyOn(mockApi, 'resetManagementAuthSettings').mockImplementation(mockApi.resetManagementAuthSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'getManagementAuthSettings')
+    vi.spyOn(mockApi, 'updateManagementAuthSettings')
+    vi.spyOn(mockApi, 'resetManagementAuthSettings')
 
     mockStorage = new ManagementAuthSettingsStorageMock()
-    vi.spyOn(mockStorage, 'getManagementAuthSettings').mockImplementation(mockStorage.getManagementAuthSettings.bind(mockStorage))
-    vi.spyOn(mockStorage, 'updateManagementAuthSettings').mockImplementation(mockStorage.updateManagementAuthSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'getManagementAuthSettings')
+    vi.spyOn(mockStorage, 'updateManagementAuthSettings')
 
     mockWsService = new WebSocketServiceMock()
 

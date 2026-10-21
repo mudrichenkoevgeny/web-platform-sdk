@@ -13,14 +13,14 @@ describe('OpenRefreshTokenRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new RefreshTokenApiMock()
     mockApi.refreshTokenResult = appResultSuccess(mockSessionTokenPayload)
-    vi.spyOn(mockApi, 'refreshToken').mockImplementation(mockApi.refreshToken.bind(mockApi))
+    vi.spyOn(mockApi, 'refreshToken')
 
     repository = new OpenRefreshTokenRepositoryImpl(mockApi)
   })
 
   it('delegates refreshToken and maps response to SessionToken', async () => {
-    const result = await repository.refreshToken(TEST_REFRESH_TOKEN)
+    const refreshTokenResult = await repository.refreshToken(TEST_REFRESH_TOKEN)
     expect(mockApi.refreshToken).toHaveBeenCalledWith({ refresh_token: TEST_REFRESH_TOKEN })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(refreshTokenResult)).toBe(true)
   })
 })

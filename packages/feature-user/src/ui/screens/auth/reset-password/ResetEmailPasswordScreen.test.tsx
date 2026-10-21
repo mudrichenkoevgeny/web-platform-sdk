@@ -22,19 +22,15 @@ describe('ResetEmailPasswordScreen', () => {
     resetPasswordRepository.resetResult = appResultSuccess(createTestUserIdentifierPrivate())
 
     const sendResetPasswordConfirmationToEmailUseCase = new SendResetPasswordConfirmationToEmailUseCaseMock()
-    vi.spyOn(sendResetPasswordConfirmationToEmailUseCase, 'execute').mockImplementation(
-      sendResetPasswordConfirmationToEmailUseCase.execute.bind(sendResetPasswordConfirmationToEmailUseCase)
-    )
+    sendResetPasswordConfirmationToEmailUseCase.resultProvider = async () => appResultSuccess({ retryAfterSeconds: 30, numberOfSymbols: 6, expirationSeconds: 300 })
+    vi.spyOn(sendResetPasswordConfirmationToEmailUseCase, 'execute')
 
     const resetEmailPasswordUseCase = new ResetEmailPasswordUseCaseMock()
-    vi.spyOn(resetEmailPasswordUseCase, 'execute').mockImplementation(
-      resetEmailPasswordUseCase.execute.bind(resetEmailPasswordUseCase)
-    )
+    resetEmailPasswordUseCase.resultProvider = async () => appResultSuccess(createTestUserIdentifierPrivate())
+    vi.spyOn(resetEmailPasswordUseCase, 'execute')
 
     const validatePasswordUseCase = new ValidatePasswordUseCaseMock(false)
-    vi.spyOn(validatePasswordUseCase, 'execute').mockImplementation(
-      validatePasswordUseCase.execute.bind(validatePasswordUseCase)
-    )
+    vi.spyOn(validatePasswordUseCase, 'execute')
 
     return {
       resetPasswordRepository,

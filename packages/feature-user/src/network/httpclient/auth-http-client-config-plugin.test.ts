@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { UserErrorCodes, createTestSessionTokenPayload, createTestSessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  UserErrorCodes,
+  createTestSessionTokenPayload,
+  createTestSessionToken,
+  toAccessTokenOrThrow,
+  toRefreshTokenOrThrow
+} from '@mudrichenkoevgeny/shared-foundation'
 import { AuthHttpClientConfigPlugin } from '@/network/httpclient/auth-http-client-config-plugin'
 import { AuthStorageMock } from '@/mock/storage/auth/auth-storage-mock'
 
@@ -11,8 +17,8 @@ describe('AuthHttpClientConfigPlugin', () => {
   beforeEach(() => {
     mockAuthStorage = new AuthStorageMock()
     void mockAuthStorage.updateTokens(createTestSessionToken({
-      accessToken: 'bearer-token-123' as any,
-      refreshToken: 'refresh-token-123' as any
+      accessToken: toAccessTokenOrThrow('bearer-token-123'),
+      refreshToken: toRefreshTokenOrThrow('refresh-token-123')
     }))
     vi.spyOn(mockAuthStorage, 'updateTokens')
     vi.spyOn(mockAuthStorage, 'clearTokens')

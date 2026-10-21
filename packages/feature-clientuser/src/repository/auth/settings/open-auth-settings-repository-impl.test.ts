@@ -25,11 +25,11 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new OpenAuthSettingsApiMock()
     mockApi.result = appResultSuccess(mockAuthSettingsPayload)
-    vi.spyOn(mockApi, 'getAuthSettings').mockImplementation(mockApi.getAuthSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'getAuthSettings')
 
     mockStorage = new OpenAuthSettingsStorageMock()
-    vi.spyOn(mockStorage, 'getOpenAuthSettings').mockImplementation(mockStorage.getOpenAuthSettings.bind(mockStorage))
-    vi.spyOn(mockStorage, 'updateOpenAuthSettings').mockImplementation(mockStorage.updateOpenAuthSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'getOpenAuthSettings')
+    vi.spyOn(mockStorage, 'updateOpenAuthSettings')
 
     mockWsService = new WebSocketServiceMock()
 

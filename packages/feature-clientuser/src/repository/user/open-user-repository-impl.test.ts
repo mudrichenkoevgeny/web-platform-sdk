@@ -16,21 +16,21 @@ describe('OpenUserRepositoryImpl', () => {
 
   beforeEach(() => {
     mockUserStorage = new UserStorageMock()
-    vi.spyOn(mockUserStorage, 'observeCurrentUser').mockImplementation(mockUserStorage.observeCurrentUser.bind(mockUserStorage))
-    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
-    vi.spyOn(mockUserStorage, 'clear').mockImplementation(mockUserStorage.clear.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'observeCurrentUser')
+    vi.spyOn(mockUserStorage, 'updateCurrentUser')
+    vi.spyOn(mockUserStorage, 'clear')
 
     mockAuthStorage = new AuthStorageMock()
-    vi.spyOn(mockAuthStorage, 'clearTokens').mockImplementation(mockAuthStorage.clearTokens.bind(mockAuthStorage))
+    vi.spyOn(mockAuthStorage, 'clearTokens')
 
     mockApi = new OpenUserApiMock()
     mockApi.getUserResult = appResultSuccess(mockUserPayload)
     mockApi.scheduleUserDeletionResult = appResultSuccess(mockUserPayload)
     mockApi.restoreUserResult = appResultSuccess(mockUserPayload)
 
-    vi.spyOn(mockApi, 'getUser').mockImplementation(mockApi.getUser.bind(mockApi))
-    vi.spyOn(mockApi, 'scheduleUserDeletion').mockImplementation(mockApi.scheduleUserDeletion.bind(mockApi))
-    vi.spyOn(mockApi, 'restoreUser').mockImplementation(mockApi.restoreUser.bind(mockApi))
+    vi.spyOn(mockApi, 'getUser')
+    vi.spyOn(mockApi, 'scheduleUserDeletion')
+    vi.spyOn(mockApi, 'restoreUser')
 
     mockWsService = new WebSocketServiceMock()
 

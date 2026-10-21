@@ -85,7 +85,6 @@ describe('OpenSecuritySettingsRepositoryImpl', () => {
     const observer = vi.fn()
     repo.observeOpenSecuritySettings(observer)
 
-    // Wait for potential preload to finish so observer stabilizes
     await repo.getOpenSecuritySettings()
 
     const wsPayload: OpenSecuritySettingsPayload = {

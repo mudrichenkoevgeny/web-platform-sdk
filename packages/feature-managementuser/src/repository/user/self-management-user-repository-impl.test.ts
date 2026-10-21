@@ -16,16 +16,16 @@ describe('SelfManagementUserRepositoryImpl', () => {
 
   beforeEach(() => {
     mockUserStorage = new UserStorageMock()
-    vi.spyOn(mockUserStorage, 'observeCurrentUser').mockImplementation(mockUserStorage.observeCurrentUser.bind(mockUserStorage))
-    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
-    vi.spyOn(mockUserStorage, 'clear').mockImplementation(mockUserStorage.clear.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'observeCurrentUser')
+    vi.spyOn(mockUserStorage, 'updateCurrentUser')
+    vi.spyOn(mockUserStorage, 'clear')
 
     mockAuthStorage = new AuthStorageMock()
-    vi.spyOn(mockAuthStorage, 'clearTokens').mockImplementation(mockAuthStorage.clearTokens.bind(mockAuthStorage))
+    vi.spyOn(mockAuthStorage, 'clearTokens')
 
     mockApi = new SelfManagementUserApiMock()
     mockApi.getUserResult = appResultSuccess(mockUserPayload)
-    vi.spyOn(mockApi, 'getUser').mockImplementation(mockApi.getUser.bind(mockApi))
+    vi.spyOn(mockApi, 'getUser')
 
     mockWs = new WebSocketServiceMock()
 

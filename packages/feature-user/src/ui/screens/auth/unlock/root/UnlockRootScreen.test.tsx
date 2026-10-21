@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings, createTestOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockRootScreen } from '@/ui/screens/auth/unlock/root/UnlockRootScreen'
 import type { UnlockRootStoreDependencies } from '@/ui/screens/auth/unlock/root/unlock-root-store'
 
@@ -11,10 +11,10 @@ describe('UnlockRootScreen', () => {
       execute: vi.fn().mockResolvedValue(appResultSuccess({ items: [] }))
     } as unknown as UnlockRootStoreDependencies['getUserIdentifiersUseCase'],
     sendUnlockEmailConfirmationUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({ retryAfterSeconds: 60 }))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(createTestOtpConfirmation()))
     } as unknown as UnlockRootStoreDependencies['sendUnlockEmailConfirmationUseCase'],
     sendUnlockPhoneConfirmationUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({ retryAfterSeconds: 60 }))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(createTestOtpConfirmation()))
     } as unknown as UnlockRootStoreDependencies['sendUnlockPhoneConfirmationUseCase'],
     unlockByEmailUseCase: {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))

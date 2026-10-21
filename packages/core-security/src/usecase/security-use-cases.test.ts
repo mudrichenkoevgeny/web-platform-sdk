@@ -4,7 +4,6 @@ import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
 import { PasswordPolicyValidator } from '@/domain/model/password-policy-validator'
 import { OpenSecuritySettingsRepositoryMock } from '@/mock/repository/open-security-settings-repository-mock'
 import { ClientSecurityErrorCodes } from '@/error/naming/client-security-error-codes'
-import type { SecurityError } from '@/error/model/security-error'
 
 describe('Security Use Cases', () => {
   describe('RefreshOpenSecuritySettingsUseCase', () => {
@@ -22,7 +21,23 @@ describe('Security Use Cases', () => {
 
   describe('ValidatePasswordUseCase', () => {
     it('validates password successfully using repository policy', async () => {
-      const repo = new OpenSecuritySettingsRepositoryMock()
+      const repo = new OpenSecuritySettingsRepositoryMock({
+        initialSettings: {
+          openPasswordPolicy: {
+            minLength: 8,
+            requireLetter: true,
+            requireUpperCase: true,
+            requireLowerCase: true,
+            requireDigit: true,
+            requireSpecialChar: true
+          },
+          otpConfirmation: {
+            retryAfterSeconds: 60,
+            numberOfSymbols: 6,
+            expirationSeconds: 300
+          }
+        }
+      })
       const validator = new PasswordPolicyValidator()
       const useCase = new ValidatePasswordUseCase(repo, validator)
 
@@ -31,33 +46,48 @@ describe('Security Use Cases', () => {
     })
 
     it('returns SecurityError if password fails validation', async () => {
-      const repo = new OpenSecuritySettingsRepositoryMock()
+      const repo = new OpenSecuritySettingsRepositoryMock({
+        initialSettings: {
+          openPasswordPolicy: {
+            minLength: 8,
+            requireLetter: true,
+            requireUpperCase: false,
+            requireLowerCase: false,
+            requireDigit: false,
+            requireSpecialChar: false
+          },
+          otpConfirmation: {
+            retryAfterSeconds: 60,
+            numberOfSymbols: 6,
+            expirationSeconds: 300
+          }
+        }
+      })
       const validator = new PasswordPolicyValidator()
       const useCase = new ValidatePasswordUseCase(repo, validator)
 
       const result = await useCase.execute('short')
       expect(result.success).toBe(false)
-      if (!result.success) {
-        expect((result.error as SecurityError).code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_SHORT)
+      if (!result.success && 'code' in result.error) {
+        expect(result.error.code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_SHORT)
       }
     })
 
-    it('uses fallback policy if repository fetch fails', async () => {
+    it('uses fallback policy requiring min length 8 and a letter if repository fetch fails', async () => {
       const repo = new OpenSecuritySettingsRepositoryMock({ shouldFailGet: true })
       const validator = new PasswordPolicyValidator()
       const useCase = new ValidatePasswordUseCase(repo, validator)
 
-      // Fallback policy requires min length 8 and a letter.
       const resultShort = await useCase.execute('1234567')
       expect(resultShort.success).toBe(false)
-      if (!resultShort.success) {
-        expect((resultShort.error as SecurityError).code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_SHORT)
+      if (!resultShort.success && 'code' in resultShort.error) {
+        expect(resultShort.error.code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_SHORT)
       }
 
       const resultNoLetter = await useCase.execute('12345678')
       expect(resultNoLetter.success).toBe(false)
-      if (!resultNoLetter.success) {
-        expect((resultNoLetter.error as SecurityError).code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_LETTER)
+      if (!resultNoLetter.success && 'code' in resultNoLetter.error) {
+        expect(resultNoLetter.error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_LETTER)
       }
 
       const resultValid = await useCase.execute('a1234567')

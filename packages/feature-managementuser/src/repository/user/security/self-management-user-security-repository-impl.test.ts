@@ -25,15 +25,15 @@ describe('SelfManagementUserSecurityRepositoryImpl', () => {
     mockApi.getRecoveryCodesResult = appResultSuccess(mockTotpRecoveryCodesPayload)
     mockApi.regenerateRecoveryCodesResult = appResultSuccess(mockTotpRecoveryCodesPayload)
 
-    vi.spyOn(mockApi, 'setupTotp').mockImplementation(mockApi.setupTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'enableTotp').mockImplementation(mockApi.enableTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
-    vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
+    vi.spyOn(mockApi, 'setupTotp')
+    vi.spyOn(mockApi, 'enableTotp')
+    vi.spyOn(mockApi, 'disableTotp')
+    vi.spyOn(mockApi, 'getRecoveryCodes')
+    vi.spyOn(mockApi, 'regenerateRecoveryCodes')
 
     mockUserStorage = new UserStorageMock()
     mockUserStorage.updateCurrentUser(mockUser)
-    vi.spyOn(mockUserStorage, 'updateCurrentUser').mockImplementation(mockUserStorage.updateCurrentUser.bind(mockUserStorage))
+    vi.spyOn(mockUserStorage, 'updateCurrentUser')
 
     repository = new SelfManagementUserSecurityRepositoryImpl(mockApi, mockUserStorage)
   })

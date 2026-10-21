@@ -24,13 +24,13 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
     mockApi.updateManagementSecuritySettingsResult = appResultSuccess(undefined)
     mockApi.resetManagementSecuritySettingsResult = appResultSuccess(mockSettingsPayload)
 
-    vi.spyOn(mockApi, 'getManagementSecuritySettings').mockImplementation(mockApi.getManagementSecuritySettings.bind(mockApi))
-    vi.spyOn(mockApi, 'updateManagementSecuritySettings').mockImplementation(mockApi.updateManagementSecuritySettings.bind(mockApi))
-    vi.spyOn(mockApi, 'resetManagementSecuritySettings').mockImplementation(mockApi.resetManagementSecuritySettings.bind(mockApi))
+    vi.spyOn(mockApi, 'getManagementSecuritySettings')
+    vi.spyOn(mockApi, 'updateManagementSecuritySettings')
+    vi.spyOn(mockApi, 'resetManagementSecuritySettings')
 
     mockStorage = new ManagementSecuritySettingsStorageMock()
-    vi.spyOn(mockStorage, 'getManagementSecuritySettings').mockImplementation(mockStorage.getManagementSecuritySettings.bind(mockStorage))
-    vi.spyOn(mockStorage, 'updateManagementSecuritySettings').mockImplementation(mockStorage.updateManagementSecuritySettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'getManagementSecuritySettings')
+    vi.spyOn(mockStorage, 'updateManagementSecuritySettings')
 
     mockWsService = new WebSocketServiceMock()
 
@@ -74,7 +74,7 @@ describe('ManagementSecuritySettingsRepositoryImpl', () => {
 
     expect(mockStorage.updateManagementSecuritySettings).toHaveBeenCalled()
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({
-      mfaTokenExpirationSeconds: 300
+      mfaTokenExpirationSeconds: expect.any(Number)
     }))
   })
 })

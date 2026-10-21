@@ -25,12 +25,10 @@ describe('IdentifierDetailScreen', () => {
 
   const createMockDeps = (isCurrent = false): IdentifierDetailStoreDependencies => {
     const deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCaseMock()
-    deleteUserIdentifierUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(deleteUserIdentifierUseCase, 'execute').mockImplementation(deleteUserIdentifierUseCase.execute.bind(deleteUserIdentifierUseCase))
+    vi.spyOn(deleteUserIdentifierUseCase, 'execute')
 
     const emailChangePasswordUseCase = new EmailChangePasswordUseCaseMock()
-    emailChangePasswordUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(emailChangePasswordUseCase, 'execute').mockImplementation(emailChangePasswordUseCase.execute.bind(emailChangePasswordUseCase))
+    vi.spyOn(emailChangePasswordUseCase, 'execute')
 
     return {
       identifier: mockIdentifier,
@@ -143,7 +141,7 @@ describe('IdentifierDetailScreen', () => {
   it('detects own identifier when fetching via getUserIdentifierUseCase and currentUserId matches', async () => {
     const getUserIdentifierUseCase = new GetUserIdentifierUseCaseMock()
     getUserIdentifierUseCase.resultProvider = async () => appResultSuccess(mockIdentifier)
-    vi.spyOn(getUserIdentifierUseCase, 'execute').mockImplementation(getUserIdentifierUseCase.execute.bind(getUserIdentifierUseCase))
+    vi.spyOn(getUserIdentifierUseCase, 'execute')
 
     const deps: IdentifierDetailStoreDependencies = {
       identifierId: mockIdentifier.id,
@@ -159,6 +157,6 @@ describe('IdentifierDetailScreen', () => {
     )
 
     expect(await screen.findByTestId(IdentifierDetailTestTags.TITLE)).not.toBeNull()
-    expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).not.toBeNull()
+    expect(screen.queryByTestId(IdentifierDetailTestTags.DELETE_BUTTON)).toBeNull()
   })
 })

@@ -1,12 +1,31 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
-import { createTestUserPrivatePayload, ManagementUsersRoutes, ManagementUserListParamsParser, UserApiPaths, SortOrder, TEST_EMAIL, TEST_USER_ID, toUserIdOrThrow, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  createTestUserPrivatePayload,
+  ManagementUsersRoutes,
+  ManagementUserListParamsParser,
+  UserApiPaths,
+  SortOrder,
+  TEST_EMAIL,
+  TEST_USER_ID,
+  toUserIdOrThrow,
+  createTestPagedResult,
+  createTestPagedResultPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
 describe('FetchManagementUserApi', () => {
   let mockHttpClient: HttpClientMock
   let api: FetchManagementUserApi
+
+  const userListPagedPayload = createTestPagedResultPayload({
+    items: [],
+    total_count: 0,
+    page_number: 1,
+    page_size: 10,
+    total_pages: 0
+  })
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
@@ -29,9 +48,8 @@ describe('FetchManagementUserApi', () => {
   })
 
   it('dispatches getUsers request with query params', async () => {
-    const mockUserListPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedUserListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserListPayload)
+    const expectedUserListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(userListPagedPayload)
 
     const managementUserListParams = {
       pageNumber: 1,

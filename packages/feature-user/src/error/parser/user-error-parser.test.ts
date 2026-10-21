@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { UserErrorCodes, UserErrorArgs, UserModuleStrings, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { CommonError, generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserErrorParser } from '@/error/parser/user-error-parser'
 import { UserError } from '@/error/model/user-error'
 
@@ -20,7 +19,7 @@ describe('UserErrorParser', () => {
 
   it('parses shared foundation user error codes', () => {
     const invalidTokenError = {
-      id: 'err-1' as ErrorId,
+      id: generateErrorId(),
       code: UserErrorCodes.INVALID_ACCESS_TOKEN,
       args: null,
       isRetryable: false
@@ -30,7 +29,7 @@ describe('UserErrorParser', () => {
     expect(parserRu.parse(invalidTokenError)).toBe('Токен доступа недействителен.')
 
     const lockedUntilError = {
-      id: 'err-2' as ErrorId,
+      id: generateErrorId(),
       code: UserErrorCodes.USER_LOCKED,
       args: { [UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL]: String(Date.UTC(2026, 0, 1, 12, 0)) },
       isRetryable: false
@@ -41,7 +40,7 @@ describe('UserErrorParser', () => {
 
   it('parses identifier limit errors with arguments', () => {
     const limitError = {
-      id: 'err-3' as ErrorId,
+      id: generateErrorId(),
       code: UserErrorCodes.USER_IDENTIFIER_LIMIT_REACHED,
       args: {
         [UserErrorArgs.USER_AUTH_PROVIDER]: 'GOOGLE',

@@ -17,7 +17,7 @@ describe('AuditEventListScreen', () => {
           items: createTestAuditEventPrivateList(1)
         })
       )
-    vi.spyOn(getAuditEventsUseCase, 'execute').mockImplementation(getAuditEventsUseCase.execute.bind(getAuditEventsUseCase))
+    vi.spyOn(getAuditEventsUseCase, 'execute')
 
     return auditEventListDependenciesMock({
       getAuditEventsUseCase,

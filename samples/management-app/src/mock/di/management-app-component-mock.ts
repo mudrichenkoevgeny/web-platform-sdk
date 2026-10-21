@@ -25,29 +25,37 @@ export function managementAppComponentMock(): ManagementAppComponent {
   const mockCommonComponent = createMockCommonComponent()
   const mockSettingsComponent = createMockSettingsComponent()
   const mockSecurityComponent = createMockSecurityComponent()
+
+  const compositeActionTypeParser = new CompositeAuditActionTypeParser([
+    UserAuditActionType,
+    SecurityAuditActionType,
+    SettingsAuditActionType
+  ])
+  const compositeResourceTypeParser = new CompositeAuditResourceTypeParser([
+    UserAuditResourceType,
+    SecurityAuditResourceType,
+    SettingsAuditResourceType,
+    CommonAuditResourceType
+  ])
+  const compositeMetadataKeyParser = new CompositeAuditMetadataKeyParser([
+    CommonAuditMetadataKey,
+    UserAuditMetadataKey
+  ])
+
   const mockManagementUserComponent = managementUserComponentMock({
     commonComponent: mockCommonComponent,
     settingsComponent: mockSettingsComponent,
-    securityComponent: mockSecurityComponent
+    securityComponent: mockSecurityComponent,
+    compositeActionTypeParser,
+    compositeResourceTypeParser,
+    compositeMetadataKeyParser
   })
 
   return new ManagementAppComponent({
     baseUrl: 'http://localhost:8080',
-    compositeActionTypeParser: new CompositeAuditActionTypeParser([
-      UserAuditActionType,
-      SecurityAuditActionType,
-      SettingsAuditActionType
-    ]),
-    compositeResourceTypeParser: new CompositeAuditResourceTypeParser([
-      UserAuditResourceType,
-      SecurityAuditResourceType,
-      SettingsAuditResourceType,
-      CommonAuditResourceType
-    ]),
-    compositeMetadataKeyParser: new CompositeAuditMetadataKeyParser([
-      CommonAuditMetadataKey,
-      UserAuditMetadataKey
-    ]),
+    compositeActionTypeParser,
+    compositeResourceTypeParser,
+    compositeMetadataKeyParser,
     mockCommonComponent,
     mockSettingsComponent,
     mockSecurityComponent,

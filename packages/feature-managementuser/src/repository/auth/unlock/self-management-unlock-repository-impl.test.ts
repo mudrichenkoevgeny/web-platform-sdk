@@ -18,14 +18,14 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
     mockApi.unlockByPhoneResult = appResultSuccess(undefined)
     mockApi.unlockByExternalAuthProviderResult = appResultSuccess(undefined)
 
-    vi.spyOn(mockApi, 'sendUnlockEmailConfirmation').mockImplementation(mockApi.sendUnlockEmailConfirmation.bind(mockApi))
-    vi.spyOn(mockApi, 'unlockByEmail').mockImplementation(mockApi.unlockByEmail.bind(mockApi))
-    vi.spyOn(mockApi, 'sendUnlockPhoneConfirmation').mockImplementation(mockApi.sendUnlockPhoneConfirmation.bind(mockApi))
-    vi.spyOn(mockApi, 'unlockByPhone').mockImplementation(mockApi.unlockByPhone.bind(mockApi))
-    vi.spyOn(mockApi, 'unlockByExternalAuthProvider').mockImplementation(mockApi.unlockByExternalAuthProvider.bind(mockApi))
+    vi.spyOn(mockApi, 'sendUnlockEmailConfirmation')
+    vi.spyOn(mockApi, 'unlockByEmail')
+    vi.spyOn(mockApi, 'sendUnlockPhoneConfirmation')
+    vi.spyOn(mockApi, 'unlockByPhone')
+    vi.spyOn(mockApi, 'unlockByExternalAuthProvider')
 
     mockConfirmationRepo = new ConfirmationRepositoryMock()
-    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
 
     repository = new SelfManagementUnlockRepositoryImpl(mockApi, mockConfirmationRepo)
   })

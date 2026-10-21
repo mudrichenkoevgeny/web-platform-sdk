@@ -3,8 +3,7 @@ import { appResultSuccess, appResultFailure, CommonError, isSuccess } from '@mud
 import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { managementUserListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { managementUserListParamsSchema, createTestOpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuditRepositoryMock } from '@/mock/audit/repository/management-audit-repository-mock'
 import { ManagementUserRepositoryMock } from '@/mock/repository/user/management-user-repository-mock'
 import { ManagementAuthSettingsRepositoryMock } from '@/mock/repository/auth/settings/management-auth-settings-repository-mock'
@@ -23,8 +22,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementAuditRepositoryMock()
       const useCase = new GetAuditEventsUseCase(repo)
 
-      const result = await useCase.execute({ pageNumber: 1, pageSize: 10 })
-      expect(isSuccess(result)).toBe(true)
+      const auditEventsResult = await useCase.execute({ pageNumber: 1, pageSize: 10 })
+      expect(isSuccess(auditEventsResult)).toBe(true)
     })
   })
 
@@ -33,8 +32,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementUserRepositoryMock()
       const useCase = new GetUsersUseCase(repo)
 
-      const result = await useCase.execute(managementUserListParamsSchema.parse({ pageNumber: 1, pageSize: 10 }))
-      expect(isSuccess(result)).toBe(true)
+      const usersResult = await useCase.execute(managementUserListParamsSchema.parse({ pageNumber: 1, pageSize: 10 }))
+      expect(isSuccess(usersResult)).toBe(true)
     })
   })
 
@@ -43,8 +42,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementAuthSettingsRepositoryMock()
       const useCase = new GetManagementAuthSettingsUseCase(repo)
 
-      const result = await useCase.execute()
-      expect(isSuccess(result)).toBe(true)
+      const authSettingsResult = await useCase.execute()
+      expect(isSuccess(authSettingsResult)).toBe(true)
     })
   })
 
@@ -53,8 +52,8 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementGlobalSettingsRepositoryMock()
       const useCase = new GetManagementGlobalSettingsUseCase(repo)
 
-      const result = await useCase.execute()
-      expect(isSuccess(result)).toBe(true)
+      const globalSettingsResult = await useCase.execute()
+      expect(isSuccess(globalSettingsResult)).toBe(true)
     })
   })
 
@@ -63,50 +62,17 @@ describe('Management User Use Cases', () => {
       const repo = new ManagementSecuritySettingsRepositoryMock()
       const useCase = new GetManagementSecuritySettingsUseCase(repo)
 
-      const result = await useCase.execute()
-      expect(isSuccess(result)).toBe(true)
+      const securitySettingsResult = await useCase.execute()
+      expect(isSuccess(securitySettingsResult)).toBe(true)
     })
   })
 
   describe('RefreshManagementUserConfigurationUseCase', () => {
     it('fetches user configuration and updates core repositories on success', async () => {
-      const mockPayload: OpenUserConfigurationPayload = {
-        open_global_settings: {
-          privacy_policy_url: null,
-          terms_of_service_url: null,
-          contact_support_email: null,
-          min_supported_app_versions: {}
-        },
-        open_security_settings: {
-          open_password_policy: {
-            min_length: 8,
-            require_letter: false,
-            require_upper_case: false,
-            require_lower_case: false,
-            require_digit: false,
-            require_special_char: false
-          },
-          otp_confirmation: {
-            retry_after_seconds: 60,
-            number_of_symbols: 6,
-            expiration_seconds: 300
-          }
-        },
-        open_auth_settings: {
-          available_auth_providers: {
-            primary: [],
-            secondary: []
-          },
-          max_total_identifiers: 5,
-          max_email_identifiers: 2,
-          max_phone_identifiers: 2,
-          max_identifiers_per_external_provider: 1,
-          is_registration_enabled: true
-        }
-      }
+      const configurationPayload = createTestOpenUserConfigurationPayload()
 
       const mockApi: OpenUserConfigurationApi = {
-        getOpenUserConfiguration: vi.fn().mockResolvedValue(appResultSuccess(mockPayload))
+        getOpenUserConfiguration: vi.fn().mockResolvedValue(appResultSuccess(configurationPayload))
       }
 
       const globalRepo = new OpenGlobalSettingsRepositoryMock()
@@ -121,9 +87,9 @@ describe('Management User Use Cases', () => {
         securityRepo
       )
 
-      const result = await useCase.execute()
+      const refreshConfigResult = await useCase.execute()
 
-      expect(isSuccess(result)).toBe(true)
+      expect(isSuccess(refreshConfigResult)).toBe(true)
       expect(updateGlobalSpy).toHaveBeenCalledTimes(1)
       expect(updateSecuritySpy).toHaveBeenCalledTimes(1)
     })
@@ -145,9 +111,9 @@ describe('Management User Use Cases', () => {
         securityRepo
       )
 
-      const result = await useCase.execute()
+      const failedConfigResult = await useCase.execute()
 
-      expect(isSuccess(result)).toBe(false)
+      expect(isSuccess(failedConfigResult)).toBe(false)
       expect(updateGlobalSpy).not.toHaveBeenCalled()
       expect(updateSecuritySpy).not.toHaveBeenCalled()
     })

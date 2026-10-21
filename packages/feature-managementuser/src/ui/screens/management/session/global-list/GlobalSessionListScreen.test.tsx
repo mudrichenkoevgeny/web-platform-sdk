@@ -17,11 +17,11 @@ describe('GlobalSessionListScreen', () => {
           items: createTestUserSessionPrivateList(1)
         })
       )
-    vi.spyOn(managementGetSessionsUseCase, 'execute').mockImplementation(managementGetSessionsUseCase.execute.bind(managementGetSessionsUseCase))
+    vi.spyOn(managementGetSessionsUseCase, 'execute')
 
     const managementDeleteSessionUseCase = new ManagementDeleteSessionUseCaseMock()
     managementDeleteSessionUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(managementDeleteSessionUseCase, 'execute').mockImplementation(managementDeleteSessionUseCase.execute.bind(managementDeleteSessionUseCase))
+    vi.spyOn(managementDeleteSessionUseCase, 'execute')
 
     return globalSessionListDependenciesMock({
       managementGetSessionsUseCase,

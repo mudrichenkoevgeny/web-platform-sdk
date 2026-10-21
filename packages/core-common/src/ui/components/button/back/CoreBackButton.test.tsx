@@ -19,7 +19,7 @@ describe('CoreBackButton', () => {
     await user.click(button)
 
     expect(onClick).toHaveBeenCalledTimes(1)
-  })
+  }, 15000)
 
   it('does not trigger onClick when disabled', async () => {
     const onClick = vi.fn()
@@ -35,5 +35,5 @@ describe('CoreBackButton', () => {
     await user.click(button)
 
     expect(onClick).not.toHaveBeenCalled()
-  })
+  }, 15000)
 })

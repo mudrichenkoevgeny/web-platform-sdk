@@ -16,7 +16,7 @@ describe('GlobalUserListScreen', () => {
           items: createTestUserSummaryList(1)
         })
       )
-    vi.spyOn(getUsersUseCase, 'execute').mockImplementation(getUsersUseCase.execute.bind(getUsersUseCase))
+    vi.spyOn(getUsersUseCase, 'execute')
 
     return globalUserListDependenciesMock({
       getUsersUseCase,

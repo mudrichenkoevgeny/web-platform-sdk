@@ -1,21 +1,21 @@
 import { describe, it, expect } from 'vitest'
-import type { ApiErrorResponse, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 import { toServerError } from '@/error/mapper/to-server-error'
 import { generateErrorId } from '@/error/model/error-id'
 
 describe('toServerError', () => {
   it('maps ApiErrorResponse to ServerError with valid id', () => {
-    const validId = generateErrorId()
-    const apiErrorResponse: ApiErrorResponse = {
-      id: validId as unknown as UserId,
+    const validErrorId = generateErrorId()
+    const apiErrorResponse = createTestApiErrorResponse({
+      id: validErrorId,
       code: 'USER_NOT_FOUND',
       message: 'User was not found',
       args: { userId: '123' }
-    }
+    })
 
     const serverError = toServerError(apiErrorResponse, true)
 
-    expect(serverError.id).toBe(validId)
+    expect(serverError.id).toBe(validErrorId)
     expect(serverError.code).toBe('USER_NOT_FOUND')
     expect(serverError.message).toBe('User was not found')
     expect(serverError.args).toEqual({ userId: '123' })
@@ -23,12 +23,12 @@ describe('toServerError', () => {
   })
 
   it('generates new ErrorId if ApiErrorResponse id is invalid or missing', () => {
-    const apiErrorResponse: ApiErrorResponse = {
-      id: 'invalid-id' as unknown as UserId,
+    const apiErrorResponse = createTestApiErrorResponse({
+      id: 'invalid-id',
       code: 'SERVER_ERROR',
       message: 'Server failed',
       args: {}
-    }
+    })
 
     const serverError = toServerError(apiErrorResponse)
 

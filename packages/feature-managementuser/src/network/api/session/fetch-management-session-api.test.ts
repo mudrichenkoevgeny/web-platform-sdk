@@ -1,11 +1,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementSessionApi } from '@/network/api/session/fetch-management-session-api'
-import { ManagementSessionsRoutes, ManagementGlobalSessionListParamsParser, ManagementUserSessionListParamsParser, UserApiPaths, SortOrder, TEST_SESSION_ID, TEST_USER_ID, toUserIdOrThrow, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  ManagementSessionsRoutes,
+  ManagementGlobalSessionListParamsParser,
+  ManagementUserSessionListParamsParser,
+  UserApiPaths,
+  SortOrder,
+  TEST_SESSION_ID,
+  TEST_USER_ID,
+  toUserIdOrThrow,
+  toUserSessionIdOrThrow,
+  createTestUserSessionPrivatePayload,
+  createTestPagedResult,
+  createTestPagedResultPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementSessionApi', () => {
   let mockHttpClient: HttpClientMock
   let api: FetchManagementSessionApi
+
+  const sessionPagedPayload = createTestPagedResultPayload({
+    items: [],
+    total_count: 0,
+    page_number: 1,
+    page_size: 10,
+    total_pages: 0
+  })
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
@@ -14,9 +35,8 @@ describe('FetchManagementSessionApi', () => {
   })
 
   it('dispatches getSessions request with query params', async () => {
-    const mockSessionListPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedSessionListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionListPayload)
+    const expectedSessionListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(sessionPagedPayload)
 
     const managementSessionListParams = {
       pageNumber: 1,
@@ -49,9 +69,8 @@ describe('FetchManagementSessionApi', () => {
   })
 
   it('dispatches getSessions request using GET_USER_SESSIONS route when userId param is provided', async () => {
-    const mockSessionListPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedSessionListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockSessionListPayload)
+    const expectedSessionListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(sessionPagedPayload)
 
     const managementUserSessionListParams = {
       userId: toUserIdOrThrow(TEST_USER_ID),

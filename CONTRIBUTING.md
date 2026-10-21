@@ -76,7 +76,7 @@ Demonstrates back-office admin panel flows (Staff Auth, Audit Logs, User Managem
   ```bash
   pnpm dev:management
   ```
-- **Local URL:** `http://localhost:3003`
+- **Local URL:** `http://localhost:3001`
 
 ---
 

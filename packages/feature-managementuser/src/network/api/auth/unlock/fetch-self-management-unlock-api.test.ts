@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementUnlockApi } from '@/network/api/auth/unlock/fetch-self-management-unlock-api'
-import { SelfManagementUnlockRoutes, TEST_PHONE, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementUnlockRoutes, TEST_PHONE, createTestOtpConfirmationPayload, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementUnlockApi', () => {
   let mockHttpClient: HttpClientMock
@@ -66,11 +66,11 @@ describe('FetchSelfManagementUnlockApi', () => {
   it('dispatches unlockByExternalAuthProvider request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const unlockByProviderResult = await api.unlockByExternalAuthProvider('google', 'token123')
+    const unlockByProviderResult = await api.unlockByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' }) })
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ auth_provider: UserAuthProvider.GOOGLE, external_provider_token: 'token123' }) })
     )
     expect(unlockByProviderResult).toEqual({ success: true, data: undefined })
   })

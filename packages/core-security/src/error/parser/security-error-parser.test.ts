@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { SecurityErrorCodes, SecurityErrorArgs, CommonErrorArgs, SecurityModuleStrings, CommonLocales } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import { CommonError, generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { SecurityErrorParser } from '@/error/parser/security-error-parser'
 import { SecurityError } from '@/error/model/security-error'
 
@@ -53,7 +52,7 @@ describe('SecurityErrorParser', () => {
 
   it('parses shared foundation security error codes', () => {
     const mfaError = {
-      id: 'err-1' as ErrorId,
+      id: generateErrorId(),
       code: SecurityErrorCodes.MFA_CONFIRMATION_REQUIRED,
       args: { [SecurityErrorArgs.MFA_TOKEN]: 'token-123' },
       isRetryable: false
@@ -63,7 +62,7 @@ describe('SecurityErrorParser', () => {
     expect(parserRu.parse(mfaError)).toBe('Требуется подтверждение аутентификации. MFA токен: token-123')
 
     const otpError = {
-      id: 'err-2' as ErrorId,
+      id: generateErrorId(),
       code: SecurityErrorCodes.OTP_RETRY_TOO_SOON,
       args: { [CommonErrorArgs.RETRY_AFTER_SECONDS]: '60' },
       isRetryable: true
@@ -72,7 +71,7 @@ describe('SecurityErrorParser', () => {
     expect(parserEn.parse(otpError)).toBe('Too many attempts. Please try again in 60 seconds.')
 
     const totpAlreadyEnabled = {
-      id: 'err-3' as ErrorId,
+      id: generateErrorId(),
       code: SecurityErrorCodes.TOTP_ALREADY_ENABLED,
       args: null,
       isRetryable: false

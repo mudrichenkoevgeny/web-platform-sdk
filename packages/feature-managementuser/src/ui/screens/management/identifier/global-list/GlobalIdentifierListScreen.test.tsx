@@ -17,11 +17,11 @@ describe('GlobalIdentifierListScreen', () => {
           items: createTestUserIdentifierPrivateList(1)
         })
       )
-    vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+    vi.spyOn(managementGetIdentifiersUseCase, 'execute')
 
     const managementDeleteIdentifierUseCase = new ManagementDeleteIdentifierUseCaseMock()
     managementDeleteIdentifierUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(managementDeleteIdentifierUseCase, 'execute').mockImplementation(managementDeleteIdentifierUseCase.execute.bind(managementDeleteIdentifierUseCase))
+    vi.spyOn(managementDeleteIdentifierUseCase, 'execute')
 
     return globalIdentifierListDependenciesMock({
       managementGetIdentifiersUseCase,

@@ -180,7 +180,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
   describe('Store Integration with Typed KMP Search Params', () => {
     it('AuditEventListStore passes typed KMP searchParams directly to UseCase', async () => {
       const getAuditEventsUseCase = new GetAuditEventsUseCaseMock()
-      vi.spyOn(getAuditEventsUseCase, 'execute').mockImplementation(getAuditEventsUseCase.execute.bind(getAuditEventsUseCase))
+      vi.spyOn(getAuditEventsUseCase, 'execute')
 
       const typedParams = managementAuditEventListParamsSchema.parse({
         pageNumber: 2,
@@ -211,7 +211,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
     it('GlobalUserListStore passes typed KMP searchParams directly to UseCase', async () => {
       const getUsersUseCase = new GetUsersUseCaseMock()
-      vi.spyOn(getUsersUseCase, 'execute').mockImplementation(getUsersUseCase.execute.bind(getUsersUseCase))
+      vi.spyOn(getUsersUseCase, 'execute')
 
       const typedParams = managementUserListParamsSchema.parse({
         pageNumber: 3,
@@ -243,7 +243,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
     it('GlobalSessionListStore passes typed KMP searchParams directly to UseCase', async () => {
       const managementGetSessionsUseCase = new ManagementGetSessionsUseCaseMock()
-      vi.spyOn(managementGetSessionsUseCase, 'execute').mockImplementation(managementGetSessionsUseCase.execute.bind(managementGetSessionsUseCase))
+      vi.spyOn(managementGetSessionsUseCase, 'execute')
       const managementDeleteSessionUseCase = new ManagementDeleteSessionUseCaseMock()
 
       const typedParams = managementGlobalSessionListParamsSchema.parse({
@@ -282,7 +282,7 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
 
     it('GlobalIdentifierListStore passes typed KMP searchParams directly to UseCase', async () => {
       const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
-      vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+      vi.spyOn(managementGetIdentifiersUseCase, 'execute')
       const managementDeleteIdentifierUseCase = new ManagementDeleteIdentifierUseCaseMock()
 
       const typedParams = managementGlobalIdentifierListParamsSchema.parse({

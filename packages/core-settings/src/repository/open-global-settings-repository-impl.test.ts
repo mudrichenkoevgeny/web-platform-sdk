@@ -79,7 +79,7 @@ describe('OpenGlobalSettingsRepositoryImpl', () => {
     const observer = vi.fn()
     repo.observeOpenGlobalSettings(observer)
 
-    await repo.getOpenGlobalSettings() // Wait for preload
+    await repo.getOpenGlobalSettings()
 
     const wsPayload: OpenGlobalSettingsPayload = {
       ...samplePayload,

@@ -35,8 +35,8 @@ describe('ManagementAuditRepositoryImpl', () => {
     }))
     mockApi.getAuditEventResult = appResultSuccess(mockAuditEventPayload)
 
-    vi.spyOn(mockApi, 'getAuditEvents').mockImplementation(mockApi.getAuditEvents.bind(mockApi))
-    vi.spyOn(mockApi, 'getAuditEvent').mockImplementation(mockApi.getAuditEvent.bind(mockApi))
+    vi.spyOn(mockApi, 'getAuditEvents')
+    vi.spyOn(mockApi, 'getAuditEvent')
 
     repository = new ManagementAuditRepositoryImpl(
       mockApi,

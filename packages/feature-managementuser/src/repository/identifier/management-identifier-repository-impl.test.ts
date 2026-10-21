@@ -24,10 +24,10 @@ describe('ManagementIdentifierRepositoryImpl', () => {
     mockApi.deleteIdentifierResult = appResultSuccess(undefined)
     mockApi.deleteIdentifierPasswordResult = appResultSuccess(undefined)
 
-    vi.spyOn(mockApi, 'getIdentifiers').mockImplementation(mockApi.getIdentifiers.bind(mockApi))
-    vi.spyOn(mockApi, 'getIdentifier').mockImplementation(mockApi.getIdentifier.bind(mockApi))
-    vi.spyOn(mockApi, 'deleteIdentifier').mockImplementation(mockApi.deleteIdentifier.bind(mockApi))
-    vi.spyOn(mockApi, 'deleteIdentifierPassword').mockImplementation(mockApi.deleteIdentifierPassword.bind(mockApi))
+    vi.spyOn(mockApi, 'getIdentifiers')
+    vi.spyOn(mockApi, 'getIdentifier')
+    vi.spyOn(mockApi, 'deleteIdentifier')
+    vi.spyOn(mockApi, 'deleteIdentifierPassword')
 
     repository = new ManagementIdentifierRepositoryImpl(mockApi)
   })

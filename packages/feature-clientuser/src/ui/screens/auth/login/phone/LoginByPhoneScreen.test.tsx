@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings, commonStrings, TEST_PHONE } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { userStrings, commonStrings, TEST_PHONE, createTestOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByPhoneScreen } from '@/ui/screens/auth/login/phone/LoginByPhoneScreen'
 import { loginByPhoneDependenciesMock } from '@/mock/ui/screen/auth/login/phone/login-by-phone-component-mock'
 import { SendLoginConfirmationToPhoneUseCaseMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -10,6 +10,8 @@ import { SendLoginConfirmationToPhoneUseCaseMock } from '@mudrichenkoevgeny/web-
 describe('LoginByPhoneScreen', () => {
   it('renders phone input and enables send code button for valid phone number', async () => {
     const sendLoginConfirmationToPhoneUseCase = new SendLoginConfirmationToPhoneUseCaseMock()
+    sendLoginConfirmationToPhoneUseCase.resultProvider = async () =>
+      appResultSuccess(createTestOtpConfirmation())
     vi.spyOn(sendLoginConfirmationToPhoneUseCase, 'execute')
 
     const deps = loginByPhoneDependenciesMock({

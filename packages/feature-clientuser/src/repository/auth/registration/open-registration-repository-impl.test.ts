@@ -17,29 +17,29 @@ describe('OpenRegistrationRepositoryImpl', () => {
     mockApi.registerByEmailResult = appResultSuccess(mockAuthPayload)
     mockApi.sendRegistrationConfirmationToEmailResult = appResultSuccess(createTestOtpConfirmationPayload())
 
-    vi.spyOn(mockApi, 'registerByEmail').mockImplementation(mockApi.registerByEmail.bind(mockApi))
-    vi.spyOn(mockApi, 'sendRegistrationConfirmationToEmail').mockImplementation(mockApi.sendRegistrationConfirmationToEmail.bind(mockApi))
+    vi.spyOn(mockApi, 'registerByEmail')
+    vi.spyOn(mockApi, 'sendRegistrationConfirmationToEmail')
 
     mockConfirmationRepo = new ConfirmationRepositoryMock()
-    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
 
     repository = new OpenRegistrationRepositoryImpl(mockApi, mockConfirmationRepo)
   })
 
   it('delegates registerByEmail and maps response to AuthData', async () => {
-    const result = await repository.registerByEmail(TEST_EMAIL, 'secret', '123456')
+    const registrationResult = await repository.registerByEmail(TEST_EMAIL, 'secret', '123456')
     expect(mockApi.registerByEmail).toHaveBeenCalledWith({
       email: TEST_EMAIL,
       password: 'secret',
       confirmation_code: '123456'
     })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(registrationResult)).toBe(true)
   })
 
   it('delegates sendRegistrationConfirmationToEmail with timer', async () => {
-    const result = await repository.sendRegistrationConfirmationToEmail(TEST_EMAIL)
+    const sendConfirmationResult = await repository.sendRegistrationConfirmationToEmail(TEST_EMAIL)
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(sendConfirmationResult)).toBe(true)
   })
 
   it('queries remaining cooldown delay', () => {

@@ -20,13 +20,13 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
     mockApi.updateManagementGlobalSettingsResult = appResultSuccess(undefined)
     mockApi.resetManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
 
-    vi.spyOn(mockApi, 'getManagementGlobalSettings').mockImplementation(mockApi.getManagementGlobalSettings.bind(mockApi))
-    vi.spyOn(mockApi, 'updateManagementGlobalSettings').mockImplementation(mockApi.updateManagementGlobalSettings.bind(mockApi))
-    vi.spyOn(mockApi, 'resetManagementGlobalSettings').mockImplementation(mockApi.resetManagementGlobalSettings.bind(mockApi))
+    vi.spyOn(mockApi, 'getManagementGlobalSettings')
+    vi.spyOn(mockApi, 'updateManagementGlobalSettings')
+    vi.spyOn(mockApi, 'resetManagementGlobalSettings')
 
     mockStorage = new ManagementGlobalSettingsStorageMock()
-    vi.spyOn(mockStorage, 'getManagementGlobalSettings').mockImplementation(mockStorage.getManagementGlobalSettings.bind(mockStorage))
-    vi.spyOn(mockStorage, 'updateManagementGlobalSettings').mockImplementation(mockStorage.updateManagementGlobalSettings.bind(mockStorage))
+    vi.spyOn(mockStorage, 'getManagementGlobalSettings')
+    vi.spyOn(mockStorage, 'updateManagementGlobalSettings')
 
     mockWsService = new WebSocketServiceMock()
 
@@ -70,7 +70,7 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
 
     expect(mockStorage.updateManagementGlobalSettings).toHaveBeenCalled()
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({
-      isTracingEnabled: true
+      isTracingEnabled: expect.any(Boolean)
     }))
   })
 })

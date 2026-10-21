@@ -28,11 +28,11 @@ describe('ManagementUserRepositoryImpl', () => {
     mockApi.updateUserResult = appResultSuccess(undefined)
     mockApi.deleteUserResult = appResultSuccess(undefined)
 
-    vi.spyOn(mockApi, 'createUser').mockImplementation(mockApi.createUser.bind(mockApi))
-    vi.spyOn(mockApi, 'getUsers').mockImplementation(mockApi.getUsers.bind(mockApi))
-    vi.spyOn(mockApi, 'getUser').mockImplementation(mockApi.getUser.bind(mockApi))
-    vi.spyOn(mockApi, 'updateUser').mockImplementation(mockApi.updateUser.bind(mockApi))
-    vi.spyOn(mockApi, 'deleteUser').mockImplementation(mockApi.deleteUser.bind(mockApi))
+    vi.spyOn(mockApi, 'createUser')
+    vi.spyOn(mockApi, 'getUsers')
+    vi.spyOn(mockApi, 'getUser')
+    vi.spyOn(mockApi, 'updateUser')
+    vi.spyOn(mockApi, 'deleteUser')
 
     repository = new ManagementUserRepositoryImpl(mockApi)
   })

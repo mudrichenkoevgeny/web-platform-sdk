@@ -22,9 +22,9 @@ describe('SelfManagementIdentifierRepositoryImpl', () => {
     }))
     mockApi.emailChangePasswordResult = appResultSuccess(undefined)
 
-    vi.spyOn(mockApi, 'getUserIdentifier').mockImplementation(mockApi.getUserIdentifier.bind(mockApi))
-    vi.spyOn(mockApi, 'getUserIdentifiers').mockImplementation(mockApi.getUserIdentifiers.bind(mockApi))
-    vi.spyOn(mockApi, 'emailChangePassword').mockImplementation(mockApi.emailChangePassword.bind(mockApi))
+    vi.spyOn(mockApi, 'getUserIdentifier')
+    vi.spyOn(mockApi, 'getUserIdentifiers')
+    vi.spyOn(mockApi, 'emailChangePassword')
 
     repository = new SelfManagementIdentifierRepositoryImpl(mockApi)
   })

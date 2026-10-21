@@ -22,47 +22,47 @@ describe('OpenUserSecurityRepositoryImpl', () => {
     mockApi.getRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
     mockApi.regenerateRecoveryCodesResult = appResultSuccess(createTestTotpRecoveryCodesPayload())
 
-    vi.spyOn(mockApi, 'setupTotp').mockImplementation(mockApi.setupTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'enableTotp').mockImplementation(mockApi.enableTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'getRecoveryCodes').mockImplementation(mockApi.getRecoveryCodes.bind(mockApi))
-    vi.spyOn(mockApi, 'regenerateRecoveryCodes').mockImplementation(mockApi.regenerateRecoveryCodes.bind(mockApi))
+    vi.spyOn(mockApi, 'setupTotp')
+    vi.spyOn(mockApi, 'enableTotp')
+    vi.spyOn(mockApi, 'disableTotp')
+    vi.spyOn(mockApi, 'getRecoveryCodes')
+    vi.spyOn(mockApi, 'regenerateRecoveryCodes')
 
     mockStorage = new UserStorageMock({ initialUser: mockUser })
-    vi.spyOn(mockStorage, 'updateCurrentUser').mockImplementation(mockStorage.updateCurrentUser.bind(mockStorage))
+    vi.spyOn(mockStorage, 'updateCurrentUser')
 
     repository = new OpenUserSecurityRepositoryImpl(mockApi, mockStorage)
   })
 
   it('delegates setupTotp and maps result', async () => {
-    const result = await repository.setupTotp()
+    const setupTotpResult = await repository.setupTotp()
     expect(mockApi.setupTotp).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(setupTotpResult)).toBe(true)
   })
 
   it('enables TOTP and updates storage', async () => {
-    const result = await repository.enableTotp('mfa1', '123456')
+    const enableTotpResult = await repository.enableTotp('mfa1', '123456')
     expect(mockApi.enableTotp).toHaveBeenCalledWith('mfa1', '123456')
     expect(mockStorage.updateCurrentUser).toHaveBeenCalledWith(expect.objectContaining({ isTotpEnabled: true }))
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(enableTotpResult)).toBe(true)
   })
 
   it('disables TOTP and updates storage', async () => {
-    const result = await repository.disableTotp()
+    const disableTotpResult = await repository.disableTotp()
     expect(mockApi.disableTotp).toHaveBeenCalled()
     expect(mockStorage.updateCurrentUser).toHaveBeenCalledWith(expect.objectContaining({ isTotpEnabled: false }))
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(disableTotpResult)).toBe(true)
   })
 
   it('delegates getRecoveryCodes and maps result', async () => {
-    const result = await repository.getRecoveryCodes()
+    const getRecoveryCodesResult = await repository.getRecoveryCodes()
     expect(mockApi.getRecoveryCodes).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(getRecoveryCodesResult)).toBe(true)
   })
 
   it('delegates regenerateRecoveryCodes and maps result', async () => {
-    const result = await repository.regenerateRecoveryCodes()
+    const regenerateRecoveryCodesResult = await repository.regenerateRecoveryCodes()
     expect(mockApi.regenerateRecoveryCodes).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(regenerateRecoveryCodesResult)).toBe(true)
   })
 })

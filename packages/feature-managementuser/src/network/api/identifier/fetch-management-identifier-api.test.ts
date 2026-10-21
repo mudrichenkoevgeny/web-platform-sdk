@@ -1,11 +1,32 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
-import { ManagementIdentifiersRoutes, ManagementGlobalIdentifierListParamsParser, ManagementUserIdentifierListParamsParser, UserApiPaths, SortOrder, TEST_IDENTIFIER_ID, TEST_USER_ID, toUserIdOrThrow, toUserIdentifierIdOrThrow, createTestUserIdentifierPrivatePayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  ManagementIdentifiersRoutes,
+  ManagementGlobalIdentifierListParamsParser,
+  ManagementUserIdentifierListParamsParser,
+  UserApiPaths,
+  SortOrder,
+  TEST_IDENTIFIER_ID,
+  TEST_USER_ID,
+  toUserIdOrThrow,
+  toUserIdentifierIdOrThrow,
+  createTestUserIdentifierPrivatePayload,
+  createTestPagedResult,
+  createTestPagedResultPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementIdentifierApi', () => {
   let mockHttpClient: HttpClientMock
   let api: FetchManagementIdentifierApi
+
+  const identifierPagedPayload = createTestPagedResultPayload({
+    items: [],
+    total_count: 0,
+    page_number: 1,
+    page_size: 10,
+    total_pages: 0
+  })
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
@@ -14,9 +35,8 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifiers request with query params', async () => {
-    const mockIdentifierListPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedIdentifierListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockIdentifierListPayload)
+    const expectedIdentifierListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPagedPayload)
 
     const identifierListParams = {
       pageNumber: 1,
@@ -39,9 +59,8 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifiers request using GET_USER_IDENTIFIERS route when userId param is provided', async () => {
-    const mockIdentifierListPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedIdentifierListPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockIdentifierListPayload)
+    const expectedIdentifierListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPagedPayload)
 
     const userIdentifierListParams = {
       userId: toUserIdOrThrow(TEST_USER_ID),

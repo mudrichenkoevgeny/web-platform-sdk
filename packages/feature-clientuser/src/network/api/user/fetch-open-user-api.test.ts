@@ -17,12 +17,12 @@ describe('FetchOpenUserApi', () => {
     const mockUserPayload = createTestUserPrivatePayload({ id: toUserIdOrThrow(TEST_USER_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
-    const result = await api.getUser()
+    const userResult = await api.getUser()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserRoutes.GET_USER
     )
-    expect(result).toEqual({ success: true, data: mockUserPayload })
+    expect(userResult).toEqual({ success: true, data: mockUserPayload })
   })
 
   it('dispatches scheduleUserDeletion request', async () => {
@@ -32,13 +32,13 @@ describe('FetchOpenUserApi', () => {
     })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
-    const result = await api.scheduleUserDeletion()
+    const scheduledDeletionResult = await api.scheduleUserDeletion()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserRoutes.SCHEDULE_DELETION,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: mockUserPayload })
+    expect(scheduledDeletionResult).toEqual({ success: true, data: mockUserPayload })
   })
 
   it('dispatches restoreUser request', async () => {
@@ -48,12 +48,12 @@ describe('FetchOpenUserApi', () => {
     })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
-    const result = await api.restoreUser()
+    const restoredUserResult = await api.restoreUser()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserRoutes.RESTORE_USER,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockUserPayload })
+    expect(restoredUserResult).toEqual({ success: true, data: mockUserPayload })
   })
 })

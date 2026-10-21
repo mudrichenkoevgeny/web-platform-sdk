@@ -1,11 +1,29 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
-import { createTestAuditEventPrivatePayload, ManagementAuditRoutes, ManagementAuditEventListParamsParser, SortOrder, TEST_AUDIT_EVENT_ID, TEST_USER_ID, toAuditEventIdOrThrow, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  createTestAuditEventPrivatePayload,
+  ManagementAuditRoutes,
+  ManagementAuditEventListParamsParser,
+  SortOrder,
+  TEST_AUDIT_EVENT_ID,
+  TEST_USER_ID,
+  toAuditEventIdOrThrow,
+  createTestPagedResult,
+  createTestPagedResultPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementAuditApi', () => {
   let mockHttpClient: HttpClientMock
   let api: FetchManagementAuditApi
+
+  const auditEventsPagedPayload = createTestPagedResultPayload({
+    items: [],
+    total_count: 0,
+    page_number: 1,
+    page_size: 10,
+    total_pages: 0
+  })
 
   beforeEach(() => {
     mockHttpClient = new HttpClientMock()
@@ -14,9 +32,8 @@ describe('FetchManagementAuditApi', () => {
   })
 
   it('dispatches getAuditEvents request with query params', async () => {
-    const mockAuditEventsPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedAuditEventsPagedResult = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuditEventsPayload)
+    const expectedAuditEventsPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(auditEventsPagedPayload)
 
     const auditEventListParams = {
       pageNumber: 1,
@@ -44,8 +61,7 @@ describe('FetchManagementAuditApi', () => {
   })
 
   it('formats actorIds into actor_id query parameter', async () => {
-    const mockAuditEventsPayload = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuditEventsPayload)
+    vi.mocked(mockHttpClient.request).mockResolvedValue(auditEventsPagedPayload)
 
     const auditEventListParams = { actorIds: [TEST_USER_ID] }
     await api.getAuditEvents(auditEventListParams)

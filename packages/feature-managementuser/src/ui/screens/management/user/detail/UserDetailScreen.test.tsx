@@ -14,19 +14,19 @@ describe('UserDetailScreen', () => {
   const createMockDeps = (): UserDetailStoreDependencies => {
     const getUserUseCase = new GetUserUseCaseMock()
     getUserUseCase.resultProvider = async () => appResultSuccess(toUserPrivate(createTestUserPrivatePayload()))
-    vi.spyOn(getUserUseCase, 'execute').mockImplementation(getUserUseCase.execute.bind(getUserUseCase))
+    vi.spyOn(getUserUseCase, 'execute')
 
     const updateUserUseCase = new UpdateUserUseCaseMock()
     updateUserUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(updateUserUseCase, 'execute').mockImplementation(updateUserUseCase.execute.bind(updateUserUseCase))
+    vi.spyOn(updateUserUseCase, 'execute')
 
     const deleteUserUseCase = new DeleteUserUseCaseMock()
     deleteUserUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(deleteUserUseCase, 'execute').mockImplementation(deleteUserUseCase.execute.bind(deleteUserUseCase))
+    vi.spyOn(deleteUserUseCase, 'execute')
 
     const managementDisableTotpUseCase = new ManagementDisableTotpUseCaseMock()
     managementDisableTotpUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(managementDisableTotpUseCase, 'execute').mockImplementation(managementDisableTotpUseCase.execute.bind(managementDisableTotpUseCase))
+    vi.spyOn(managementDisableTotpUseCase, 'execute')
 
     return userDetailDependenciesMock({
       userId: toUserIdOrThrow(TEST_USER_ID),
@@ -69,7 +69,7 @@ describe('UserDetailScreen', () => {
     deps.currentUserId = deps.userId
     const getUserUseCase = new GetUserUseCaseMock()
     getUserUseCase.resultProvider = async () => appResultSuccess(toUserPrivate(createTestUserPrivatePayload({ id: deps.userId })))
-    vi.spyOn(getUserUseCase, 'execute').mockImplementation(getUserUseCase.execute.bind(getUserUseCase))
+    vi.spyOn(getUserUseCase, 'execute')
     deps.getUserUseCase = getUserUseCase
 
     render(

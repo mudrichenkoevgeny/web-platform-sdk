@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestSessionToken, createTestUserPrivate, TEST_USER_ID, toUserIdOrThrow, UserAccountStatus, userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByTotpScreen } from '@/ui/screens/auth/login/totp/LoginByTotpScreen'
 import { loginByTotpDependenciesMock } from '@/mock/ui/screen/auth/login/totp/login-by-totp-component-mock'
 import { LoginByTotpUseCaseMock } from '@/mock/usecase/auth/login/login-by-totp-use-case-mock'
@@ -10,7 +10,15 @@ import { LoginByTotpUseCaseMock } from '@/mock/usecase/auth/login/login-by-totp-
 describe('LoginByTotpScreen', () => {
   it('renders TOTP mode by default and enables submit when 6 digits are typed', async () => {
     const loginByTotpUseCase = new LoginByTotpUseCaseMock()
-    vi.spyOn(loginByTotpUseCase, 'execute').mockImplementation(loginByTotpUseCase.execute.bind(loginByTotpUseCase))
+    loginByTotpUseCase.resultProvider = async () =>
+      appResultSuccess({
+        userPrivate: createTestUserPrivate({
+          id: toUserIdOrThrow(TEST_USER_ID),
+          accountStatus: UserAccountStatus.ACTIVE
+        }),
+        sessionToken: createTestSessionToken()
+      })
+    vi.spyOn(loginByTotpUseCase, 'execute')
 
     const onFinished = vi.fn()
     const deps = loginByTotpDependenciesMock({

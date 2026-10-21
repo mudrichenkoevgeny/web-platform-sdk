@@ -17,29 +17,29 @@ describe('SelfManagementResetPasswordRepositoryImpl', () => {
     mockApi.resetPasswordResult = appResultSuccess(mockIdentifierPayload)
     mockApi.sendResetPasswordConfirmationToEmailResult = appResultSuccess(createTestOtpConfirmationPayload())
 
-    vi.spyOn(mockApi, 'resetPassword').mockImplementation(mockApi.resetPassword.bind(mockApi))
-    vi.spyOn(mockApi, 'sendResetPasswordConfirmationToEmail').mockImplementation(mockApi.sendResetPasswordConfirmationToEmail.bind(mockApi))
+    vi.spyOn(mockApi, 'resetPassword')
+    vi.spyOn(mockApi, 'sendResetPasswordConfirmationToEmail')
 
     mockConfirmationRepo = new ConfirmationRepositoryMock()
-    vi.spyOn(mockConfirmationRepo, 'executeWithTimer').mockImplementation(mockConfirmationRepo.executeWithTimer.bind(mockConfirmationRepo))
+    vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
 
     repository = new SelfManagementResetPasswordRepositoryImpl(mockApi, mockConfirmationRepo)
   })
 
   it('delegates resetPassword and maps response to UserIdentifierPrivate', async () => {
-    const result = await repository.resetPassword('admin@example.com', 'new_secret', '123456')
+    const resetResult = await repository.resetPassword('admin@example.com', 'new_secret', '123456')
     expect(mockApi.resetPassword).toHaveBeenCalledWith({
       email: 'admin@example.com',
       new_password: 'new_secret',
       confirmation_code: '123456'
     })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(resetResult)).toBe(true)
   })
 
   it('delegates sendResetPasswordConfirmationToEmail with timer', async () => {
-    const result = await repository.sendResetPasswordConfirmationToEmail('admin@example.com')
+    const sendConfirmationResult = await repository.sendResetPasswordConfirmationToEmail('admin@example.com')
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(sendConfirmationResult)).toBe(true)
   })
 
   it('queries remaining cooldown delay', () => {

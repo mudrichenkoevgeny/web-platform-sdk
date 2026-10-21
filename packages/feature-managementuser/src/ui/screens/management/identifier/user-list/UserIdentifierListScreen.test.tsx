@@ -16,7 +16,7 @@ describe('UserIdentifierListScreen', () => {
           items: createTestUserIdentifierPrivateList(1)
         })
       )
-    vi.spyOn(managementGetIdentifiersUseCase, 'execute').mockImplementation(managementGetIdentifiersUseCase.execute.bind(managementGetIdentifiersUseCase))
+    vi.spyOn(managementGetIdentifiersUseCase, 'execute')
 
     return userIdentifierListDependenciesMock({
       userId: toUserIdOrThrow(TEST_USER_ID),

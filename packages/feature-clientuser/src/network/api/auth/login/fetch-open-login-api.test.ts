@@ -6,7 +6,8 @@ import {
   TEST_EMAIL,
   TEST_PHONE,
   createTestAuthDataPayload,
-  createTestOtpConfirmationPayload
+  createTestOtpConfirmationPayload,
+  UserAuthProvider
 } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenLoginApi', () => {
@@ -55,13 +56,13 @@ describe('FetchOpenLoginApi', () => {
     const mockAuthDataPayload = createTestAuthDataPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthDataPayload)
 
-    const result = await api.loginByExternalAuthProvider('google', 'token123')
+    const result = await api.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenLoginRoutes.LOGIN_BY_EXTERNAL_AUTH_PROVIDER,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
+        body: JSON.stringify({ auth_provider: UserAuthProvider.GOOGLE, external_provider_token: 'token123' })
       })
     )
     expect(result).toEqual({ success: true, data: mockAuthDataPayload })

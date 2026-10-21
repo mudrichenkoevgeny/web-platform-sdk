@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TEST_EMAIL } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestSessionToken, createTestUserPrivate, TEST_EMAIL, TEST_USER_ID, toUserIdOrThrow, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
 import { LoginByEmailScreen, LoginByEmailTestTags } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
 import { loginByEmailDependenciesMock } from '@/mock/ui/screen/auth/login/email/login-by-email-component-mock'
 import { LoginByEmailUseCaseMock } from '@/mock/usecase/auth/login/login-by-email-use-case-mock'
@@ -10,7 +10,15 @@ import { LoginByEmailUseCaseMock } from '@/mock/usecase/auth/login/login-by-emai
 describe('LoginByEmailScreen', () => {
   it('enables login button when valid email and password are provided', async () => {
     const loginByEmailUseCase = new LoginByEmailUseCaseMock()
-    vi.spyOn(loginByEmailUseCase, 'execute').mockImplementation(loginByEmailUseCase.execute.bind(loginByEmailUseCase))
+    loginByEmailUseCase.resultProvider = async () =>
+      appResultSuccess({
+        userPrivate: createTestUserPrivate({
+          id: toUserIdOrThrow(TEST_USER_ID),
+          accountStatus: UserAccountStatus.ACTIVE
+        }),
+        sessionToken: createTestSessionToken()
+      })
+    vi.spyOn(loginByEmailUseCase, 'execute')
 
     const onFinished = vi.fn()
     const deps = loginByEmailDependenciesMock({

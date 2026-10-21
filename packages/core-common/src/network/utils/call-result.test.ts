@@ -29,7 +29,9 @@ describe('callResult', () => {
     expect(isFailure(result)).toBe(true)
     if (isFailure(result)) {
       expect(result.error).toBeInstanceOf(ServerError)
-      expect((result.error as ServerError).code).toBe('UNAUTHORIZED')
+      if (result.error instanceof ServerError) {
+        expect(result.error.code).toBe('UNAUTHORIZED')
+      }
       expect(result.error.isRetryable).toBe(true)
     }
   })

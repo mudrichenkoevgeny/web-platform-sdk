@@ -25,10 +25,10 @@ describe('ManagementSessionRepositoryImpl', () => {
     mockApi.deleteSessionResult = appResultSuccess(undefined)
     mockApi.deleteAllUserSessionsResult = appResultSuccess(undefined)
 
-    vi.spyOn(mockApi, 'getSessions').mockImplementation(mockApi.getSessions.bind(mockApi))
-    vi.spyOn(mockApi, 'getSession').mockImplementation(mockApi.getSession.bind(mockApi))
-    vi.spyOn(mockApi, 'deleteSession').mockImplementation(mockApi.deleteSession.bind(mockApi))
-    vi.spyOn(mockApi, 'deleteAllUserSessions').mockImplementation(mockApi.deleteAllUserSessions.bind(mockApi))
+    vi.spyOn(mockApi, 'getSessions')
+    vi.spyOn(mockApi, 'getSession')
+    vi.spyOn(mockApi, 'deleteSession')
+    vi.spyOn(mockApi, 'deleteAllUserSessions')
 
     repository = new ManagementSessionRepositoryImpl(mockApi)
   })

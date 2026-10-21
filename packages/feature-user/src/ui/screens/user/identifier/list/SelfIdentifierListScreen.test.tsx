@@ -21,7 +21,7 @@ describe('SelfIdentifierListScreen', () => {
           items: identifiers
         })
       )
-    vi.spyOn(getUserIdentifiersUseCase, 'execute').mockImplementation(getUserIdentifiersUseCase.execute.bind(getUserIdentifiersUseCase))
+    vi.spyOn(getUserIdentifiersUseCase, 'execute')
 
     const getAvailableUserAuthProvidersUseCase = new GetAvailableUserAuthProvidersUseCaseMock()
     getAvailableUserAuthProvidersUseCase.resultProvider = async () =>
@@ -29,7 +29,7 @@ describe('SelfIdentifierListScreen', () => {
         primary: [UserAuthProvider.EMAIL],
         secondary: [UserAuthProvider.GOOGLE]
       })
-    vi.spyOn(getAvailableUserAuthProvidersUseCase, 'execute').mockImplementation(getAvailableUserAuthProvidersUseCase.execute.bind(getAvailableUserAuthProvidersUseCase))
+    vi.spyOn(getAvailableUserAuthProvidersUseCase, 'execute')
 
     return {
       appType: AppType.CLIENT,

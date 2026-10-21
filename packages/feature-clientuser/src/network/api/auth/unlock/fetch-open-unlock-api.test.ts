@@ -84,7 +84,7 @@ describe('FetchOpenUnlockApi', () => {
       OpenUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER,
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
+        body: JSON.stringify({ auth_provider: UserAuthProvider.GOOGLE, external_provider_token: 'token123' })
       })
     )
     expect(result).toEqual({ success: true, data: undefined })

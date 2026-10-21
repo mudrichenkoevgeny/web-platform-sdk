@@ -21,12 +21,12 @@ describe('OpenLoginRepositoryImpl', () => {
     mockApi.loginByTotpRecoveryCodeResult = appResultSuccess(mockAuthPayload)
     mockApi.sendLoginConfirmationToPhoneResult = appResultSuccess(createTestOtpConfirmationPayload())
 
-    vi.spyOn(mockApi, 'loginByEmail').mockImplementation(mockApi.loginByEmail.bind(mockApi))
-    vi.spyOn(mockApi, 'loginByPhone').mockImplementation(mockApi.loginByPhone.bind(mockApi))
-    vi.spyOn(mockApi, 'loginByExternalAuthProvider').mockImplementation(mockApi.loginByExternalAuthProvider.bind(mockApi))
-    vi.spyOn(mockApi, 'loginByTotp').mockImplementation(mockApi.loginByTotp.bind(mockApi))
-    vi.spyOn(mockApi, 'loginByTotpRecoveryCode').mockImplementation(mockApi.loginByTotpRecoveryCode.bind(mockApi))
-    vi.spyOn(mockApi, 'sendLoginConfirmationToPhone').mockImplementation(mockApi.sendLoginConfirmationToPhone.bind(mockApi))
+    vi.spyOn(mockApi, 'loginByEmail')
+    vi.spyOn(mockApi, 'loginByPhone')
+    vi.spyOn(mockApi, 'loginByExternalAuthProvider')
+    vi.spyOn(mockApi, 'loginByTotp')
+    vi.spyOn(mockApi, 'loginByTotpRecoveryCode')
+    vi.spyOn(mockApi, 'sendLoginConfirmationToPhone')
 
     mockConfirmationRepo = new ConfirmationRepositoryMock()
     vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
@@ -35,45 +35,45 @@ describe('OpenLoginRepositoryImpl', () => {
   })
 
   it('delegates loginByEmail and maps response', async () => {
-    const result = await repository.loginByEmail(TEST_EMAIL, 'secret')
+    const loginResult = await repository.loginByEmail(TEST_EMAIL, 'secret')
     expect(mockApi.loginByEmail).toHaveBeenCalledWith(TEST_EMAIL, 'secret')
     expect(mockApi.lastLoginByEmailRequest).toEqual({ email: TEST_EMAIL, password: 'secret' })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(loginResult)).toBe(true)
   })
 
   it('delegates loginByPhone and maps response', async () => {
-    const result = await repository.loginByPhone(TEST_PHONE, '123456')
+    const loginResult = await repository.loginByPhone(TEST_PHONE, '123456')
     expect(mockApi.loginByPhone).toHaveBeenCalledWith(TEST_PHONE, '123456')
     expect(mockApi.lastLoginByPhoneRequest).toEqual({ phone_number: TEST_PHONE, confirmation_code: '123456' })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(loginResult)).toBe(true)
   })
 
   it('delegates loginByExternalAuthProvider and maps response', async () => {
-    const result = await repository.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
+    const loginResult = await repository.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
     expect(mockApi.loginByExternalAuthProvider).toHaveBeenCalledWith(UserAuthProvider.GOOGLE, 'token_xyz')
     expect(mockApi.lastLoginByExternalAuthProviderRequest).toEqual({ auth_provider: UserAuthProvider.GOOGLE, external_provider_token: 'token_xyz' })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(loginResult)).toBe(true)
   })
 
   it('delegates loginByTotp and maps response', async () => {
-    const result = await repository.loginByTotp('mfa_123', '654321')
+    const loginResult = await repository.loginByTotp('mfa_123', '654321')
     expect(mockApi.loginByTotp).toHaveBeenCalledWith('mfa_123', '654321')
     expect(mockApi.lastLoginByTotpRequest).toEqual({ mfa_token: 'mfa_123', totp_code: '654321' })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(loginResult)).toBe(true)
   })
 
   it('delegates loginByTotpRecoveryCode and maps response', async () => {
-    const result = await repository.loginByTotpRecoveryCode('mfa_123', 'rec_123')
+    const loginResult = await repository.loginByTotpRecoveryCode('mfa_123', 'rec_123')
     expect(mockApi.loginByTotpRecoveryCode).toHaveBeenCalledWith('mfa_123', 'rec_123')
     expect(mockApi.lastLoginByTotpRecoveryCodeRequest).toEqual({ mfa_token: 'mfa_123', totp_code: 'rec_123' })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(loginResult)).toBe(true)
   })
 
   it('delegates sendLoginConfirmationToPhone with timer', async () => {
-    const result = await repository.sendLoginConfirmationToPhone(TEST_PHONE)
+    const sendConfirmationResult = await repository.sendLoginConfirmationToPhone(TEST_PHONE)
     expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
     expect(mockApi.lastSendLoginConfirmationToPhoneRequest).toEqual({ phone_number: TEST_PHONE })
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(sendConfirmationResult)).toBe(true)
   })
 
   it('queries remaining cooldown delay', () => {

@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createTestAuthData, createTestUserPrivate, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestAuthData, createTestUserPrivate, UserAccountStatus, createTestOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import {
   LoginRepositoryMock,
   LoginByPhoneUseCaseMock,
@@ -15,7 +15,7 @@ export const loginByPhoneDependenciesMock = (
 
   const sendLoginConfirmationToPhoneUseCase = new SendLoginConfirmationToPhoneUseCaseMock()
   sendLoginConfirmationToPhoneUseCase.resultProvider = async () =>
-    appResultSuccess({ retryAfterSeconds: 60, numberOfSymbols: 6, expirationSeconds: 300 })
+    appResultSuccess(createTestOtpConfirmation())
 
   const loginByPhoneUseCase = new LoginByPhoneUseCaseMock()
   loginByPhoneUseCase.resultProvider = async () =>

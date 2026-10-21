@@ -1,7 +1,20 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchOpenIdentifiersApi, OPEN_IDENTIFIER_DELETE_PASSWORD_ROUTE } from '@/network/api/identifier/fetch-open-identifiers-api'
-import { createTestUserIdentifierPrivatePayload, OpenIdentifierRoutes, SelfIdentifierListParamsParser, selfIdentifierListParamsSchema, SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, createTestPagedResult, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  createTestUserIdentifierPrivatePayload,
+  OpenIdentifierRoutes,
+  SelfIdentifierListParamsParser,
+  selfIdentifierListParamsSchema,
+  SortOrder,
+  TEST_EMAIL,
+  TEST_IDENTIFIER_ID,
+  TEST_PHONE,
+  toUserIdentifierIdOrThrow,
+  createTestPagedResult,
+  createTestPagedResultPayload,
+  createTestOtpConfirmationPayload
+} from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchOpenIdentifiersApi', () => {
   let mockHttpClient: HttpClientMock
@@ -14,22 +27,28 @@ describe('FetchOpenIdentifiersApi', () => {
   })
 
   it('dispatches getUserIdentifier request', async () => {
-    const mockPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const identifierPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPayload)
 
-    const id = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
-    const result = await api.getUserIdentifier(id)
+    const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
+    const identifierResult = await api.getUserIdentifier(identifierId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.GET_IDENTIFIER.replace('{user_identifier_id}', TEST_IDENTIFIER_ID)
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(identifierResult).toEqual({ success: true, data: identifierPayload })
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
-    const mockPayload = createTestPagedResult({ pageSize: 10 })
-    const expectedData = createTestPagedResult({ pageSize: 10 })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const userIdentifiersPagedPayload = createTestPagedResultPayload({
+      items: [],
+      total_count: 0,
+      page_number: 1,
+      page_size: 10,
+      total_pages: 0
+    })
+    const expectedIdentifiersPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(userIdentifiersPagedPayload)
 
     const params = selfIdentifierListParamsSchema.parse({
       pageNumber: 1,
@@ -39,7 +58,7 @@ describe('FetchOpenIdentifiersApi', () => {
       userAuthProviders: [],
       identifiers: []
     })
-    const result = await api.getUserIdentifiers(params)
+    const identifiersResult = await api.getUserIdentifiers(params)
 
     const expectedUrl = appendQueryParamsToPath(
       OpenIdentifierRoutes.GET_IDENTIFIERS,
@@ -47,40 +66,40 @@ describe('FetchOpenIdentifiersApi', () => {
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(result).toEqual({ success: true, data: expectedData })
+    expect(identifiersResult).toEqual({ success: true, data: expectedIdentifiersPagedResult })
   })
 
   it('dispatches deleteUserIdentifier request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const id = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
-    const result = await api.deleteUserIdentifier(id)
+    const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
+    const deleteIdentifierResult = await api.deleteUserIdentifier(identifierId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.DELETE_IDENTIFIER.replace('{user_identifier_id}', TEST_IDENTIFIER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(deleteIdentifierResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches deletePassword request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
-    const id = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
-    const result = await api.deletePassword(id)
+    const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
+    const deletePasswordResult = await api.deletePassword(identifierId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OPEN_IDENTIFIER_DELETE_PASSWORD_ROUTE.replace('{user_identifier_id}', TEST_IDENTIFIER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(deletePasswordResult).toEqual({ success: true, data: undefined })
   })
 
   it('dispatches addUserIdentifierEmail request', async () => {
-    const mockPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const emailIdentifierPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(emailIdentifierPayload)
 
-    const result = await api.addUserIdentifierEmail(TEST_EMAIL, 'secret', '123456')
+    const addEmailResult = await api.addUserIdentifierEmail(TEST_EMAIL, 'secret', '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_EMAIL,
@@ -89,14 +108,14 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ email: TEST_EMAIL, password: 'secret', confirmation_code: '123456' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(addEmailResult).toEqual({ success: true, data: emailIdentifierPayload })
   })
 
   it('dispatches addUserIdentifierPhone request', async () => {
-    const mockPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const phoneIdentifierPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(phoneIdentifierPayload)
 
-    const result = await api.addUserIdentifierPhone(TEST_PHONE, '123456')
+    const addPhoneResult = await api.addUserIdentifierPhone(TEST_PHONE, '123456')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_PHONE,
@@ -105,14 +124,14 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ phone_number: TEST_PHONE, confirmation_code: '123456' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(addPhoneResult).toEqual({ success: true, data: phoneIdentifierPayload })
   })
 
   it('dispatches addUserIdentifierExternalAuthProvider request', async () => {
-    const mockPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const externalAuthIdentifierPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
+    vi.mocked(mockHttpClient.request).mockResolvedValue(externalAuthIdentifierPayload)
 
-    const result = await api.addUserIdentifierExternalAuthProvider('GOOGLE', 'token123')
+    const addExternalAuthResult = await api.addUserIdentifierExternalAuthProvider('GOOGLE', 'token123')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.ADD_IDENTIFIER_EXTERNAL_AUTH_PROVIDER,
@@ -121,14 +140,14 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ auth_provider: 'GOOGLE', external_provider_token: 'token123' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(addExternalAuthResult).toEqual({ success: true, data: externalAuthIdentifierPayload })
   })
 
   it('dispatches sendAddEmailIdentifierConfirmation request', async () => {
-    const mockPayload = createTestOtpConfirmationPayload()
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const emailConfirmationPayload = createTestOtpConfirmationPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(emailConfirmationPayload)
 
-    const result = await api.sendAddEmailIdentifierConfirmation(TEST_EMAIL)
+    const sendEmailConfirmationResult = await api.sendAddEmailIdentifierConfirmation(TEST_EMAIL)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.SEND_ADD_EMAIL_IDENTIFIER_CONFIRMATION,
@@ -137,14 +156,14 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ email: TEST_EMAIL })
       })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(sendEmailConfirmationResult).toEqual({ success: true, data: emailConfirmationPayload })
   })
 
   it('dispatches sendAddPhoneIdentifierConfirmation request', async () => {
-    const mockPayload = createTestOtpConfirmationPayload()
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+    const phoneConfirmationPayload = createTestOtpConfirmationPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(phoneConfirmationPayload)
 
-    const result = await api.sendAddPhoneIdentifierConfirmation(TEST_PHONE)
+    const sendPhoneConfirmationResult = await api.sendAddPhoneIdentifierConfirmation(TEST_PHONE)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.SEND_ADD_PHONE_IDENTIFIER_CONFIRMATION,
@@ -153,14 +172,14 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ phone_number: TEST_PHONE })
       })
     )
-    expect(result).toEqual({ success: true, data: mockPayload })
+    expect(sendPhoneConfirmationResult).toEqual({ success: true, data: phoneConfirmationPayload })
   })
 
   it('dispatches emailChangePassword request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
-    const result = await api.emailChangePassword(identifierId, 'old', 'new')
+    const changePasswordResult = await api.emailChangePassword(identifierId, 'old', 'new')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD.replace('{user_identifier_id}', identifierId),
@@ -169,6 +188,6 @@ describe('FetchOpenIdentifiersApi', () => {
         body: JSON.stringify({ old_password: 'old', new_password: 'new' })
       })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(changePasswordResult).toEqual({ success: true, data: undefined })
   })
 })

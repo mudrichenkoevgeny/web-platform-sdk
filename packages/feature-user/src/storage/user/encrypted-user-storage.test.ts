@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createTestUserPrivate, createTestUserSessionSummary, SortOrder, TEST_USER_ID, toUserIdOrThrow, toUserSessionIdOrThrow, UserSessionSortBy } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserPrivate, createTestUserSessionSummaryPayload, createTestPagedResult, SortOrder, TEST_SESSION_ID, TEST_USER_ID, toUserIdOrThrow, UserSessionSortBy, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
 
@@ -8,18 +8,6 @@ describe('EncryptedUserStorage', () => {
   let storage: EncryptedUserStorage
 
   const mockUser = createTestUserPrivate({ id: toUserIdOrThrow(TEST_USER_ID) })
-
-  const mockSession1 = createTestUserSessionSummary({
-    id: toUserSessionIdOrThrow('sess_1'),
-    lastAccessedAt: 100,
-    expiresAt: 1000
-  })
-
-  const mockSession2 = createTestUserSessionSummary({
-    id: toUserSessionIdOrThrow('sess_2'),
-    lastAccessedAt: 200,
-    expiresAt: 2000
-  })
 
   beforeEach(() => {
     mockEncryptedSettings = new EncryptedSettingsMock()
@@ -68,15 +56,31 @@ describe('EncryptedUserStorage', () => {
   })
 
   it('sorts sessions by LAST_ACCESSED_AT and EXPIRES_AT', async () => {
-    await storage.addUserSession(mockSession1)
-    await storage.addUserSession(mockSession2)
+    const mockPayload1 = createTestUserSessionSummaryPayload({
+      id: toUserSessionIdOrThrow(TEST_SESSION_ID),
+      last_accessed_at: 100,
+      expires_at: 1000
+    })
+    const mockPayload2 = createTestUserSessionSummaryPayload({
+      id: toUserSessionIdOrThrow('sess_456'),
+      last_accessed_at: 200,
+      expires_at: 2000
+    })
+
+    await storage.updateUserSessionsPayloadList(createTestPagedResult({
+      items: [mockPayload1, mockPayload2],
+      totalCount: 2,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 1
+    }))
 
     const sortedByAccessed = await storage.getUserSessionsList({
       pageNumber: 1,
       pageSize: 10,
       sortBy: UserSessionSortBy.LAST_ACCESSED_AT
     })
-    expect(sortedByAccessed.items[0]?.id).toBe(mockSession1.id)
+    expect(sortedByAccessed.items[0]?.id).toBe(toUserSessionIdOrThrow(TEST_SESSION_ID))
 
     const sortedByExpiresDesc = await storage.getUserSessionsList({
       pageNumber: 1,
@@ -84,6 +88,6 @@ describe('EncryptedUserStorage', () => {
       sortBy: UserSessionSortBy.EXPIRES_AT,
       sortOrder: SortOrder.DESC
     })
-    expect(sortedByExpiresDesc.items[0]?.id).toBe(mockSession2.id)
+    expect(sortedByExpiresDesc.items[0]?.id).toBe(toUserSessionIdOrThrow('sess_456'))
   })
 })

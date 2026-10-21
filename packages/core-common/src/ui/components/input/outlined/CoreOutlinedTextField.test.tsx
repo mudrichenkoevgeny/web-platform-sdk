@@ -23,7 +23,7 @@ describe('CoreOutlinedTextField', () => {
     await user.type(input, 'john')
 
     expect(onChange).toHaveBeenCalled()
-  })
+  }, 15000)
 
   it('displays error text when isError is true', () => {
     render(

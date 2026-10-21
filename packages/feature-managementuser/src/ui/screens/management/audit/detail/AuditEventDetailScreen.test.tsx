@@ -15,7 +15,7 @@ describe('AuditEventDetailScreen', () => {
   const createMockDeps = (overrides?: Partial<AuditEventDetailStoreDependencies>): AuditEventDetailStoreDependencies => {
     const getAuditEventUseCase = new GetAuditEventUseCaseMock()
     getAuditEventUseCase.resultProvider = async () => appResultSuccess(createTestAuditEventPrivate())
-    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+    vi.spyOn(getAuditEventUseCase, 'execute')
 
     return auditEventDetailDependenciesMock({
       eventId: createTestAuditEventPrivate().id ?? toAuditEventIdOrThrow('evt_1'),
@@ -55,7 +55,7 @@ describe('AuditEventDetailScreen', () => {
 
     const getAuditEventUseCase = new GetAuditEventUseCaseMock()
     getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
-    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+    vi.spyOn(getAuditEventUseCase, 'execute')
 
     const deps = createMockDeps({
       getAuditEventUseCase
@@ -82,7 +82,7 @@ describe('AuditEventDetailScreen', () => {
 
     const getAuditEventUseCase = new GetAuditEventUseCaseMock()
     getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
-    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+    vi.spyOn(getAuditEventUseCase, 'execute')
 
     const deps = createMockDeps({
       getAuditEventUseCase
@@ -109,7 +109,7 @@ describe('AuditEventDetailScreen', () => {
 
     const getAuditEventUseCase = new GetAuditEventUseCaseMock()
     getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
-    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+    vi.spyOn(getAuditEventUseCase, 'execute')
 
     const deps = createMockDeps({
       getAuditEventUseCase
@@ -136,7 +136,7 @@ describe('AuditEventDetailScreen', () => {
 
     const getAuditEventUseCase = new GetAuditEventUseCaseMock()
     getAuditEventUseCase.resultProvider = async () => appResultSuccess(mockEvent)
-    vi.spyOn(getAuditEventUseCase, 'execute').mockImplementation(getAuditEventUseCase.execute.bind(getAuditEventUseCase))
+    vi.spyOn(getAuditEventUseCase, 'execute')
 
     const deps = createMockDeps({
       getAuditEventUseCase

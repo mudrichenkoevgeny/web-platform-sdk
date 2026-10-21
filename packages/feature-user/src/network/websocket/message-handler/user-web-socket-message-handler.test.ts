@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createTestUserPrivatePayload, createTestSessionToken, TEST_USER_ID, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestUserPrivatePayload, createTestSessionToken, TEST_USER_ID, toUserIdOrThrow, UserWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
 import type { SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserWebSocketMessageHandler } from '@/network/websocket/message-handler/user-web-socket-message-handler'
 import { UserStorageMock } from '@/mock/storage/user/user-storage-mock'
@@ -52,7 +51,9 @@ describe('UserWebSocketMessageHandler', () => {
   })
 
   it('handles USER_UPDATED frame by updating user storage', async () => {
-    const userPayload: UserPrivatePayload = createTestUserPrivatePayload()
+    const userPayload = createTestUserPrivatePayload({
+      id: toUserIdOrThrow(TEST_USER_ID)
+    })
 
     const frame: SocketFrame = {
       id: 'err-2',

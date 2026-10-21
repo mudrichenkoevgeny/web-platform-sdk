@@ -19,17 +19,17 @@ describe('MainUserScreen', () => {
   ): MainUserStoreDependencies => {
     const userRepository = new UserRepositoryMock()
     userRepository.emit(mockUser)
-    vi.spyOn(userRepository, 'observeCurrentUser').mockImplementation(userRepository.observeCurrentUser.bind(userRepository))
-    vi.spyOn(userRepository, 'refreshCurrentUser').mockImplementation(userRepository.refreshCurrentUser.bind(userRepository))
-    vi.spyOn(userRepository, 'clearSession').mockImplementation(userRepository.clearSession.bind(userRepository))
+    vi.spyOn(userRepository, 'observeCurrentUser')
+    vi.spyOn(userRepository, 'refreshCurrentUser')
+    vi.spyOn(userRepository, 'clearSession')
 
     const logoutUseCase = new LogoutUseCaseMock()
     logoutUseCase.resultProvider = async () => appResultSuccess(undefined)
-    vi.spyOn(logoutUseCase, 'execute').mockImplementation(logoutUseCase.execute.bind(logoutUseCase))
+    vi.spyOn(logoutUseCase, 'execute')
 
     const scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCaseMock()
     scheduleUserDeletionUseCase.resultProvider = async () => appResultSuccess(mockUser)
-    vi.spyOn(scheduleUserDeletionUseCase, 'execute').mockImplementation(scheduleUserDeletionUseCase.execute.bind(scheduleUserDeletionUseCase))
+    vi.spyOn(scheduleUserDeletionUseCase, 'execute')
 
     return {
       appType: AppType.CLIENT,
@@ -80,7 +80,7 @@ describe('MainUserScreen', () => {
   it('renders unauthorized state when user is null', () => {
     const userRepository = new UserRepositoryMock()
     userRepository.emit(null)
-    vi.spyOn(userRepository, 'observeCurrentUser').mockImplementation(userRepository.observeCurrentUser.bind(userRepository))
+    vi.spyOn(userRepository, 'observeCurrentUser')
 
     const deps = createMockDependencies({
       userRepository

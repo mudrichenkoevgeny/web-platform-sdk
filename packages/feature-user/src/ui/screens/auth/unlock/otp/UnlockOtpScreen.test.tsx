@@ -13,16 +13,16 @@ import type { UnlockOtpStoreDependencies } from '@/ui/screens/auth/unlock/otp/un
 describe('UnlockOtpScreen', () => {
   const createMockDeps = (): UnlockOtpStoreDependencies => {
     const unlockByEmailUseCase = new UnlockByEmailUseCaseMock()
-    vi.spyOn(unlockByEmailUseCase, 'execute').mockImplementation(unlockByEmailUseCase.execute.bind(unlockByEmailUseCase))
+    vi.spyOn(unlockByEmailUseCase, 'execute')
 
     const unlockByPhoneUseCase = new UnlockByPhoneUseCaseMock()
-    vi.spyOn(unlockByPhoneUseCase, 'execute').mockImplementation(unlockByPhoneUseCase.execute.bind(unlockByPhoneUseCase))
+    vi.spyOn(unlockByPhoneUseCase, 'execute')
 
     const sendUnlockEmailConfirmationUseCase = new SendUnlockEmailConfirmationUseCaseMock()
-    vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute').mockImplementation(sendUnlockEmailConfirmationUseCase.execute.bind(sendUnlockEmailConfirmationUseCase))
+    vi.spyOn(sendUnlockEmailConfirmationUseCase, 'execute')
 
     const sendUnlockPhoneConfirmationUseCase = new SendUnlockPhoneConfirmationUseCaseMock()
-    vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute').mockImplementation(sendUnlockPhoneConfirmationUseCase.execute.bind(sendUnlockPhoneConfirmationUseCase))
+    vi.spyOn(sendUnlockPhoneConfirmationUseCase, 'execute')
 
     return {
       method: UnlockMethod.EMAIL,

@@ -11,14 +11,14 @@ describe('ManagementUserSecurityRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new ManagementUserSecurityApiMock()
     mockApi.disableTotpResult = appResultSuccess(undefined)
-    vi.spyOn(mockApi, 'disableTotp').mockImplementation(mockApi.disableTotp.bind(mockApi))
+    vi.spyOn(mockApi, 'disableTotp')
 
     repository = new ManagementUserSecurityRepositoryImpl(mockApi)
   })
 
   it('delegates disableTotp to API', async () => {
-    const result = await repository.disableTotp(toUserIdOrThrow(TEST_USER_ID))
+    const disableTotpResult = await repository.disableTotp(toUserIdOrThrow(TEST_USER_ID))
     expect(mockApi.disableTotp).toHaveBeenCalledWith(TEST_USER_ID)
-    expect(isSuccess(result)).toBe(true)
+    expect(isSuccess(disableTotpResult)).toBe(true)
   })
 })
