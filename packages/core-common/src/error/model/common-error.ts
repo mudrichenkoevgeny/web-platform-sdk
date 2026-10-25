@@ -1,8 +1,8 @@
-import { CommonErrorCodes, CommonErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonErrorCodes, CommonErrorArgs, ClientCommonErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 import { generateErrorId } from '@/error/model/error-id'
 import type { ErrorId } from '@/error/model/error-id'
-import { ClientCommonErrorCodes } from '@/error/naming/client-common-error-codes'
+
 /**
  * Abstract base class for common system errors.
  */

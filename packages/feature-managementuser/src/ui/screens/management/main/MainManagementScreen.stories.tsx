@@ -8,7 +8,8 @@ const createMockDeps = (): MainManagementStoreDependencies => ({
   onGlobalUserListClick: () => {},
   onAuditEventListClick: () => {},
   onGlobalSessionListClick: () => {},
-  onGlobalIdentifierListClick: () => {}
+  onGlobalIdentifierListClick: () => {},
+  onStorageFileListClick: () => {}
 })
 
 const meta: Meta<typeof MainManagementScreen> = {

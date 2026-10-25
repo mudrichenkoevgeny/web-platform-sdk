@@ -4,8 +4,8 @@ import type { ManagementSecuritySettings } from '@mudrichenkoevgeny/shared-found
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/get-management-security-settings-use-case'
-import type { ResetRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/reset-remote-security-settings-use-case'
-import type { SaveRemoteSecuritySettingsUseCase } from '@/usecase/security/settings/save-remote-security-settings-use-case'
+import type { ResetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/reset-management-security-settings-use-case'
+import type { UpdateManagementSecuritySettingsUseCase } from '@/usecase/security/settings/update-management-security-settings-use-case'
 
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value.trim(), 10)
@@ -67,8 +67,8 @@ export type EditSecuritySettingsScreenState =
 
 export interface EditSecuritySettingsStoreDependencies {
   getManagementSecuritySettingsUseCase: GetManagementSecuritySettingsUseCase
-  saveRemoteSecuritySettingsUseCase: SaveRemoteSecuritySettingsUseCase
-  resetRemoteSecuritySettingsUseCase: ResetRemoteSecuritySettingsUseCase
+  updateManagementSecuritySettingsUseCase: UpdateManagementSecuritySettingsUseCase
+  resetManagementSecuritySettingsUseCase: ResetManagementSecuritySettingsUseCase
   onBack: () => void
 }
 
@@ -487,7 +487,7 @@ export const createEditSecuritySettingsStore = (
         rateLimitPeriodSeconds: parseIntegerOrDefault(current.rateLimitPeriodSeconds, 60)
       }
 
-      const saveResult = await deps.saveRemoteSecuritySettingsUseCase.execute(settings)
+      const saveResult = await deps.updateManagementSecuritySettingsUseCase.execute(settings)
       if (isSuccess(saveResult)) {
         deps.onBack()
       } else {
@@ -506,7 +506,7 @@ export const createEditSecuritySettingsStore = (
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
-      const result = await deps.resetRemoteSecuritySettingsUseCase.execute()
+      const result = await deps.resetManagementSecuritySettingsUseCase.execute()
       if (isSuccess(result)) {
         deps.onBack()
       } else {

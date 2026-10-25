@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, userStrings, UiValues } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -191,7 +191,7 @@ const TotpMainContent: React.FC<{ strings?: UserModuleStrings }> = ({
                             type="button"
                             onClick={() => handleCopySecretKey(screenState.setup.secretKey)}
                             className="p-1 hover:bg-accent rounded text-muted-foreground transition-colors"
-                            title="Copy secret key"
+                            title={strings.ui.copySecretKey}
                             data-testid={TotpMainTestTags.COPY_SECRET_KEY_BUTTON}
                           >
                             <CoreIcon src={icons.copy} size={16} />
@@ -222,7 +222,7 @@ const TotpMainContent: React.FC<{ strings?: UserModuleStrings }> = ({
                           value={screenState.code}
                           onChange={(e) => onCodeChanged(e.target.value)}
                           maxLength={6}
-                          placeholder="000000"
+                          placeholder={UiValues.Placeholder.TOTP_CODE}
                           disabled={screenState.actionLoading}
                           isError={Boolean(screenState.actionError)}
                           data-testid={TotpMainTestTags.CODE_INPUT}

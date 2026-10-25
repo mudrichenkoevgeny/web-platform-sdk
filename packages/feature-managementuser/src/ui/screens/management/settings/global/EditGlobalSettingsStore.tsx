@@ -5,8 +5,8 @@ import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundat
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetManagementGlobalSettingsUseCase } from '@/usecase/global-settings/get-management-global-settings-use-case'
-import type { ResetRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/reset-remote-global-settings-use-case'
-import type { SaveRemoteGlobalSettingsUseCase } from '@/usecase/global-settings/save-remote-global-settings-use-case'
+import type { ResetManagementGlobalSettingsUseCase } from '@/usecase/global-settings/reset-management-global-settings-use-case'
+import type { UpdateManagementGlobalSettingsUseCase } from '@/usecase/global-settings/update-management-global-settings-use-case'
 
 /** Status values for {@link EditGlobalSettingsScreenState}. */
 export enum EditGlobalSettingsStatus {
@@ -41,8 +41,8 @@ export type EditGlobalSettingsScreenState =
 
 export interface EditGlobalSettingsStoreDependencies {
   getManagementGlobalSettingsUseCase: GetManagementGlobalSettingsUseCase
-  saveRemoteGlobalSettingsUseCase: SaveRemoteGlobalSettingsUseCase
-  resetRemoteGlobalSettingsUseCase: ResetRemoteGlobalSettingsUseCase
+  updateManagementGlobalSettingsUseCase: UpdateManagementGlobalSettingsUseCase
+  resetManagementGlobalSettingsUseCase: ResetManagementGlobalSettingsUseCase
   onBack: () => void
 }
 
@@ -220,7 +220,7 @@ export const createEditGlobalSettingsStore = (
         isVerboseLoggingEnabled: current.isVerboseLoggingEnabled
       }
 
-      const saveResult = await deps.saveRemoteGlobalSettingsUseCase.execute(settings)
+      const saveResult = await deps.updateManagementGlobalSettingsUseCase.execute(settings)
       if (isSuccess(saveResult)) {
         deps.onBack()
       } else {
@@ -239,7 +239,7 @@ export const createEditGlobalSettingsStore = (
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
-      const result = await deps.resetRemoteGlobalSettingsUseCase.execute()
+      const result = await deps.resetManagementGlobalSettingsUseCase.execute()
       if (isSuccess(result)) {
         deps.onBack()
       } else {

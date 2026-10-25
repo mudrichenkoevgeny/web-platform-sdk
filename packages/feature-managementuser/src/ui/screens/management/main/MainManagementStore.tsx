@@ -7,6 +7,7 @@ export interface MainManagementStoreDependencies {
   onAuditEventListClick: () => void
   onGlobalSessionListClick: () => void
   onGlobalIdentifierListClick: () => void
+  onStorageFileListClick: () => void
 }
 
 export interface MainManagementStoreState {
@@ -15,6 +16,7 @@ export interface MainManagementStoreState {
   onAuditEventListClick: () => void
   onGlobalSessionListClick: () => void
   onGlobalIdentifierListClick: () => void
+  onStorageFileListClick: () => void
 }
 
 export type MainManagementStore = ReturnType<typeof createMainManagementStore>
@@ -25,7 +27,8 @@ export const createMainManagementStore = (deps: MainManagementStoreDependencies)
     onGlobalUserListClick: deps.onGlobalUserListClick,
     onAuditEventListClick: deps.onAuditEventListClick,
     onGlobalSessionListClick: deps.onGlobalSessionListClick,
-    onGlobalIdentifierListClick: deps.onGlobalIdentifierListClick
+    onGlobalIdentifierListClick: deps.onGlobalIdentifierListClick,
+    onStorageFileListClick: deps.onStorageFileListClick
   }))
 }
 

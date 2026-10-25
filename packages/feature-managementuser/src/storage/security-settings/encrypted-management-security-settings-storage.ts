@@ -18,6 +18,11 @@ export class EncryptedManagementSecuritySettingsStorage implements ManagementSec
    */
   public constructor(private readonly encryptedSettings: EncryptedSettings) {}
 
+  /**
+   * Retrieves and deserializes encrypted management security settings.
+   *
+   * @returns Deserialized settings or null if unreadable or absent
+   */
   public async getManagementSecuritySettings(): Promise<ManagementSecuritySettings | null> {
     const rawData = await this.encryptedSettings.get(KEY_MANAGEMENT_SECURITY_SETTINGS)
     if (!rawData) {
@@ -38,11 +43,19 @@ export class EncryptedManagementSecuritySettingsStorage implements ManagementSec
     }
   }
 
+  /**
+   * Serializes and persists management security settings.
+   *
+   * @param settings - Security settings snapshot to store
+   */
   public async updateManagementSecuritySettings(settings: ManagementSecuritySettings): Promise<void> {
     const payload = toManagementSecuritySettingsPayload(settings)
     await this.encryptedSettings.put(KEY_MANAGEMENT_SECURITY_SETTINGS, JSON.stringify(payload))
   }
 
+  /**
+   * Removes persisted management security settings from storage.
+   */
   public async clearManagementSecuritySettings(): Promise<void> {
     await this.encryptedSettings.remove(KEY_MANAGEMENT_SECURITY_SETTINGS)
   }

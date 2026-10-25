@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
+import { ClientSecurityErrorCodes, PasswordPolicyFailReason } from '@mudrichenkoevgeny/shared-foundation'
 import { SecurityError } from '@/error/model/security-error'
-import { ClientSecurityErrorCodes } from '@/error/naming/client-security-error-codes'
 
 describe('SecurityError', () => {
   it('creates passwordPolicyUnavailable error as a plain object', () => {
@@ -13,7 +13,7 @@ describe('SecurityError', () => {
 
   it('creates passwordTooShort error with arguments', () => {
     const error = SecurityError.passwordTooShort(8)
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_SHORT)
+    expect(error.code).toBe(PasswordPolicyFailReason.TOO_SHORT)
     expect(error.isRetryable).toBe(false)
     expect(error.args).toEqual({ passwordMinLength: '8' })
   })
@@ -25,32 +25,32 @@ describe('SecurityError', () => {
 
   it('creates passwordNoLetter error', () => {
     const error = SecurityError.passwordNoLetter()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_LETTER)
+    expect(error.code).toBe(PasswordPolicyFailReason.NO_LETTER)
   })
 
   it('creates passwordNoUpperCase error', () => {
     const error = SecurityError.passwordNoUpperCase()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_UPPERCASE)
+    expect(error.code).toBe(PasswordPolicyFailReason.NO_UPPERCASE)
   })
 
   it('creates passwordNoLowerCase error', () => {
     const error = SecurityError.passwordNoLowerCase()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_LOWERCASE)
+    expect(error.code).toBe(PasswordPolicyFailReason.NO_LOWERCASE)
   })
 
   it('creates passwordNoDigit error', () => {
     const error = SecurityError.passwordNoDigit()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_DIGIT)
+    expect(error.code).toBe(PasswordPolicyFailReason.NO_DIGIT)
   })
 
   it('creates passwordNoSpecialChar error', () => {
     const error = SecurityError.passwordNoSpecialChar()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_NO_SPECIAL_CHAR)
+    expect(error.code).toBe(PasswordPolicyFailReason.NO_SPECIAL_CHAR)
   })
 
   it('creates passwordTooCommon error', () => {
     const error = SecurityError.passwordTooCommon()
-    expect(error.code).toBe(ClientSecurityErrorCodes.PASSWORD_TOO_COMMON)
+    expect(error.code).toBe(PasswordPolicyFailReason.TOO_COMMON)
   })
 
   it('supports JSON serialization / deserialization without losing structure', () => {
@@ -59,7 +59,7 @@ describe('SecurityError', () => {
     const deserialized = JSON.parse(serialized) as typeof original
 
     expect(deserialized).toEqual(original)
-    expect(deserialized.code).toBe('PASSWORD_TOO_SHORT')
+    expect(deserialized.code).toBe('too_short')
     expect(deserialized.args).toEqual({ passwordMinLength: '12' })
   })
 })

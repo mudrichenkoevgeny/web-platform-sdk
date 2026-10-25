@@ -27,3 +27,13 @@ export type UserDestination =
       type: 'identifierDetail'
       identifierId: UserIdentifierId
     }
+  | {
+      type: 'storageFileList'
+    }
+  | {
+      type: 'storageFileDetail'
+      fileId: string
+    }
+  | {
+      type: 'storageFileUpload'
+    }

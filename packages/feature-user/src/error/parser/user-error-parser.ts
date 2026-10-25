@@ -1,7 +1,6 @@
-import { UserErrorCodes, UserErrorArgs, CommonErrorArgs, UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserErrorCodes, UserErrorArgs, CommonErrorArgs, ClientUserErrorCodes, UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, AppErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientUserErrorCodes } from '@/error/naming/client-user-error-codes'
+import { formatEpochMillisToDateTime, getAppErrorArgAsString, getAppErrorArgAsNumber } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
 /**
  * AppErrorParser implementation for user-related error codes.
@@ -47,11 +46,10 @@ export class UserErrorParser implements AppErrorParser {
         return strings.errors.banned
 
       case UserErrorCodes.USER_LOCKED: {
-        const formattedUntil = formatEpochMillisToDateTime(args[UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL])
-        if (formattedUntil) {
-          return strings.errors.locked(formattedUntil)
-        }
-        return strings.errors.lockedWithoutArgs
+        const lockoutType = getAppErrorArgAsString(args, UserErrorArgs.ACCOUNT_LOCKOUT_TYPE)
+        const rawUntil = getAppErrorArgAsNumber(args, UserErrorArgs.TEMPORARY_LOCKOUT_UNTIL)
+        const formattedUntil = rawUntil ? formatEpochMillisToDateTime(rawUntil) : null
+        return strings.resolveUserLockedMessage(lockoutType, formattedUntil)
       }
 
       case UserErrorCodes.SELF_SERVICE_UNLOCK_DISABLED:
@@ -115,21 +113,16 @@ export class UserErrorParser implements AppErrorParser {
         return strings.errors.emailNotAllowed
 
       case UserErrorCodes.USER_IDENTIFIER_LIMIT_REACHED:
-        return this.resolveLimit(
-          args,
-          UserErrorArgs.USER_AUTH_PROVIDER,
-          UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS,
-          (limit, provider) => strings.errors.identifierLimitReached(limit, provider),
-          strings.errors.identifierLimitReachedWithoutArgs
+        return strings.resolveUserIdentifierLimitReachedMessage(
+          commonStrings,
+          getAppErrorArgAsString(args, UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS),
+          getAppErrorArgAsString(args, UserErrorArgs.USER_AUTH_PROVIDER)
         )
 
-      case UserErrorCodes.TOTAL_USER_IDENTIFIERS_LIMIT_REACHED: {
-        const limit = args[UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS]
-        if (limit && limit.trim().length > 0) {
-          return strings.errors.totalIdentifiersLimitReached(limit)
-        }
-        return strings.errors.totalIdentifiersLimitReachedWithoutArgs
-      }
+      case UserErrorCodes.TOTAL_USER_IDENTIFIERS_LIMIT_REACHED:
+        return strings.resolveTotalUserIdentifiersLimitReachedMessage(
+          getAppErrorArgAsString(args, UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS)
+        )
 
       case ClientUserErrorCodes.REGISTRATION_DISABLED:
         return strings.errors.registrationDisabled
@@ -141,8 +134,8 @@ export class UserErrorParser implements AppErrorParser {
         return strings.errors.externalAuthFailed
 
       case ClientUserErrorCodes.TOO_MANY_CONFIRMATION_REQUESTS: {
-        const seconds = args[CommonErrorArgs.RETRY_AFTER_SECONDS]
-        if (seconds && seconds.trim().length > 0) {
+        const seconds = getAppErrorArgAsString(args, CommonErrorArgs.RETRY_AFTER_SECONDS)
+        if (seconds) {
           return commonStrings.errors.tooManyRequests(seconds)
         }
         return strings.errors.tooManyConfirmationRequests
@@ -151,20 +144,5 @@ export class UserErrorParser implements AppErrorParser {
       default:
         return null
     }
-  }
-
-  private resolveLimit(
-    args: Record<string, string>,
-    providerKey: string,
-    limitKey: string,
-    withArgsFormatter: (limit: string, provider: string) => string,
-    fallback: string
-  ): string {
-    const provider = args[providerKey]
-    const limit = args[limitKey]
-    if (provider && provider.trim().length > 0 && limit && limit.trim().length > 0) {
-      return withArgsFormatter(limit, provider)
-    }
-    return fallback
   }
 }

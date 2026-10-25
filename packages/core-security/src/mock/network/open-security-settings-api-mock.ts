@@ -2,7 +2,7 @@ import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foun
 import { createTestOpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
+import type { OpenSecuritySettingsApi } from '@/network/api/security-settings/open-security-settings-api'
 
 /**
  * Mock implementation of {@link OpenSecuritySettingsApi}.

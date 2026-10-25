@@ -1,11 +1,9 @@
 import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { toOpenSecuritySettings } from '@/domain/model/open-security-settings'
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
+import { openSecuritySettingsPayloadSchema, toOpenSecuritySettings, type OpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsObserver } from '@/repository/open-security-settings-repository'
-import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
+import type { OpenSecuritySettingsApi } from '@/network/api/security-settings/open-security-settings-api'
 import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
 import { SecurityWebSocketEventTypes } from '@/network/contract/security-web-socket-event-types'
 

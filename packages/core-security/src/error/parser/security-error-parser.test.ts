@@ -58,8 +58,8 @@ describe('SecurityErrorParser', () => {
       isRetryable: false
     } as const
 
-    expect(parserEn.parse(mfaError)).toBe('Authentication confirmation is required. MFA token: token-123')
-    expect(parserRu.parse(mfaError)).toBe('Требуется подтверждение аутентификации. MFA токен: token-123')
+    expect(parserEn.parse(mfaError)).toBe('Authentication confirmation is required.')
+    expect(parserRu.parse(mfaError)).toBe('Требуется подтверждение аутентификации.')
 
     const otpError = {
       id: generateErrorId(),

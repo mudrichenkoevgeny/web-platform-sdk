@@ -3,6 +3,8 @@ import {
   ManagementAuthSettingsNavigation,
   ManagementSecurityNavigation,
   ManagementSettingsNavigation,
+  ManagementStorageSettingsNavigation,
+  storageStrings,
   userStrings
 } from '@mudrichenkoevgeny/shared-foundation'
 import { CoreBackButton, CoreButton, CoreScreenTitleText } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -40,6 +42,11 @@ export const Route = createFileRoute('/settings/')({
             type="button"
             label={userStrings.ui.editSecuritySettings}
             onClick={() => void navigate({ to: ManagementSecurityNavigation.SecuritySettings.route })}
+          />
+          <CoreButton
+            type="button"
+            label={storageStrings.ui.storageSettingsTitle ?? 'Storage Settings'}
+            onClick={() => void navigate({ to: ManagementStorageSettingsNavigation.StorageSettings.route })}
           />
         </div>
       </div>

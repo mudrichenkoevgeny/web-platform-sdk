@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { UserModuleStrings, userStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserModuleStrings, StorageModuleStrings, userStrings, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreButton, CoreScreenTitleText } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   MainManagementProvider,
@@ -7,14 +7,19 @@ import {
 } from '@/ui/screens/management/main/MainManagementStore'
 import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
 
-const MainManagementContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = userStrings
+const MainManagementContent: React.FC<{
+  strings?: UserModuleStrings
+  storageUiStrings?: StorageModuleStrings
+}> = ({
+  strings = userStrings,
+  storageUiStrings = storageStrings
 }) => {
   const onSettingsClick = useMainManagementStore((s) => s.onSettingsClick)
   const onGlobalUserListClick = useMainManagementStore((s) => s.onGlobalUserListClick)
   const onAuditEventListClick = useMainManagementStore((s) => s.onAuditEventListClick)
   const onGlobalSessionListClick = useMainManagementStore((s) => s.onGlobalSessionListClick)
   const onGlobalIdentifierListClick = useMainManagementStore((s) => s.onGlobalIdentifierListClick)
+  const onStorageFileListClick = useMainManagementStore((s) => s.onStorageFileListClick)
 
   return (
     <div className="w-full h-full p-6 flex flex-col relative overflow-y-auto">
@@ -43,6 +48,11 @@ const MainManagementContent: React.FC<{ strings?: UserModuleStrings }> = ({
         />
         <CoreButton
           type="button"
+          label={storageUiStrings.ui.storageFileListTitle}
+          onClick={onStorageFileListClick}
+        />
+        <CoreButton
+          type="button"
           label={strings.ui.auditLogs}
           onClick={onAuditEventListClick}
         />
@@ -59,14 +69,15 @@ const MainManagementContent: React.FC<{ strings?: UserModuleStrings }> = ({
 export interface MainManagementScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: MainManagementStoreDependencies
   strings?: UserModuleStrings
+  storageUiStrings?: StorageModuleStrings
 }
 
 export const MainManagementScreen = forwardRef<HTMLDivElement, MainManagementScreenProps>(
-  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, storageUiStrings = storageStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <MainManagementProvider dependencies={dependencies}>
-          <MainManagementContent strings={strings} />
+          <MainManagementContent strings={strings} storageUiStrings={storageUiStrings} />
         </MainManagementProvider>
       </div>
     )

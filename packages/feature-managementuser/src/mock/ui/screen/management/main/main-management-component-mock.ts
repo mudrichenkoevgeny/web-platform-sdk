@@ -8,5 +8,6 @@ export const mainManagementDependenciesMock = (
   onAuditEventListClick: () => {},
   onGlobalSessionListClick: () => {},
   onGlobalIdentifierListClick: () => {},
+  onStorageFileListClick: () => {},
   ...overrides
 })

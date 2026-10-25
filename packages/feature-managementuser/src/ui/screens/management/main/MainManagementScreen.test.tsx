@@ -11,7 +11,8 @@ describe('MainManagementScreen', () => {
     onGlobalUserListClick: vi.fn(),
     onAuditEventListClick: vi.fn(),
     onGlobalSessionListClick: vi.fn(),
-    onGlobalIdentifierListClick: vi.fn()
+    onGlobalIdentifierListClick: vi.fn(),
+    onStorageFileListClick: vi.fn()
   })
 
   it('renders main management screen', async () => {

@@ -1,11 +1,11 @@
-import { openSecuritySettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  openSecuritySettingsPayloadSchema,
+  toOpenSecuritySettings,
+  toOpenSecuritySettingsPayload,
+  type OpenSecuritySettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
-import {
-  toOpenSecuritySettings,
-  toOpenSecuritySettingsPayload
-} from '@/domain/model/open-security-settings'
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
 
 const KEY_SECURITY_SETTINGS = 'security_settings'
 

@@ -10,7 +10,7 @@ import {
   icons,
   useAppErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { AppType, UserAccountStatus, UserModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, UserAccountStatus, UserModuleStrings, StorageModuleStrings, userStrings, commonStrings, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   MainUserProvider,
   MainUserStatus,
@@ -30,6 +30,7 @@ export const MainUserTestTags = {
   TOTP_MAIN_BUTTON: 'MainUser_TotpMainButton',
   SESSIONS_BUTTON: 'MainUser_SessionsButton',
   IDENTIFIERS_BUTTON: 'MainUser_IdentifiersButton',
+  STORAGE_BUTTON: 'MainUser_StorageButton',
   DELETE_ACCOUNT_BUTTON: 'MainUser_DeleteAccountButton',
   LOGOUT_BUTTON: 'MainUser_LogoutButton',
   ACTION_ERROR_TEXT: 'MainUser_ActionErrorText',
@@ -37,8 +38,12 @@ export const MainUserTestTags = {
   REFRESH_BUTTON: 'MainUser_RefreshButton'
 }
 
-const MainUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = userStrings
+const MainUserContent: React.FC<{
+  strings?: UserModuleStrings
+  storageUiStrings?: StorageModuleStrings
+}> = ({
+  strings = userStrings,
+  storageUiStrings = storageStrings
 }) => {
   const screenState = useMainUserStore((s) => s.screenState)
   const onRefresh = useMainUserStore((s) => s.onRefresh)
@@ -48,6 +53,7 @@ const MainUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onTotpMainClick = useMainUserStore((s) => s.onTotpMainClick)
   const onSessionsClick = useMainUserStore((s) => s.onSessionsClick)
   const onIdentifiersClick = useMainUserStore((s) => s.onIdentifiersClick)
+  const onStorageClick = useMainUserStore((s) => s.onStorageClick)
   const onDeleteAccountClick = useMainUserStore((s) => s.onDeleteAccountClick)
   const onConfirmDeleteAccount = useMainUserStore((s) => s.onConfirmDeleteAccount)
   const onDismissDialog = useMainUserStore((s) => s.onDismissDialog)
@@ -193,6 +199,14 @@ const MainUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
                 data-testid={MainUserTestTags.IDENTIFIERS_BUTTON}
               />
 
+              <CoreButton
+                type="button"
+                label={storageUiStrings.ui.myFilesTitle}
+                onClick={onStorageClick}
+                disabled={actionLoading}
+                data-testid={MainUserTestTags.STORAGE_BUTTON}
+              />
+
               {isAccountDeletionAvailable && (
                 <CoreButton
                   type="button"
@@ -318,17 +332,18 @@ const MainUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
 export interface MainUserScreenProps extends React.HTMLAttributes<HTMLDivElement> {
   dependencies: MainUserStoreDependencies
   strings?: UserModuleStrings
+  storageUiStrings?: StorageModuleStrings
 }
 
 /**
  * Main user screen component showing signed-in user details and navigation actions.
  */
 export const MainUserScreen = forwardRef<HTMLDivElement, MainUserScreenProps>(
-  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
+  ({ dependencies, strings = userStrings, storageUiStrings = storageStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <MainUserProvider dependencies={dependencies}>
-          <MainUserContent strings={strings} />
+          <MainUserContent strings={strings} storageUiStrings={storageUiStrings} />
         </MainUserProvider>
       </div>
     )

@@ -30,6 +30,7 @@ const createMockDependencies = (
     onNavigateToTotp: () => alert('Navigate to TOTP'),
     onNavigateToSessions: () => alert('Navigate to sessions'),
     onNavigateToIdentifiers: () => alert('Navigate to identifiers'),
+    onNavigateToStorage: () => alert('Navigate to storage'),
     ...overrides
   }
 }
@@ -71,7 +72,8 @@ export const Unauthorized: Story = {
         onNavigateToLogin: () => {},
         onNavigateToTotp: () => {},
         onNavigateToSessions: () => {},
-        onNavigateToIdentifiers: () => {}
+        onNavigateToIdentifiers: () => {},
+        onNavigateToStorage: () => {}
       }
     })()
   }

@@ -1,11 +1,11 @@
-import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  openGlobalSettingsPayloadSchema,
+  toOpenGlobalSettings,
+  toOpenGlobalSettingsPayload,
+  type OpenGlobalSettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
-import {
-  toOpenGlobalSettings,
-  toOpenGlobalSettingsPayload
-} from '@/domain/model/open-global-settings'
-import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
 
 const KEY_GLOBAL_SETTINGS = 'global_settings'
 

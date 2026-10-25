@@ -1,5 +1,5 @@
 import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
-import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
+import type { OpenGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Mock in-memory implementation of {@link OpenGlobalSettingsStorage}.

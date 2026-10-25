@@ -18,6 +18,11 @@ export class EncryptedManagementGlobalSettingsStorage implements ManagementGloba
    */
   public constructor(private readonly encryptedSettings: EncryptedSettings) {}
 
+  /**
+   * Retrieves and deserializes encrypted management global settings.
+   *
+   * @returns Deserialized settings or null if unreadable or absent
+   */
   public async getManagementGlobalSettings(): Promise<ManagementGlobalSettings | null> {
     const rawData = await this.encryptedSettings.get(KEY_MANAGEMENT_GLOBAL_SETTINGS)
     if (!rawData) {
@@ -38,11 +43,19 @@ export class EncryptedManagementGlobalSettingsStorage implements ManagementGloba
     }
   }
 
+  /**
+   * Serializes and persists management global settings.
+   *
+   * @param settings - Global settings snapshot to store
+   */
   public async updateManagementGlobalSettings(settings: ManagementGlobalSettings): Promise<void> {
     const payload = toManagementGlobalSettingsPayload(settings)
     await this.encryptedSettings.put(KEY_MANAGEMENT_GLOBAL_SETTINGS, JSON.stringify(payload))
   }
 
+  /**
+   * Removes persisted management global settings from storage.
+   */
   public async clearManagementGlobalSettings(): Promise<void> {
     await this.encryptedSettings.remove(KEY_MANAGEMENT_GLOBAL_SETTINGS)
   }

@@ -3,7 +3,7 @@ import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-co
 import { createTestOpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import type { OpenSecuritySettingsObserver } from '@/repository/open-security-settings-repository'
-import { toOpenSecuritySettings, type OpenSecuritySettings } from '@/domain/model/open-security-settings'
+import { toOpenSecuritySettings, type OpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Configuration options for {@link OpenSecuritySettingsRepositoryMock}.

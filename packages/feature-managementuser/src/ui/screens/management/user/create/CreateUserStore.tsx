@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { UserAccountStatus, UserRole } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAccountStatus, UserRole, type UserStorageConfiguration } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -11,6 +11,15 @@ const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   return isNaN(parsed) ? defaultValue : parsed
 }
 
+const parseNullableInteger = (value: string): number | null => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+  const parsed = parseInt(trimmed, 10)
+  return isNaN(parsed) ? null : parsed
+}
+
 export interface CreateUserScreenState {
   email: string
   password: string
@@ -18,6 +27,9 @@ export interface CreateUserScreenState {
   role: UserRole
   status: UserAccountStatus
   authorityLevel: string
+  storageQuotaBytes: string
+  storageMaxUploadSizeBytes: string
+  storageMaxPendingUploads: string
   isLoading: boolean
   error: AppError | null
 }
@@ -36,6 +48,9 @@ export interface CreateUserStoreState {
   onRoleChanged: (value: UserRole) => void
   onStatusChanged: (value: UserAccountStatus) => void
   onAuthorityLevelChanged: (value: string) => void
+  onStorageQuotaBytesChanged: (value: string) => void
+  onStorageMaxUploadSizeBytesChanged: (value: string) => void
+  onStorageMaxPendingUploadsChanged: (value: string) => void
   onCreateClick: () => Promise<void>
   onBackClick: () => void
 }
@@ -53,6 +68,9 @@ export const createCreateUserStore = (
     role: UserRole.USER,
     status: UserAccountStatus.ACTIVE,
     authorityLevel: '0',
+    storageQuotaBytes: '',
+    storageMaxUploadSizeBytes: '',
+    storageMaxPendingUploads: '',
     isLoading: false,
     error: null,
     ...initialState
@@ -95,6 +113,18 @@ export const createCreateUserStore = (
       }
     },
 
+    onStorageQuotaBytesChanged: (value: string) => {
+      set({ screenState: { ...get().screenState, storageQuotaBytes: value, error: null } })
+    },
+
+    onStorageMaxUploadSizeBytesChanged: (value: string) => {
+      set({ screenState: { ...get().screenState, storageMaxUploadSizeBytes: value, error: null } })
+    },
+
+    onStorageMaxPendingUploadsChanged: (value: string) => {
+      set({ screenState: { ...get().screenState, storageMaxPendingUploads: value, error: null } })
+    },
+
     onCreateClick: async () => {
       const current = get().screenState
       if (current.isLoading || !FieldValidator.isValidEmail(current.email)) {
@@ -104,13 +134,26 @@ export const createCreateUserStore = (
       set({ screenState: { ...current, isLoading: true, error: null } })
 
       const authLevel = parseIntegerOrDefault(current.authorityLevel, 0)
+      const quota = parseNullableInteger(current.storageQuotaBytes)
+      const maxUpload = parseNullableInteger(current.storageMaxUploadSizeBytes)
+      const maxPending = parseNullableInteger(current.storageMaxPendingUploads)
+
+      const hasStorageConfig = quota !== null || maxUpload !== null || maxPending !== null
+      const storageConfiguration: UserStorageConfiguration | null = hasStorageConfig
+        ? {
+            quotaBytes: quota,
+            maxUploadSizeBytes: maxUpload,
+            maxPendingUploads: maxPending
+          }
+        : null
 
       const result = await deps.createUserUseCase.execute({
         email: current.email.trim(),
         password: current.password.trim() || null,
         role: current.role,
         status: current.status,
-        authorityLevel: authLevel
+        authorityLevel: authLevel,
+        storageConfiguration
       })
 
       if (isSuccess(result)) {

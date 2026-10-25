@@ -24,13 +24,23 @@ import {
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
 import type { CreateUserParams, UpdateUserParams } from '@/repository/user/management-user-repository'
 
+const storageConfigSchema = z
+  .object({
+    quotaBytes: z.number().nullable().optional(),
+    maxUploadSizeBytes: z.number().nullable().optional(),
+    maxPendingUploads: z.number().nullable().optional()
+  })
+  .nullable()
+  .optional()
+
 const createUserParamsMapperSchema = z
   .object({
     email: z.string(),
     password: z.string().nullable().optional(),
     role: z.nativeEnum(UserRole).nullable().optional(),
     status: z.nativeEnum(UserAccountStatus).nullable().optional(),
-    authorityLevel: z.number().nullable().optional()
+    authorityLevel: z.number().nullable().optional(),
+    storageConfiguration: storageConfigSchema
   })
   .transform((params) =>
     createByEmailRequestSchema.parse({
@@ -39,7 +49,14 @@ const createUserParamsMapperSchema = z
       role: params.role ?? UserRole.USER,
       account_status: params.status ?? UserAccountStatus.ACTIVE,
       authority_level: params.authorityLevel ?? 0,
-      permission_codes: []
+      permission_codes: [],
+      storage_configuration: params.storageConfiguration
+        ? {
+            quota_bytes: params.storageConfiguration.quotaBytes ?? null,
+            max_upload_size_bytes: params.storageConfiguration.maxUploadSizeBytes ?? null,
+            max_pending_uploads: params.storageConfiguration.maxPendingUploads ?? null
+          }
+        : null
     })
   )
 
@@ -50,7 +67,8 @@ const updateUserParamsMapperSchema = z
     permissionCodes: z.array(z.string()).nullable().optional(),
     accountLockoutType: z.nativeEnum(AccountLockoutType).nullable().optional(),
     lockoutType: z.nativeEnum(AccountLockoutType).nullable().optional(),
-    temporaryLockoutUntil: z.number().nullable().optional()
+    temporaryLockoutUntil: z.number().nullable().optional(),
+    storageConfiguration: storageConfigSchema
   })
   .transform((params) =>
     updateUserRequestSchema.parse({
@@ -58,7 +76,14 @@ const updateUserParamsMapperSchema = z
       authority_level: params.authorityLevel ?? null,
       permission_codes: params.permissionCodes ?? null,
       account_lockout_type: params.accountLockoutType ?? params.lockoutType ?? null,
-      temporary_lockout_until: params.temporaryLockoutUntil ?? null
+      temporary_lockout_until: params.temporaryLockoutUntil ?? null,
+      storage_configuration: params.storageConfiguration
+        ? {
+            quota_bytes: params.storageConfiguration.quotaBytes ?? null,
+            max_upload_size_bytes: params.storageConfiguration.maxUploadSizeBytes ?? null,
+            max_pending_uploads: params.storageConfiguration.maxPendingUploads ?? null
+          }
+        : null
     })
   )
 

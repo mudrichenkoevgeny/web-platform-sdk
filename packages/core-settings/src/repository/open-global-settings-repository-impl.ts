@@ -1,11 +1,9 @@
 import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { openGlobalSettingsPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { toOpenGlobalSettings } from '@/domain/model/open-global-settings'
-import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
+import { openGlobalSettingsPayloadSchema, toOpenGlobalSettings, type OpenGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettingsObserver } from '@/repository/open-global-settings-repository'
-import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
+import type { OpenGlobalSettingsApi } from '@/network/api/global-settings/open-global-settings-api'
 import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
 import { SettingsWebSocketEventTypes } from '@/network/contract/settings-web-socket-event-types'
 

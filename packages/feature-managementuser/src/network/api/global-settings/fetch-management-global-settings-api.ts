@@ -13,6 +13,11 @@ export class FetchManagementGlobalSettingsApi implements ManagementGlobalSetting
    */
   public constructor(private readonly client: HttpClient) {}
 
+  /**
+   * Retrieves global platform settings for management.
+   *
+   * @returns AppResult containing {@link ManagementGlobalSettingsPayload} on success or {@link AppError} on failure
+   */
   public async getManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>> {
     return callResult(() =>
       this.client.request<ManagementGlobalSettingsPayload>(
@@ -21,6 +26,12 @@ export class FetchManagementGlobalSettingsApi implements ManagementGlobalSetting
     )
   }
 
+  /**
+   * Updates platform-wide global settings via HTTP PUT request.
+   *
+   * @param request - New global settings payload
+   * @returns AppResult resolving to void on success or {@link AppError} on failure
+   */
   public async updateManagementGlobalSettings(
     request: ManagementGlobalSettingsPayload
   ): Promise<AppResult<void, AppError>> {
@@ -32,6 +43,11 @@ export class FetchManagementGlobalSettingsApi implements ManagementGlobalSetting
     )
   }
 
+  /**
+   * Resets platform-wide global settings to default values via HTTP POST request.
+   *
+   * @returns AppResult containing fresh default {@link ManagementGlobalSettingsPayload} on success or {@link AppError} on failure
+   */
   public async resetManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>> {
     return callResult(() =>
       this.client.request<ManagementGlobalSettingsPayload>(

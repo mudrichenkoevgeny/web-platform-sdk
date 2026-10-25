@@ -26,6 +26,7 @@
     "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-core-storage": "workspace:*",
     "@types/qrcode.react": "^3.0.0",
     "clsx": "catalog:",
     "qrcode.react": "^4.2.0",

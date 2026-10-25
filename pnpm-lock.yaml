@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@mudrichenkoevgeny/shared-foundation':
-      specifier: file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
-      version: file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+      specifier: file:D:/Documents/Projects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+      version: file:D:/Documents/Projects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
     '@tanstack/react-router':
       specifier: ^1.111.0
       version: 1.170.44
@@ -245,7 +245,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -273,7 +273,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -328,7 +328,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -386,7 +386,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -437,11 +437,39 @@ importers:
         specifier: 'catalog:'
         version: 5.0.4(@types/node@26.6.5)(jsdom@26.1.0)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@1.21.7))
 
+  packages/core-storage:
+    dependencies:
+      '@mudrichenkoevgeny/shared-foundation':
+        specifier: 'catalog:'
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+      '@mudrichenkoevgeny/web-platform-sdk-core-common':
+        specifier: workspace:*
+        version: link:../core-common
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.5
+      '@typescript/typescript6':
+        specifier: ^6.0.2
+        version: 6.0.2
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@1.21.7)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 5.1.2(esbuild@0.28.2)(rolldown@1.2.13)(typescript@7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@1.21.7))
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.4(@types/node@26.6.5)(jsdom@26.1.0)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@1.21.7))
+
   packages/feature-clientuser:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -511,7 +539,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -521,6 +549,9 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../core-settings
+      '@mudrichenkoevgeny/web-platform-sdk-core-storage':
+        specifier: workspace:*
+        version: link:../core-storage
       '@mudrichenkoevgeny/web-platform-sdk-feature-user':
         specifier: workspace:*
         version: link:../feature-user
@@ -581,7 +612,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -591,6 +622,9 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../core-settings
+      '@mudrichenkoevgeny/web-platform-sdk-core-storage':
+        specifier: workspace:*
+        version: link:../core-storage
       '@types/qrcode.react':
         specifier: ^3.0.0
         version: 3.0.0(react@19.3.0)
@@ -654,7 +688,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -724,7 +758,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -1172,9 +1206,9 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz':
-    resolution: {integrity: sha512-TSY73YzmcSZMLnkr/XZpaTuktlLWh1ccGS8DS2v3d8Vebo5Evh5KxaR56/5PKLTmmwlgw/3GjIznlxDfVpILJg==, tarball: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz}
-    version: 0.0.79
+  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz':
+    resolution: {integrity: sha512-AQdTiGFNNWAXDAzdbH1YQ9w5mEXMiRGPHBEy59vOUztOMNTv4jbSWr8JYRDLD3iqyk8+rht4xao4QRknHH0fXw==, tarball: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz}
+    version: 0.0.90
 
   '@napi-rs/wasm-runtime@1.2.5':
     resolution: {integrity: sha512-HshSvXzmBxNzqejd3k/KemgQ3hdREUYFRRrgxOZ+gPljDIsO2SDZrVZMd4Z/HsxudQbE62OVyVFE8z9BCurfjA==}
@@ -3797,7 +3831,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.79.tgz':
+  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz':
     dependencies:
       zod: 3.25.76
 

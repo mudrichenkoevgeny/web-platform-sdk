@@ -2,7 +2,7 @@ import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-founda
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestOpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
+import type { OpenGlobalSettingsApi } from '@/network/api/global-settings/open-global-settings-api'
 
 /**
  * Mock implementation of {@link OpenGlobalSettingsApi}.

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { ClientCommonErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import {
   appResultSuccess,
   appResultFailure,
@@ -12,7 +13,6 @@ import {
   mapSuccess
 } from '@/result/app-result'
 import { CommonError } from '@/error/model/common-error'
-import { ClientCommonErrorCodes } from '@/error/naming/client-common-error-codes'
 
 describe('AppResult', () => {
   it('appResultSuccess creates a success result', () => {

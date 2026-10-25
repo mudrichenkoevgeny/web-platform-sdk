@@ -1,11 +1,11 @@
 import type { EncryptedSettings, HttpClient, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { PasswordPolicyValidator } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
 import { EncryptedOpenSecuritySettingsStorage } from '@/storage/security-settings/encrypted-open-security-settings-storage'
-import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
-import { FetchOpenSecuritySettingsApi } from '@/network/security-settings/fetch-open-security-settings-api'
+import type { OpenSecuritySettingsApi } from '@/network/api/security-settings/open-security-settings-api'
+import { FetchOpenSecuritySettingsApi } from '@/network/api/security-settings/fetch-open-security-settings-api'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 import { OpenSecuritySettingsRepositoryImpl } from '@/repository/open-security-settings-repository-impl'
-import { PasswordPolicyValidator } from '@/domain/model/password-policy-validator'
 import { RefreshOpenSecuritySettingsUseCase } from '@/usecase/refresh-open-security-settings-use-case'
 import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
 import { SecurityWebSocketMessageHandler } from '@/network/websocket/message-handler/security-web-socket-message-handler'
@@ -40,7 +40,7 @@ export class SecurityComponent {
   public readonly openSecuritySettingsApi: OpenSecuritySettingsApi
   /** Central repository for open security settings. */
   public readonly securitySettingsRepository: OpenSecuritySettingsRepository
-  /** Pure domain logic password policy validator. */
+  /** Pure domain logic password policy validator from shared foundation. */
   public readonly passwordPolicyValidator: PasswordPolicyValidator
   /** Use case for forcing a network refresh of settings. */
   public readonly refreshSecuritySettingsUseCase: RefreshOpenSecuritySettingsUseCase

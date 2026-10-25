@@ -28,6 +28,7 @@ This document is the entry point for architectural and coding standards. These r
 - **Accessibility (a11y):** Always use `useId()` to generate unique IDs for form fields and link labels via `htmlFor`.
 - **Manual Test Execution:** AI agents must not run tests or suggest running them. Execution is always triggered explicitly by the developer.
 - **No Redundant Builds:** Do not run Vite build tasks or attempt compilation after modifying documentation (TSDoc), markdown, or other non-executable changes.
+- **Git Ban (Strict Prohibition):** NEVER run git commands (git add, git commit, git push, etc.) via shell. Version control, staging, and committing are strictly the developer's responsibility. Do not attempt to save or document changes into git history.
 
 ## Module Map
 

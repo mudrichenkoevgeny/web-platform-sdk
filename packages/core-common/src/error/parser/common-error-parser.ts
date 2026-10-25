@@ -1,7 +1,7 @@
-import { CommonErrorCodes, CommonErrorArgs, CommonModuleStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonErrorCodes, CommonErrorArgs, ClientCommonErrorCodes, CommonModuleStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
 import type { AppErrorParser } from '@/error/parser/app-error-parser'
-import { ClientCommonErrorCodes } from '@/error/naming/client-common-error-codes'
+import { getAppErrorArgAsString } from '@/error/parser/app-error-parser-utils'
 
 /**
  * Default error parser resolving common SDK and server error codes to localized strings.
@@ -104,30 +104,29 @@ export class CommonErrorParser implements AppErrorParser {
       case ClientCommonErrorCodes.NETWORK:
         return strings.errors.network
 
-      case CommonErrorCodes.INTERNAL:
       case CommonErrorCodes.BAD_REQUEST:
       case CommonErrorCodes.INVALID_JSON_BODY:
-      case CommonErrorCodes.UNKNOWN:
       case ClientCommonErrorCodes.CONTRACT_VIOLATION:
+        return strings.errors.badRequest
+
+      case CommonErrorCodes.INTERNAL:
       case ClientCommonErrorCodes.LIFECYCLE_ERROR:
         return strings.errors.internal
 
+      case CommonErrorCodes.UNKNOWN:
       default:
-        if ('message' in appError && typeof appError.message === 'string' && appError.message.trim().length > 0) {
-          return appError.message
-        }
         return strings.errors.unknown
     }
   }
 
   private resolveLocalizedString(
-    args: Record<string, string>,
+    args: Record<string, unknown>,
     key: string,
     withArgsFormatter: (value: string) => string,
     fallback: string
   ): string {
-    const value = args[key]
-    if (value && value.trim().length > 0) {
+    const value = getAppErrorArgAsString(args, key)
+    if (value) {
       return withArgsFormatter(value)
     }
     return fallback

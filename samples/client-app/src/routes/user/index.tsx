@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AppType, ClientAuthNavigation, ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, ClientAuthNavigation, ClientUserNavigation, OpenStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
 export const Route = createFileRoute('/user/')({
   component: function MainUserRoute() {
@@ -21,7 +21,8 @@ export const Route = createFileRoute('/user/')({
           onNavigateToLogin: () => navigate({ to: ClientAuthNavigation.Main.ROUTE }),
           onNavigateToTotp: () => navigate({ to: ClientUserNavigation.TotpMain.ROUTE }),
           onNavigateToSessions: () => navigate({ to: ClientUserNavigation.SessionList.ROUTE }),
-          onNavigateToIdentifiers: () => navigate({ to: ClientUserNavigation.IdentifierList.ROUTE })
+          onNavigateToIdentifiers: () => navigate({ to: ClientUserNavigation.IdentifierList.ROUTE }),
+          onNavigateToStorage: () => navigate({ to: OpenStorageNavigation.FileList.ROUTE })
         }}
       />
     )

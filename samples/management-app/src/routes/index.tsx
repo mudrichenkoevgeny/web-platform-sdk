@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import {
   ManagementAuditNavigation,
-  ManagementUsersNavigation
+  ManagementUsersNavigation,
+  ManagementStorageNavigation
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Route configuration for main administrative dashboard screen. */
@@ -17,7 +18,8 @@ export const Route = createFileRoute('/')({
           onGlobalUserListClick: () => void navigate({ to: ManagementUsersNavigation.UserList.ROUTE }),
           onAuditEventListClick: () => void navigate({ to: ManagementAuditNavigation.AuditEventList.ROUTE }),
           onGlobalSessionListClick: () => void navigate({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE }),
-          onGlobalIdentifierListClick: () => void navigate({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE })
+          onGlobalIdentifierListClick: () => void navigate({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE }),
+          onStorageFileListClick: () => void navigate({ to: ManagementStorageNavigation.FileList.ROUTE })
         }}
       />
     )

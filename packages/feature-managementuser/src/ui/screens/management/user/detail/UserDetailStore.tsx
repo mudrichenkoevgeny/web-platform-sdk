@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, toUserIdOrNull, UserAccountStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, toUserIdOrNull, UserAccountStatus, type UserStorageConfiguration } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -12,6 +12,15 @@ import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/manag
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value, 10)
   return isNaN(parsed) ? defaultValue : parsed
+}
+
+const parseNullableInteger = (value: string): number | null => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+  const parsed = parseInt(trimmed, 10)
+  return isNaN(parsed) ? null : parsed
 }
 
 /** Status values for {@link UserDetailScreenState}. */
@@ -48,6 +57,12 @@ export type UserDetailScreenState =
       lockoutTypeInput: AccountLockoutType
       /** Input string value for temporary lockout until timestamp. */
       temporaryLockoutUntilInput: string
+      /** Input string value for storage quota bytes field. */
+      storageQuotaBytesInput: string
+      /** Input string value for max upload size bytes field. */
+      storageMaxUploadSizeBytesInput: string
+      /** Input string value for max pending uploads field. */
+      storageMaxPendingUploadsInput: string
       /** Whether an update action is currently saving. */
       isSaving: boolean
       /** Update error instance if saving failed. */
@@ -102,6 +117,12 @@ export interface UserDetailStoreState {
   onLockoutTypeChanged: (value: AccountLockoutType) => void
   /** Handles temporary lockout until input value change. */
   onTemporaryLockoutUntilChanged: (value: string) => void
+  /** Handles storage quota bytes input change. */
+  onStorageQuotaBytesChanged: (value: string) => void
+  /** Handles max upload size bytes input change. */
+  onStorageMaxUploadSizeBytesChanged: (value: string) => void
+  /** Handles max pending uploads input change. */
+  onStorageMaxPendingUploadsChanged: (value: string) => void
   /** Submits updated user settings. */
   onUpdateClick: () => Promise<void>
   /** Opens delete confirmation modal dialog. */
@@ -139,11 +160,18 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
   const initialTempLockout = state.user.temporaryLockoutUntil ? String(state.user.temporaryLockoutUntil) : ''
   const initialLockoutType = state.user.lockoutType ?? AccountLockoutType.NONE
 
+  const initialQuota = state.user.storageConfiguration?.quotaBytes != null ? String(state.user.storageConfiguration.quotaBytes) : ''
+  const initialMaxUpload = state.user.storageConfiguration?.maxUploadSizeBytes != null ? String(state.user.storageConfiguration.maxUploadSizeBytes) : ''
+  const initialMaxPending = state.user.storageConfiguration?.maxPendingUploads != null ? String(state.user.storageConfiguration.maxPendingUploads) : ''
+
   return (
     currentAuthLevel !== initialAuthLevel ||
     state.accountStatusInput !== state.user.accountStatus ||
     state.lockoutTypeInput !== initialLockoutType ||
-    state.temporaryLockoutUntilInput.trim() !== initialTempLockout
+    state.temporaryLockoutUntilInput.trim() !== initialTempLockout ||
+    state.storageQuotaBytesInput.trim() !== initialQuota ||
+    state.storageMaxUploadSizeBytesInput.trim() !== initialMaxUpload ||
+    state.storageMaxPendingUploadsInput.trim() !== initialMaxPending
   )
 }
 
@@ -197,6 +225,9 @@ export const createUserDetailStore = (
               accountStatusInput: user.accountStatus,
               lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
               temporaryLockoutUntilInput: user.temporaryLockoutUntil ? String(user.temporaryLockoutUntil) : '',
+              storageQuotaBytesInput: user.storageConfiguration?.quotaBytes != null ? String(user.storageConfiguration.quotaBytes) : '',
+              storageMaxUploadSizeBytesInput: user.storageConfiguration?.maxUploadSizeBytes != null ? String(user.storageConfiguration.maxUploadSizeBytes) : '',
+              storageMaxPendingUploadsInput: user.storageConfiguration?.maxPendingUploads != null ? String(user.storageConfiguration.maxPendingUploads) : '',
               isSaving: false,
               saveError: null,
               isDeleting: false,
@@ -257,6 +288,27 @@ export const createUserDetailStore = (
       }
     },
 
+    onStorageQuotaBytesChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageQuotaBytesInput: value, saveError: null } })
+      }
+    },
+
+    onStorageMaxUploadSizeBytesChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageMaxUploadSizeBytesInput: value, saveError: null } })
+      }
+    },
+
+    onStorageMaxPendingUploadsChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageMaxPendingUploadsInput: value, saveError: null } })
+      }
+    },
+
     onUpdateClick: async () => {
       const current = get().screenState
       if (current.status !== UserDetailStatus.CONTENT || current.isSaving) {
@@ -270,12 +322,26 @@ export const createUserDetailStore = (
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
         : null
 
+      const quota = parseNullableInteger(current.storageQuotaBytesInput)
+      const maxUpload = parseNullableInteger(current.storageMaxUploadSizeBytesInput)
+      const maxPending = parseNullableInteger(current.storageMaxPendingUploadsInput)
+
+      const hasStorageConfig = quota !== null || maxUpload !== null || maxPending !== null
+      const storageConfiguration: UserStorageConfiguration | null = hasStorageConfig
+        ? {
+            quotaBytes: quota,
+            maxUploadSizeBytes: maxUpload,
+            maxPendingUploads: maxPending
+          }
+        : null
+
       const updateUserResult = await deps.updateUserUseCase.execute(deps.userId, {
         accountStatus: current.accountStatusInput,
         authorityLevel: authLevel,
         permissionCodes: null,
         lockoutType: current.lockoutTypeInput,
-        temporaryLockoutUntil: tempLockout
+        temporaryLockoutUntil: tempLockout,
+        storageConfiguration
       })
 
       if (isSuccess(updateUserResult)) {

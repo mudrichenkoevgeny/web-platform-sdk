@@ -1,9 +1,12 @@
 import { appResultFailure, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  PasswordPolicyFailReason,
+  PasswordPolicyValidator,
+  type OpenPasswordPolicy
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
-import type { PasswordPolicyValidator, PasswordPolicyFailReason } from '@/domain/model/password-policy-validator'
 import { SecurityError } from '@/error/model/security-error'
-import type { OpenPasswordPolicy } from '@/domain/model/open-security-settings'
 
 /** Default fallback password policy if loading from repository fails. */
 const FALLBACK_PASSWORD_POLICY: OpenPasswordPolicy = {
@@ -23,7 +26,7 @@ export class ValidatePasswordUseCase {
    * Constructs a new {@link ValidatePasswordUseCase}.
    *
    * @param openSecuritySettingsRepository - Source of the active password policy
-   * @param passwordPolicyValidator - Pure domain logic validator implementation
+   * @param passwordPolicyValidator - Pure domain logic validator implementation from shared foundation
    */
   public constructor(
     private readonly openSecuritySettingsRepository: OpenSecuritySettingsRepository,
@@ -55,20 +58,29 @@ export class ValidatePasswordUseCase {
 
   private toSecurityError(reason: PasswordPolicyFailReason, minLength: number): SecurityError {
     switch (reason) {
-      case 'TOO_SHORT':
+      case PasswordPolicyFailReason.TOO_SHORT:
+      case 'too_short':
         return SecurityError.passwordTooShort(minLength)
-      case 'NO_LETTER':
+      case PasswordPolicyFailReason.NO_LETTER:
+      case 'no_letter':
         return SecurityError.passwordNoLetter()
-      case 'NO_UPPERCASE':
+      case PasswordPolicyFailReason.NO_UPPERCASE:
+      case 'no_uppercase':
         return SecurityError.passwordNoUpperCase()
-      case 'NO_LOWERCASE':
+      case PasswordPolicyFailReason.NO_LOWERCASE:
+      case 'no_lowercase':
         return SecurityError.passwordNoLowerCase()
-      case 'NO_DIGIT':
+      case PasswordPolicyFailReason.NO_DIGIT:
+      case 'no_digit':
         return SecurityError.passwordNoDigit()
-      case 'NO_SPECIAL_CHAR':
+      case PasswordPolicyFailReason.NO_SPECIAL_CHAR:
+      case 'no_special_char':
         return SecurityError.passwordNoSpecialChar()
-      case 'TOO_COMMON':
+      case PasswordPolicyFailReason.TOO_COMMON:
+      case 'too_common':
         return SecurityError.passwordTooCommon()
+      default:
+        return SecurityError.passwordTooShort(minLength)
     }
   }
 }

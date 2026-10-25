@@ -1,7 +1,7 @@
-import { SecurityErrorArgs } from '@mudrichenkoevgeny/shared-foundation'
+import { SecurityErrorArgs, ClientSecurityErrorCodes, PasswordPolicyFailReason } from '@mudrichenkoevgeny/shared-foundation'
 import { generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ErrorId } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { ClientSecurityErrorCodes } from '@/error/naming/client-security-error-codes'
+import type { ErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+
 /** Error indicating security/password policy settings could not be fetched. */
 export type SecurityErrorPasswordPolicyUnavailable = {
   readonly id: ErrorId
@@ -13,7 +13,7 @@ export type SecurityErrorPasswordPolicyUnavailable = {
 /** Error indicating candidate password is shorter than minimum required length. */
 export type SecurityErrorPasswordTooShort = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_TOO_SHORT
+  readonly code: typeof PasswordPolicyFailReason.TOO_SHORT
   readonly args: Record<string, string> | null
   readonly isRetryable: false
 }
@@ -21,7 +21,7 @@ export type SecurityErrorPasswordTooShort = {
 /** Error indicating candidate password contains no letter character. */
 export type SecurityErrorPasswordNoLetter = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_NO_LETTER
+  readonly code: typeof PasswordPolicyFailReason.NO_LETTER
   readonly args: null
   readonly isRetryable: false
 }
@@ -29,7 +29,7 @@ export type SecurityErrorPasswordNoLetter = {
 /** Error indicating candidate password contains no uppercase letter. */
 export type SecurityErrorPasswordNoUpperCase = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_NO_UPPERCASE
+  readonly code: typeof PasswordPolicyFailReason.NO_UPPERCASE
   readonly args: null
   readonly isRetryable: false
 }
@@ -37,7 +37,7 @@ export type SecurityErrorPasswordNoUpperCase = {
 /** Error indicating candidate password contains no lowercase letter. */
 export type SecurityErrorPasswordNoLowerCase = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_NO_LOWERCASE
+  readonly code: typeof PasswordPolicyFailReason.NO_LOWERCASE
   readonly args: null
   readonly isRetryable: false
 }
@@ -45,7 +45,7 @@ export type SecurityErrorPasswordNoLowerCase = {
 /** Error indicating candidate password contains no digit character. */
 export type SecurityErrorPasswordNoDigit = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_NO_DIGIT
+  readonly code: typeof PasswordPolicyFailReason.NO_DIGIT
   readonly args: null
   readonly isRetryable: false
 }
@@ -53,7 +53,7 @@ export type SecurityErrorPasswordNoDigit = {
 /** Error indicating candidate password contains no special character. */
 export type SecurityErrorPasswordNoSpecialChar = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_NO_SPECIAL_CHAR
+  readonly code: typeof PasswordPolicyFailReason.NO_SPECIAL_CHAR
   readonly args: null
   readonly isRetryable: false
 }
@@ -61,7 +61,7 @@ export type SecurityErrorPasswordNoSpecialChar = {
 /** Error indicating candidate password is on the forbidden common passwords list. */
 export type SecurityErrorPasswordTooCommon = {
   readonly id: ErrorId
-  readonly code: typeof ClientSecurityErrorCodes.PASSWORD_TOO_COMMON
+  readonly code: typeof PasswordPolicyFailReason.TOO_COMMON
   readonly args: null
   readonly isRetryable: false
 }
@@ -103,7 +103,7 @@ export const SecurityError = {
    */
   passwordTooShort: (minLength?: number | null): SecurityErrorPasswordTooShort => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_TOO_SHORT,
+    code: PasswordPolicyFailReason.TOO_SHORT,
     args: minLength != null ? { [SecurityErrorArgs.PASSWORD_MIN_LENGTH]: String(minLength) } : null,
     isRetryable: false
   }),
@@ -115,7 +115,7 @@ export const SecurityError = {
    */
   passwordNoLetter: (): SecurityErrorPasswordNoLetter => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_NO_LETTER,
+    code: PasswordPolicyFailReason.NO_LETTER,
     args: null,
     isRetryable: false
   }),
@@ -127,7 +127,7 @@ export const SecurityError = {
    */
   passwordNoUpperCase: (): SecurityErrorPasswordNoUpperCase => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_NO_UPPERCASE,
+    code: PasswordPolicyFailReason.NO_UPPERCASE,
     args: null,
     isRetryable: false
   }),
@@ -139,7 +139,7 @@ export const SecurityError = {
    */
   passwordNoLowerCase: (): SecurityErrorPasswordNoLowerCase => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_NO_LOWERCASE,
+    code: PasswordPolicyFailReason.NO_LOWERCASE,
     args: null,
     isRetryable: false
   }),
@@ -151,7 +151,7 @@ export const SecurityError = {
    */
   passwordNoDigit: (): SecurityErrorPasswordNoDigit => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_NO_DIGIT,
+    code: PasswordPolicyFailReason.NO_DIGIT,
     args: null,
     isRetryable: false
   }),
@@ -163,7 +163,7 @@ export const SecurityError = {
    */
   passwordNoSpecialChar: (): SecurityErrorPasswordNoSpecialChar => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_NO_SPECIAL_CHAR,
+    code: PasswordPolicyFailReason.NO_SPECIAL_CHAR,
     args: null,
     isRetryable: false
   }),
@@ -175,7 +175,7 @@ export const SecurityError = {
    */
   passwordTooCommon: (): SecurityErrorPasswordTooCommon => ({
     id: generateErrorId(),
-    code: ClientSecurityErrorCodes.PASSWORD_TOO_COMMON,
+    code: PasswordPolicyFailReason.TOO_COMMON,
     args: null,
     isRetryable: false
   })

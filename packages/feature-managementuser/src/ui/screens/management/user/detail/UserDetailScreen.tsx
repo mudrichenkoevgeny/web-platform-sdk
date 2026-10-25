@@ -37,6 +37,9 @@ export const UserDetailTestTags = {
   AUTHORITY_LEVEL_INPUT: 'UserDetail_AuthorityLevelInput',
   LOCKOUT_TYPE_SELECT: 'UserDetail_LockoutTypeSelect',
   LOCKOUT_UNTIL_INPUT: 'UserDetail_LockoutUntilInput',
+  STORAGE_QUOTA_INPUT: 'UserDetail_StorageQuotaInput',
+  STORAGE_MAX_UPLOAD_INPUT: 'UserDetail_StorageMaxUploadInput',
+  STORAGE_MAX_PENDING_INPUT: 'UserDetail_StorageMaxPendingInput',
   UPDATE_BUTTON: 'UserDetail_UpdateButton',
   SAVE_ERROR_TEXT: 'UserDetail_SaveErrorText',
   DELETE_BUTTON: 'UserDetail_DeleteButton',
@@ -138,6 +141,9 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onAccountStatusChanged = useUserDetailStore((s) => s.onAccountStatusChanged)
   const onLockoutTypeChanged = useUserDetailStore((s) => s.onLockoutTypeChanged)
   const onTemporaryLockoutUntilChanged = useUserDetailStore((s) => s.onTemporaryLockoutUntilChanged)
+  const onStorageQuotaBytesChanged = useUserDetailStore((s) => s.onStorageQuotaBytesChanged)
+  const onStorageMaxUploadSizeBytesChanged = useUserDetailStore((s) => s.onStorageMaxUploadSizeBytesChanged)
+  const onStorageMaxPendingUploadsChanged = useUserDetailStore((s) => s.onStorageMaxPendingUploadsChanged)
   const onUpdateClick = useUserDetailStore((s) => s.onUpdateClick)
   const onDeleteClick = useUserDetailStore((s) => s.onDeleteClick)
   const onConfirmDeleteClick = useUserDetailStore((s) => s.onConfirmDeleteClick)
@@ -154,6 +160,9 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const authLevelId = useId()
   const lockoutTypeId = useId()
   const tempLockoutId = useId()
+  const storageQuotaId = useId()
+  const storageMaxUploadId = useId()
+  const storageMaxPendingId = useId()
 
   switch (screenState.status) {
     case UserDetailStatus.LOADING:
@@ -178,6 +187,9 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
         accountStatusInput,
         lockoutTypeInput,
         temporaryLockoutUntilInput,
+        storageQuotaBytesInput,
+        storageMaxUploadSizeBytesInput,
+        storageMaxPendingUploadsInput,
         isSaving,
         saveError,
         isDeleting,
@@ -328,6 +340,45 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
               label={commonStrings.ui.lockoutUntil}
               disabled={isSelfUser || isSaving || isDeleting}
             />
+
+            <div className="pt-2 border-t border-border flex flex-col gap-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {strings.ui.customStorageConfiguration}
+              </p>
+
+              <CoreOutlinedTextField
+                id={storageQuotaId}
+                data-testid={UserDetailTestTags.STORAGE_QUOTA_INPUT}
+                type="number"
+                value={storageQuotaBytesInput}
+                onChange={(e) => onStorageQuotaBytesChanged(e.target.value)}
+                label={strings.ui.userStorageQuotaOptional}
+                placeholder={strings.ui.defaultNullPlaceholder}
+                disabled={isSelfUser || isSaving || isDeleting}
+              />
+
+              <CoreOutlinedTextField
+                id={storageMaxUploadId}
+                data-testid={UserDetailTestTags.STORAGE_MAX_UPLOAD_INPUT}
+                type="number"
+                value={storageMaxUploadSizeBytesInput}
+                onChange={(e) => onStorageMaxUploadSizeBytesChanged(e.target.value)}
+                label={strings.ui.userMaxUploadSizeOptional}
+                placeholder={strings.ui.defaultNullPlaceholder}
+                disabled={isSelfUser || isSaving || isDeleting}
+              />
+
+              <CoreOutlinedTextField
+                id={storageMaxPendingId}
+                data-testid={UserDetailTestTags.STORAGE_MAX_PENDING_INPUT}
+                type="number"
+                value={storageMaxPendingUploadsInput}
+                onChange={(e) => onStorageMaxPendingUploadsChanged(e.target.value)}
+                label={strings.ui.userMaxPendingUploadsOptional}
+                placeholder={strings.ui.defaultNullPlaceholder}
+                disabled={isSelfUser || isSaving || isDeleting}
+              />
+            </div>
 
             <div className="flex flex-col gap-2 pt-2">
               <CoreButton

@@ -3,10 +3,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   OtpConfirmationPayload,
   SendConfirmationToEmailRequest,
-  SendConfirmationToPhoneRequest,
-  UnlockByEmailConfirmationRequest,
-  UnlockByExternalAuthProviderRequest,
-  UnlockByPhoneConfirmationRequest
+  UnlockByEmailConfirmationRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUnlockRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -21,6 +18,12 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
+  /**
+   * Sends an account unlock confirmation code (OTP) to the specified management email address.
+   *
+   * @param email - Target email address
+   * @returns Confirmation dispatch result, or a mapped failure
+   */
   public async sendUnlockEmailConfirmation(email: string): Promise<AppResult<OtpConfirmationPayload, AppError>> {
     const request: SendConfirmationToEmailRequest = { email }
     return callResult(() =>
@@ -32,6 +35,13 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
     )
   }
 
+  /**
+   * Unlocks a temporarily locked management account using an email confirmation code.
+   *
+   * @param email - User email
+   * @param confirmationCode - OTP confirmation code
+   * @returns Void result on success, or a mapped failure
+   */
   public async unlockByEmail(email: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
     const request: UnlockByEmailConfirmationRequest = {
       email,
@@ -39,48 +49,6 @@ export class FetchSelfManagementUnlockApi implements SelfManagementUnlockApi {
     }
     return callResult(() =>
       this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_EMAIL, {
-        method: 'POST',
-        body: JSON.stringify(request),
-        ...markAsPublic()
-      })
-    )
-  }
-
-  public async sendUnlockPhoneConfirmation(phoneNumber: string): Promise<AppResult<OtpConfirmationPayload, AppError>> {
-    const request: SendConfirmationToPhoneRequest = { phone_number: phoneNumber }
-    return callResult(() =>
-      this.client.request<OtpConfirmationPayload>(SelfManagementUnlockRoutes.SEND_UNLOCK_PHONE_CONFIRMATION, {
-        method: 'POST',
-        body: JSON.stringify(request),
-        ...markAsPublic()
-      })
-    )
-  }
-
-  public async unlockByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<void, AppError>> {
-    const request: UnlockByPhoneConfirmationRequest = {
-      phone_number: phoneNumber,
-      confirmation_code: confirmationCode
-    }
-    return callResult(() =>
-      this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_PHONE, {
-        method: 'POST',
-        body: JSON.stringify(request),
-        ...markAsPublic()
-      })
-    )
-  }
-
-  public async unlockByExternalAuthProvider(
-    authProvider: string,
-    externalProviderToken: string
-  ): Promise<AppResult<void, AppError>> {
-    const request: UnlockByExternalAuthProviderRequest = {
-      auth_provider: authProvider,
-      external_provider_token: externalProviderToken
-    }
-    return callResult(() =>
-      this.client.request<void>(SelfManagementUnlockRoutes.UNLOCK_BY_EXTERNAL_PROVIDER, {
         method: 'POST',
         body: JSON.stringify(request),
         ...markAsPublic()

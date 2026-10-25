@@ -8,6 +8,7 @@ import type {
   UserId,
   UserPrivate,
   UserRole,
+  UserStorageConfiguration,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -18,6 +19,7 @@ export interface CreateUserParams {
   role?: UserRole | null
   status?: UserAccountStatus | null
   authorityLevel?: number | null
+  storageConfiguration?: UserStorageConfiguration | null
 }
 
 /** Parameters for updating a user account administratively. */
@@ -28,6 +30,7 @@ export interface UpdateUserParams {
   accountLockoutType?: AccountLockoutType | null
   lockoutType?: AccountLockoutType | null
   temporaryLockoutUntil?: number | null
+  storageConfiguration?: UserStorageConfiguration | null
 }
 
 /** Administrative repository providing staff and administrators full control over creating, fetching, filtering, updating, and removing user accounts across the system. */

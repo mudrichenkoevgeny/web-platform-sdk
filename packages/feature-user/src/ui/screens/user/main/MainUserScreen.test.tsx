@@ -40,6 +40,7 @@ describe('MainUserScreen', () => {
       onNavigateToTotp: vi.fn(),
       onNavigateToSessions: vi.fn(),
       onNavigateToIdentifiers: vi.fn(),
+      onNavigateToStorage: vi.fn(),
       ...overrides
     }
   }

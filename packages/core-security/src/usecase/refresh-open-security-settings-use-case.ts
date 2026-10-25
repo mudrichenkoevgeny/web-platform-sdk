@@ -1,5 +1,5 @@
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
+import type { OpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
 
 /**

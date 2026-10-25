@@ -5,8 +5,8 @@ import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundatio
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'
-import type { ResetRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/reset-remote-auth-settings-use-case'
-import type { SaveRemoteAuthSettingsUseCase } from '@/usecase/auth/settings/save-remote-auth-settings-use-case'
+import type { ResetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/reset-management-auth-settings-use-case'
+import type { UpdateManagementAuthSettingsUseCase } from '@/usecase/auth/settings/update-management-auth-settings-use-case'
 
 export const DEFAULT_OTP_LENGTH = 6
 
@@ -58,8 +58,8 @@ export type EditAuthSettingsScreenState =
 
 export interface EditAuthSettingsStoreDependencies {
   getManagementAuthSettingsUseCase: GetManagementAuthSettingsUseCase
-  saveRemoteAuthSettingsUseCase: SaveRemoteAuthSettingsUseCase
-  resetRemoteAuthSettingsUseCase: ResetRemoteAuthSettingsUseCase
+  updateManagementAuthSettingsUseCase: UpdateManagementAuthSettingsUseCase
+  resetManagementAuthSettingsUseCase: ResetManagementAuthSettingsUseCase
   onBack: () => void
 }
 
@@ -377,7 +377,7 @@ export const createEditAuthSettingsStore = (
         }
       }
 
-      const saveResult = await deps.saveRemoteAuthSettingsUseCase.execute(settings)
+      const saveResult = await deps.updateManagementAuthSettingsUseCase.execute(settings)
       if (isSuccess(saveResult)) {
         deps.onBack()
       } else {
@@ -396,7 +396,7 @@ export const createEditAuthSettingsStore = (
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
-      const result = await deps.resetRemoteAuthSettingsUseCase.execute()
+      const result = await deps.resetManagementAuthSettingsUseCase.execute()
       if (isSuccess(result)) {
         deps.onBack()
       } else {

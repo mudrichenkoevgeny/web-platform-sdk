@@ -3,7 +3,7 @@ import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-co
 import { createTestOpenGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
 import type { OpenGlobalSettingsObserver } from '@/repository/open-global-settings-repository'
-import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
+import type { OpenGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Configuration options for {@link OpenGlobalSettingsRepositoryMock}.

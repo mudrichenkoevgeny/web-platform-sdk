@@ -19,10 +19,10 @@ import {
   userSessionPrivatePayloadSchema,
   userSessionSummaryPayloadSchema
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { SessionApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { OpenSessionApi } from './open-session-api'
 
-/** Open {@link SessionApi} implementation backed by {@link HttpClient}. */
-export class FetchOpenSessionApi implements SessionApi {
+/** Open {@link OpenSessionApi} implementation backed by {@link HttpClient}. */
+export class FetchOpenSessionApi implements OpenSessionApi {
   /**
    * Constructs a new {@link FetchOpenSessionApi}.
    *

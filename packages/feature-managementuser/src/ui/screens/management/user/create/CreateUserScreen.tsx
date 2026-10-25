@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from 'react'
-import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, UiValues } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
@@ -27,6 +27,9 @@ export const CreateUserTestTags = {
   ROLE_SELECT: 'CreateUser_RoleSelect',
   STATUS_SELECT: 'CreateUser_StatusSelect',
   AUTHORITY_LEVEL_INPUT: 'CreateUser_AuthorityLevelInput',
+  STORAGE_QUOTA_INPUT: 'CreateUser_StorageQuotaInput',
+  STORAGE_MAX_UPLOAD_INPUT: 'CreateUser_StorageMaxUploadInput',
+  STORAGE_MAX_PENDING_INPUT: 'CreateUser_StorageMaxPendingInput',
   CREATE_BUTTON: 'CreateUser_CreateButton',
   ERROR_TEXT: 'CreateUser_ErrorText'
 }
@@ -98,13 +101,29 @@ const getUserRoleLabel = (role: UserRole, strings: CommonModuleStrings): string 
 const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings
 }) => {
-  const { email, password, isPasswordVisible, role, status, authorityLevel, isLoading, error } = useCreateUserStore((s) => s.screenState)
+  const {
+    email,
+    password,
+    isPasswordVisible,
+    role,
+    status,
+    authorityLevel,
+    storageQuotaBytes,
+    storageMaxUploadSizeBytes,
+    storageMaxPendingUploads,
+    isLoading,
+    error
+  } = useCreateUserStore((s) => s.screenState)
+
   const onEmailChanged = useCreateUserStore((s) => s.onEmailChanged)
   const onPasswordChanged = useCreateUserStore((s) => s.onPasswordChanged)
   const onTogglePasswordVisibility = useCreateUserStore((s) => s.onTogglePasswordVisibility)
   const onRoleChanged = useCreateUserStore((s) => s.onRoleChanged)
   const onStatusChanged = useCreateUserStore((s) => s.onStatusChanged)
   const onAuthorityLevelChanged = useCreateUserStore((s) => s.onAuthorityLevelChanged)
+  const onStorageQuotaBytesChanged = useCreateUserStore((s) => s.onStorageQuotaBytesChanged)
+  const onStorageMaxUploadSizeBytesChanged = useCreateUserStore((s) => s.onStorageMaxUploadSizeBytesChanged)
+  const onStorageMaxPendingUploadsChanged = useCreateUserStore((s) => s.onStorageMaxPendingUploadsChanged)
   const onCreateClick = useCreateUserStore((s) => s.onCreateClick)
   const onBackClick = useCreateUserStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
@@ -114,6 +133,9 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const roleId = useId()
   const statusId = useId()
   const authLevelId = useId()
+  const storageQuotaId = useId()
+  const storageMaxUploadId = useId()
+  const storageMaxPendingId = useId()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,7 +164,7 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
           value={email}
           onChange={(e) => onEmailChanged(e.target.value)}
           label={strings.ui.email}
-          placeholder="user@example.com"
+          placeholder={UiValues.Placeholder.EMAIL}
           autoComplete="off"
           disabled={isLoading}
         />
@@ -223,6 +245,45 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
           label={strings.ui.authorityLevel}
           disabled={isLoading}
         />
+
+        <div className="pt-2 border-t border-border flex flex-col gap-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            {strings.ui.customStorageConfiguration}
+          </p>
+
+          <CoreOutlinedTextField
+            id={storageQuotaId}
+            data-testid={CreateUserTestTags.STORAGE_QUOTA_INPUT}
+            type="number"
+            value={storageQuotaBytes}
+            onChange={(e) => onStorageQuotaBytesChanged(e.target.value)}
+            label={strings.ui.userStorageQuotaOptional}
+            placeholder={strings.ui.defaultNullPlaceholder}
+            disabled={isLoading}
+          />
+
+          <CoreOutlinedTextField
+            id={storageMaxUploadId}
+            data-testid={CreateUserTestTags.STORAGE_MAX_UPLOAD_INPUT}
+            type="number"
+            value={storageMaxUploadSizeBytes}
+            onChange={(e) => onStorageMaxUploadSizeBytesChanged(e.target.value)}
+            label={strings.ui.userMaxUploadSizeOptional}
+            placeholder={strings.ui.defaultNullPlaceholder}
+            disabled={isLoading}
+          />
+
+          <CoreOutlinedTextField
+            id={storageMaxPendingId}
+            data-testid={CreateUserTestTags.STORAGE_MAX_PENDING_INPUT}
+            type="number"
+            value={storageMaxPendingUploads}
+            onChange={(e) => onStorageMaxPendingUploadsChanged(e.target.value)}
+            label={strings.ui.userMaxPendingUploadsOptional}
+            placeholder={strings.ui.defaultNullPlaceholder}
+            disabled={isLoading}
+          />
+        </div>
 
         <div className="flex flex-col gap-2 pt-2">
           <CoreButton

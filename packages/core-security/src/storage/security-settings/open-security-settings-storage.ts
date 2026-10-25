@@ -1,4 +1,4 @@
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
+import type { OpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Persistence port for {@link OpenSecuritySettings} storage implementations.
