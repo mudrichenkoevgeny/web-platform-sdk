@@ -12,10 +12,10 @@ describe('EditStorageSettingsScreen', () => {
       execute: vi.fn().mockResolvedValue(appResultSuccess(createTestManagementStorageSettings()))
     },
     updateManagementStorageSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(createTestManagementStorageSettings()))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     },
     resetManagementStorageSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess(createTestManagementStorageSettings()))
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     },
     onBack: vi.fn()
   })
@@ -29,9 +29,9 @@ describe('EditStorageSettingsScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByTestId(EditStorageSettingsTestTags.TITLE)).toBeInTheDocument()
-    expect(screen.getByText(storageStrings.ui.storageSettingsTitle)).toBeInTheDocument()
-    expect(screen.getByTestId(EditStorageSettingsTestTags.SAVE_BUTTON)).toBeInTheDocument()
+    expect(await screen.findByTestId(EditStorageSettingsTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(storageStrings.ui.storageSettingsTitle)).toBeDefined()
+    expect(screen.getByTestId(EditStorageSettingsTestTags.SAVE_BUTTON)).toBeDefined()
   })
 
   it('triggers onBack when back button is clicked', async () => {

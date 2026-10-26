@@ -1,7 +1,14 @@
 import React, { forwardRef } from 'react'
-import { formatByteSize, userStrings, UserModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
-import { cn, formatEpochMillisToDateTime } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { formatByteSize, storageStrings, StorageModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { cn } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { StorageFileSummary } from '@mudrichenkoevgeny/shared-foundation'
+
+/**
+ * Test tags dictionary for {@link StorageFileItem}.
+ */
+export const StorageFileItemTestTags = {
+  ITEM: 'StorageFileItem'
+}
 
 /**
  * Props for the {@link StorageFileItem} component.
@@ -26,7 +33,7 @@ export interface StorageFileItemProps extends Omit<React.HTMLAttributes<HTMLDivE
   /**
    * Localized strings dictionary override.
    */
-  strings?: UserModuleStrings
+  strings?: StorageModuleStrings
 }
 
 /**
@@ -39,7 +46,7 @@ export const StorageFileItem = forwardRef<HTMLDivElement, StorageFileItemProps>(
       onDeleteClick,
       enabled = true,
       onFileClick,
-      strings = userStrings,
+      strings = storageStrings,
       className,
       ...rest
     },
@@ -47,12 +54,11 @@ export const StorageFileItem = forwardRef<HTMLDivElement, StorageFileItemProps>(
   ) => {
     const isClickable = Boolean(onFileClick)
     const formattedSize = formatByteSize(file.fileSizeBytes)
-    const formattedDate = formatEpochMillisToDateTime(file.createdAtMillis) ?? String(file.createdAtMillis)
 
     return (
       <div
         ref={ref}
-        data-testid={`StorageFileItem_${file.fileId}`}
+        data-testid={`${StorageFileItemTestTags.ITEM}_${file.id}`}
         tabIndex={isClickable ? -1 : undefined}
         className={cn(
           'relative w-full p-4 rounded-lg border border-border bg-card transition-colors flex flex-col gap-3 shadow-sm',
@@ -79,22 +85,16 @@ export const StorageFileItem = forwardRef<HTMLDivElement, StorageFileItemProps>(
           </span>
         </div>
 
-        {file.ownerUserId && (
-          <div className="text-xs text-muted-foreground relative z-10 pointer-events-none">
-            <span>{strings.ui.ownerUserId}: {file.ownerUserId}</span>
-          </div>
-        )}
-
         <div className="flex items-center justify-between text-xs text-muted-foreground relative z-10 pointer-events-none">
           <span>{formattedSize}</span>
-          <span>{formattedDate}</span>
+          <span>{file.mimeType}</span>
         </div>
 
         {onDeleteClick && (
           <div className="pt-2 border-t border-border flex justify-end relative z-10">
             <button
               type="button"
-              aria-label={strings.ui.deleteFileAction}
+              aria-label={strings.ui.deleteFile}
               disabled={!enabled}
               onClick={(e) => {
                 e.stopPropagation()
@@ -102,7 +102,7 @@ export const StorageFileItem = forwardRef<HTMLDivElement, StorageFileItemProps>(
               }}
               className="px-3 py-1.5 rounded-md text-xs font-semibold bg-error/10 text-error hover:bg-error/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {strings.ui.deleteFileAction}
+              {strings.ui.deleteFile}
             </button>
           </div>
         )}

@@ -15,16 +15,20 @@ import {
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { managementUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import { ManagementAppComponent } from '@/di/management-app-component'
 
 /**
  * Builds a {@link ManagementAppComponent} backed by SDK mock components.
+ *
+ * @returns A fully initialized {@link ManagementAppComponent} instance with mock dependencies.
  */
 export function managementAppComponentMock(): ManagementAppComponent {
   const mockCommonComponent = createMockCommonComponent()
   const mockSettingsComponent = createMockSettingsComponent()
   const mockSecurityComponent = createMockSecurityComponent()
+  const mockStorageComponent = createMockStorageComponent()
 
   const compositeActionTypeParser = new CompositeAuditActionTypeParser([
     UserAuditActionType,
@@ -44,8 +48,9 @@ export function managementAppComponentMock(): ManagementAppComponent {
 
   const mockManagementUserComponent = managementUserComponentMock({
     commonComponent: mockCommonComponent,
-    settingsComponent: mockSettingsComponent,
-    securityComponent: mockSecurityComponent,
+    openGlobalSettingsRepository: mockSettingsComponent.globalSettingsRepository,
+    openSecuritySettingsRepository: mockSecurityComponent.securitySettingsRepository,
+    openStorageSettingsRepository: mockStorageComponent.storageSettingsRepository,
     compositeActionTypeParser,
     compositeResourceTypeParser,
     compositeMetadataKeyParser
@@ -59,6 +64,7 @@ export function managementAppComponentMock(): ManagementAppComponent {
     mockCommonComponent,
     mockSettingsComponent,
     mockSecurityComponent,
+    mockStorageComponent,
     mockManagementUserComponent
   })
 }

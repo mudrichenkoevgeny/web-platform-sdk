@@ -1,22 +1,25 @@
 import { describe, it, expect } from 'vitest'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { OpenStorageSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { AuthStorageMock, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { clientUserComponentMock } from '@/mock/di/client-user-component-mock'
+import { clientUserComponentMock } from '@/mock/index.js'
 
 describe('ClientUserComponent', () => {
   it('instantiates successfully with required dependencies', () => {
     const commonComponent = createMockCommonComponent()
-    const settingsComponent = createMockSettingsComponent()
-    const securityComponent = createMockSecurityComponent()
+    const openGlobalSettingsRepository = new OpenGlobalSettingsRepositoryMock()
+    const openSecuritySettingsRepository = new OpenSecuritySettingsRepositoryMock()
+    const openStorageSettingsRepository = new OpenStorageSettingsRepositoryMock()
     const authStorage = new AuthStorageMock()
     const authServices = new UserAuthServicesMock()
 
     const component = clientUserComponentMock({
       commonComponent,
-      settingsComponent,
-      securityComponent,
+      openGlobalSettingsRepository,
+      openSecuritySettingsRepository,
+      openStorageSettingsRepository,
       authStorage,
       authServices
     })

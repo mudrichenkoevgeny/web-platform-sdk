@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TEST_PHONE, createTestOtpConfirmationPayload, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUnlockRepositoryImpl } from '@/repository/auth/unlock/self-management-unlock-repository-impl'
 import { SelfManagementUnlockApiMock } from '@/mock/network/api/auth/unlock/self-management-unlock-api-mock'
 import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -14,15 +14,9 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
     mockApi = new SelfManagementUnlockApiMock()
     mockApi.sendUnlockEmailConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
     mockApi.unlockByEmailResult = appResultSuccess(undefined)
-    mockApi.sendUnlockPhoneConfirmationResult = appResultSuccess(createTestOtpConfirmationPayload())
-    mockApi.unlockByPhoneResult = appResultSuccess(undefined)
-    mockApi.unlockByExternalAuthProviderResult = appResultSuccess(undefined)
 
     vi.spyOn(mockApi, 'sendUnlockEmailConfirmation')
     vi.spyOn(mockApi, 'unlockByEmail')
-    vi.spyOn(mockApi, 'sendUnlockPhoneConfirmation')
-    vi.spyOn(mockApi, 'unlockByPhone')
-    vi.spyOn(mockApi, 'unlockByExternalAuthProvider')
 
     mockConfirmationRepo = new ConfirmationRepositoryMock()
     vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
@@ -44,27 +38,5 @@ describe('SelfManagementUnlockRepositoryImpl', () => {
     const unlockByEmailResult = await repository.unlockByEmail('admin@example.com', '123456')
     expect(mockApi.unlockByEmail).toHaveBeenCalledWith('admin@example.com', '123456')
     expect(isSuccess(unlockByEmailResult)).toBe(true)
-  })
-
-  it('delegates sendUnlockPhoneConfirmation with timer', async () => {
-    const phoneConfirmationResult = await repository.sendUnlockPhoneConfirmation(TEST_PHONE)
-    expect(mockConfirmationRepo.executeWithTimer).toHaveBeenCalled()
-    expect(isSuccess(phoneConfirmationResult)).toBe(true)
-  })
-
-  it('queries remaining phone unlock cooldown delay', () => {
-    expect(repository.getRemainingUnlockPhoneConfirmationDelayInSeconds(TEST_PHONE)).toBe(0)
-  })
-
-  it('delegates unlockByPhone request', async () => {
-    const unlockByPhoneResult = await repository.unlockByPhone(TEST_PHONE, '123456')
-    expect(mockApi.unlockByPhone).toHaveBeenCalledWith(TEST_PHONE, '123456')
-    expect(isSuccess(unlockByPhoneResult)).toBe(true)
-  })
-
-  it('delegates unlockByExternalAuthProvider request', async () => {
-    const unlockByProviderResult = await repository.unlockByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
-    expect(mockApi.unlockByExternalAuthProvider).toHaveBeenCalledWith(UserAuthProvider.GOOGLE, 'token_xyz')
-    expect(isSuccess(unlockByProviderResult)).toBe(true)
   })
 })

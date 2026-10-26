@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@mudrichenkoevgeny/shared-foundation':
-      specifier: file:D:/Documents/Projects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
-      version: file:D:/Documents/Projects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+      specifier: file:D:\Documents\Projects\shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
+      version: file:D:\Documents\Projects\shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
     '@tanstack/react-router':
       specifier: ^1.111.0
       version: 1.170.44
@@ -245,7 +245,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -273,7 +273,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -328,7 +328,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -386,7 +386,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -441,7 +441,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -469,7 +469,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -479,6 +479,9 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../core-settings
+      '@mudrichenkoevgeny/web-platform-sdk-core-storage':
+        specifier: workspace:*
+        version: link:../core-storage
       '@mudrichenkoevgeny/web-platform-sdk-feature-user':
         specifier: workspace:*
         version: link:../feature-user
@@ -539,7 +542,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -612,7 +615,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../core-common
@@ -688,7 +691,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -698,6 +701,9 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../../packages/core-settings
+      '@mudrichenkoevgeny/web-platform-sdk-core-storage':
+        specifier: workspace:*
+        version: link:../../packages/core-storage
       '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser':
         specifier: workspace:*
         version: link:../../packages/feature-clientuser
@@ -758,7 +764,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz
+        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz
       '@mudrichenkoevgeny/web-platform-sdk-core-common':
         specifier: workspace:*
         version: link:../../packages/core-common
@@ -768,6 +774,9 @@ importers:
       '@mudrichenkoevgeny/web-platform-sdk-core-settings':
         specifier: workspace:*
         version: link:../../packages/core-settings
+      '@mudrichenkoevgeny/web-platform-sdk-core-storage':
+        specifier: workspace:*
+        version: link:../../packages/core-storage
       '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser':
         specifier: workspace:*
         version: link:../../packages/feature-managementuser
@@ -1206,9 +1215,9 @@ packages:
   '@keyv/serialize@1.1.1':
     resolution: {integrity: sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==}
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz':
-    resolution: {integrity: sha512-AQdTiGFNNWAXDAzdbH1YQ9w5mEXMiRGPHBEy59vOUztOMNTv4jbSWr8JYRDLD3iqyk8+rht4xao4QRknHH0fXw==, tarball: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz}
-    version: 0.0.90
+  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz':
+    resolution: {integrity: sha512-d8rsOkAMSfixnljvTXxK6QxNBKW4WjlcE0fxkutqvN5OSdDMOTcDBXxD2u5pQSUoj6YhnPnvTO+kJ+i+NfRegw==, tarball: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz}
+    version: 0.0.91
 
   '@napi-rs/wasm-runtime@1.2.5':
     resolution: {integrity: sha512-HshSvXzmBxNzqejd3k/KemgQ3hdREUYFRRrgxOZ+gPljDIsO2SDZrVZMd4Z/HsxudQbE62OVyVFE8z9BCurfjA==}
@@ -3831,7 +3840,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.90.tgz':
+  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.0.91.tgz':
     dependencies:
       zod: 3.25.76
 

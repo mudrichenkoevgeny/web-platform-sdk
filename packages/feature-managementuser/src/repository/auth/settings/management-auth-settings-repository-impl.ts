@@ -74,14 +74,15 @@ export class ManagementAuthSettingsRepositoryImpl implements ManagementAuthSetti
 
   public async saveRemoteManagementAuthSettings(
     authSettings: ManagementAuthSettings
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementAuthSettings, AppError>> {
     return this.mutex.runExclusive(async () => {
       const payload = toManagementAuthSettingsPayload(authSettings)
       const result = await this.managementAuthSettingsApi.updateManagementAuthSettings(payload)
-      if (isSuccess(result)) {
-        await this.applySettingsUpdate(authSettings)
+      const mapped = mapSuccess(result, (responsePayload) => toManagementAuthSettings(responsePayload))
+      if (isSuccess(mapped)) {
+        await this.applySettingsUpdate(mapped.data)
       }
-      return result
+      return mapped
     })
   }
 

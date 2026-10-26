@@ -15,8 +15,7 @@ describe('StorageFileDetailScreen', () => {
           createTestStorageFilePrivate({
             id: toFileIdOrThrow('file-123'),
             fileName: 'sample-image.png',
-            fileUrl: 'https://example.com/sample-image.png',
-            category: 'image'
+            fileUrl: 'https://example.com/sample-image.png'
           })
         )
       )
@@ -37,9 +36,9 @@ describe('StorageFileDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByTestId(StorageFileDetailTestTags.TITLE)).toBeInTheDocument()
-    expect(screen.getByText(storageStrings.ui.fileDetailTitle)).toBeInTheDocument()
-    expect(screen.getByText('sample-image.png')).toBeInTheDocument()
+    expect(await screen.findByTestId(StorageFileDetailTestTags.TITLE)).toBeDefined()
+    expect(screen.getByText(storageStrings.ui.fileDetailTitle)).toBeDefined()
+    expect(screen.getByText('sample-image.png')).toBeDefined()
 
     const copyBtn = screen.getByTestId(StorageFileDetailTestTags.COPY_URL_BUTTON)
     await user.click(copyBtn)
@@ -82,7 +81,7 @@ describe('StorageFileDetailScreen', () => {
 
   it('renders error state when file loading fails', async () => {
     const deps = createMockDeps()
-    deps.getFileDetailUseCase.execute = vi.fn().mockResolvedValue(appResultFailure(CommonError.networkError()))
+    deps.getFileDetailUseCase.execute = vi.fn().mockResolvedValue(appResultFailure(CommonError.unknown()))
 
     render(
       <ComponentTestHarness>
@@ -90,6 +89,6 @@ describe('StorageFileDetailScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByText(storageStrings.ui.fileDetailTitle)).toBeInTheDocument()
+    expect(await screen.findByText(storageStrings.ui.fileDetailTitle)).toBeDefined()
   })
 })

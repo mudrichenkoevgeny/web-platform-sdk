@@ -10,7 +10,6 @@ import type { LogoutUseCase } from '@/usecase/session/logout-use-case'
 import type { ScheduleUserDeletionUseCase } from '@/usecase/user/schedule-user-deletion-use-case'
 import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import type { GetAuthSettingsUseCase } from '@/usecase/auth/settings/get-auth-settings-use-case'
-import type { ObserveAuthSettingsUseCase } from '@/usecase/auth/settings/observe-auth-settings-use-case'
 import type { OpenAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
@@ -59,7 +58,6 @@ export interface MainUserStoreDependencies {
   logoutUseCase: LogoutUseCase
   scheduleUserDeletionUseCase: ScheduleUserDeletionUseCase
   getAuthSettingsUseCase?: GetAuthSettingsUseCase
-  observeAuthSettingsUseCase?: ObserveAuthSettingsUseCase
   onNavigateToLogin: () => void
   onNavigateToTotp: () => void
   onNavigateToSessions: () => void

@@ -17,6 +17,6 @@ export class SelfManagementRefreshTokenRepositoryImpl implements RefreshTokenRep
 
   public async refreshToken(refreshToken: string): Promise<AppResult<SessionToken, AppError>> {
     const result = await this.refreshTokenApi.refreshToken({ refresh_token: refreshToken })
-    return mapSuccess(result, (sessionTokenResponse) => toSessionToken(sessionTokenResponse))
+    return mapSuccess(result, (sessionTokenPayload) => toSessionToken(sessionTokenPayload))
   }
 }

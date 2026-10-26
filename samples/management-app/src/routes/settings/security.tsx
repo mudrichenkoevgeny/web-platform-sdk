@@ -13,8 +13,8 @@ export const Route = createFileRoute('/settings/security')({
       <EditSecuritySettingsScreen
         dependencies={{
           getManagementSecuritySettingsUseCase: managementDeps.getManagementSecuritySettingsUseCase,
-          saveRemoteSecuritySettingsUseCase: managementDeps.saveRemoteSecuritySettingsUseCase,
-          resetRemoteSecuritySettingsUseCase: managementDeps.resetRemoteSecuritySettingsUseCase,
+          updateManagementSecuritySettingsUseCase: managementDeps.updateManagementSecuritySettingsUseCase,
+          resetManagementSecuritySettingsUseCase: managementDeps.resetManagementSecuritySettingsUseCase,
           onBack: () => navigateUp({ to: ManagementSecurityNavigation.SecuritySettings.parentRoute })
         }}
       />

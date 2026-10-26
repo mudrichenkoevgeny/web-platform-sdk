@@ -1,5 +1,6 @@
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  DeleteFilesBatchRequest,
   PagedResult,
   StorageFileSummary,
   StorageFilePrivate,
@@ -57,8 +58,8 @@ export interface StorageRepository {
   /**
    * Deletes multiple files in a single batch operation.
    *
-   * @param fileIds - Array of unique file identifiers to delete
+   * @param request - Batch deletion request object or array of unique file identifiers
    * @returns A promise resolving to an {@link AppResult} containing void or {@link AppError}
    */
-  deleteFilesBatch(fileIds: string[]): Promise<AppResult<void, AppError>>
+  deleteFilesBatch(request: DeleteFilesBatchRequest | string[]): Promise<AppResult<void, AppError>>
 }

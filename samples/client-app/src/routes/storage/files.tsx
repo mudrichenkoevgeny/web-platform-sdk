@@ -29,7 +29,7 @@ export const Route = createFileRoute('/storage/files')({
           onNavigateToUpload: () =>
             void navigate({ to: OpenStorageNavigation.FileUpload.route }),
           onNavigateToFileDetail: (fileId) =>
-            void navigate({ to: OpenStorageNavigation.FileList.ROUTE, search: { fileId } }),
+            void navigate({ to: OpenStorageNavigation.FileList.ROUTE, search: (prev) => ({ ...prev, fileId }) }),
           onBack: () => navigateUp({ to: ClientUserNavigation.Main.route })
         }}
       />

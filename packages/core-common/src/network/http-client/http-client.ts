@@ -39,7 +39,9 @@ export class HttpClient {
     this.baseUrl = config.baseUrl.endsWith('/') ? config.baseUrl.slice(0, -1) : config.baseUrl
     this.clientDeviceInfoProvider = config.clientDeviceInfoProvider
     this.plugins = config.plugins ?? []
-    this.fetchImpl = config.customFetch ?? (typeof fetch !== 'undefined' ? fetch.bind(window) : fetch)
+    this.fetchImpl =
+      config.customFetch ??
+      (typeof window !== 'undefined' && typeof fetch !== 'undefined' ? fetch.bind(window) : fetch)
     this.logger = config.logger
   }
 

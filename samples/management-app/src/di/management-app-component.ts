@@ -18,6 +18,7 @@ import {
   SecurityErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ManagementUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import type {
   AuthStorage,
@@ -47,12 +48,13 @@ export interface ManagementAppComponentConfig {
   mockCommonComponent?: CommonComponent
   mockSettingsComponent?: SettingsComponent
   mockSecurityComponent?: SecurityComponent
+  mockStorageComponent?: StorageComponent
   mockManagementUserComponent?: ManagementUserComponent
 }
 
 /**
  * Sample management host root DI container: builds encrypted storage, CommonComponent,
- * SettingsComponent, SecurityComponent, and ManagementUserComponent.
+ * SettingsComponent, SecurityComponent, StorageComponent, and ManagementUserComponent.
  */
 export class ManagementAppComponent {
   private _isInitialized = false
@@ -64,6 +66,7 @@ export class ManagementAppComponent {
   public readonly commonComponent: CommonComponent
   public readonly settingsComponent: SettingsComponent
   public readonly securityComponent: SecurityComponent
+  public readonly storageComponent: StorageComponent
   public readonly managementUserComponent: ManagementUserComponent
   private readonly managementAppUseCaseModule: ManagementAppUseCaseModule
 
@@ -96,11 +99,13 @@ export class ManagementAppComponent {
       config.mockCommonComponent &&
       config.mockSettingsComponent &&
       config.mockSecurityComponent &&
+      config.mockStorageComponent &&
       config.mockManagementUserComponent
     ) {
       this.commonComponent = config.mockCommonComponent
       this.settingsComponent = config.mockSettingsComponent
       this.securityComponent = config.mockSecurityComponent
+      this.storageComponent = config.mockStorageComponent
       this.managementUserComponent = config.mockManagementUserComponent
       this._isInitialized = true
     } else {
@@ -118,7 +123,7 @@ export class ManagementAppComponent {
         reauthenticateRoute: SelfManagementSessionRoutes.REAUTHENTICATE_SESSION,
         mfaChallengeHandler: this.mfaChallengeHandler,
         reauthenticateAction: (mfaToken, code) =>
-          this.managementUserComponent.reauthenticateSessionUseCase.execute(mfaToken, code)
+          this.managementUserComponent.selfManagementSessionRepository.reauthenticateSession(mfaToken, code)
       })
 
       this.commonComponent = new CommonComponent({
@@ -146,10 +151,17 @@ export class ManagementAppComponent {
         encryptedSettings: this.encryptedSettings
       })
 
+      this.storageComponent = new StorageComponent({
+        webSocketService: this.commonComponent.webSocketService,
+        httpClient: this.commonComponent.httpClient,
+        encryptedSettings: this.encryptedSettings
+      })
+
       this.managementUserComponent = new ManagementUserComponent({
         commonComponent: this.commonComponent,
-        settingsComponent: this.settingsComponent,
-        securityComponent: this.securityComponent,
+        openGlobalSettingsRepository: this.settingsComponent.globalSettingsRepository,
+        openSecuritySettingsRepository: this.securityComponent.securitySettingsRepository,
+        openStorageSettingsRepository: this.storageComponent.storageSettingsRepository,
         authStorage: this.authStorage,
         authServices,
         compositeActionTypeParser: config.compositeActionTypeParser,
@@ -175,8 +187,8 @@ export class ManagementAppComponent {
   /**
    * Atomic use case for refreshing full user state.
    */
-  public get refreshUserConfigurationUseCase() {
-    return this.managementUserComponent.refreshUserConfigurationUseCase
+  public get refreshManagementUserConfigurationUseCase() {
+    return this.managementUserComponent.refreshManagementUserConfigurationUseCase
   }
 
   /**
@@ -204,6 +216,7 @@ export class ManagementAppComponent {
       this.commonComponent.commonWebSocketMessageHandler,
       this.settingsComponent.settingsWebSocketMessageHandler,
       this.securityComponent.securityWebSocketMessageHandler,
+      this.storageComponent.storageWebSocketMessageHandler,
       this.managementUserComponent.userWebSocketMessageHandler
     ]
 

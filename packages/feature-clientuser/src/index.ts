@@ -41,13 +41,8 @@ export * from './domain/model/configuration/open-user-configuration.js'
 
 export * from './usecase/auth/settings/refresh-open-auth-settings-use-case.js'
 export * from './usecase/configuration/refresh-client-user-configuration-use-case.js'
-export * from './usecase/storage/get-self-files-use-case.js'
-export * from './usecase/storage/get-self-file-detail-use-case.js'
-export * from './usecase/storage/upload-self-file-use-case.js'
-export * from './usecase/storage/delete-self-file-use-case.js'
-export * from './usecase/storage/delete-self-files-batch-use-case.js'
 
-export * from './di/client-user-component.ts'
+export * from './di/client-user-component.js'
 
 export * from './ui/screens/auth/login/phone/LoginByPhoneStore.js'
 export * from './ui/screens/auth/login/phone/LoginByPhoneScreen.js'

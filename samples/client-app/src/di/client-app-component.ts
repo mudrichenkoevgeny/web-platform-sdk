@@ -15,6 +15,7 @@ import {
   SecurityErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
 import type {
   AuthStorage,
@@ -41,12 +42,13 @@ export interface ClientAppComponentConfig {
   mockCommonComponent?: CommonComponent
   mockSettingsComponent?: SettingsComponent
   mockSecurityComponent?: SecurityComponent
+  mockStorageComponent?: StorageComponent
   mockClientUserComponent?: ClientUserComponent
 }
 
 /**
  * Sample host root DI container: builds encrypted storage, CommonComponent,
- * SettingsComponent, SecurityComponent, and ClientUserComponent.
+ * SettingsComponent, SecurityComponent, StorageComponent, and ClientUserComponent.
  */
 export class ClientAppComponent {
   private _isInitialized = false
@@ -58,6 +60,7 @@ export class ClientAppComponent {
   public readonly commonComponent: CommonComponent
   public readonly settingsComponent: SettingsComponent
   public readonly securityComponent: SecurityComponent
+  public readonly storageComponent: StorageComponent
   public readonly clientUserComponent: ClientUserComponent
   private readonly clientAppUseCaseModule: ClientAppUseCaseModule
 
@@ -90,11 +93,13 @@ export class ClientAppComponent {
       config.mockCommonComponent &&
       config.mockSettingsComponent &&
       config.mockSecurityComponent &&
+      config.mockStorageComponent &&
       config.mockClientUserComponent
     ) {
       this.commonComponent = config.mockCommonComponent
       this.settingsComponent = config.mockSettingsComponent
       this.securityComponent = config.mockSecurityComponent
+      this.storageComponent = config.mockStorageComponent
       this.clientUserComponent = config.mockClientUserComponent
       this._isInitialized = true
     } else {
@@ -140,10 +145,17 @@ export class ClientAppComponent {
         encryptedSettings: this.encryptedSettings
       })
 
+      this.storageComponent = new StorageComponent({
+        webSocketService: this.commonComponent.webSocketService,
+        httpClient: this.commonComponent.httpClient,
+        encryptedSettings: this.encryptedSettings
+      })
+
       this.clientUserComponent = new ClientUserComponent({
         commonComponent: this.commonComponent,
-        settingsComponent: this.settingsComponent,
-        securityComponent: this.securityComponent,
+        openGlobalSettingsRepository: this.settingsComponent.globalSettingsRepository,
+        openSecuritySettingsRepository: this.securityComponent.securitySettingsRepository,
+        openStorageSettingsRepository: this.storageComponent.storageSettingsRepository,
         authStorage: this.authStorage,
         authServices
       })
@@ -193,6 +205,7 @@ export class ClientAppComponent {
       this.commonComponent.commonWebSocketMessageHandler,
       this.settingsComponent.settingsWebSocketMessageHandler,
       this.securityComponent.securityWebSocketMessageHandler,
+      this.storageComponent.storageWebSocketMessageHandler,
       this.clientUserComponent.userWebSocketMessageHandler
     ]
 

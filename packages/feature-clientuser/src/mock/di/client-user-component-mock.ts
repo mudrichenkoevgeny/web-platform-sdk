@@ -1,9 +1,11 @@
 import type { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import type { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { OpenStorageSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { AuthStorage, UserAuthServices, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { AuthStorageMock, createPopulatedUserStorageMock, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ClientUserComponent } from '@/di/client-user-component'
@@ -19,16 +21,21 @@ export const clientUserComponentMock = (
   config?: Partial<ClientUserComponentConfig>
 ): ClientUserComponent => {
   const commonComponent: CommonComponent = config?.commonComponent ?? createMockCommonComponent()
-  const settingsComponent: SettingsComponent = config?.settingsComponent ?? createMockSettingsComponent()
-  const securityComponent: SecurityComponent = config?.securityComponent ?? createMockSecurityComponent()
+  const openGlobalSettingsRepository: OpenGlobalSettingsRepository =
+    config?.openGlobalSettingsRepository ?? new OpenGlobalSettingsRepositoryMock()
+  const openSecuritySettingsRepository: OpenSecuritySettingsRepository =
+    config?.openSecuritySettingsRepository ?? new OpenSecuritySettingsRepositoryMock()
+  const openStorageSettingsRepository: OpenStorageSettingsRepository =
+    config?.openStorageSettingsRepository ?? new OpenStorageSettingsRepositoryMock()
   const authStorage: AuthStorage = config?.authStorage ?? new AuthStorageMock()
   const userStorage: UserStorage = config?.userStorage ?? createPopulatedUserStorageMock()
   const authServices: UserAuthServices = config?.authServices ?? new UserAuthServicesMock()
 
   return new ClientUserComponent({
     commonComponent,
-    settingsComponent,
-    securityComponent,
+    openGlobalSettingsRepository,
+    openSecuritySettingsRepository,
+    openStorageSettingsRepository,
     authStorage,
     userStorage,
     authServices,

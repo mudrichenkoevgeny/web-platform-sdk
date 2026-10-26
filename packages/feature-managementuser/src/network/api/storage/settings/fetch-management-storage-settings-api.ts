@@ -1,25 +1,15 @@
-import {
-  callResult
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type {
-  HttpClient,
-  AppResult,
-  AppError
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import {
-  ManagementStorageSettingsRoutes,
-  type ManagementStorageSettingsPayload
-} from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementStorageSettingsApi } from './management-storage-settings-api'
+import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementStorageSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementStorageSettingsApi } from '@/network/api/storage/settings/management-storage-settings-api'
 
-/**
- * Fetch-based implementation of {@link ManagementStorageSettingsApi}.
- */
+/** {@link ManagementStorageSettingsApi} implementation backed by {@link HttpClient}. */
 export class FetchManagementStorageSettingsApi implements ManagementStorageSettingsApi {
   /**
-   * Constructs a new {@link FetchManagementStorageSettingsApi} instance.
+   * Constructs a new {@link FetchManagementStorageSettingsApi}.
    *
-   * @param client - The HTTP client instance used to execute network requests
+   * @param client - Network HTTP client
    */
   public constructor(private readonly client: HttpClient) {}
 
@@ -43,14 +33,14 @@ export class FetchManagementStorageSettingsApi implements ManagementStorageSetti
    * @returns A promise resolving to an {@link AppResult} containing updated {@link ManagementStorageSettingsPayload} or {@link AppError}
    */
   public async updateManagementStorageSettings(
-    settings: ManagementStorageSettingsPayload
+    request: ManagementStorageSettingsPayload
   ): Promise<AppResult<ManagementStorageSettingsPayload, AppError>> {
     return callResult(() =>
       this.client.request<ManagementStorageSettingsPayload>(
         ManagementStorageSettingsRoutes.UPDATE_MANAGEMENT_STORAGE_SETTINGS,
         {
           method: 'PUT',
-          body: JSON.stringify(settings)
+          body: JSON.stringify(request)
         }
       )
     )

@@ -24,7 +24,7 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
 
     const initialize = async () => {
       managementAppComponent.init()
-      await managementAppComponent.refreshUserConfigurationUseCase.execute()
+      await managementAppComponent.refreshManagementUserConfigurationUseCase.execute()
       managementAppComponent.commonComponent.webSocketService.connect()
       if (isMounted) {
         setIsInitialized(true)
@@ -52,14 +52,21 @@ export function RootContent({ managementAppComponent }: RootContentProps): React
     () => ({
       currentUserId,
       getManagementAuthSettingsUseCase: managementAppComponent.managementUserComponent.getManagementAuthSettingsUseCase,
-      saveRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.saveRemoteAuthSettingsUseCase,
-      resetRemoteAuthSettingsUseCase: managementAppComponent.managementUserComponent.resetRemoteAuthSettingsUseCase,
+      updateManagementAuthSettingsUseCase: managementAppComponent.managementUserComponent.updateManagementAuthSettingsUseCase,
+      resetManagementAuthSettingsUseCase: managementAppComponent.managementUserComponent.resetManagementAuthSettingsUseCase,
       getManagementGlobalSettingsUseCase: managementAppComponent.managementUserComponent.getManagementGlobalSettingsUseCase,
-      saveRemoteGlobalSettingsUseCase: managementAppComponent.managementUserComponent.saveRemoteGlobalSettingsUseCase,
-      resetRemoteGlobalSettingsUseCase: managementAppComponent.managementUserComponent.resetRemoteGlobalSettingsUseCase,
+      updateManagementGlobalSettingsUseCase: managementAppComponent.managementUserComponent.updateManagementGlobalSettingsUseCase,
+      resetManagementGlobalSettingsUseCase: managementAppComponent.managementUserComponent.resetManagementGlobalSettingsUseCase,
       getManagementSecuritySettingsUseCase: managementAppComponent.managementUserComponent.getManagementSecuritySettingsUseCase,
-      saveRemoteSecuritySettingsUseCase: managementAppComponent.managementUserComponent.saveRemoteSecuritySettingsUseCase,
-      resetRemoteSecuritySettingsUseCase: managementAppComponent.managementUserComponent.resetRemoteSecuritySettingsUseCase,
+      updateManagementSecuritySettingsUseCase: managementAppComponent.managementUserComponent.updateManagementSecuritySettingsUseCase,
+      resetManagementSecuritySettingsUseCase: managementAppComponent.managementUserComponent.resetManagementSecuritySettingsUseCase,
+      getManagementStorageSettingsUseCase: managementAppComponent.managementUserComponent.getManagementStorageSettingsUseCase,
+      updateManagementStorageSettingsUseCase: managementAppComponent.managementUserComponent.updateManagementStorageSettingsUseCase,
+      resetManagementStorageSettingsUseCase: managementAppComponent.managementUserComponent.resetManagementStorageSettingsUseCase,
+      managementGetFilesUseCase: managementAppComponent.managementUserComponent.managementGetFilesUseCase,
+      managementGetFileDetailUseCase: managementAppComponent.managementUserComponent.managementGetFileDetailUseCase,
+      managementDeleteFileUseCase: managementAppComponent.managementUserComponent.managementDeleteFileUseCase,
+      managementDeleteFilesBatchUseCase: managementAppComponent.managementUserComponent.managementDeleteFilesBatchUseCase,
       getUsersUseCase: managementAppComponent.managementUserComponent.getUsersUseCase,
       getUserUseCase: managementAppComponent.managementUserComponent.getUserUseCase,
       createUserUseCase: managementAppComponent.managementUserComponent.createUserUseCase,

@@ -57,6 +57,5 @@ export * from './ui/screen/management/session/global-list/global-session-list-co
 export * from './ui/screen/management/user/detail/user-detail-component-mock.js'
 export * from './ui/screen/management/user/create/create-user-component-mock.js'
 export * from './ui/screen/management/user/global-list/global-user-list-component-mock.js'
-export * from './ui/screen/management/storage/global-list/global-storage-file-list-component-mock.js'
 
 export * from './di/management-user-component-mock.js'

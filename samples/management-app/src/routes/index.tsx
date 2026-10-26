@@ -6,6 +6,9 @@ import {
   ManagementStorageNavigation
 } from '@mudrichenkoevgeny/shared-foundation'
 
+const toRoutePath = (route: string): string =>
+  route.startsWith('$') ? route.slice(1) : route
+
 /** Route configuration for main administrative dashboard screen. */
 export const Route = createFileRoute('/')({
   component: function MainManagementRoute() {
@@ -19,7 +22,7 @@ export const Route = createFileRoute('/')({
           onAuditEventListClick: () => void navigate({ to: ManagementAuditNavigation.AuditEventList.ROUTE }),
           onGlobalSessionListClick: () => void navigate({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE }),
           onGlobalIdentifierListClick: () => void navigate({ to: ManagementUsersNavigation.GlobalIdentifierList.ROUTE }),
-          onStorageFileListClick: () => void navigate({ to: ManagementStorageNavigation.FileList.ROUTE })
+          onStorageFileListClick: () => void navigate({ to: toRoutePath(ManagementStorageNavigation.FileList.ROUTE) })
         }}
       />
     )

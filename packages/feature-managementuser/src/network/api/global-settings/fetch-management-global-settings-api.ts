@@ -34,12 +34,15 @@ export class FetchManagementGlobalSettingsApi implements ManagementGlobalSetting
    */
   public async updateManagementGlobalSettings(
     request: ManagementGlobalSettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>> {
     return callResult(() =>
-      this.client.request<void>(ManagementGlobalSettingsRoutes.UPDATE_MANAGEMENT_GLOBAL_SETTINGS, {
-        method: 'PUT',
-        body: JSON.stringify(request)
-      })
+      this.client.request<ManagementGlobalSettingsPayload>(
+        ManagementGlobalSettingsRoutes.UPDATE_MANAGEMENT_GLOBAL_SETTINGS,
+        {
+          method: 'PUT',
+          body: JSON.stringify(request)
+        }
+      )
     )
   }
 

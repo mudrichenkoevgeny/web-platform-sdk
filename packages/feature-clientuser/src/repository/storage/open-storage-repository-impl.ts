@@ -136,11 +136,12 @@ export class OpenStorageRepositoryImpl implements OpenStorageRepository {
   /**
    * Deletes multiple files uploaded by current user in a single batch operation.
    *
-   * @param request - Batch deletion request parameters containing target file identifiers
+   * @param request - Batch deletion request parameters containing target file identifiers or array of IDs
    * @returns AppResult containing void on success
    */
-  public async deleteFilesBatch(request: DeleteFilesBatchRequest): Promise<AppResult<void, AppError>> {
-    return this.api.deleteFilesBatch(request)
+  public async deleteFilesBatch(request: DeleteFilesBatchRequest | string[]): Promise<AppResult<void, AppError>> {
+    const payload: DeleteFilesBatchRequest = Array.isArray(request) ? { fileIds: request } : request
+    return this.api.deleteFilesBatch(payload)
   }
 
   /**

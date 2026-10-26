@@ -13,8 +13,8 @@ export const Route = createFileRoute('/settings/global')({
       <EditGlobalSettingsScreen
         dependencies={{
           getManagementGlobalSettingsUseCase: managementDeps.getManagementGlobalSettingsUseCase,
-          saveRemoteGlobalSettingsUseCase: managementDeps.saveRemoteGlobalSettingsUseCase,
-          resetRemoteGlobalSettingsUseCase: managementDeps.resetRemoteGlobalSettingsUseCase,
+          updateManagementGlobalSettingsUseCase: managementDeps.updateManagementGlobalSettingsUseCase,
+          resetManagementGlobalSettingsUseCase: managementDeps.resetManagementGlobalSettingsUseCase,
           onBack: () => navigateUp({ to: ManagementSettingsNavigation.GlobalSettings.parentRoute })
         }}
       />

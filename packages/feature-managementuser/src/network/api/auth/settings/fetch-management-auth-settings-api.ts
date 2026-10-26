@@ -21,9 +21,9 @@ export class FetchManagementAuthSettingsApi implements ManagementAuthSettingsApi
 
   public async updateManagementAuthSettings(
     request: ManagementAuthSettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementAuthSettingsPayload, AppError>> {
     return callResult(() =>
-      this.client.request<void>(ManagementAuthSettingsRoutes.UPDATE_MANAGEMENT_AUTH_SETTINGS, {
+      this.client.request<ManagementAuthSettingsPayload>(ManagementAuthSettingsRoutes.UPDATE_MANAGEMENT_AUTH_SETTINGS, {
         method: 'PUT',
         body: JSON.stringify(request)
       })

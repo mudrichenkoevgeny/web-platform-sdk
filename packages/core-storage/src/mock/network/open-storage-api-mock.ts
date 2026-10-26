@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { PresignedUrlParams } from '@/network/api/storage/storage-api'
+import type { PresignedUrlParams, StorageApi } from '@/network/api/storage/storage-api'
 import type {
   DeleteFilesBatchRequest,
   PagedResult,
@@ -10,12 +10,11 @@ import type {
   SelfStorageFileListParams
 } from '@mudrichenkoevgeny/shared-foundation'
 import { createTestStorageFilePrivate, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { OpenStorageApi } from '@/network/api/storage/open-storage-api'
 
 /**
- * Mock implementation of {@link OpenStorageApi} for unit and integration testing.
+ * Mock implementation of {@link StorageApi} for unit and integration testing.
  */
-export class OpenStorageApiMock implements OpenStorageApi {
+export class OpenStorageApiMock implements StorageApi {
   /** Call count tracking invocations of {@link getPresignedUploadUrl}. */
   public getPresignedUploadUrlCallCount = 0
 
@@ -51,9 +50,11 @@ export class OpenStorageApiMock implements OpenStorageApi {
     _params: PresignedUrlParams
   ): Promise<AppResult<PresignedUrl, AppError>> {
     this.getPresignedUploadUrlCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess({
-      fileId: 'file-123',
+      fileId: toFileIdOrThrow('file-123'),
       uploadUrl: 'https://s3.example.com/upload-123',
       fileUrl: 'https://cdn.example.com/file-123',
       expiresAt: Date.now() + 3600000
@@ -68,7 +69,9 @@ export class OpenStorageApiMock implements OpenStorageApi {
    */
   public async confirmUpload(fileId: string): Promise<AppResult<StorageFilePrivate, AppError>> {
     this.confirmUploadCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(createTestStorageFilePrivate({ id: toFileIdOrThrow(fileId) }))
   }
 
@@ -82,8 +85,10 @@ export class OpenStorageApiMock implements OpenStorageApi {
     _params?: SelfStorageFileListParams | null
   ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>> {
     this.getFilesCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
-    return appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalPages: 0 })
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
+    return appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalCount: 0, totalPages: 0 })
   }
 
   /**
@@ -94,7 +99,9 @@ export class OpenStorageApiMock implements OpenStorageApi {
    */
   public async getFileDetail(fileId: string): Promise<AppResult<StorageFilePrivate, AppError>> {
     this.getFileDetailCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(createTestStorageFilePrivate({ id: toFileIdOrThrow(fileId) }))
   }
 
@@ -106,7 +113,9 @@ export class OpenStorageApiMock implements OpenStorageApi {
    */
   public async deleteFile(_fileId: string): Promise<AppResult<void, AppError>> {
     this.deleteFileCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(undefined)
   }
 
@@ -118,7 +127,9 @@ export class OpenStorageApiMock implements OpenStorageApi {
    */
   public async deleteFilesBatch(_request: DeleteFilesBatchRequest): Promise<AppResult<void, AppError>> {
     this.deleteFilesBatchCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(undefined)
   }
 }

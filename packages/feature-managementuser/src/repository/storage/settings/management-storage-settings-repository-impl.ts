@@ -14,7 +14,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementStorageSettingsApi } from '@/network/api/storage/settings/management-storage-settings-api'
 import type { ManagementStorageSettingsStorage } from '@/storage/storage-settings/management-storage-settings-storage'
-import type { ManagementStorageSettingsRepository } from './management-storage-settings-repository'
+import type { ManagementStorageSettingsRepository } from '@/repository/storage/settings/management-storage-settings-repository'
 
 class AsyncMutex {
   private queue: Promise<unknown> = Promise.resolve()
@@ -30,8 +30,9 @@ class AsyncMutex {
 }
 
 /**
- * Implementation of {@link ManagementStorageSettingsRepository} backing in-memory flow, {@link ManagementStorageSettingsStorage},
- * REST updates via {@link ManagementStorageSettingsApi}, and WebSocket events for live changes.
+ * Implements {@link ManagementStorageSettingsRepository} managing an in-memory cache,
+ * persistence via {@link ManagementStorageSettingsStorage}, remote HTTP via {@link ManagementStorageSettingsApi},
+ * and live push updates via {@link WebSocketService}.
  */
 export class ManagementStorageSettingsRepositoryImpl implements ManagementStorageSettingsRepository {
   private cachedSettings: ManagementStorageSettings | null = null
@@ -42,9 +43,9 @@ export class ManagementStorageSettingsRepositoryImpl implements ManagementStorag
   /**
    * Constructs a new {@link ManagementStorageSettingsRepositoryImpl}.
    *
-   * @param managementStorageSettingsApi - Remote REST endpoint for management storage settings
-   * @param managementStorageSettingsStorage - Encrypted or local persistence for settings snapshots
-   * @param webSocketService - Optional WebSocket service for receiving real-time updates
+   * @param managementStorageSettingsApi - Remote REST endpoint
+   * @param managementStorageSettingsStorage - Storage backend for persistent caching
+   * @param webSocketService - Optional WebSocket client for real-time updates
    * @param logger - Optional diagnostic logger
    */
   public constructor(
@@ -74,14 +75,15 @@ export class ManagementStorageSettingsRepositoryImpl implements ManagementStorag
 
   public async saveRemoteManagementStorageSettings(
     storageSettings: ManagementStorageSettings
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementStorageSettings, AppError>> {
     return this.mutex.runExclusive(async () => {
       const payload = toManagementStorageSettingsPayload(storageSettings)
       const result = await this.managementStorageSettingsApi.updateManagementStorageSettings(payload)
-      if (isSuccess(result)) {
-        await this.applySettingsUpdate(storageSettings)
+      const mapped = mapSuccess(result, (responsePayload) => toManagementStorageSettings(responsePayload))
+      if (isSuccess(mapped)) {
+        await this.applySettingsUpdate(mapped.data)
       }
-      return mapSuccess(result, () => undefined)
+      return mapped
     })
   }
 
@@ -137,11 +139,11 @@ export class ManagementStorageSettingsRepositoryImpl implements ManagementStorag
     return mapped
   }
 
-  private async applySettingsUpdate(storageSettings: ManagementStorageSettings): Promise<void> {
-    this.cachedSettings = storageSettings
+  private async applySettingsUpdate(managementStorageSettings: ManagementStorageSettings): Promise<void> {
+    this.cachedSettings = managementStorageSettings
     this.notifyListeners()
     try {
-      await this.managementStorageSettingsStorage.updateManagementStorageSettings(storageSettings)
+      await this.managementStorageSettingsStorage.updateManagementStorageSettings(managementStorageSettings)
     } catch (e) {
       this.logger?.(`ManagementStorageSettingsRepositoryImpl: Storage update failed - ${String(e)}`)
     }

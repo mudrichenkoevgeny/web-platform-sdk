@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import { getAppErrorRetryAfterSeconds, isSuccess, resendCountdown } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { ClientSecurityErrorCodes, PasswordPolicyFailReason } from '@mudrichenkoevgeny/shared-foundation'
 import type { ValidatePasswordUseCase } from "@mudrichenkoevgeny/web-platform-sdk-core-security";
 import type { ResetPasswordRepository } from '@/repository/auth/reset-password/reset-password-repository'
 import type { ResetEmailPasswordUseCase } from '@/usecase/auth/reset-password/reset-email-password-use-case'
@@ -239,7 +239,7 @@ export const createResetEmailPasswordStore = (
       } else {
         const errCode = validationResult.error.code
         isPasswordValid =
-          errCode !== ClientSecurityErrorCodes.PASSWORD_TOO_SHORT &&
+          errCode !== PasswordPolicyFailReason.TOO_SHORT &&
           errCode !== ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE
       }
 

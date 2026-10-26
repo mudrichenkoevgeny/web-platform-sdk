@@ -5,9 +5,7 @@ import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-plat
 import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { OpenAuthSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import {
-  toOpenUserConfiguration
-} from '@/domain/model/configuration/open-user-configuration'
+import { toOpenUserConfiguration } from '@/domain/model/configuration/open-user-configuration'
 import type { OpenUserConfiguration } from '@/domain/model/configuration/open-user-configuration'
 
 /**

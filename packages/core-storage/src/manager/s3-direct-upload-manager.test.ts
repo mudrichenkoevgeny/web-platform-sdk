@@ -19,7 +19,12 @@ describe('S3DirectUploadManagerImpl', () => {
       onerror: null
     }
 
-    vi.stubGlobal('XMLHttpRequest', vi.fn(() => mockXHR))
+    vi.stubGlobal(
+      'XMLHttpRequest',
+      vi.fn(function (this: any) {
+        return mockXHR
+      })
+    )
   })
 
   afterEach(() => {

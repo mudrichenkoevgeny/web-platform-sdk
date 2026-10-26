@@ -1,15 +1,17 @@
 import type {
   CommonComponent,
-  EncryptedSettings,
-  SecurityComponent,
-  SettingsComponent
+  EncryptedSettings
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { UserAuthServices } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   AddUserIdentifierEmailUseCase,
   AddUserIdentifierGoogleUseCase,
   AddUserIdentifierPhoneUseCase,
+  ConfirmationRepositoryImpl,
   DeleteAllOtherSessionsUseCase,
   DeletePasswordUseCase,
   DeleteSessionUseCase,
@@ -23,16 +25,7 @@ import {
   EncryptedAuthStorage,
   EncryptedOpenAuthSettingsStorage,
   EncryptedUserStorage,
-  FetchOpenAuthSettingsApi,
-  FetchOpenIdentifiersApi,
-  FetchOpenLoginApi,
-  FetchOpenRefreshTokenApi,
-  FetchOpenUserApi,
   FetchOpenUserConfigurationApi,
-  FetchOpenUserSecurityApi,
-  FetchRegistrationApi,
-  FetchResetPasswordApi,
-  FetchOpenUnlockApi,
   GetAuthSettingsUseCase,
   GetAvailableUserAuthProvidersUseCase,
   GetRecoveryCodesUseCase,
@@ -76,25 +69,38 @@ import type {
   ConfirmationRepository,
   IdentifierRepository,
   LoginRepository,
-  OpenAuthSettingsApi,
   OpenAuthSettingsRepository,
-  OpenIdentifiersApi,
-  OpenLoginApi,
-  OpenRefreshTokenApi,
-  OpenRegistrationApi,
-  OpenResetPasswordApi,
-  OpenUnlockApi,
-  OpenUserApi,
   OpenUserConfigurationApi,
-  OpenUserConfigurationRepository,
   RefreshTokenRepository,
   RegistrationRepository,
   ResetPasswordRepository,
-  SessionApi,
   SessionRepository,
   UnlockRepository,
+  UserRepository,
+  UserSecurityRepository,
   UserStorage
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+
+import type { OpenAuthSettingsApi } from '@/network/api/auth/settings/open-auth-settings-api'
+import { FetchOpenAuthSettingsApi } from '@/network/api/auth/settings/fetch-open-auth-settings-api'
+import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
+import { FetchOpenIdentifiersApi } from '@/network/api/identifier/fetch-open-identifiers-api'
+import type { OpenLoginApi } from '@/network/api/auth/login/open-login-api'
+import { FetchOpenLoginApi } from '@/network/api/auth/login/fetch-open-login-api'
+import type { OpenRefreshTokenApi } from '@/network/api/auth/refresh-token/open-refresh-token-api'
+import { FetchOpenRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-open-refresh-token-api'
+import type { OpenRegistrationApi } from '@/network/api/auth/registration/open-registration-api'
+import { FetchRegistrationApi } from '@/network/api/auth/registration/fetch-registration-api'
+import type { OpenResetPasswordApi } from '@/network/api/auth/reset-password/open-reset-password-api'
+import { FetchResetPasswordApi } from '@/network/api/auth/reset-password/fetch-reset-password-api'
+import type { OpenUnlockApi } from '@/network/api/auth/unlock/open-unlock-api'
+import { FetchOpenUnlockApi } from '@/network/api/auth/unlock/fetch-open-unlock-api'
+import type { OpenUserApi } from '@/network/api/user/open-user-api'
+import { FetchOpenUserApi } from '@/network/api/user/fetch-open-user-api'
+import type { OpenUserSecurityApi } from '@/network/api/user/security/open-user-security-api'
+import { FetchOpenUserSecurityApi } from '@/network/api/user/security/fetch-open-user-security-api'
+import type { SessionApi } from '@/network/api/session/open-session-api'
+import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
 
 import type { OpenStorageApi } from '@/network/api/storage/open-storage-api'
 import { FetchOpenStorageApi } from '@/network/api/storage/fetch-open-storage-api'
@@ -110,10 +116,8 @@ import { OpenRegistrationRepositoryImpl } from '@/repository/auth/registration/o
 import { OpenResetPasswordRepositoryImpl } from '@/repository/auth/reset-password/open-reset-password-repository-impl'
 import { OpenSessionRepositoryImpl } from '@/repository/session/open-session-repository-impl'
 import { OpenUnlockRepositoryImpl } from '@/repository/auth/unlock/open-unlock-repository-impl'
-import { OpenUserConfigurationRepositoryImpl } from '@/repository/configuration/open-user-configuration-repository-impl'
 import { OpenUserRepositoryImpl } from '@/repository/user/open-user-repository-impl'
 import { OpenUserSecurityRepositoryImpl } from '@/repository/user/security/open-user-security-repository-impl'
-import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
 import { RefreshOpenAuthSettingsUseCase } from '@/usecase/auth/settings/refresh-open-auth-settings-use-case'
 import { RefreshClientUserConfigurationUseCase } from '@/usecase/configuration/refresh-client-user-configuration-use-case'
 
@@ -123,10 +127,12 @@ import { RefreshClientUserConfigurationUseCase } from '@/usecase/configuration/r
 export interface ClientUserComponentConfig {
   /** Injected common component container. */
   commonComponent: CommonComponent
-  /** Injected settings component container. */
-  settingsComponent: SettingsComponent
-  /** Injected security component container. */
-  securityComponent: SecurityComponent
+  /** Injected global settings repository container. */
+  openGlobalSettingsRepository: OpenGlobalSettingsRepository
+  /** Injected security settings repository container. */
+  openSecuritySettingsRepository: OpenSecuritySettingsRepository
+  /** Injected storage settings repository container. */
+  openStorageSettingsRepository: OpenStorageSettingsRepository
   /** Pluggable external authentication providers (e.g. Google Auth SDK). */
   authServices: UserAuthServices
   /** Optional custom encrypted settings store override. */
@@ -144,8 +150,9 @@ export interface ClientUserComponentConfig {
  */
 export class ClientUserComponent {
   public readonly commonComponent: CommonComponent
-  public readonly settingsComponent: SettingsComponent
-  public readonly securityComponent: SecurityComponent
+  public readonly openGlobalSettingsRepository: OpenGlobalSettingsRepository
+  public readonly openSecuritySettingsRepository: OpenSecuritySettingsRepository
+  public readonly openStorageSettingsRepository: OpenStorageSettingsRepository
   public readonly authServices: UserAuthServices
 
   public readonly authStorage: AuthStorage
@@ -171,7 +178,6 @@ export class ClientUserComponent {
   public readonly unlockRepository: UnlockRepository
 
   public readonly openUserConfigurationApi: OpenUserConfigurationApi
-  public readonly openUserConfigurationRepository: OpenUserConfigurationRepository
 
   public readonly openIdentifiersApi: OpenIdentifiersApi
   public readonly identifierRepository: IdentifierRepository
@@ -246,8 +252,9 @@ export class ClientUserComponent {
 
   public constructor(config: ClientUserComponentConfig) {
     this.commonComponent = config.commonComponent
-    this.settingsComponent = config.settingsComponent
-    this.securityComponent = config.securityComponent
+    this.openGlobalSettingsRepository = config.openGlobalSettingsRepository
+    this.openSecuritySettingsRepository = config.openSecuritySettingsRepository
+    this.openStorageSettingsRepository = config.openStorageSettingsRepository
     this.authStorage = config.authStorage ?? new EncryptedAuthStorage(this.commonComponent.encryptedSettings)
     this.authServices = config.authServices
 
@@ -262,64 +269,65 @@ export class ClientUserComponent {
       this.commonComponent.webSocketService
     )
 
+    this.confirmationRepository = new ConfirmationRepositoryImpl()
+
     this.openLoginApi = new FetchOpenLoginApi(this.commonComponent.httpClient)
     this.loginRepository = new OpenLoginRepositoryImpl(
       this.openLoginApi,
-      this.authStorage,
-      this.userStorage
+      this.confirmationRepository
     )
 
     this.openRefreshTokenApi = new FetchOpenRefreshTokenApi(this.commonComponent.httpClient)
     this.refreshTokenRepository = new OpenRefreshTokenRepositoryImpl(
-      this.openRefreshTokenApi,
-      this.authStorage
+      this.openRefreshTokenApi
     )
 
     this.openRegistrationApi = new FetchRegistrationApi(this.commonComponent.httpClient)
     this.registrationRepository = new OpenRegistrationRepositoryImpl(
       this.openRegistrationApi,
-      this.authStorage,
+      this.confirmationRepository
+    )
+
+    this.openIdentifiersApi = new FetchOpenIdentifiersApi(this.commonComponent.httpClient)
+    this.identifierRepository = new OpenIdentifierRepositoryImpl(
+      this.openIdentifiersApi,
+      this.confirmationRepository,
       this.userStorage
     )
 
     this.openResetPasswordApi = new FetchResetPasswordApi(this.commonComponent.httpClient)
     this.resetPasswordRepository = new OpenResetPasswordRepositoryImpl(
-      this.openResetPasswordApi
+      this.openResetPasswordApi,
+      this.confirmationRepository
     )
 
     this.openUnlockApi = new FetchOpenUnlockApi(this.commonComponent.httpClient)
     this.unlockRepository = new OpenUnlockRepositoryImpl(
       this.openUnlockApi,
-      this.authStorage,
-      this.userStorage
+      this.confirmationRepository
     )
 
     this.openUserConfigurationApi = new FetchOpenUserConfigurationApi(this.commonComponent.httpClient)
-    this.openUserConfigurationRepository = new OpenUserConfigurationRepositoryImpl(
-      this.openUserConfigurationApi
-    )
-
-    this.openIdentifiersApi = new FetchOpenIdentifiersApi(this.commonComponent.httpClient)
-    this.identifierRepository = new OpenIdentifierRepositoryImpl(
-      this.openIdentifiersApi
-    )
 
     this.sessionApi = new FetchOpenSessionApi(this.commonComponent.httpClient)
     this.sessionRepository = new OpenSessionRepositoryImpl(
       this.sessionApi,
-      this.authStorage,
-      this.userStorage
+      this.userStorage,
+      this.authStorage
     )
 
     this.openUserSecurityApi = new FetchOpenUserSecurityApi(this.commonComponent.httpClient)
     this.userSecurityRepository = new OpenUserSecurityRepositoryImpl(
-      this.openUserSecurityApi
+      this.openUserSecurityApi,
+      this.userStorage
     )
 
     this.openUserApi = new FetchOpenUserApi(this.commonComponent.httpClient)
     this.userRepository = new OpenUserRepositoryImpl(
+      this.userStorage,
+      this.authStorage,
       this.openUserApi,
-      this.userStorage
+      this.commonComponent.webSocketService
     )
 
     this.openStorageApi = config.openStorageApi ?? new FetchOpenStorageApi(this.commonComponent.httpClient)
@@ -327,8 +335,6 @@ export class ClientUserComponent {
       this.openStorageApi,
       this.commonComponent.webSocketService
     )
-
-    this.confirmationRepository = this.identifierRepository
 
     this.refreshTokenUseCase = new RefreshTokenUseCase(this.refreshTokenRepository, this.authStorage)
     this.loginByEmailUseCase = new LoginByEmailUseCase(this.loginRepository, this.authStorage, this.userStorage)
@@ -360,7 +366,10 @@ export class ClientUserComponent {
     )
     this.refreshUserConfigurationUseCase = new RefreshClientUserConfigurationUseCase(
       this.openUserConfigurationApi,
-      this.openUserConfigurationRepository
+      this.openGlobalSettingsRepository,
+      this.openSecuritySettingsRepository,
+      this.openStorageSettingsRepository,
+      this.openAuthSettingsRepository
     )
     this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(this.userRepository)
     this.restoreUserUseCase = new RestoreUserUseCase(this.userRepository)
@@ -372,7 +381,7 @@ export class ClientUserComponent {
 
     this.getSessionsUseCase = new GetSessionsUseCase(this.sessionRepository)
     this.getSessionUseCase = new GetSessionUseCase(this.sessionRepository)
-    this.logoutUseCase = new LogoutUseCase(this.sessionRepository, this.authStorage, this.userStorage)
+    this.logoutUseCase = new LogoutUseCase(this.sessionRepository, this.userRepository)
     this.deleteSessionUseCase = new DeleteSessionUseCase(this.sessionRepository)
     this.deleteAllOtherSessionsUseCase = new DeleteAllOtherSessionsUseCase(this.sessionRepository)
     this.reauthenticateSessionUseCase = new ReauthenticateSessionUseCase(this.sessionRepository)

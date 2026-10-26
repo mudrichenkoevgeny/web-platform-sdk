@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AppType, ClientUserNavigation, selfIdentifierListParamsSchema, type UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, ClientUserNavigation, selfIdentifierListParamsSchema, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/user/identifiers/$identifierId')({
       <IdentifierDetailScreen
         dependencies={{
           appType: AppType.CLIENT,
-          identifierId: identifierId as UserIdentifierId,
+          identifierId: toUserIdentifierIdOrThrow(identifierId),
           getUserIdentifierUseCase: appComponent.clientUserComponent.getUserIdentifierUseCase,
           deleteUserIdentifierUseCase: appComponent.clientUserComponent.deleteUserIdentifierUseCase,
           emailChangePasswordUseCase: appComponent.clientUserComponent.emailChangePasswordUseCase,

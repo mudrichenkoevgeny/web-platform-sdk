@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { PasswordPolicyFailReason, PasswordPolicyValidator } from '@mudrichenkoevgeny/shared-foundation'
+import { PasswordPolicyFailReason, PasswordPolicyValidator, createTestOpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import { RefreshOpenSecuritySettingsUseCase } from '@/usecase/refresh-open-security-settings-use-case'
 import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
 import { OpenSecuritySettingsRepositoryMock } from '@/mock/repository/open-security-settings-repository-mock'
@@ -21,21 +21,16 @@ describe('Security Use Cases', () => {
   describe('ValidatePasswordUseCase', () => {
     it('validates password successfully using repository policy', async () => {
       const repo = new OpenSecuritySettingsRepositoryMock({
-        initialSettings: {
-          openPasswordPolicy: {
+        initialSettings: createTestOpenSecuritySettings({
+          passwordPolicy: {
             minLength: 8,
             requireLetter: true,
             requireUpperCase: true,
             requireLowerCase: true,
             requireDigit: true,
             requireSpecialChar: true
-          },
-          otpConfirmation: {
-            retryAfterSeconds: 60,
-            numberOfSymbols: 6,
-            expirationSeconds: 300
           }
-        }
+        })
       })
       const validator = new PasswordPolicyValidator()
       const useCase = new ValidatePasswordUseCase(repo, validator)
@@ -46,21 +41,16 @@ describe('Security Use Cases', () => {
 
     it('returns SecurityError if password fails validation', async () => {
       const repo = new OpenSecuritySettingsRepositoryMock({
-        initialSettings: {
-          openPasswordPolicy: {
+        initialSettings: createTestOpenSecuritySettings({
+          passwordPolicy: {
             minLength: 8,
             requireLetter: true,
             requireUpperCase: false,
             requireLowerCase: false,
             requireDigit: false,
             requireSpecialChar: false
-          },
-          otpConfirmation: {
-            retryAfterSeconds: 60,
-            numberOfSymbols: 6,
-            expirationSeconds: 300
           }
-        }
+        })
       })
       const validator = new PasswordPolicyValidator()
       const useCase = new ValidatePasswordUseCase(repo, validator)

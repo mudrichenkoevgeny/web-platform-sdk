@@ -18,7 +18,8 @@ export const storageFileListSearchSchema = z.object({
   visibility: z.nativeEnum(StorageFileVisibility).optional(),
   status: z.nativeEnum(StorageFileStatus).optional(),
   mimeType: z.string().optional(),
-  fileName: z.string().optional()
+  fileName: z.string().optional(),
+  fileId: z.string().optional()
 })
 
 /** Inferred TypeScript type for storage file list search parameters. */

@@ -1,7 +1,7 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenUserConfigurationRoutes, openUserConfigurationPayloadSchema } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenUserConfigurationApi } from '@/network/api/configuration/open-user-configuration-api'
 
 /** {@link OpenUserConfigurationApi} implementation backed by {@link HttpClient}. */
@@ -22,6 +22,9 @@ export class FetchOpenUserConfigurationApi implements OpenUserConfigurationApi {
     const route = OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION.startsWith('/')
       ? OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
       : `/${OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION}`
-    return callResult(() => this.client.request<OpenUserConfigurationPayload>(route))
+    return callResult(async () => {
+      const response = await this.client.request<unknown>(route)
+      return openUserConfigurationPayloadSchema.parse(response)
+    })
   }
 }

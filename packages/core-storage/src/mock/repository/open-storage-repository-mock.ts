@@ -46,8 +46,10 @@ export class OpenStorageRepositoryMock implements StorageRepository {
     _params?: SelfStorageFileListParams | null
   ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>> {
     this.getFilesCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
-    return appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalPages: 0 })
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
+    return appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalCount: 0, totalPages: 0 })
   }
 
   /**
@@ -58,7 +60,9 @@ export class OpenStorageRepositoryMock implements StorageRepository {
    */
   public async getFileDetail(fileId: string): Promise<AppResult<StorageFilePrivate, AppError>> {
     this.getFileDetailCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(createTestStorageFilePrivate({ id: toFileIdOrThrow(fileId) }))
   }
 
@@ -80,7 +84,9 @@ export class OpenStorageRepositoryMock implements StorageRepository {
     _onProgress?: (percent: number) => void
   ): Promise<AppResult<StorageFilePrivate, AppError>> {
     this.uploadFileCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(createTestStorageFilePrivate({ id: toFileIdOrThrow('file-uploaded-1') }))
   }
 
@@ -92,19 +98,23 @@ export class OpenStorageRepositoryMock implements StorageRepository {
    */
   public async deleteFile(_fileId: string): Promise<AppResult<void, AppError>> {
     this.deleteFileCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(undefined)
   }
 
   /**
    * Simulates batch file deletion.
    *
-   * @param _request - Batch deletion request payload.
+   * @param _request - Batch deletion request payload or array of file IDs.
    * @returns AppResult containing void or {@link AppError}.
    */
-  public async deleteFilesBatch(_request: DeleteFilesBatchRequest): Promise<AppResult<void, AppError>> {
+  public async deleteFilesBatch(_request: DeleteFilesBatchRequest | string[]): Promise<AppResult<void, AppError>> {
     this.deleteFilesBatchCallCount++
-    if (this.shouldFail) return appResultFailure(CommonError.unknown())
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
     return appResultSuccess(undefined)
   }
 }

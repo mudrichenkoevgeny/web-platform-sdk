@@ -7,7 +7,7 @@ export interface RefreshTokenApi {
    * Obtains a new access (and refresh) token pair from the current refresh token.
    *
    * @param request - Refresh token wrapper from the shared contract
-   * @returns New session token material and expiry, or a mapped failure
+   * @returns New session token material and expiry payload, or a mapped failure
    */
   refreshToken(request: RefreshTokenPayload): Promise<AppResult<SessionTokenPayload, AppError>>
 }

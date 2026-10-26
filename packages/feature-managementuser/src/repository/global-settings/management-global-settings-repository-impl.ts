@@ -30,8 +30,9 @@ class AsyncMutex {
 }
 
 /**
- * Implementation of {@link ManagementGlobalSettingsRepository} backing in-memory flow, {@link ManagementGlobalSettingsStorage},
- * REST updates via {@link ManagementGlobalSettingsApi}, and WebSocket events for live changes.
+ * Implements {@link ManagementGlobalSettingsRepository} managing an in-memory cache,
+ * persistence via {@link ManagementGlobalSettingsStorage}, remote HTTP via {@link ManagementGlobalSettingsApi},
+ * and live push updates via {@link WebSocketService}.
  */
 export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalSettingsRepository {
   private cachedSettings: ManagementGlobalSettings | null = null
@@ -42,9 +43,9 @@ export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalS
   /**
    * Constructs a new {@link ManagementGlobalSettingsRepositoryImpl}.
    *
-   * @param managementGlobalSettingsApi - Remote REST endpoint for management global settings
-   * @param managementGlobalSettingsStorage - Encrypted or local persistence for settings snapshots
-   * @param webSocketService - Optional WebSocket service for receiving real-time updates
+   * @param managementGlobalSettingsApi - Remote REST endpoint
+   * @param managementGlobalSettingsStorage - Storage backend for persistent caching
+   * @param webSocketService - Optional WebSocket client for real-time updates
    * @param logger - Optional diagnostic logger
    */
   public constructor(
@@ -74,14 +75,15 @@ export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalS
 
   public async saveRemoteManagementGlobalSettings(
     globalSettings: ManagementGlobalSettings
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementGlobalSettings, AppError>> {
     return this.mutex.runExclusive(async () => {
       const payload = toManagementGlobalSettingsPayload(globalSettings)
       const result = await this.managementGlobalSettingsApi.updateManagementGlobalSettings(payload)
-      if (isSuccess(result)) {
-        await this.applySettingsUpdate(globalSettings)
+      const mapped = mapSuccess(result, (responsePayload) => toManagementGlobalSettings(responsePayload))
+      if (isSuccess(mapped)) {
+        await this.applySettingsUpdate(mapped.data)
       }
-      return result
+      return mapped
     })
   }
 
@@ -104,7 +106,9 @@ export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalS
     await this.mutex.runExclusive(() => this.applySettingsUpdate(globalSettings))
   }
 
-  public observeManagementGlobalSettings(listener: (settings: ManagementGlobalSettings | null) => void): () => void {
+  public observeManagementGlobalSettings(
+    listener: (settings: ManagementGlobalSettings | null) => void
+  ): () => void {
     this.listeners.add(listener)
     listener(this.cachedSettings)
     return () => {
@@ -135,11 +139,11 @@ export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalS
     return mapped
   }
 
-  private async applySettingsUpdate(globalSettings: ManagementGlobalSettings): Promise<void> {
-    this.cachedSettings = globalSettings
+  private async applySettingsUpdate(managementGlobalSettings: ManagementGlobalSettings): Promise<void> {
+    this.cachedSettings = managementGlobalSettings
     this.notifyListeners()
     try {
-      await this.managementGlobalSettingsStorage.updateManagementGlobalSettings(globalSettings)
+      await this.managementGlobalSettingsStorage.updateManagementGlobalSettings(managementGlobalSettings)
     } catch (e) {
       this.logger?.(`ManagementGlobalSettingsRepositoryImpl: Storage update failed - ${String(e)}`)
     }
@@ -167,7 +171,7 @@ export class ManagementGlobalSettingsRepositoryImpl implements ManagementGlobalS
             const validationResult = managementGlobalSettingsPayloadSchema.safeParse(frame.payload)
             if (validationResult.success) {
               const settings = toManagementGlobalSettings(validationResult.data)
-              void this.updateManagementGlobalSettings(settings)
+              void this.applySettingsUpdate(settings)
             } else {
               this.logger?.('ManagementGlobalSettingsRepositoryImpl: Invalid WS payload schema')
             }

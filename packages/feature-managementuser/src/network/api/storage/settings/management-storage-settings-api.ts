@@ -1,31 +1,29 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
-/**
- * Management Storage Settings API contract for staff administrative operations.
- */
+/** Fetch and update storage settings in management scope. */
 export interface ManagementStorageSettingsApi {
   /**
-   * Retrieves the platform-wide storage settings.
+   * Loads storage settings.
    *
-   * @returns A promise resolving to an {@link AppResult} containing {@link ManagementStorageSettingsPayload} or {@link AppError}
+   * @returns ManagementStorageSettingsPayload on success, or an error result
    */
   getManagementStorageSettings(): Promise<AppResult<ManagementStorageSettingsPayload, AppError>>
 
   /**
-   * Updates global storage settings and category upload limits.
+   * Pushes updated storage settings to the server.
    *
-   * @param settings - The updated settings payload to apply
-   * @returns A promise resolving to an {@link AppResult} containing updated {@link ManagementStorageSettingsPayload} or {@link AppError}
+   * @param request - Complete updated settings payload
+   * @returns Updated ManagementStorageSettingsPayload on success, or an error result
    */
   updateManagementStorageSettings(
-    settings: ManagementStorageSettingsPayload
+    request: ManagementStorageSettingsPayload
   ): Promise<AppResult<ManagementStorageSettingsPayload, AppError>>
 
   /**
-   * Resets global storage settings and category limits to default platform values.
+   * Resets storage settings to defaults.
    *
-   * @returns A promise resolving to an {@link AppResult} containing default {@link ManagementStorageSettingsPayload} or {@link AppError}
+   * @returns Fresh default ManagementStorageSettingsPayload on success, or an error result
    */
   resetManagementStorageSettings(): Promise<AppResult<ManagementStorageSettingsPayload, AppError>>
 }

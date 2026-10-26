@@ -4,6 +4,9 @@ import { ManagementMainNavigation, ManagementStorageNavigation } from '@mudriche
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+const toRoutePath = (route: string): string =>
+  route.startsWith('$') ? route.slice(1) : route
+
 /** Route configuration for global storage file list screen. */
 export const Route = createFileRoute('/storage/files')({
   validateSearch: (rawSearch) => parseSearchParams(storageFileListSearchSchema, rawSearch),
@@ -24,9 +27,9 @@ export const Route = createFileRoute('/storage/files')({
           deleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
-          onNavigateToUpload: () => void navigate({ to: ManagementStorageNavigation.FileUpload.route }),
+          onNavigateToUpload: () => void navigate({ to: toRoutePath(ManagementStorageNavigation.FileUpload.route) }),
           onNavigateToFileDetail: (fileId) =>
-            void navigate({ to: ManagementStorageNavigation.FileList.ROUTE, search: { fileId } }),
+            void navigate({ search: (prev) => ({ ...prev, fileId }), replace: true }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })
         }}
       />

@@ -1,29 +1,22 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  SettingsWebSocketEventTypes,
+  createTestOpenGlobalSettingsPayload,
+  createTestOpenGlobalSettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import { OpenGlobalSettingsRepositoryImpl } from '@/repository/open-global-settings-repository-impl'
-import type { OpenGlobalSettingsApi } from '@/network/global-settings/open-global-settings-api'
+import type { OpenGlobalSettingsApi } from '@/network/api/global-settings/open-global-settings-api'
 import { EncryptedOpenGlobalSettingsStorage } from '@/storage/global-settings/encrypted-open-global-settings-storage'
-import { toOpenGlobalSettings } from '@/domain/model/open-global-settings'
-import { SettingsWebSocketEventTypes } from '@/network/contract/settings-web-socket-event-types'
 
 describe('OpenGlobalSettingsRepositoryImpl', () => {
-  const samplePayload: OpenGlobalSettingsPayload = {
-    privacy_policy_url: 'https://example.com/privacy',
-    terms_of_service_url: 'https://example.com/terms',
-    contact_support_email: 'support@example.com',
-    min_supported_app_versions: {
-      android: '1.0.0',
-      ios: '1.0.0'
-    }
-  }
-
-  const sampleSettings = toOpenGlobalSettings(samplePayload)
+  const samplePayload = createTestOpenGlobalSettingsPayload()
+  const sampleSettings = createTestOpenGlobalSettings()
 
   class MockApi implements OpenGlobalSettingsApi {
     public getOpenGlobalSettingsCallCount = 0
-    public async getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettingsPayload, AppError>> {
+    public async getOpenGlobalSettings(): Promise<AppResult<typeof samplePayload, AppError>> {
       this.getOpenGlobalSettingsCallCount++
       return appResultSuccess(samplePayload)
     }
@@ -81,14 +74,13 @@ describe('OpenGlobalSettingsRepositoryImpl', () => {
 
     await repo.getOpenGlobalSettings()
 
-    const wsPayload: OpenGlobalSettingsPayload = {
-      ...samplePayload,
+    const wsPayload = createTestOpenGlobalSettingsPayload({
       privacy_policy_url: 'https://new.example.com/privacy'
-    }
+    })
 
     ws.emitFrameLocally({
       id: 'frame1',
-      type: SettingsWebSocketEventTypes.GLOBAL_SETTINGS_UPDATED,
+      type: SettingsWebSocketEventTypes.OPEN_GLOBAL_SETTINGS_UPDATED,
       payload: wsPayload,
       timestamp: Date.now()
     })

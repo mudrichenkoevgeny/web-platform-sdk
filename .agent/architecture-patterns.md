@@ -22,7 +22,7 @@ alwaysApply: true
 ## 3. Networking & Data Layering (Fetch API & Zod Schemas)
 - **HttpClient:** Centralized in `core-common` wrapping the native `fetch` API. Do not use Axios.
 - **Interceptors:** Implement `HttpClientConfigPlugin` for modifying headers (auth tokens) and handling 401 retries.
-- **Data Layering & Network DTO Mapping:** All API payload mapping (including `snake_case` to `camelCase` conversion) must happen strictly at the Network layer using Zod schemas (`auditEventPayloadSchema`, `pagedResultSchema`). The UI/Store layer must only consume strictly typed domain models (e.g., a fully parsed `PagedResult`). Never map DTOs inside Repositories or UI stores.
+- **Data Layering & Network DTO Mapping:** Network API classes (`FetchApi`) act strictly as transport layer clients: they execute HTTP requests, validate wire response payloads against Zod schemas (`*PayloadSchema`), and return validated DTO payloads (`AppResult<*Payload, AppError>`). Transformations from wire DTO payloads to domain models (e.g., converting `snake_case` DTOs to `camelCase` domain models using foundation mappers like `toOpenGlobalSettings(payload)`, `toSessionToken(payload)`, or `toOpenUserConfiguration(payload)`) take place strictly in the Repository or UseCase layer. UI components and Zustand stores must only consume strictly typed domain models and must NEVER handle raw DTO payloads directly.
 
 ## 4. Error Modeling (Chain of Responsibility & POJO Errors)
 - **AppError:** Extend this base class (with `code` and `isRetryable`).

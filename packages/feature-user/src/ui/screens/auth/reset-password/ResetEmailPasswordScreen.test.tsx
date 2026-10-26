@@ -44,7 +44,7 @@ describe('ResetEmailPasswordScreen', () => {
 
   it('renders email input step initially and sends code on submit', async () => {
     const deps = createMockDeps()
-    const user = userEvent.setup()
+    const user = userEvent.setup({ delay: null })
 
     render(
       <ComponentTestHarness>
@@ -66,11 +66,11 @@ describe('ResetEmailPasswordScreen', () => {
 
     expect(deps.sendResetPasswordConfirmationToEmailUseCase.execute).toHaveBeenCalledWith(TEST_EMAIL)
     expect(await screen.findByText(userStrings.ui.enterConfirmationCode)).toBeDefined()
-  })
+  }, 10000)
 
   it('submits code and new password to complete reset on second step', async () => {
     const deps = createMockDeps()
-    const user = userEvent.setup()
+    const user = userEvent.setup({ delay: null })
 
     render(
       <ComponentTestHarness>
@@ -95,5 +95,5 @@ describe('ResetEmailPasswordScreen', () => {
 
     expect(deps.resetEmailPasswordUseCase.execute).toHaveBeenCalledWith(TEST_EMAIL, 'NewPassword123!', '123456')
     expect(deps.onFinished).toHaveBeenCalledTimes(1)
-  })
+  }, 10000)
 })

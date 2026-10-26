@@ -30,8 +30,9 @@ class AsyncMutex {
 }
 
 /**
- * Implementation of {@link ManagementSecuritySettingsRepository} backing in-memory flow, {@link ManagementSecuritySettingsStorage},
- * REST updates via {@link ManagementSecuritySettingsApi}, and WebSocket events for live changes.
+ * Implements {@link ManagementSecuritySettingsRepository} managing an in-memory cache,
+ * persistence via {@link ManagementSecuritySettingsStorage}, remote HTTP via {@link ManagementSecuritySettingsApi},
+ * and live push updates via {@link WebSocketService}.
  */
 export class ManagementSecuritySettingsRepositoryImpl implements ManagementSecuritySettingsRepository {
   private cachedSettings: ManagementSecuritySettings | null = null
@@ -42,9 +43,9 @@ export class ManagementSecuritySettingsRepositoryImpl implements ManagementSecur
   /**
    * Constructs a new {@link ManagementSecuritySettingsRepositoryImpl}.
    *
-   * @param managementSecuritySettingsApi - Remote REST endpoint for management security settings
-   * @param managementSecuritySettingsStorage - Encrypted or local persistence for settings snapshots
-   * @param webSocketService - Optional WebSocket service for receiving real-time updates
+   * @param managementSecuritySettingsApi - Remote REST endpoint
+   * @param managementSecuritySettingsStorage - Storage backend for persistent caching
+   * @param webSocketService - Optional WebSocket client for real-time updates
    * @param logger - Optional diagnostic logger
    */
   public constructor(
@@ -74,14 +75,15 @@ export class ManagementSecuritySettingsRepositoryImpl implements ManagementSecur
 
   public async saveRemoteManagementSecuritySettings(
     securitySettings: ManagementSecuritySettings
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementSecuritySettings, AppError>> {
     return this.mutex.runExclusive(async () => {
       const payload = toManagementSecuritySettingsPayload(securitySettings)
       const result = await this.managementSecuritySettingsApi.updateManagementSecuritySettings(payload)
-      if (isSuccess(result)) {
-        await this.applySettingsUpdate(securitySettings)
+      const mapped = mapSuccess(result, (responsePayload) => toManagementSecuritySettings(responsePayload))
+      if (isSuccess(mapped)) {
+        await this.applySettingsUpdate(mapped.data)
       }
-      return result
+      return mapped
     })
   }
 
@@ -137,11 +139,11 @@ export class ManagementSecuritySettingsRepositoryImpl implements ManagementSecur
     return mapped
   }
 
-  private async applySettingsUpdate(securitySettings: ManagementSecuritySettings): Promise<void> {
-    this.cachedSettings = securitySettings
+  private async applySettingsUpdate(managementSecuritySettings: ManagementSecuritySettings): Promise<void> {
+    this.cachedSettings = managementSecuritySettings
     this.notifyListeners()
     try {
-      await this.managementSecuritySettingsStorage.updateManagementSecuritySettings(securitySettings)
+      await this.managementSecuritySettingsStorage.updateManagementSecuritySettings(managementSecuritySettings)
     } catch (e) {
       this.logger?.(`ManagementSecuritySettingsRepositoryImpl: Storage update failed - ${String(e)}`)
     }

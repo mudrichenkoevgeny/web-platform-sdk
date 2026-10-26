@@ -56,11 +56,11 @@ describe('EditSecuritySettingsScreen', () => {
         })
       )
     } as any,
-    saveRemoteSecuritySettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    updateManagementSecuritySettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
-    resetRemoteSecuritySettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    resetManagementSecuritySettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onBack: vi.fn()
   })
@@ -80,7 +80,7 @@ describe('EditSecuritySettingsScreen', () => {
     const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
-    expect(deps.saveRemoteSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.updateManagementSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
@@ -99,7 +99,7 @@ describe('EditSecuritySettingsScreen', () => {
     const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
-    expect(deps.resetRemoteSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.resetManagementSecuritySettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,4 +1,4 @@
-import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, CommonError, isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AppError,
   AppResult,
@@ -67,6 +67,14 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
       }
       return mapped
     })
+  }
+
+  public async scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>> {
+    return appResultFailure(CommonError.unknown())
+  }
+
+  public async restoreUser(): Promise<AppResult<UserPrivate, AppError>> {
+    return appResultFailure(CommonError.unknown())
   }
 
   public async clearSession(): Promise<void> {

@@ -21,7 +21,7 @@ export function MainScreen(): React.JSX.Element {
   const [mfaRequest, setMfaRequest] = useState<MfaChallengeRequest | null>(null)
 
   useEffect(() => {
-    return appComponent.mfaChallengeHandler.subscribe((req) => {
+    return appComponent.mfaChallengeHandler.subscribe((req: MfaChallengeRequest | null) => {
       setMfaRequest(req)
     })
   }, [appComponent])

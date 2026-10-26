@@ -51,11 +51,11 @@ const createMockDeps = (): EditSecuritySettingsStoreDependencies => ({
         refreshTokenRotationGracePeriodSeconds: 30
       })
   } as any,
-  saveRemoteSecuritySettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  updateManagementSecuritySettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
-  resetRemoteSecuritySettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  resetManagementSecuritySettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onBack: () => {}
 })

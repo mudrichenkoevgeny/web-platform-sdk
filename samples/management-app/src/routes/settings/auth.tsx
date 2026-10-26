@@ -13,8 +13,8 @@ export const Route = createFileRoute('/settings/auth')({
       <EditAuthSettingsScreen
         dependencies={{
           getManagementAuthSettingsUseCase: managementDeps.getManagementAuthSettingsUseCase,
-          saveRemoteAuthSettingsUseCase: managementDeps.saveRemoteAuthSettingsUseCase,
-          resetRemoteAuthSettingsUseCase: managementDeps.resetRemoteAuthSettingsUseCase,
+          updateManagementAuthSettingsUseCase: managementDeps.updateManagementAuthSettingsUseCase,
+          resetManagementAuthSettingsUseCase: managementDeps.resetManagementAuthSettingsUseCase,
           onBack: () => navigateUp({ to: ManagementAuthSettingsNavigation.AuthSettings.parentRoute })
         }}
       />

@@ -29,6 +29,14 @@ export class SelfManagementUserRepositoryMock implements SelfManagementUserRepos
     return this.handleUpdate()
   }
 
+  public async scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>> {
+    return this.handleUpdate()
+  }
+
+  public async restoreUser(): Promise<AppResult<UserPrivate, AppError>> {
+    return this.handleUpdate()
+  }
+
   public async clearSession(): Promise<void> {
     this.currentUserSnapshot = null
     this.notifyListeners()

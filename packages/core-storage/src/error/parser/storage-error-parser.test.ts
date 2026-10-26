@@ -23,6 +23,14 @@ describe('StorageErrorParser', () => {
     const notFoundError = StorageError.fileNotFound('file-123')
     expect(parserEn.parse(notFoundError)).toBe('The requested file was not found.')
     expect(parserRu.parse(notFoundError)).toBe('Запрошенный файл не найден.')
+
+    const unsupportedCategoryError = StorageError.unsupportedStorageCategory('INVALID')
+    expect(parserEn.parse(unsupportedCategoryError)).toBe('The specified storage category is not supported.')
+    expect(parserRu.parse(unsupportedCategoryError)).toBe('Указанная категория хранилища не поддерживается.')
+
+    const unsupportedMimeError = StorageError.unsupportedMimeType('application/exe')
+    expect(parserEn.parse(unsupportedMimeError)).toBe('The provided file type is not supported.')
+    expect(parserRu.parse(unsupportedMimeError)).toBe('Указанный тип файла не поддерживается.')
   })
 
   it('parses domain storage error codes without arguments falling back to default strings', () => {

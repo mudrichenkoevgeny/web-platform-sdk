@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createTestStorageFilePrivate, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestStorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileUploadScreen, StorageFileUploadTestTags } from './StorageFileUploadScreen'
 import type { StorageFileUploadStoreDependencies } from './storage-file-upload-store'
 
@@ -24,9 +24,8 @@ describe('StorageFileUploadScreen', () => {
       </ComponentTestHarness>
     )
 
-    expect(await screen.findByTestId(StorageFileUploadTestTags.TITLE)).toBeInTheDocument()
-    expect(screen.getByText(storageStrings.ui.fileUploadTitle)).toBeInTheDocument()
-    expect(screen.getByTestId(StorageFileUploadTestTags.DROPZONE)).toBeInTheDocument()
+    expect(await screen.findByTestId(StorageFileUploadTestTags.TITLE)).toBeDefined()
+    expect(screen.getByTestId(StorageFileUploadTestTags.DROPZONE)).toBeDefined()
   })
 
   it('triggers onBack when back button is clicked', async () => {

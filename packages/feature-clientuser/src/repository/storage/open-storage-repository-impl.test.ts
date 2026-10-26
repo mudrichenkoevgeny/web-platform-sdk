@@ -35,23 +35,18 @@ describe('OpenStorageRepositoryImpl', () => {
     const mockPagedPayload = {
       items: [
         {
-          file_id: 'file-1',
-          owner_user_id: 'user-1',
-          target_scope: 'AVATAR',
+          id: 'file-1',
+          fileName: 'photo.jpg',
+          fileSizeBytes: 1024,
+          mimeType: 'image/jpeg',
           category: 'IMAGE',
-          file_name: 'photo.jpg',
-          file_size_bytes: 1024,
-          mime_type: 'image/jpeg',
-          visibility: 'PUBLIC',
-          status: 'READY',
-          file_url: 'https://cdn.example.com/file-1',
-          created_at_millis: 1000,
-          updated_at_millis: 2000
+          fileUrl: 'https://cdn.example.com/file-1'
         }
       ],
       pageNumber: 1,
       pageSize: 10,
       totalElements: 1,
+      totalCount: 1,
       totalPages: 1
     }
     vi.mocked(mockApi.getFiles).mockResolvedValue(appResultSuccess(mockPagedPayload as any))
@@ -61,8 +56,8 @@ describe('OpenStorageRepositoryImpl', () => {
 
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.items[0].fileId).toBe('file-1')
-      expect(result.data.items[0].fileName).toBe('photo.jpg')
+      expect(result.data.items[0]?.id).toBe('file-1')
+      expect(result.data.items[0]?.fileName).toBe('photo.jpg')
     }
   })
 
@@ -82,8 +77,8 @@ describe('OpenStorageRepositoryImpl', () => {
       visibility: 'PUBLIC',
       status: 'READY',
       file_url: 'https://cdn.example.com/file-ws-1',
-      created_at_millis: 1000,
-      updated_at_millis: 2000
+      created_at: 1000,
+      updated_at: 2000
     }
 
     if (wsCallback) {
@@ -98,7 +93,7 @@ describe('OpenStorageRepositoryImpl', () => {
 
     expect(observer).toHaveBeenCalledWith(
       expect.objectContaining({
-        fileId: 'file-ws-1',
+        id: 'file-ws-1',
         fileName: 'updated.jpg'
       })
     )
@@ -108,13 +103,13 @@ describe('OpenStorageRepositoryImpl', () => {
     const repository = new OpenStorageRepositoryImpl(mockApi, mockWebSocketService)
     const file = new File(['content'], 'test.png', { type: 'image/png' })
     const presigned = {
-      file_id: 'file-99',
-      upload_url: 'https://s3.example.com/upload-99',
-      file_url: 'https://cdn.example.com/file-99',
-      expires_at: Date.now() + 60000
+      fileId: 'file-99',
+      uploadUrl: 'https://s3.example.com/upload-99',
+      fileUrl: 'https://cdn.example.com/file-99',
+      expiresAtMillis: Date.now() + 60000
     }
     const confirmedPayload = {
-      file_id: 'file-99',
+      id: 'file-99',
       owner_user_id: 'user-1',
       target_scope: 'AVATAR',
       category: 'IMAGE',
@@ -135,12 +130,12 @@ describe('OpenStorageRepositoryImpl', () => {
     const result = await repository.uploadFile(file, 'IMAGE', 'PUBLIC', 'AVATAR')
     expect(result.success).toBe(true)
     expect(mockApi.getPresignedUploadUrl).toHaveBeenCalledWith({
-      file_name: 'test.png',
-      file_size_bytes: 7,
-      mime_type: 'image/png',
+      fileName: 'test.png',
+      fileSizeBytes: 7,
+      mimeType: 'image/png',
       category: 'IMAGE',
       visibility: 'PUBLIC',
-      target_scope: 'AVATAR'
+      targetScope: 'AVATAR'
     })
     expect(CoreStorageModule.uploadFileToS3).toHaveBeenCalledWith('https://s3.example.com/upload-99', file, undefined)
     expect(mockApi.confirmUpload).toHaveBeenCalledWith('file-99')
@@ -155,6 +150,6 @@ describe('OpenStorageRepositoryImpl', () => {
     expect(mockApi.deleteFile).toHaveBeenCalledWith('file-123')
 
     await repository.deleteFilesBatch(['file-1', 'file-2'])
-    expect(mockApi.deleteFilesBatch).toHaveBeenCalledWith(['file-1', 'file-2'])
+    expect(mockApi.deleteFilesBatch).toHaveBeenCalledWith({ fileIds: ['file-1', 'file-2'] })
   })
 })

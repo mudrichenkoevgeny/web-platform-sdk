@@ -7,7 +7,12 @@
     "declaration": true,
     "declarationMap": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-common": ["../../packages/core-common/dist/index.d.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-security": ["../../packages/core-security/dist/index.d.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-settings": ["../../packages/core-settings/dist/index.d.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-core-storage": ["../../packages/core-storage/dist/index.d.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk-feature-user": ["../../packages/feature-user/dist/index.d.ts"]
     }
   },
   "include": [

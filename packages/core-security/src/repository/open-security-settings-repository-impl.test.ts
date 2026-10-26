@@ -1,35 +1,22 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess, WebSocketServiceMock, EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  SecurityWebSocketEventTypes,
+  createTestOpenSecuritySettingsPayload,
+  toOpenSecuritySettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import { OpenSecuritySettingsRepositoryImpl } from '@/repository/open-security-settings-repository-impl'
-import type { OpenSecuritySettingsApi } from '@/network/security-settings/open-security-settings-api'
+import type { OpenSecuritySettingsApi } from '@/network/api/security-settings/open-security-settings-api'
 import { EncryptedOpenSecuritySettingsStorage } from '@/storage/security-settings/encrypted-open-security-settings-storage'
-import { toOpenSecuritySettings } from '@/domain/model/open-security-settings'
-import { SecurityWebSocketEventTypes } from '@/network/contract/security-web-socket-event-types'
 
 describe('OpenSecuritySettingsRepositoryImpl', () => {
-  const samplePayload: OpenSecuritySettingsPayload = {
-    open_password_policy: {
-      min_length: 8,
-      require_letter: true,
-      require_upper_case: true,
-      require_lower_case: true,
-      require_digit: true,
-      require_special_char: false
-    },
-    otp_confirmation: {
-      retry_after_seconds: 60,
-      number_of_symbols: 6,
-      expiration_seconds: 300
-    }
-  }
-
+  const samplePayload = createTestOpenSecuritySettingsPayload()
   const sampleSettings = toOpenSecuritySettings(samplePayload)
 
   class MockApi implements OpenSecuritySettingsApi {
     public getSecuritySettingsCallCount = 0
-    public async getSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
+    public async getSecuritySettings(): Promise<AppResult<typeof samplePayload, AppError>> {
       this.getSecuritySettingsCallCount++
       return appResultSuccess(samplePayload)
     }
@@ -87,24 +74,30 @@ describe('OpenSecuritySettingsRepositoryImpl', () => {
 
     await repo.getOpenSecuritySettings()
 
-    const wsPayload: OpenSecuritySettingsPayload = {
-      open_password_policy: { ...samplePayload.open_password_policy, min_length: 12 },
-      otp_confirmation: samplePayload.otp_confirmation
-    }
+    const wsPayload = createTestOpenSecuritySettingsPayload({
+      open_password_policy: {
+        min_length: 12,
+        require_letter: true,
+        require_upper_case: true,
+        require_lower_case: true,
+        require_digit: true,
+        require_special_char: false
+      }
+    })
 
     ws.emitFrameLocally({
       id: 'frame1',
-      type: SecurityWebSocketEventTypes.SECURITY_SETTINGS_UPDATED,
+      type: SecurityWebSocketEventTypes.OPEN_SECURITY_SETTINGS_UPDATED,
       payload: wsPayload,
       timestamp: Date.now()
     })
 
     const updatedSettings = await storage.getOpenSecuritySettings()
-    expect(updatedSettings?.openPasswordPolicy.minLength).toBe(12)
+    expect(updatedSettings?.passwordPolicy.minLength).toBe(12)
 
     const currentResult = await repo.getOpenSecuritySettings()
     if (currentResult.success) {
-      expect(currentResult.data.openPasswordPolicy.minLength).toBe(12)
+      expect(currentResult.data.passwordPolicy.minLength).toBe(12)
     }
 
     expect(observer).toHaveBeenCalled()

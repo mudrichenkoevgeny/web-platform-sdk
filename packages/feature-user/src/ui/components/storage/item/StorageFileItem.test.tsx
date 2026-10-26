@@ -1,22 +1,21 @@
 import { describe, it, expect, vi } from 'vitest'
-import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { createTestStorageFileSummary } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestStorageFileSummary, StorageCategory, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileItem } from './StorageFileItem'
 
 describe('StorageFileItem', () => {
   const sampleFile = createTestStorageFileSummary({
-    fileId: 'file-1',
+    id: toFileIdOrThrow('file-1'),
     fileName: 'avatar.jpg',
-    category: 'IMAGE',
+    category: StorageCategory.IMAGE,
     fileSizeBytes: 2048
   })
 
   it('renders file details correctly', () => {
     render(<StorageFileItem file={sampleFile} />)
 
-    expect(screen.getByText('avatar.jpg')).toBeInTheDocument()
-    expect(screen.getByText('IMAGE')).toBeInTheDocument()
+    expect(screen.getByText('avatar.jpg')).toBeDefined()
+    expect(screen.getByText(StorageCategory.IMAGE)).toBeDefined()
   })
 
   it('calls onFileClick when card is clicked', () => {
@@ -33,7 +32,7 @@ describe('StorageFileItem', () => {
     const onDeleteClick = vi.fn()
     render(<StorageFileItem file={sampleFile} onDeleteClick={onDeleteClick} />)
 
-    const deleteBtn = screen.getByRole('button', { name: 'Delete' })
+    const deleteBtn = screen.getByRole('button', { name: 'Delete File' })
     fireEvent.click(deleteBtn)
 
     expect(onDeleteClick).toHaveBeenCalledTimes(1)

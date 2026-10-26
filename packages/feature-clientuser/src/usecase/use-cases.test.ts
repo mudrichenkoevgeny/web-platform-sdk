@@ -3,6 +3,7 @@ import { appResultSuccess, appResultFailure, CommonError } from '@mudrichenkoevg
 import { OpenAuthSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { OpenGlobalSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import { OpenSecuritySettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { OpenStorageSettingsRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { OpenUserConfigurationApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { createTestOpenAuthSettings, createTestOpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { RefreshOpenAuthSettingsUseCase } from '@/usecase/auth/settings/refresh-open-auth-settings-use-case'
@@ -34,16 +35,19 @@ describe('Client User Use Cases', () => {
 
       const globalRepo = new OpenGlobalSettingsRepositoryMock()
       const securityRepo = new OpenSecuritySettingsRepositoryMock()
+      const storageRepo = new OpenStorageSettingsRepositoryMock()
       const authRepo = new OpenAuthSettingsRepositoryMock()
 
       const updateGlobalSpy = vi.spyOn(globalRepo, 'updateOpenGlobalSettings')
       const updateSecuritySpy = vi.spyOn(securityRepo, 'updateOpenSecuritySettings')
+      const updateStorageSpy = vi.spyOn(storageRepo, 'updateOpenStorageSettings')
       const updateAuthSpy = vi.spyOn(authRepo, 'updateOpenAuthSettings')
 
       const useCase = new RefreshClientUserConfigurationUseCase(
         mockApi,
         globalRepo,
         securityRepo,
+        storageRepo,
         authRepo
       )
 
@@ -52,6 +56,7 @@ describe('Client User Use Cases', () => {
       expect(refreshConfigResult.success).toBe(true)
       expect(updateGlobalSpy).toHaveBeenCalledTimes(1)
       expect(updateSecuritySpy).toHaveBeenCalledTimes(1)
+      expect(updateStorageSpy).toHaveBeenCalledTimes(1)
       expect(updateAuthSpy).toHaveBeenCalledTimes(1)
     })
 
@@ -62,16 +67,19 @@ describe('Client User Use Cases', () => {
 
       const globalRepo = new OpenGlobalSettingsRepositoryMock()
       const securityRepo = new OpenSecuritySettingsRepositoryMock()
+      const storageRepo = new OpenStorageSettingsRepositoryMock()
       const authRepo = new OpenAuthSettingsRepositoryMock()
 
       const updateGlobalSpy = vi.spyOn(globalRepo, 'updateOpenGlobalSettings')
       const updateSecuritySpy = vi.spyOn(securityRepo, 'updateOpenSecuritySettings')
+      const updateStorageSpy = vi.spyOn(storageRepo, 'updateOpenStorageSettings')
       const updateAuthSpy = vi.spyOn(authRepo, 'updateOpenAuthSettings')
 
       const useCase = new RefreshClientUserConfigurationUseCase(
         mockApi,
         globalRepo,
         securityRepo,
+        storageRepo,
         authRepo
       )
 
@@ -80,6 +88,7 @@ describe('Client User Use Cases', () => {
       expect(failedConfigResult.success).toBe(false)
       expect(updateGlobalSpy).not.toHaveBeenCalled()
       expect(updateSecuritySpy).not.toHaveBeenCalled()
+      expect(updateStorageSpy).not.toHaveBeenCalled()
       expect(updateAuthSpy).not.toHaveBeenCalled()
     })
   })

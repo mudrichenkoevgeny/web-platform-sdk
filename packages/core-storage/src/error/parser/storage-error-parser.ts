@@ -54,20 +54,10 @@ export class StorageErrorParser implements AppErrorParser {
       }
 
       case StorageErrorCodes.UNSUPPORTED_MIME_TYPE:
-        return this.resolveLocalizedString(
-          args,
-          StorageErrorArgs.MIME_TYPE,
-          (mimeType) => strings.errors.unsupportedMimeType(mimeType),
-          strings.errors.unsupportedMimeTypeWithoutArgs
-        )
+        return strings.errors.unsupportedMimeType
 
       case StorageErrorCodes.UNSUPPORTED_STORAGE_CATEGORY:
-        return this.resolveLocalizedString(
-          args,
-          StorageErrorArgs.CATEGORY,
-          (category) => strings.errors.unsupportedStorageCategory(category),
-          strings.errors.unsupportedStorageCategoryWithoutArgs
-        )
+        return strings.errors.unsupportedStorageCategory
 
       case StorageErrorCodes.STORAGE_QUOTA_EXCEEDED: {
         const used = getAppErrorArgAsString(args, StorageErrorArgs.USED_BYTES)
@@ -90,7 +80,7 @@ export class StorageErrorParser implements AppErrorParser {
         return strings.errors.presignedUrlExpired
 
       case StorageErrorCodes.INVALID_UPLOAD_TOKEN:
-        return strings.errors.invalidUploadToken
+        return strings.errors.storageError
 
       case StorageErrorCodes.UPLOAD_ALREADY_COMPLETED:
         return strings.errors.uploadAlreadyCompleted

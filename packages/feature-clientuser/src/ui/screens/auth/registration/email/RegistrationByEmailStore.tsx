@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { getAppErrorRetryAfterSeconds, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientSecurityErrorCodes } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { ClientSecurityErrorCodes, PasswordPolicyFailReason } from '@mudrichenkoevgeny/shared-foundation'
 import type { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { RegistrationRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -287,7 +287,7 @@ export const createRegistrationByEmailStore = (
         const isPasswordValid =
           isSuccess(validatePasswordResult) ||
           (!isSuccess(validatePasswordResult) &&
-            (validatePasswordResult.error.code === ClientSecurityErrorCodes.PASSWORD_TOO_SHORT ||
+            (validatePasswordResult.error.code === PasswordPolicyFailReason.TOO_SHORT ||
               validatePasswordResult.error.code === ClientSecurityErrorCodes.PASSWORD_POLICY_UNAVAILABLE))
 
         set({

@@ -23,12 +23,15 @@ export class FetchManagementSecuritySettingsApi implements ManagementSecuritySet
 
   public async updateManagementSecuritySettings(
     request: ManagementSecuritySettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>> {
     return callResult(() =>
-      this.client.request<void>(ManagementSecuritySettingsRoutes.UPDATE_MANAGEMENT_SECURITY_SETTINGS, {
-        method: 'PUT',
-        body: JSON.stringify(request)
-      })
+      this.client.request<ManagementSecuritySettingsPayload>(
+        ManagementSecuritySettingsRoutes.UPDATE_MANAGEMENT_SECURITY_SETTINGS,
+        {
+          method: 'PUT',
+          body: JSON.stringify(request)
+        }
+      )
     )
   }
 

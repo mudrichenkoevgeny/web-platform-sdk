@@ -2,10 +2,33 @@ import type {
   CommonComponent,
   EncryptedSettings,
   HttpClient,
-  SecurityComponent,
-  SettingsComponent,
   WebSocketService
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import {
+  AppType,
+  CompositeAuditActionTypeParser,
+  CompositeAuditMetadataKeyParser,
+  CompositeAuditResourceTypeParser
+} from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import {
+  OpenGlobalSettingsRepositoryImpl,
+  FetchOpenGlobalSettingsApi,
+  EncryptedOpenGlobalSettingsStorage
+} from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import {
+  OpenSecuritySettingsRepositoryImpl,
+  FetchOpenSecuritySettingsApi,
+  EncryptedOpenSecuritySettingsStorage
+} from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import {
+  OpenStorageSettingsRepositoryImpl,
+  FetchOpenStorageSettingsApi,
+  EncryptedOpenStorageSettingsStorage
+} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+
 import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 import { FetchManagementAuthSettingsApi } from '@/network/api/auth/settings/fetch-management-auth-settings-api'
 import type { ManagementAuthSettingsStorage } from '@/storage/auth/settings/management-auth-settings-storage'
@@ -33,15 +56,12 @@ import { ManagementStorageSettingsRepositoryImpl } from '@/repository/storage/se
 
 import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
 import { FetchSelfManagementLoginApi } from '@/network/api/auth/login/fetch-self-management-login-api'
-import type { SelfManagementLoginRepository } from '@/repository/auth/login/self-management-login-repository'
 import { SelfManagementLoginRepositoryImpl } from '@/repository/auth/login/self-management-login-repository-impl'
 import type { SelfManagementRefreshTokenApi } from '@/network/api/auth/refresh-token/self-management-refresh-token-api'
 import { FetchSelfManagementRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-self-management-refresh-token-api'
-import type { SelfManagementRefreshTokenRepository } from '@/repository/auth/refresh-token/self-management-refresh-token-repository'
 import { SelfManagementRefreshTokenRepositoryImpl } from '@/repository/auth/refresh-token/self-management-refresh-token-repository-impl'
 import type { SelfManagementResetPasswordApi } from '@/network/api/auth/reset-password/self-management-reset-password-api'
 import { FetchSelfManagementResetPasswordApi } from '@/network/api/auth/reset-password/fetch-self-management-reset-password-api'
-import type { SelfManagementResetPasswordRepository } from '@/repository/auth/reset-password/self-management-reset-password-repository'
 import { SelfManagementResetPasswordRepositoryImpl } from '@/repository/auth/reset-password/self-management-reset-password-repository-impl'
 import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 import { FetchSelfManagementUnlockApi } from '@/network/api/auth/unlock/fetch-self-management-unlock-api'
@@ -50,8 +70,6 @@ import { SelfManagementUnlockRepositoryImpl } from '@/repository/auth/unlock/sel
 
 import type { ManagementUserConfigurationApi } from '@/network/api/configuration/management-user-configuration-api'
 import { FetchManagementUserConfigurationApi } from '@/network/api/configuration/fetch-management-user-configuration-api'
-import type { ManagementUserConfigurationRepository } from '@/repository/configuration/management-user-configuration-repository'
-import { ManagementUserConfigurationRepositoryImpl } from '@/repository/configuration/management-user-configuration-repository-impl'
 
 import type { ManagementIdentifierApi } from '@/network/api/identifier/management-identifier-api'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
@@ -68,7 +86,6 @@ import type { ManagementSessionRepository } from '@/repository/session/managemen
 import { ManagementSessionRepositoryImpl } from '@/repository/session/management-session-repository-impl'
 import type { SelfManagementSessionApi } from '@/network/api/session/self-management-session-api'
 import { FetchSelfManagementSessionApi } from '@/network/api/session/fetch-self-management-session-api'
-import type { SelfManagementSessionRepository } from '@/repository/session/self-management-session-repository'
 import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 
 import type { ManagementAuditApi } from '@/network/api/audit/management-audit-api'
@@ -82,7 +99,6 @@ import type { ManagementUserSecurityRepository } from '@/repository/user/securit
 import { ManagementUserSecurityRepositoryImpl } from '@/repository/user/security/management-user-security-repository-impl'
 import type { SelfManagementUserSecurityApi } from '@/network/api/user/security/self-management-user-security-api'
 import { FetchSelfManagementUserSecurityApi } from '@/network/api/user/security/fetch-self-management-user-security-api'
-import type { SelfManagementUserSecurityRepository } from '@/repository/user/security/self-management-user-security-repository'
 import { SelfManagementUserSecurityRepositoryImpl } from '@/repository/user/security/self-management-user-security-repository-impl'
 
 import type { ManagementUserApi } from '@/network/api/user/management-user-api'
@@ -151,9 +167,43 @@ import { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import { GetUsersUseCase } from '@/usecase/user/get-users-use-case'
 import { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
 
-import { UserWebSocketMessageHandler } from '@/network/websocket/message-handler/user-web-socket-message-handler'
-import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { EncryptedAuthStorage, EncryptedUserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import {
+  AddUserIdentifierEmailUseCase,
+  AddUserIdentifierPhoneUseCase,
+  DeleteAllOtherSessionsUseCase,
+  DeleteSessionUseCase,
+  DeleteUserIdentifierUseCase,
+  DisableTotpUseCase,
+  EmailChangePasswordUseCase,
+  EnableTotpUseCase,
+  GetAvailableUserAuthProvidersUseCase,
+  GetRecoveryCodesUseCase,
+  GetSessionUseCase,
+  GetSessionsUseCase,
+  GetUserIdentifierUseCase,
+  GetUserIdentifiersUseCase,
+  LoginByEmailUseCase,
+  LoginByTotpRecoveryCodeUseCase,
+  LoginByTotpUseCase,
+  LogoutUseCase,
+  RefreshTokenUseCase,
+  RegenerateRecoveryCodesUseCase,
+  ResetEmailPasswordUseCase,
+  RestoreUserUseCase,
+  ScheduleUserDeletionUseCase,
+  SendAddEmailIdentifierConfirmationUseCase,
+  SendAddPhoneIdentifierConfirmationUseCase,
+  SendResetPasswordConfirmationToEmailUseCase,
+  SendUnlockEmailConfirmationUseCase,
+  SendUnlockPhoneConfirmationUseCase,
+  SetupTotpUseCase,
+  UnlockByEmailUseCase,
+  UnlockByPhoneUseCase,
+  UserWebSocketMessageHandler
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { AuthStorage, ConfirmationRepository, IdentifierRepository, LoginRepository, OpenAuthSettingsRepository, RefreshTokenRepository, ResetPasswordRepository, SessionRepository, UnlockRepository, UserSecurityRepository, UserStorage, UserRepository, UserAuthServices } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ConfirmationRepositoryImpl, EncryptedAuthStorage, EncryptedUserStorage, UserAuthServicesMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { ManagementRootStoreDependencies } from '@/ui/screens/management/management-dependencies'
 
 /**
  * Configuration options required to instantiate {@link ManagementUserComponent}.
@@ -161,10 +211,6 @@ import { EncryptedAuthStorage, EncryptedUserStorage } from '@mudrichenkoevgeny/w
 export interface ManagementUserComponentConfig {
   /** Injected common component container. */
   commonComponent: CommonComponent
-  /** Injected settings component container. */
-  settingsComponent: SettingsComponent
-  /** Injected security component container. */
-  securityComponent: SecurityComponent
   /** Optional custom HTTP client override. */
   httpClient?: HttpClient
   /** Optional custom encrypted settings store override. */
@@ -173,8 +219,16 @@ export interface ManagementUserComponentConfig {
   webSocketService?: WebSocketService
   /** Optional custom auth storage override. */
   authStorage?: AuthStorage
+  /** Optional custom auth services override. */
+  authServices?: UserAuthServices
   /** Optional custom user storage override. */
   userStorage?: UserStorage
+  /** Optional open global settings repository override. */
+  openGlobalSettingsRepository?: OpenGlobalSettingsRepository
+  /** Optional open security settings repository override. */
+  openSecuritySettingsRepository?: OpenSecuritySettingsRepository
+  /** Optional open storage settings repository override. */
+  openStorageSettingsRepository?: OpenStorageSettingsRepository
   /** Optional custom management auth settings API override. */
   managementAuthSettingsApi?: ManagementAuthSettingsApi
   /** Optional custom management auth settings storage override. */
@@ -191,6 +245,12 @@ export interface ManagementUserComponentConfig {
   managementStorageSettingsApi?: ManagementStorageSettingsApi
   /** Optional custom management storage settings storage override. */
   managementStorageSettingsStorage?: ManagementStorageSettingsStorage
+  /** Optional custom composite audit action type parser. */
+  compositeActionTypeParser?: CompositeAuditActionTypeParser
+  /** Optional custom composite audit resource type parser. */
+  compositeResourceTypeParser?: CompositeAuditResourceTypeParser
+  /** Optional custom composite audit metadata key parser. */
+  compositeMetadataKeyParser?: CompositeAuditMetadataKeyParser
 }
 
 /**
@@ -198,8 +258,6 @@ export interface ManagementUserComponentConfig {
  */
 export class ManagementUserComponent {
   public readonly commonComponent: CommonComponent
-  public readonly settingsComponent: SettingsComponent
-  public readonly securityComponent: SecurityComponent
 
   public readonly httpClient: HttpClient
   public readonly encryptedSettings: EncryptedSettings
@@ -207,6 +265,12 @@ export class ManagementUserComponent {
 
   public readonly authStorage: AuthStorage
   public readonly userStorage: UserStorage
+  public readonly authServices: UserAuthServices
+  public readonly confirmationRepository: ConfirmationRepository
+
+  public readonly openGlobalSettingsRepository: OpenGlobalSettingsRepository
+  public readonly openSecuritySettingsRepository: OpenSecuritySettingsRepository
+  public readonly openStorageSettingsRepository: OpenStorageSettingsRepository
 
   public readonly managementAuthSettingsApi: ManagementAuthSettingsApi
   public readonly managementAuthSettingsStorage: ManagementAuthSettingsStorage
@@ -225,19 +289,18 @@ export class ManagementUserComponent {
   public readonly managementStorageSettingsRepository: ManagementStorageSettingsRepository
 
   public readonly selfManagementLoginApi: SelfManagementLoginApi
-  public readonly selfManagementLoginRepository: SelfManagementLoginRepository
+  public readonly selfManagementLoginRepository: LoginRepository
 
   public readonly selfManagementRefreshTokenApi: SelfManagementRefreshTokenApi
-  public readonly selfManagementRefreshTokenRepository: SelfManagementRefreshTokenRepository
+  public readonly selfManagementRefreshTokenRepository: RefreshTokenRepository
 
   public readonly selfManagementResetPasswordApi: SelfManagementResetPasswordApi
-  public readonly selfManagementResetPasswordRepository: SelfManagementResetPasswordRepository
+  public readonly selfManagementResetPasswordRepository: ResetPasswordRepository
 
   public readonly selfManagementUnlockApi: SelfManagementUnlockApi
   public readonly selfManagementUnlockRepository: SelfManagementUnlockRepository
 
   public readonly managementUserConfigurationApi: ManagementUserConfigurationApi
-  public readonly managementUserConfigurationRepository: ManagementUserConfigurationRepository
 
   public readonly managementIdentifierApi: ManagementIdentifierApi
   public readonly managementIdentifierRepository: ManagementIdentifierRepository
@@ -249,7 +312,7 @@ export class ManagementUserComponent {
   public readonly managementSessionRepository: ManagementSessionRepository
 
   public readonly selfManagementSessionApi: SelfManagementSessionApi
-  public readonly selfManagementSessionRepository: SelfManagementSessionRepository
+  public readonly selfManagementSessionRepository: SessionRepository
 
   public readonly managementAuditApi: ManagementAuditApi
   public readonly managementAuditRepository: ManagementAuditRepository
@@ -258,7 +321,7 @@ export class ManagementUserComponent {
   public readonly managementUserSecurityRepository: ManagementUserSecurityRepository
 
   public readonly selfManagementUserSecurityApi: SelfManagementUserSecurityApi
-  public readonly selfManagementUserSecurityRepository: SelfManagementUserSecurityRepository
+  public readonly selfManagementUserSecurityRepository: UserSecurityRepository
 
   public readonly managementUserApi: ManagementUserApi
   public readonly managementUserRepository: ManagementUserRepository
@@ -320,12 +383,83 @@ export class ManagementUserComponent {
   public readonly updateUserUseCase: UpdateUserUseCase
   public readonly deleteUserUseCase: DeleteUserUseCase
 
+  public readonly loginByEmailUseCase: LoginByEmailUseCase
+  public readonly loginByTotpUseCase: LoginByTotpUseCase
+  public readonly loginByTotpRecoveryCodeUseCase: LoginByTotpRecoveryCodeUseCase
+  public readonly getAvailableUserAuthProvidersUseCase: GetAvailableUserAuthProvidersUseCase
+  public readonly resetEmailPasswordUseCase: ResetEmailPasswordUseCase
+  public readonly sendResetPasswordConfirmationToEmailUseCase: SendResetPasswordConfirmationToEmailUseCase
+  public readonly sendUnlockEmailConfirmationUseCase: SendUnlockEmailConfirmationUseCase
+  public readonly unlockByEmailUseCase: UnlockByEmailUseCase
+  public readonly sendUnlockPhoneConfirmationUseCase: SendUnlockPhoneConfirmationUseCase
+  public readonly unlockByPhoneUseCase: UnlockByPhoneUseCase
+  public readonly getUserIdentifiersUseCase: GetUserIdentifiersUseCase
+  public readonly getUserIdentifierUseCase: GetUserIdentifierUseCase
+  public readonly deleteUserIdentifierUseCase: DeleteUserIdentifierUseCase
+  public readonly emailChangePasswordUseCase: EmailChangePasswordUseCase
+  public readonly sendAddEmailIdentifierConfirmationUseCase: SendAddEmailIdentifierConfirmationUseCase
+  public readonly addUserIdentifierEmailUseCase: AddUserIdentifierEmailUseCase
+  public readonly sendAddPhoneIdentifierConfirmationUseCase: SendAddPhoneIdentifierConfirmationUseCase
+  public readonly addUserIdentifierPhoneUseCase: AddUserIdentifierPhoneUseCase
+  public readonly getSessionsUseCase: GetSessionsUseCase
+  public readonly getSessionUseCase: GetSessionUseCase
+  public readonly deleteSessionUseCase: DeleteSessionUseCase
+  public readonly deleteAllOtherSessionsUseCase: DeleteAllOtherSessionsUseCase
+  public readonly logoutUseCase: LogoutUseCase
+  public readonly scheduleUserDeletionUseCase: ScheduleUserDeletionUseCase
+  public readonly restoreUserUseCase: RestoreUserUseCase
+  public readonly setupTotpUseCase: SetupTotpUseCase
+  public readonly enableTotpUseCase: EnableTotpUseCase
+  public readonly disableTotpUseCase: DisableTotpUseCase
+  public readonly getRecoveryCodesUseCase: GetRecoveryCodesUseCase
+  public readonly regenerateRecoveryCodesUseCase: RegenerateRecoveryCodesUseCase
+
+  public get selfUserRepository(): SelfManagementUserRepository {
+    return this.selfManagementUserRepository
+  }
+
+  public get rootStoreDependencies(): ManagementRootStoreDependencies {
+    return {
+      selfManagementUserRepository: this.selfManagementUserRepository,
+      getManagementAuthSettingsUseCase: this.getManagementAuthSettingsUseCase,
+      updateManagementAuthSettingsUseCase: this.updateManagementAuthSettingsUseCase,
+      resetManagementAuthSettingsUseCase: this.resetManagementAuthSettingsUseCase,
+      getManagementGlobalSettingsUseCase: this.getManagementGlobalSettingsUseCase,
+      updateManagementGlobalSettingsUseCase: this.updateManagementGlobalSettingsUseCase,
+      resetManagementGlobalSettingsUseCase: this.resetManagementGlobalSettingsUseCase,
+      getManagementSecuritySettingsUseCase: this.getManagementSecuritySettingsUseCase,
+      updateManagementSecuritySettingsUseCase: this.updateManagementSecuritySettingsUseCase,
+      resetManagementSecuritySettingsUseCase: this.resetManagementSecuritySettingsUseCase,
+      getManagementStorageSettingsUseCase: this.getManagementStorageSettingsUseCase,
+      updateManagementStorageSettingsUseCase: this.updateManagementStorageSettingsUseCase,
+      resetManagementStorageSettingsUseCase: this.resetManagementStorageSettingsUseCase,
+      managementGetFilesUseCase: this.managementGetFilesUseCase,
+      managementGetFileDetailUseCase: this.managementGetFileDetailUseCase,
+      managementDeleteFileUseCase: this.managementDeleteFileUseCase,
+      managementDeleteFilesBatchUseCase: this.managementDeleteFilesBatchUseCase,
+      getUsersUseCase: this.getUsersUseCase,
+      getUserUseCase: this.getUserUseCase,
+      createUserUseCase: this.createUserUseCase,
+      updateUserUseCase: this.updateUserUseCase,
+      deleteUserUseCase: this.deleteUserUseCase,
+      managementGetSessionsUseCase: this.managementGetSessionsUseCase,
+      managementGetSessionUseCase: this.managementGetSessionUseCase,
+      managementGetIdentifiersUseCase: this.managementGetIdentifiersUseCase,
+      managementGetIdentifierUseCase: this.managementGetIdentifierUseCase,
+      managementDisableTotpUseCase: this.managementDisableTotpUseCase,
+      managementDeleteSessionUseCase: this.managementDeleteSessionUseCase,
+      managementDeleteAllUserSessionsUseCase: this.managementDeleteAllUserSessionsUseCase,
+      managementDeleteIdentifierUseCase: this.managementDeleteIdentifierUseCase,
+      managementDeleteIdentifierPasswordUseCase: this.managementDeleteIdentifierPasswordUseCase,
+      getAuditEventsUseCase: this.getAuditEventsUseCase,
+      getAuditEventUseCase: this.getAuditEventUseCase
+    }
+  }
+
   public readonly userWebSocketMessageHandler: UserWebSocketMessageHandler
 
   public constructor(config: ManagementUserComponentConfig) {
     this.commonComponent = config.commonComponent
-    this.settingsComponent = config.settingsComponent
-    this.securityComponent = config.securityComponent
 
     this.httpClient = config.httpClient ?? config.commonComponent.httpClient
     this.encryptedSettings = config.encryptedSettings ?? config.commonComponent.encryptedSettings
@@ -333,6 +467,32 @@ export class ManagementUserComponent {
 
     this.authStorage = config.authStorage ?? new EncryptedAuthStorage(this.encryptedSettings)
     this.userStorage = config.userStorage ?? new EncryptedUserStorage(this.encryptedSettings)
+    this.authServices = config.authServices ?? new UserAuthServicesMock()
+    this.confirmationRepository = new ConfirmationRepositoryImpl()
+
+    this.openGlobalSettingsRepository =
+      config.openGlobalSettingsRepository ??
+      new OpenGlobalSettingsRepositoryImpl(
+        new FetchOpenGlobalSettingsApi(this.httpClient),
+        new EncryptedOpenGlobalSettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
+
+    this.openSecuritySettingsRepository =
+      config.openSecuritySettingsRepository ??
+      new OpenSecuritySettingsRepositoryImpl(
+        new FetchOpenSecuritySettingsApi(this.httpClient),
+        new EncryptedOpenSecuritySettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
+
+    this.openStorageSettingsRepository =
+      config.openStorageSettingsRepository ??
+      new OpenStorageSettingsRepositoryImpl(
+        new FetchOpenStorageSettingsApi(this.httpClient),
+        new EncryptedOpenStorageSettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
 
     this.managementAuthSettingsApi =
       config.managementAuthSettingsApi ?? new FetchManagementAuthSettingsApi(this.httpClient)
@@ -376,33 +536,27 @@ export class ManagementUserComponent {
 
     this.selfManagementLoginApi = new FetchSelfManagementLoginApi(this.httpClient)
     this.selfManagementLoginRepository = new SelfManagementLoginRepositoryImpl(
-      this.selfManagementLoginApi,
-      this.authStorage,
-      this.userStorage
+      this.selfManagementLoginApi
     )
 
     this.selfManagementRefreshTokenApi = new FetchSelfManagementRefreshTokenApi(this.httpClient)
     this.selfManagementRefreshTokenRepository = new SelfManagementRefreshTokenRepositoryImpl(
-      this.selfManagementRefreshTokenApi,
-      this.authStorage
+      this.selfManagementRefreshTokenApi
     )
 
     this.selfManagementResetPasswordApi = new FetchSelfManagementResetPasswordApi(this.httpClient)
     this.selfManagementResetPasswordRepository = new SelfManagementResetPasswordRepositoryImpl(
-      this.selfManagementResetPasswordApi
+      this.selfManagementResetPasswordApi,
+      this.confirmationRepository
     )
 
     this.selfManagementUnlockApi = new FetchSelfManagementUnlockApi(this.httpClient)
     this.selfManagementUnlockRepository = new SelfManagementUnlockRepositoryImpl(
       this.selfManagementUnlockApi,
-      this.authStorage,
-      this.userStorage
+      this.confirmationRepository
     )
 
     this.managementUserConfigurationApi = new FetchManagementUserConfigurationApi(this.httpClient)
-    this.managementUserConfigurationRepository = new ManagementUserConfigurationRepositoryImpl(
-      this.managementUserConfigurationApi
-    )
 
     this.managementIdentifierApi = new FetchManagementIdentifierApi(this.httpClient)
     this.managementIdentifierRepository = new ManagementIdentifierRepositoryImpl(
@@ -422,13 +576,19 @@ export class ManagementUserComponent {
     this.selfManagementSessionApi = new FetchSelfManagementSessionApi(this.httpClient)
     this.selfManagementSessionRepository = new SelfManagementSessionRepositoryImpl(
       this.selfManagementSessionApi,
-      this.authStorage,
-      this.userStorage
+      this.userStorage,
+      this.authStorage
     )
 
     this.managementAuditApi = new FetchManagementAuditApi(this.httpClient)
+    const actionParser = config.compositeActionTypeParser ?? new CompositeAuditActionTypeParser([])
+    const resourceParser = config.compositeResourceTypeParser ?? new CompositeAuditResourceTypeParser([])
+    const metadataParser = config.compositeMetadataKeyParser ?? new CompositeAuditMetadataKeyParser([])
     this.managementAuditRepository = new ManagementAuditRepositoryImpl(
-      this.managementAuditApi
+      this.managementAuditApi,
+      actionParser,
+      resourceParser,
+      metadataParser
     )
 
     this.managementUserSecurityApi = new FetchManagementUserSecurityApi(this.httpClient)
@@ -438,7 +598,8 @@ export class ManagementUserComponent {
 
     this.selfManagementUserSecurityApi = new FetchSelfManagementUserSecurityApi(this.httpClient)
     this.selfManagementUserSecurityRepository = new SelfManagementUserSecurityRepositoryImpl(
-      this.selfManagementUserSecurityApi
+      this.selfManagementUserSecurityApi,
+      this.userStorage
     )
 
     this.managementUserApi = new FetchManagementUserApi(this.httpClient)
@@ -448,8 +609,10 @@ export class ManagementUserComponent {
 
     this.selfManagementUserApi = new FetchSelfManagementUserApi(this.httpClient)
     this.selfManagementUserRepository = new SelfManagementUserRepositoryImpl(
+      this.userStorage,
+      this.authStorage,
       this.selfManagementUserApi,
-      this.userStorage
+      this.webSocketService
     )
 
     this.managementStorageApi = new FetchManagementStorageApi(this.httpClient)
@@ -490,10 +653,10 @@ export class ManagementUserComponent {
     this.managementDeleteFilesBatchUseCase = new ManagementDeleteFilesBatchUseCase(this.managementStorageRepository)
 
     this.refreshManagementUserConfigurationUseCase = new RefreshManagementUserConfigurationUseCase(
-      this.managementUserConfigurationRepository,
-      this.managementGlobalSettingsRepository,
-      this.managementSecuritySettingsRepository,
-      this.managementStorageSettingsRepository,
+      this.managementUserConfigurationApi,
+      this.openGlobalSettingsRepository,
+      this.openSecuritySettingsRepository,
+      this.openStorageSettingsRepository,
       this.managementAuthSettingsRepository
     )
 
@@ -518,11 +681,110 @@ export class ManagementUserComponent {
     this.updateUserUseCase = new UpdateUserUseCase(this.managementUserRepository)
     this.deleteUserUseCase = new DeleteUserUseCase(this.managementUserRepository)
 
+    this.loginByEmailUseCase = new LoginByEmailUseCase(
+      this.selfManagementLoginRepository,
+      this.authStorage,
+      this.userStorage
+    )
+    this.loginByTotpUseCase = new LoginByTotpUseCase(
+      this.selfManagementLoginRepository,
+      this.authStorage,
+      this.userStorage
+    )
+    this.loginByTotpRecoveryCodeUseCase = new LoginByTotpRecoveryCodeUseCase(
+      this.selfManagementLoginRepository,
+      this.authStorage,
+      this.userStorage
+    )
+    this.getAvailableUserAuthProvidersUseCase = new GetAvailableUserAuthProvidersUseCase(
+      AppType.MANAGEMENT,
+      this.managementAuthSettingsRepository as unknown as OpenAuthSettingsRepository
+    )
+    this.resetEmailPasswordUseCase = new ResetEmailPasswordUseCase(
+      this.selfManagementResetPasswordRepository
+    )
+    this.sendResetPasswordConfirmationToEmailUseCase = new SendResetPasswordConfirmationToEmailUseCase(
+      this.selfManagementResetPasswordRepository
+    )
+    this.sendUnlockEmailConfirmationUseCase = new SendUnlockEmailConfirmationUseCase(
+      this.selfManagementUnlockRepository as unknown as UnlockRepository
+    )
+    this.unlockByEmailUseCase = new UnlockByEmailUseCase(
+      this.selfManagementUnlockRepository as unknown as UnlockRepository
+    )
+    this.sendUnlockPhoneConfirmationUseCase = new SendUnlockPhoneConfirmationUseCase(
+      this.selfManagementUnlockRepository as unknown as UnlockRepository
+    )
+    this.unlockByPhoneUseCase = new UnlockByPhoneUseCase(
+      this.selfManagementUnlockRepository as unknown as UnlockRepository
+    )
+    this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.emailChangePasswordUseCase = new EmailChangePasswordUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.sendAddEmailIdentifierConfirmationUseCase = new SendAddEmailIdentifierConfirmationUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.addUserIdentifierEmailUseCase = new AddUserIdentifierEmailUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.sendAddPhoneIdentifierConfirmationUseCase = new SendAddPhoneIdentifierConfirmationUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.addUserIdentifierPhoneUseCase = new AddUserIdentifierPhoneUseCase(
+      this.selfManagementIdentifierRepository as unknown as IdentifierRepository
+    )
+    this.getSessionsUseCase = new GetSessionsUseCase(
+      this.selfManagementSessionRepository
+    )
+    this.getSessionUseCase = new GetSessionUseCase(
+      this.selfManagementSessionRepository
+    )
+    this.deleteSessionUseCase = new DeleteSessionUseCase(
+      this.selfManagementSessionRepository
+    )
+    this.deleteAllOtherSessionsUseCase = new DeleteAllOtherSessionsUseCase(
+      this.selfManagementSessionRepository
+    )
+    this.logoutUseCase = new LogoutUseCase(
+      this.selfManagementSessionRepository,
+      this.selfManagementUserRepository as unknown as UserRepository
+    )
+    this.scheduleUserDeletionUseCase = new ScheduleUserDeletionUseCase(
+      this.selfManagementUserRepository as unknown as UserRepository
+    )
+    this.restoreUserUseCase = new RestoreUserUseCase(
+      this.selfManagementUserRepository as unknown as UserRepository
+    )
+    this.setupTotpUseCase = new SetupTotpUseCase(
+      this.selfManagementUserSecurityRepository
+    )
+    this.enableTotpUseCase = new EnableTotpUseCase(
+      this.selfManagementUserSecurityRepository
+    )
+    this.disableTotpUseCase = new DisableTotpUseCase(
+      this.selfManagementUserSecurityRepository
+    )
+    this.getRecoveryCodesUseCase = new GetRecoveryCodesUseCase(
+      this.selfManagementUserSecurityRepository
+    )
+    this.regenerateRecoveryCodesUseCase = new RegenerateRecoveryCodesUseCase(
+      this.selfManagementUserSecurityRepository
+    )
+
     this.userWebSocketMessageHandler = new UserWebSocketMessageHandler(
       this.userStorage,
-      this.selfUserRepository,
+      this.selfManagementUserRepository as unknown as UserRepository,
       this.authStorage,
-      this.selfManagementRefreshTokenRepository
+      new RefreshTokenUseCase(this.selfManagementRefreshTokenRepository, this.authStorage)
     )
   }
 }

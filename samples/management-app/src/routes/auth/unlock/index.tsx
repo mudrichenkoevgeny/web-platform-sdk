@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ManagementAuthNavigation, type AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
+import { ManagementAuthNavigation, accountLockoutTypeSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { UnlockRootScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 import { z } from 'zod'
 
 const searchSchema = z.object({
-  lockoutType: z.string().optional(),
+  lockoutType: accountLockoutTypeSchema.optional(),
   lockoutUntil: z.number().optional()
 })
 
@@ -25,7 +25,7 @@ export const Route = createFileRoute('/auth/unlock/')({
         <div className="bg-card text-card-foreground border border-border rounded-xl shadow-lg w-full max-w-lg overflow-hidden relative p-4">
           <UnlockRootScreen
             dependencies={{
-              lockoutType: (lockoutType as AccountLockoutType) ?? null,
+              lockoutType: lockoutType ?? null,
               lockoutUntil: lockoutUntil ?? null,
               getUserIdentifiersUseCase: appComponent.managementUserComponent.getUserIdentifiersUseCase,
               unlockByGoogleUseCase: null,

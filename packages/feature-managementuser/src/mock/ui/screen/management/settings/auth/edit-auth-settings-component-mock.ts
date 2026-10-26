@@ -36,11 +36,11 @@ export const editAuthSettingsDependenciesMock = (
         }
       })
   } as any,
-  saveRemoteAuthSettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  updateManagementAuthSettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
-  resetRemoteAuthSettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  resetManagementAuthSettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onBack: () => {},
   ...overrides
