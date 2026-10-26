@@ -97,6 +97,8 @@ export interface UserDetailStoreDependencies {
   onNavigateToSessions: (userId: UserId) => void
   /** Navigation callback to open user identifiers list. */
   onNavigateToIdentifiers: (userId: UserId) => void
+  /** Navigation callback to open user storage files list. */
+  onNavigateToStorageFiles?: (userId: UserId) => void
   /** Navigation callback to open user audit events list. */
   onNavigateToAuditEvents: (userId: UserId) => void
   /** Navigation callback to return to previous screen. */
@@ -137,6 +139,8 @@ export interface UserDetailStoreState {
   onSessionsClick: () => void
   /** Opens user identifiers screen. */
   onIdentifiersClick: () => void
+  /** Opens user storage files screen. */
+  onStorageFilesClick: () => void
   /** Opens user audit events screen. */
   onAuditEventsClick: () => void
   /** Retries loading user details after failure. */
@@ -412,6 +416,10 @@ export const createUserDetailStore = (
 
     onIdentifiersClick: () => {
       deps.onNavigateToIdentifiers(deps.userId)
+    },
+
+    onStorageFilesClick: () => {
+      deps.onNavigateToStorageFiles?.(deps.userId)
     },
 
     onAuditEventsClick: () => {

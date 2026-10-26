@@ -43,16 +43,16 @@ export class CommonErrorParser implements AppErrorParser {
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.PARAMETER_NAME,
-          (param) => strings.errors.missingParameter(param),
-          strings.errors.missingParameterWithoutArgs
+          (param) => strings.errors.missingField(param),
+          strings.errors.missingFieldWithoutArgs
         )
 
       case CommonErrorCodes.INVALID_PARAMETER_VALUE:
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.PARAMETER_NAME,
-          (param) => strings.errors.invalidParameter(param),
-          strings.errors.invalidParameterWithoutArgs
+          (param) => strings.errors.invalidField(param),
+          strings.errors.invalidFieldWithoutArgs
         )
 
       case CommonErrorCodes.MISSING_REQUIRED_FIELD:
@@ -75,8 +75,8 @@ export class CommonErrorParser implements AppErrorParser {
         return this.resolveLocalizedString(
           args,
           CommonErrorArgs.FIELD_NAME,
-          (field) => strings.errors.emptyCollectionField(field),
-          strings.errors.emptyCollectionFieldWithoutArgs
+          (field) => strings.errors.blankField(field),
+          strings.errors.blankFieldWithoutArgs
         )
 
       case CommonErrorCodes.INVALID_FIELD_VALUE:

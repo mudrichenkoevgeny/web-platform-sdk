@@ -9,7 +9,7 @@ describe('UserErrorParser', () => {
   const parserRu = new UserErrorParser(new UserModuleStrings(undefined, CommonLocales.RUSSIAN))
 
   it('parses client user feature errors', () => {
-    expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The refresh token is invalid.')
+    expect(parserEn.parse(UserError.invalidRefreshToken())).toBe('The session is invalid. Please log in again.')
     expect(parserEn.parse(UserError.registrationDisabled())).toBe('Registration is currently disabled.')
     expect(parserEn.parse(UserError.externalAuthCancelled())).toBe('Authentication was cancelled.')
     expect(parserEn.parse(UserError.externalAuthFailed())).toBe('External authentication failed.')
@@ -25,8 +25,8 @@ describe('UserErrorParser', () => {
       isRetryable: false
     } as const
 
-    expect(parserEn.parse(invalidTokenError)).toBe('The access token is invalid.')
-    expect(parserRu.parse(invalidTokenError)).toBe('Токен доступа недействителен.')
+    expect(parserEn.parse(invalidTokenError)).toBe('The session is invalid. Please log in again.')
+    expect(parserRu.parse(invalidTokenError)).toBe('Сессия недействительна. Пожалуйста, войдите снова.')
 
     const lockedUntilError = {
       id: generateErrorId(),
@@ -35,7 +35,7 @@ describe('UserErrorParser', () => {
       isRetryable: false
     } as const
 
-    expect(parserEn.parse(lockedUntilError)).toContain('This account has been locked until')
+    expect(parserEn.parse(lockedUntilError)).toContain('This account has been locked')
   })
 
   it('parses identifier limit errors with arguments', () => {
@@ -49,7 +49,7 @@ describe('UserErrorParser', () => {
       isRetryable: false
     } as const
 
-    expect(parserEn.parse(limitError)).toBe("The limit of 3 identifiers for 'GOOGLE' has been reached.")
+    expect(parserEn.parse(limitError)).toBe("The limit of 3 sign-in methods for 'External Provider' has been reached.")
   })
 
   it('returns null for unhandled errors', () => {

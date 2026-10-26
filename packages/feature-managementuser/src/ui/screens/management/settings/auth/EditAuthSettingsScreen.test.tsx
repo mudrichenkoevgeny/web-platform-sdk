@@ -41,11 +41,11 @@ describe('EditAuthSettingsScreen', () => {
         })
       )
     } as any,
-    saveRemoteAuthSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    updateManagementAuthSettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
-    resetRemoteAuthSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    resetManagementAuthSettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onBack: vi.fn()
   })
@@ -65,7 +65,7 @@ describe('EditAuthSettingsScreen', () => {
     const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
-    expect(deps.saveRemoteAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.updateManagementAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
@@ -84,7 +84,7 @@ describe('EditAuthSettingsScreen', () => {
     const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
-    expect(deps.resetRemoteAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.resetManagementAuthSettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 })

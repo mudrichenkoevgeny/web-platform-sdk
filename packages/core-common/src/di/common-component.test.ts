@@ -40,6 +40,6 @@ describe('CommonComponent', () => {
 
     expect(component.appErrorParser).toBeDefined()
     const parsed = component.appErrorParser.parse(CommonError.unknown())
-    expect(parsed).toBe('An error has occurred.')
+    expect(parsed).toBe('An unknown error has occurred.')
   })
 })

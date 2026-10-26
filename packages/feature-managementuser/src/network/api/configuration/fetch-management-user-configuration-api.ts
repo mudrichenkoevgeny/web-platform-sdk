@@ -15,7 +15,7 @@ export class FetchManagementUserConfigurationApi implements ManagementUserConfig
 
   public async getManagementUserConfiguration(): Promise<AppResult<ManagementUserConfigurationPayload, AppError>> {
     return callResult(() =>
-      this.client.request<ManagementUserConfigurationPayload>(ManagementUserConfigurationRoutes.GET_CONFIGURATION)
+      this.client.request<ManagementUserConfigurationPayload>(ManagementUserConfigurationRoutes.GET_MANAGEMENT_USER_CONFIGURATION)
     )
   }
 }

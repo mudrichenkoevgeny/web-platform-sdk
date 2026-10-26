@@ -1,27 +1,27 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
-/** Fetch and update global application settings via the management API. */
+/** Fetch and update global settings in management scope. */
 export interface ManagementGlobalSettingsApi {
   /**
-   * Fetches global settings for management.
+   * Loads global application configuration.
    *
-   * @returns ManagementGlobalSettingsPayload or a mapped failure
+   * @returns ManagementGlobalSettingsPayload on success, or an error result
    */
   getManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>>
 
   /**
-   * Updates platform-wide global settings.
+   * Pushes updated global application settings to the server.
    *
-   * @param request - New global settings payload
-   * @returns Void result or a mapped failure
+   * @param request - Complete updated settings payload
+   * @returns Updated ManagementGlobalSettingsPayload on success, or an error result
    */
-  updateManagementGlobalSettings(request: ManagementGlobalSettingsPayload): Promise<AppResult<void, AppError>>
+  updateManagementGlobalSettings(request: ManagementGlobalSettingsPayload): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>>
 
   /**
-   * Resets platform-wide global settings to default values.
+   * Resets global application settings to defaults.
    *
-   * @returns Fresh default ManagementGlobalSettingsPayload, or a mapped failure
+   * @returns Fresh default ManagementGlobalSettingsPayload on success, or an error result
    */
   resetManagementGlobalSettings(): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>>
 }

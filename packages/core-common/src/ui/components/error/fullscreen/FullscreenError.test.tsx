@@ -33,7 +33,7 @@ describe('FullscreenError', () => {
       </ComponentTestHarness>
     )
 
-    expect(screen.getByText('An error has occurred.')).toBeDefined()
+    expect(screen.getByText('An unknown error has occurred.')).toBeDefined()
     expect(screen.queryByText('Retry')).toBeNull()
   })
 

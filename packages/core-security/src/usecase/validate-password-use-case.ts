@@ -43,7 +43,7 @@ export class ValidatePasswordUseCase {
     const securitySettingsResult = await this.openSecuritySettingsRepository.getOpenSecuritySettings()
 
     const passwordPolicy = securitySettingsResult.success
-      ? securitySettingsResult.data.openPasswordPolicy
+      ? securitySettingsResult.data.passwordPolicy
       : FALLBACK_PASSWORD_POLICY
 
     const validationResult = this.passwordPolicyValidator.validate(passwordPolicy, password)
@@ -52,7 +52,7 @@ export class ValidatePasswordUseCase {
       return appResultSuccess(undefined)
     }
 
-    const primaryReason = validationResult.reasons[0]
+    const primaryReason = validationResult.reasons[0] ?? PasswordPolicyFailReason.TOO_SHORT
     return appResultFailure(this.toSecurityError(primaryReason, passwordPolicy.minLength))
   }
 

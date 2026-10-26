@@ -6,7 +6,7 @@ import type { ManagementSecuritySettingsApi } from '@/network/api/security/setti
 /** Mock implementation of {@link ManagementSecuritySettingsApi}. */
 export class ManagementSecuritySettingsApiMock implements ManagementSecuritySettingsApi {
   public getResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
-  public updateResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
+  public updateResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
   public resetResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
 
   public get getManagementSecuritySettingsResult() {
@@ -18,7 +18,7 @@ export class ManagementSecuritySettingsApiMock implements ManagementSecuritySett
   public get updateManagementSecuritySettingsResult() {
     return this.updateResult
   }
-  public set updateManagementSecuritySettingsResult(val: AppResult<void, AppError>) {
+  public set updateManagementSecuritySettingsResult(val: AppResult<ManagementSecuritySettingsPayload, AppError>) {
     this.updateResult = val
   }
   public get resetManagementSecuritySettingsResult() {
@@ -34,7 +34,7 @@ export class ManagementSecuritySettingsApiMock implements ManagementSecuritySett
 
   public async updateManagementSecuritySettings(
     _request: ManagementSecuritySettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>> {
     return this.updateResult
   }
 

@@ -1,5 +1,6 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 
@@ -13,8 +14,8 @@ export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi 
   public getResultProvider: () => Promise<AppResult<ManagementAuthSettingsPayload, AppError>> = async () =>
     appResultFailure(CommonError.unknown(false))
 
-  public updateResultProvider: () => Promise<AppResult<void, AppError>> = async () =>
-    appResultSuccess(undefined)
+  public updateResultProvider: () => Promise<AppResult<ManagementAuthSettingsPayload, AppError>> = async () =>
+    appResultSuccess(createTestManagementAuthSettingsPayload())
 
   public resetResultProvider: () => Promise<AppResult<ManagementAuthSettingsPayload, AppError>> = async () =>
     this.getResultProvider()
@@ -29,7 +30,7 @@ export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi 
   public get updateManagementAuthSettingsResult() {
     return this.updateResultProvider()
   }
-  public set updateManagementAuthSettingsResult(val: Promise<AppResult<void, AppError>> | AppResult<void, AppError>) {
+  public set updateManagementAuthSettingsResult(val: Promise<AppResult<ManagementAuthSettingsPayload, AppError>> | AppResult<ManagementAuthSettingsPayload, AppError>) {
     this.updateResultProvider = async () => (val instanceof Promise ? val : val)
   }
 
@@ -47,7 +48,7 @@ export class ManagementAuthSettingsApiMock implements ManagementAuthSettingsApi 
 
   public async updateManagementAuthSettings(
     request: ManagementAuthSettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementAuthSettingsPayload, AppError>> {
     this.updateCallCount++
     this.lastRequest = request
     return this.updateResultProvider()

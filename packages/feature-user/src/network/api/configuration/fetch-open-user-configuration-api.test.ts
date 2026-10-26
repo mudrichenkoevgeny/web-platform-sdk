@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { isSuccess, HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenUserConfigurationRoutes } from '@mudrichenkoevgeny/shared-foundation'
+import { OpenUserConfigurationRoutes, createTestOpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenUserConfigurationApi } from '@/network/api/configuration/fetch-open-user-configuration-api'
 
 describe('FetchOpenUserConfigurationApi', () => {
@@ -28,6 +28,7 @@ describe('FetchOpenUserConfigurationApi', () => {
           expiration_seconds: 300
         }
       },
+      open_storage_settings: createTestOpenStorageSettingsPayload(),
       open_auth_settings: {
         available_auth_providers: {
           primary: ['EMAIL'],
@@ -52,9 +53,9 @@ describe('FetchOpenUserConfigurationApi', () => {
       expect(result.data).toEqual(mockPayload)
     }
 
-    const expectedRoute = OpenUserConfigurationRoutes.GET_CONFIGURATION.startsWith('/')
-      ? OpenUserConfigurationRoutes.GET_CONFIGURATION
-      : `/${OpenUserConfigurationRoutes.GET_CONFIGURATION}`
+    const expectedRoute = OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION.startsWith('/')
+      ? OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
+      : `/${OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION}`
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedRoute)
   })
 })

@@ -19,9 +19,9 @@ export class FetchOpenUserConfigurationApi implements OpenUserConfigurationApi {
    * @returns AppResult containing OpenUserConfigurationPayload or AppError
    */
   public async getOpenUserConfiguration(): Promise<AppResult<OpenUserConfigurationPayload, AppError>> {
-    const route = OpenUserConfigurationRoutes.GET_CONFIGURATION.startsWith('/')
-      ? OpenUserConfigurationRoutes.GET_CONFIGURATION
-      : `/${OpenUserConfigurationRoutes.GET_CONFIGURATION}`
+    const route = OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION.startsWith('/')
+      ? OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
+      : `/${OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION}`
     return callResult(() => this.client.request<OpenUserConfigurationPayload>(route))
   }
 }

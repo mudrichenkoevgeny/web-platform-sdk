@@ -30,10 +30,10 @@ export class ManagementStorageSettingsRepositoryMock implements ManagementStorag
 
   public async saveRemoteManagementStorageSettings(
     storageSettings: ManagementStorageSettings
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementStorageSettings, AppError>> {
     this.settings = storageSettings
     this.notifyListeners()
-    return appResultSuccess(undefined)
+    return appResultSuccess(storageSettings)
   }
 
   public async resetRemoteManagementStorageSettings(): Promise<AppResult<ManagementStorageSettings, AppError>> {

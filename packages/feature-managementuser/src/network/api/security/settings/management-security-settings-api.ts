@@ -1,27 +1,29 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
-/** Fetch and update security settings via the management API. */
+/** Fetch and update security settings in management scope. */
 export interface ManagementSecuritySettingsApi {
   /**
-   * Fetches security settings for management.
+   * Loads security configuration.
    *
-   * @returns ManagementSecuritySettingsPayload or a mapped failure
+   * @returns ManagementSecuritySettingsPayload on success, or an error result
    */
   getManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>>
 
   /**
-   * Updates platform-wide security settings and policies.
+   * Pushes updated security settings to the server.
    *
-   * @param request - New security settings payload
-   * @returns Void result or a mapped failure
+   * @param request - Complete updated settings payload
+   * @returns Updated ManagementSecuritySettingsPayload on success, or an error result
    */
-  updateManagementSecuritySettings(request: ManagementSecuritySettingsPayload): Promise<AppResult<void, AppError>>
+  updateManagementSecuritySettings(
+    request: ManagementSecuritySettingsPayload
+  ): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>>
 
   /**
-   * Resets global security settings and policies to default values.
+   * Resets security settings to defaults.
    *
-   * @returns Fresh default ManagementSecuritySettingsPayload, or a mapped failure
+   * @returns Fresh default ManagementSecuritySettingsPayload on success, or an error result
    */
   resetManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>>
 }

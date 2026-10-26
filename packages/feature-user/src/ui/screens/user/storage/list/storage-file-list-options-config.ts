@@ -1,48 +1,42 @@
+import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { CommonModuleStrings, StorageModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   StorageFilterValues,
   StorageCategory,
   StorageFileVisibility,
   StorageFileStatus,
   StorageFileSortBy,
-  CommonModuleStrings,
   commonStrings as globalCommonStrings,
-  StorageModuleStrings,
   storageStrings as globalStorageStrings
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ListingOptionsConfig } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ChoiceFilterPresentationStyle } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 
 /**
- * Constructs the listing options configuration (sort options and filter options)
- * for personal storage file lists.
+ * Constructs the listing options configuration (sort options and filter definitions)
+ * for storage file lists.
  *
  * @param commonStrings - Optional localized common module strings dictionary override.
  * @param storageStrings - Optional localized storage module strings dictionary override.
- * @returns Configured {@link ListingOptionsConfig} instance for sorting and filtering personal storage files.
+ * @param includeOwnerFilter - Whether to include the ownerUserId text filter.
+ * @returns Configured {@link ListingOptionsConfig} instance for sorting and filtering storage files.
  */
-export const getSelfStorageFileListOptionsConfig = (
+export const getStorageFileListOptionsConfig = (
   commonStrings: CommonModuleStrings = globalCommonStrings,
-  storageStrings: StorageModuleStrings = globalStorageStrings
-): ListingOptionsConfig => ({
-  sortOptions: [
-    {
-      id: StorageFileSortBy.CREATED_AT,
-      title: commonStrings.ui.createdAt
-    },
-    {
-      id: StorageFileSortBy.UPDATED_AT,
-      title: commonStrings.ui.updatedAt
-    },
-    {
-      id: StorageFileSortBy.FILE_NAME,
-      title: storageStrings.ui.fileName
-    },
-    {
-      id: StorageFileSortBy.FILE_SIZE_BYTES,
-      title: storageStrings.ui.fileSize
-    }
-  ],
-  filters: [
+  storageStrings: StorageModuleStrings = globalStorageStrings,
+  includeOwnerFilter = false
+): ListingOptionsConfig => {
+  const filters: ListingOptionsConfig['filters'] = []
+
+  if (includeOwnerFilter) {
+    filters.push({
+      type: 'text',
+      id: StorageFilterValues.StorageFileFilterValues.OWNER_USER_ID,
+      title: storageStrings.ui.ownerUserId,
+      placeholder: commonStrings.ui.searchPlaceholder
+    })
+  }
+
+  filters.push(
     {
       type: 'text',
       id: StorageFilterValues.StorageFileFilterValues.FILE_NAME,
@@ -66,7 +60,7 @@ export const getSelfStorageFileListOptionsConfig = (
         { id: StorageCategory.DOCUMENT, title: storageStrings.ui.categoryDocument },
         { id: StorageCategory.OTHER, title: storageStrings.ui.categoryOther }
       ],
-      isMultiple: true,
+      isMultiple: false,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
     },
     {
@@ -77,7 +71,7 @@ export const getSelfStorageFileListOptionsConfig = (
         { id: StorageFileVisibility.PUBLIC, title: storageStrings.ui.visibilityPublic },
         { id: StorageFileVisibility.PRIVATE, title: storageStrings.ui.visibilityPrivate }
       ],
-      isMultiple: true,
+      isMultiple: false,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
     },
     {
@@ -87,11 +81,21 @@ export const getSelfStorageFileListOptionsConfig = (
       options: [
         { id: StorageFileStatus.PENDING_UPLOAD, title: storageStrings.ui.statusPendingUpload },
         { id: StorageFileStatus.READY, title: storageStrings.ui.statusReady },
-        { id: StorageFileStatus.PROCESSING, title: storageStrings.ui.statusProcessing },
-        { id: StorageFileStatus.DELETED, title: storageStrings.ui.statusDeleted }
+        { id: StorageFileStatus.DELETED, title: storageStrings.ui.statusDeleted },
+        { id: StorageFileStatus.PROCESSING, title: storageStrings.ui.statusProcessing }
       ],
-      isMultiple: true,
+      isMultiple: false,
       presentationStyle: ChoiceFilterPresentationStyle.DROPDOWN
     }
-  ]
-})
+  )
+
+  return {
+    sortOptions: [
+      { id: StorageFileSortBy.CREATED_AT, title: commonStrings.ui.createdAt },
+      { id: StorageFileSortBy.UPDATED_AT, title: commonStrings.ui.updatedAt },
+      { id: StorageFileSortBy.FILE_NAME, title: storageStrings.ui.fileName },
+      { id: StorageFileSortBy.FILE_SIZE_BYTES, title: storageStrings.ui.fileSize }
+    ],
+    filters
+  }
+}

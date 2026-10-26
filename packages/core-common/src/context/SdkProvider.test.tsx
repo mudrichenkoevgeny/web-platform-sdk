@@ -43,7 +43,7 @@ describe('SdkProvider', () => {
 
     expect(result.current).toBeDefined()
     const parsed = result.current.parse(CommonError.unknown())
-    expect(parsed).toBe('An error has occurred.')
+    expect(parsed).toBe('An unknown error has occurred.')
   })
 
   it('throws Error if useCommonComponent is used outside of SdkProvider', () => {

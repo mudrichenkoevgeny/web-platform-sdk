@@ -13,12 +13,12 @@ describe('StorageErrorParser', () => {
 
   it('parses domain storage error codes with arguments in English and Russian', () => {
     const sizeLimitError = StorageError.fileSizeExceedsLimit(1024, 2048, 'IMAGE', 'photo.jpg')
-    expect(parserEn.parse(sizeLimitError)).toBe('The file size exceeds the maximum permitted limit of 1024 bytes.')
-    expect(parserRu.parse(sizeLimitError)).toBe('Размер файла превышает максимально допустимый предел в 1024 байт.')
+    expect(parserEn.parse(sizeLimitError)).toBe('The file size exceeds the maximum permitted limit of 1 KB.')
+    expect(parserRu.parse(sizeLimitError)).toBe('Размер файла превышает максимально допустимый лимит в 1 KB.')
 
     const quotaError = StorageError.storageQuotaExceeded(10000, 12000)
-    expect(parserEn.parse(quotaError)).toBe('Storage quota exceeded (12000 of 10000 bytes used).')
-    expect(parserRu.parse(quotaError)).toBe('Превышен лимит объема хранилища (использовано 12000 из 10000 байт).')
+    expect(parserEn.parse(quotaError)).toBe('Storage quota exceeded (11 KB of 9 KB used).')
+    expect(parserRu.parse(quotaError)).toBe('Превышен лимит хранилища (использовано 11 KB из 9 KB).')
 
     const notFoundError = StorageError.fileNotFound('file-123')
     expect(parserEn.parse(notFoundError)).toBe('The requested file was not found.')
@@ -35,13 +35,13 @@ describe('StorageErrorParser', () => {
 
   it('parses client storage error codes and respects custom message when present', () => {
     const s3Error = StorageError.s3UploadFailed('Connection reset by peer')
-    expect(parserEn.parse(s3Error)).toBe('Connection reset by peer')
+    expect(parserEn.parse(s3Error)).toBe('Failed to upload the file. Please try again.')
 
     const s3ErrorWithoutMessage = StorageError.s3UploadFailed()
-    expect(parserEn.parse(s3ErrorWithoutMessage)).toBe('Upload verification failed.')
+    expect(parserEn.parse(s3ErrorWithoutMessage)).toBe('Failed to upload the file. Please try again.')
 
     const cancelError = StorageError.directUploadCancelled()
-    expect(parserEn.parse(cancelError)).toBe('Upload verification failed.')
+    expect(parserEn.parse(cancelError)).toBe('Upload was cancelled.')
   })
 
   it('supports dynamic language getter function for reactive localizations', () => {
@@ -49,10 +49,10 @@ describe('StorageErrorParser', () => {
     const dynamicParser = new StorageErrorParser(() => currentLanguage)
 
     const error = StorageError.fileSizeExceedsLimit(100)
-    expect(dynamicParser.parse(error)).toBe('The file size exceeds the maximum permitted limit of 100 bytes.')
+    expect(dynamicParser.parse(error)).toBe('The file size exceeds the maximum permitted limit of 100 B.')
 
     currentLanguage = new StorageModuleStrings(undefined, CommonLocales.RUSSIAN)
-    expect(dynamicParser.parse(error)).toBe('Размер файла превышает максимально допустимый предел в 100 байт.')
+    expect(dynamicParser.parse(error)).toBe('Размер файла превышает максимально допустимый лимит в 100 B.')
   })
 
   it('returns null for unhandled non-storage error codes', () => {

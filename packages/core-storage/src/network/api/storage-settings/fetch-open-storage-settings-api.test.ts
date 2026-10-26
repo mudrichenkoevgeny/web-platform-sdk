@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestOpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenStorageSettingsApi } from './fetch-open-storage-settings-api'
 
 describe('FetchOpenStorageSettingsApi', () => {
@@ -11,12 +11,7 @@ describe('FetchOpenStorageSettingsApi', () => {
   const api = new FetchOpenStorageSettingsApi(mockHttpClient)
 
   it('fetches open storage settings successfully', async () => {
-    const mockPayload: OpenStorageSettingsPayload = {
-      userQuotaBytes: 104857600,
-      presignedUrlTtlSeconds: 900,
-      maxPendingUploads: 5,
-      allowedMimeTypes: ['image/jpeg', 'image/png']
-    }
+    const mockPayload = createTestOpenStorageSettingsPayload()
 
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 

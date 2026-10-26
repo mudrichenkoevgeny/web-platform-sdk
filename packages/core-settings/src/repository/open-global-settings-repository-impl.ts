@@ -130,7 +130,7 @@ export class OpenGlobalSettingsRepositoryImpl implements OpenGlobalSettingsRepos
 
   private startWebSocketObservation(): void {
     this.webSocketService.observeEvents((frame: SocketFrame) => {
-      if (frame.type === SettingsWebSocketEventTypes.GLOBAL_SETTINGS_UPDATED) {
+      if (frame.type === SettingsWebSocketEventTypes.OPEN_GLOBAL_SETTINGS_UPDATED) {
         try {
           if (frame.payload) {
             const validationResult = openGlobalSettingsPayloadSchema.safeParse(frame.payload)

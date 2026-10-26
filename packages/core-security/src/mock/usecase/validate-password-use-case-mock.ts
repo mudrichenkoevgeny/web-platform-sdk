@@ -1,9 +1,9 @@
 import { appResultFailure, appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { PasswordPolicyValidator } from '@mudrichenkoevgeny/shared-foundation'
 import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
 import { SecurityError } from '@/error/model/security-error'
 import { OpenSecuritySettingsRepositoryMock } from '@/mock/repository/open-security-settings-repository-mock'
-import { PasswordPolicyValidator } from '@/domain/model/password-policy-validator'
 
 /**
  * Mock implementation of {@link ValidatePasswordUseCase} for testing UI components.

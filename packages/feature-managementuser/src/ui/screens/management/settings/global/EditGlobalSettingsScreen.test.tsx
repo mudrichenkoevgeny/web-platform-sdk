@@ -23,11 +23,11 @@ describe('EditGlobalSettingsScreen', () => {
         })
       )
     } as any,
-    saveRemoteGlobalSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    updateManagementGlobalSettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
-    resetRemoteGlobalSettingsUseCase: {
-      execute: vi.fn().mockResolvedValue(appResultSuccess({}))
+    resetManagementGlobalSettingsUseCase: {
+      execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
     } as any,
     onBack: vi.fn()
   })
@@ -47,7 +47,7 @@ describe('EditGlobalSettingsScreen', () => {
     const saveButton = screen.getByRole('button', { name: userStrings.ui.save })
     await user.click(saveButton)
 
-    expect(deps.saveRemoteGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.updateManagementGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
@@ -66,7 +66,7 @@ describe('EditGlobalSettingsScreen', () => {
     const resetButton = screen.getByRole('button', { name: userStrings.ui.resetToDefaults })
     await user.click(resetButton)
 
-    expect(deps.resetRemoteGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.resetManagementGlobalSettingsUseCase.execute).toHaveBeenCalledTimes(1)
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 })

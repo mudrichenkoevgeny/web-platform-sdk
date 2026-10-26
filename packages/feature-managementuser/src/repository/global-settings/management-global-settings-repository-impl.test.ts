@@ -17,7 +17,7 @@ describe('ManagementGlobalSettingsRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new ManagementGlobalSettingsApiMock()
     mockApi.getManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
-    mockApi.updateManagementGlobalSettingsResult = appResultSuccess(undefined)
+    mockApi.updateManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
     mockApi.resetManagementGlobalSettingsResult = appResultSuccess(mockSettingsPayload)
 
     vi.spyOn(mockApi, 'getManagementGlobalSettings')

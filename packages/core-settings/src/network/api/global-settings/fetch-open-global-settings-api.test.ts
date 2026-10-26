@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestOpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenGlobalSettingsApi } from './fetch-open-global-settings-api'
 
 describe('FetchOpenGlobalSettingsApi', () => {
@@ -11,11 +11,7 @@ describe('FetchOpenGlobalSettingsApi', () => {
   const api = new FetchOpenGlobalSettingsApi(mockHttpClient)
 
   it('fetches open global settings successfully', async () => {
-    const mockPayload: OpenGlobalSettingsPayload = {
-      userRegistrationEnabled: true,
-      defaultUserRole: 'CLIENT',
-      defaultLocale: 'en'
-    }
+    const mockPayload = createTestOpenGlobalSettingsPayload()
 
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 

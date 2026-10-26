@@ -1,18 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestOpenGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedOpenGlobalSettingsStorage } from '@/storage/global-settings/encrypted-open-global-settings-storage'
-import type { OpenGlobalSettings } from '@/domain/model/open-global-settings'
 
 describe('EncryptedOpenGlobalSettingsStorage', () => {
-  const sampleSettings: OpenGlobalSettings = {
-    privacyPolicyUrl: 'https://example.com/privacy',
-    termsOfServiceUrl: 'https://example.com/terms',
-    contactSupportEmail: 'support@example.com',
-    minSupportedAppVersions: {
-      android: '1.0.0',
-      ios: '1.0.0'
-    }
-  }
+  const sampleSettings = createTestOpenGlobalSettings()
 
   it('returns null when settings are not present in storage', async () => {
     const encryptedSettings = new EncryptedSettingsMock()

@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { StorageWebSocketEventTypes, type OpenStorageSettingsPayload, type OpenStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  StorageWebSocketEventTypes,
+  createTestOpenStorageSettingsPayload,
+  createTestOpenStorageSettings,
+  toOpenStorageSettings
+} from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenStorageSettingsApi } from '../../network/api/storage-settings/open-storage-settings-api'
 import type { OpenStorageSettingsStorage } from '../../storage/storage-settings/open-storage-settings-storage'
 import { OpenStorageSettingsRepositoryImpl } from './open-storage-settings-repository-impl'
@@ -12,19 +17,8 @@ describe('OpenStorageSettingsRepositoryImpl', () => {
   let mockWebSocketService: WebSocketService
   let wsCallback: ((frame: SocketFrame) => void) | null = null
 
-  const mockPayload: OpenStorageSettingsPayload = {
-    userQuotaBytes: 104857600,
-    presignedUrlTtlSeconds: 900,
-    maxPendingUploads: 5,
-    allowedMimeTypes: ['image/jpeg', 'image/png']
-  }
-
-  const mockDomainSettings: OpenStorageSettings = {
-    userQuotaBytes: 104857600,
-    presignedUrlTtlSeconds: 900,
-    maxPendingUploads: 5,
-    allowedMimeTypes: ['image/jpeg', 'image/png']
-  }
+  const mockPayload = createTestOpenStorageSettingsPayload()
+  const mockDomainSettings = createTestOpenStorageSettings()
 
   beforeEach(() => {
     wsCallback = null
@@ -73,12 +67,10 @@ describe('OpenStorageSettingsRepositoryImpl', () => {
     const repo = new OpenStorageSettingsRepositoryImpl(mockApi, mockStorage, mockWebSocketService)
     await repo.getOpenStorageSettings()
 
-    const updatedPayload = {
-      user_quota_bytes: 209715200,
-      presigned_url_ttl_seconds: 1800,
-      max_pending_uploads: 10,
-      allowed_mime_types: ['image/jpeg', 'image/png', 'application/pdf']
-    }
+    const updatedPayload = createTestOpenStorageSettingsPayload({
+      min_upload_size_bytes: 1024,
+      max_upload_size_bytes: 209715200
+    })
 
     if (wsCallback) {
       wsCallback({
@@ -90,11 +82,6 @@ describe('OpenStorageSettingsRepositoryImpl', () => {
       })
     }
 
-    expect(mockStorage.updateOpenStorageSettings).toHaveBeenCalledWith({
-      userQuotaBytes: 209715200,
-      presignedUrlTtlSeconds: 1800,
-      maxPendingUploads: 10,
-      allowedMimeTypes: ['image/jpeg', 'image/png', 'application/pdf']
-    })
+    expect(mockStorage.updateOpenStorageSettings).toHaveBeenCalledWith(toOpenStorageSettings(updatedPayload))
   })
 })

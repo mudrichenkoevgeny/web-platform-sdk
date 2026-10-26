@@ -6,7 +6,7 @@ import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/
 /** Mock implementation of {@link ManagementGlobalSettingsApi}. */
 export class ManagementGlobalSettingsApiMock implements ManagementGlobalSettingsApi {
   public getResult: AppResult<ManagementGlobalSettingsPayload, AppError> = appResultFailure(CommonError.unknown())
-  public updateResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
+  public updateResult: AppResult<ManagementGlobalSettingsPayload, AppError> = appResultFailure(CommonError.unknown())
   public resetResult: AppResult<ManagementGlobalSettingsPayload, AppError> = appResultFailure(CommonError.unknown())
 
   public get getManagementGlobalSettingsResult() {
@@ -18,7 +18,7 @@ export class ManagementGlobalSettingsApiMock implements ManagementGlobalSettings
   public get updateManagementGlobalSettingsResult() {
     return this.updateResult
   }
-  public set updateManagementGlobalSettingsResult(val: AppResult<void, AppError>) {
+  public set updateManagementGlobalSettingsResult(val: AppResult<ManagementGlobalSettingsPayload, AppError>) {
     this.updateResult = val
   }
   public get resetManagementGlobalSettingsResult() {
@@ -34,7 +34,7 @@ export class ManagementGlobalSettingsApiMock implements ManagementGlobalSettings
 
   public async updateManagementGlobalSettings(
     _request: ManagementGlobalSettingsPayload
-  ): Promise<AppResult<void, AppError>> {
+  ): Promise<AppResult<ManagementGlobalSettingsPayload, AppError>> {
     return this.updateResult
   }
 

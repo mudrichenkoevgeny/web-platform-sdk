@@ -16,9 +16,9 @@ export interface ManagementAuthSettingsRepository {
    * Pushes authSettings to the remote server and updates local storage and observers on success.
    *
    * @param authSettings - New configuration payload to apply
-   * @returns Empty success indicator, or an error result
+   * @returns Fresh ManagementAuthSettings on success, or an error result
    */
-  saveRemoteManagementAuthSettings(authSettings: ManagementAuthSettings): Promise<AppResult<void, AppError>>
+  saveRemoteManagementAuthSettings(authSettings: ManagementAuthSettings): Promise<AppResult<ManagementAuthSettings, AppError>>
 
   /**
    * Resets auth settings on the remote server to default values and updates local state.

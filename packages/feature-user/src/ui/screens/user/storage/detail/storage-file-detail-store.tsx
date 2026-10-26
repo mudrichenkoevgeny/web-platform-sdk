@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
-import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { toUserIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageFilePrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { GetFileDetailUseCase } from '@/usecase/storage/get-file-detail-use-case'
@@ -51,10 +52,16 @@ export type StorageFileDetailScreenState =
 export interface StorageFileDetailStoreDependencies {
   /** Unique identifier of the target storage file. */
   fileId: string
+  /** Optional currently authenticated user ID. */
+  currentUserId?: UserId | null
   /** Use case execution contract for retrieving storage file details. */
   getFileDetailUseCase: Pick<GetFileDetailUseCase, 'execute'>
   /** Optional use case execution contract for deleting a storage file. */
   deleteFileUseCase?: Pick<DeleteFileUseCase, 'execute'>
+  /** Optional callback to navigate to user detail screen. */
+  onNavigateToUserDetail?: (userId: UserId) => void
+  /** Optional callback to navigate to current user main screen. */
+  onNavigateToUserMain?: () => void
   /** Callback invoked when user triggers back navigation. */
   onBack: () => void
 }
@@ -73,6 +80,8 @@ export interface StorageFileDetailStoreState {
   onCopyUrlClick: () => void
   /** Triggers deletion of the storage file via `deleteFileUseCase`. */
   onDeleteClick: () => Promise<void>
+  /** Handles click on file owner user ID. */
+  onUserClick: () => void
   /** Triggers navigation back to the previous screen. */
   onBackClick: () => void
 }
@@ -161,6 +170,26 @@ export const createStorageFileDetailStore = (
         if (latest.status === StorageFileDetailStatus.CONTENT) {
           set({ screenState: { ...latest, isDeleting: false, deleteError: deleteResult.error } })
         }
+      }
+    },
+
+    onUserClick: () => {
+      const current = get().screenState
+      if (current.status !== StorageFileDetailStatus.CONTENT || !current.file.ownerUserId) {
+        return
+      }
+      const activeDeps = get().dependencies
+      const ownerUserId = toUserIdOrNull(current.file.ownerUserId)
+      if (!ownerUserId) {
+        return
+      }
+
+      if (activeDeps.currentUserId != null && ownerUserId === activeDeps.currentUserId) {
+        activeDeps.onNavigateToUserMain?.()
+      } else if (activeDeps.onNavigateToUserDetail) {
+        activeDeps.onNavigateToUserDetail(ownerUserId)
+      } else {
+        activeDeps.onNavigateToUserMain?.()
       }
     },
 

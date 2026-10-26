@@ -12,7 +12,8 @@ export class ManagementSecuritySettingsRepositoryMock implements ManagementSecur
   public resultProvider: () => Promise<AppResult<ManagementSecuritySettings, AppError>> = async () =>
     appResultSuccess(this.settings)
 
-  public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)
+  public saveResultProvider: (securitySettings: ManagementSecuritySettings) => Promise<AppResult<ManagementSecuritySettings, AppError>> = async (securitySettings) =>
+    appResultSuccess(securitySettings)
 
   public resetResultProvider: () => Promise<AppResult<ManagementSecuritySettings, AppError>> = async () =>
     this.resultProvider()
@@ -27,10 +28,10 @@ export class ManagementSecuritySettingsRepositoryMock implements ManagementSecur
 
   public async saveRemoteManagementSecuritySettings(
     securitySettings: ManagementSecuritySettings
-  ): Promise<AppResult<void, AppError>> {
-    const result = await this.saveResultProvider()
+  ): Promise<AppResult<ManagementSecuritySettings, AppError>> {
+    const result = await this.saveResultProvider(securitySettings)
     if (result.success) {
-      this.settings = securitySettings
+      this.settings = result.data
       this.notifyListeners()
     }
     return result

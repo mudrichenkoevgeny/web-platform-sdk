@@ -1,24 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { createTestOpenSecuritySettingsPayload, toOpenSecuritySettings } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedOpenSecuritySettingsStorage } from '@/storage/security-settings/encrypted-open-security-settings-storage'
-import type { OpenSecuritySettings } from '@/domain/model/open-security-settings'
 
 describe('EncryptedOpenSecuritySettingsStorage', () => {
-  const sampleSettings: OpenSecuritySettings = {
-    openPasswordPolicy: {
-      minLength: 8,
-      requireLetter: true,
-      requireUpperCase: true,
-      requireLowerCase: true,
-      requireDigit: true,
-      requireSpecialChar: false
-    },
-    otpConfirmation: {
-      retryAfterSeconds: 60,
-      numberOfSymbols: 6,
-      expirationSeconds: 300
-    }
-  }
+  const sampleSettings = toOpenSecuritySettings(createTestOpenSecuritySettingsPayload())
 
   it('returns null when settings are not present in storage', async () => {
     const encryptedSettings = new EncryptedSettingsMock()

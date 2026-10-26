@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useId } from 'react'
-import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -32,6 +32,7 @@ export const UserDetailTestTags = {
   DISABLE_TOTP_ERROR_TEXT: 'UserDetail_DisableTotpErrorText',
   SESSIONS_BUTTON: 'UserDetail_SessionsButton',
   IDENTIFIERS_BUTTON: 'UserDetail_IdentifiersButton',
+  STORAGE_FILES_BUTTON: 'UserDetail_StorageFilesButton',
   AUDIT_EVENTS_BUTTON: 'UserDetail_AuditEventsButton',
   ACCOUNT_STATUS_SELECT: 'UserDetail_AccountStatusSelect',
   AUTHORITY_LEVEL_INPUT: 'UserDetail_AuthorityLevelInput',
@@ -151,6 +152,7 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onDisableTotpClick = useUserDetailStore((s) => s.onDisableTotpClick)
   const onSessionsClick = useUserDetailStore((s) => s.onSessionsClick)
   const onIdentifiersClick = useUserDetailStore((s) => s.onIdentifiersClick)
+  const onStorageFilesClick = useUserDetailStore((s) => s.onStorageFilesClick)
   const onAuditEventsClick = useUserDetailStore((s) => s.onAuditEventsClick)
   const onRetry = useUserDetailStore((s) => s.onRetry)
   const onBackClick = useUserDetailStore((s) => s.onBackClick)
@@ -249,27 +251,30 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
               />
             )}
 
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <CoreButton
                 type="button"
                 data-testid={UserDetailTestTags.SESSIONS_BUTTON}
                 label={strings.ui.userSessions}
                 onClick={onSessionsClick}
-                className="flex-1"
               />
               <CoreButton
                 type="button"
                 data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
                 label={strings.ui.userIdentifiers}
                 onClick={onIdentifiersClick}
-                className="flex-1"
+              />
+              <CoreButton
+                type="button"
+                data-testid={UserDetailTestTags.STORAGE_FILES_BUTTON}
+                label={storageStrings.ui.storageFileListTitle}
+                onClick={onStorageFilesClick}
               />
               <CoreButton
                 type="button"
                 data-testid={UserDetailTestTags.AUDIT_EVENTS_BUTTON}
                 label={strings.ui.auditLogsTitle}
                 onClick={onAuditEventsClick}
-                className="flex-1"
               />
             </div>
 

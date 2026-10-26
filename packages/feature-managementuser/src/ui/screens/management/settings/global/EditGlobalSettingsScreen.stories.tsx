@@ -18,11 +18,11 @@ const createMockDeps = (): EditGlobalSettingsStoreDependencies => ({
         isVerboseLoggingEnabled: false
       })
   } as any,
-  saveRemoteGlobalSettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  updateManagementGlobalSettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
-  resetRemoteGlobalSettingsUseCase: {
-    execute: async () => appResultSuccess({})
+  resetManagementGlobalSettingsUseCase: {
+    execute: async () => appResultSuccess(undefined)
   } as any,
   onBack: () => {}
 })

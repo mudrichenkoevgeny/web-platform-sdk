@@ -1,15 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestOpenStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedOpenStorageSettingsStorage } from './encrypted-open-storage-settings-storage'
 
 describe('EncryptedOpenStorageSettingsStorage', () => {
-  const sampleSettings: OpenStorageSettings = {
-    userQuotaBytes: 104857600,
-    presignedUrlTtlSeconds: 900,
-    maxPendingUploads: 5,
-    allowedMimeTypes: ['image/jpeg', 'image/png']
-  }
+  const sampleSettings = createTestOpenStorageSettings()
 
   it('returns null when settings are not present in storage', async () => {
     const encryptedSettings = new EncryptedSettingsMock()

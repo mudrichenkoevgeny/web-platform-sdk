@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchManagementStorageSettingsApi } from './fetch-management-storage-settings-api'
 
 describe('FetchManagementStorageSettingsApi', () => {
@@ -10,17 +10,7 @@ describe('FetchManagementStorageSettingsApi', () => {
 
   const api = new FetchManagementStorageSettingsApi(mockHttpClient)
 
-  const mockSettings: ManagementStorageSettingsPayload = {
-    minUploadSizeBytes: 1,
-    maxUploadSizeBytes: 52428800,
-    totalStorageQuotaForOpenUserBytes: 104857600,
-    totalStorageQuotaForManagementUserBytes: 1073741824,
-    presignedUrlExpirationSeconds: 900,
-    maxPendingUploadsForOpenUser: 5,
-    maxPendingUploadsForManagementUser: 20,
-    isDeduplicationEnabled: true,
-    deletedFilesCleanupIntervalSeconds: 86400
-  }
+  const mockSettings = createTestManagementStorageSettingsPayload()
 
   it('calls getManagementStorageSettings and returns payload', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockSettings)

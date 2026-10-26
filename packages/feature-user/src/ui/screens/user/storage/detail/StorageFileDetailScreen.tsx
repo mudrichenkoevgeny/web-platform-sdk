@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react'
-import { StorageModuleStrings, storageStrings, commonStrings, formatByteSize } from '@mudrichenkoevgeny/shared-foundation'
+import { StorageCategory, StorageModuleStrings, storageStrings, commonStrings, formatByteSize } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -25,6 +25,7 @@ import type { StorageFileDetailStoreDependencies } from '@/ui/screens/user/stora
 export const StorageFileDetailTestTags = {
   BACK_BUTTON: 'StorageFileDetail_BackButton',
   TITLE: 'StorageFileDetail_Title',
+  USER_ROW: 'StorageFileDetail_UserRow',
   COPY_URL_BUTTON: 'StorageFileDetail_CopyUrlButton',
   DELETE_BUTTON: 'StorageFileDetail_DeleteButton',
   DELETE_ERROR_TEXT: 'StorageFileDetail_DeleteErrorText'
@@ -36,6 +37,7 @@ const StorageFileDetailContent: React.FC<{ strings?: StorageModuleStrings }> = (
   const screenState = useStorageFileDetailStore((s) => s.screenState)
   const onCopyUrlClick = useStorageFileDetailStore((s) => s.onCopyUrlClick)
   const onDeleteClick = useStorageFileDetailStore((s) => s.onDeleteClick)
+  const onUserClick = useStorageFileDetailStore((s) => s.onUserClick)
   const onBackClick = useStorageFileDetailStore((s) => s.onBackClick)
   const initScreen = useStorageFileDetailStore((s) => s.initScreen)
   const errorParser = useAppErrorParser()
@@ -75,9 +77,9 @@ const StorageFileDetailContent: React.FC<{ strings?: StorageModuleStrings }> = (
 
           <div className="w-full max-w-lg mx-auto flex-1 flex flex-col gap-6">
             <div className="w-full h-64 rounded-xl bg-muted border border-border overflow-hidden flex items-center justify-center relative">
-              {file.category === 'image' ? (
+              {file.category === StorageCategory.IMAGE ? (
                 <img src={file.fileUrl} alt={file.fileName} className="w-full h-full object-contain" />
-              ) : file.category === 'video' ? (
+              ) : file.category === StorageCategory.VIDEO ? (
                 <video src={file.fileUrl} controls className="w-full h-full object-contain" />
               ) : (
                 <CoreIcon src={icons.warning} size={64} className="text-muted-foreground" />
@@ -91,7 +93,19 @@ const StorageFileDetailContent: React.FC<{ strings?: StorageModuleStrings }> = (
               </div>
 
               {file.ownerUserId && (
-                <div className="flex justify-between items-center text-sm">
+                <div
+                  onClick={onUserClick}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onUserClick()
+                    }
+                  }}
+                  className="flex justify-between items-center text-sm p-2 rounded bg-muted/50 hover:bg-accent/40 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                  data-testid={StorageFileDetailTestTags.USER_ROW}
+                >
                   <span className="text-muted-foreground">{strings.ui.ownerUserId}</span>
                   <span className="font-medium text-surface-foreground">{file.ownerUserId}</span>
                 </div>

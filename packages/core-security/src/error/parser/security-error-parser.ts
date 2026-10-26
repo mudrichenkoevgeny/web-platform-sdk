@@ -1,8 +1,9 @@
 import {
   SecurityErrorCodes,
   SecurityErrorArgs,
-  CommonErrorArgs,
   ClientSecurityErrorCodes,
+  PasswordPolicyFailReason,
+  CommonErrorArgs,
   SecurityModuleStrings,
   securityStrings
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -13,6 +14,11 @@ import { getAppErrorArgAsString } from '@mudrichenkoevgeny/web-platform-sdk-core
  * AppErrorParser implementation for security-domain error codes.
  */
 export class SecurityErrorParser implements AppErrorParser {
+  /**
+   * Getter function returning the localized strings for the security module.
+   *
+   * @returns The localized string dictionary for the security module.
+   */
   private readonly getStrings: () => SecurityModuleStrings
 
   /**
@@ -56,6 +62,32 @@ export class SecurityErrorParser implements AppErrorParser {
         return strings.errors.passwordTooWeak
       }
 
+      case PasswordPolicyFailReason.TOO_SHORT:
+        return this.resolveLocalizedString(
+          args,
+          SecurityErrorArgs.PASSWORD_MIN_LENGTH,
+          (min) => strings.errors.passwordTooShort(min),
+          strings.errors.passwordTooShortWithoutArgs
+        )
+
+      case PasswordPolicyFailReason.NO_LETTER:
+        return strings.errors.passwordNoLetter
+
+      case PasswordPolicyFailReason.NO_UPPERCASE:
+        return strings.errors.passwordNoUppercase
+
+      case PasswordPolicyFailReason.NO_LOWERCASE:
+        return strings.errors.passwordNoLowercase
+
+      case PasswordPolicyFailReason.NO_DIGIT:
+        return strings.errors.passwordNoDigit
+
+      case PasswordPolicyFailReason.NO_SPECIAL_CHAR:
+        return strings.errors.passwordNoSpecialChar
+
+      case PasswordPolicyFailReason.TOO_COMMON:
+        return strings.errors.passwordTooCommon
+
       case SecurityErrorCodes.TOTP_ALREADY_ENABLED:
         return strings.errors.totpAlreadyEnabled
 
@@ -63,6 +95,7 @@ export class SecurityErrorParser implements AppErrorParser {
         return strings.errors.totpNotEnabled
 
       case SecurityErrorCodes.MFA_TOKEN_EXPIRED:
+      case SecurityErrorCodes.INVALID_MFA_TOKEN:
         return strings.errors.mfaTokenExpired
 
       case SecurityErrorCodes.RECOVERY_CODE_ALREADY_USED:
@@ -70,9 +103,6 @@ export class SecurityErrorParser implements AppErrorParser {
 
       case SecurityErrorCodes.INVALID_TOTP_CODE:
         return strings.errors.invalidTotpCode
-
-      case SecurityErrorCodes.INVALID_MFA_TOKEN:
-        return strings.errors.invalidMfaToken
 
       case SecurityErrorCodes.IP_NOT_ALLOWED:
         return strings.errors.ipNotAllowed
@@ -85,6 +115,15 @@ export class SecurityErrorParser implements AppErrorParser {
     }
   }
 
+  /**
+   * Resolves a localized string using error arguments, falling back to a message without arguments if the required argument is missing.
+   *
+   * @param args - The arguments record from the AppError.
+   * @param key - The key of the argument to extract.
+   * @param withArgsFormatter - Formatting function to generate the localized string when the argument is present.
+   * @param fallback - The fallback localized string to return if the argument is missing.
+   * @returns The resolved localized string.
+   */
   private resolveLocalizedString(
     args: Record<string, unknown>,
     key: string,

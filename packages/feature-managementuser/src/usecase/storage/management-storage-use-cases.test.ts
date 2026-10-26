@@ -15,7 +15,7 @@ describe('Management Storage File Use Cases', () => {
   }
 
   it('ManagementGetFilesUseCase delegates to repository', async () => {
-    vi.mocked(mockRepo.getFiles).mockResolvedValue(appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalPages: 0 }))
+    vi.mocked(mockRepo.getFiles).mockResolvedValue(appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalCount: 0, totalPages: 0 }))
     const useCase = new ManagementGetFilesUseCase(mockRepo)
 
     const pagedFilesResult = await useCase.execute({ pageNumber: 1 })

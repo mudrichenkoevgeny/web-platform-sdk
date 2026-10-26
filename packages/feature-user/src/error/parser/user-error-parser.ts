@@ -31,15 +31,14 @@ export class UserErrorParser implements AppErrorParser {
 
     switch (appError.code) {
       case UserErrorCodes.INVALID_ACCESS_TOKEN:
-        return strings.errors.invalidAccessToken
-
       case UserErrorCodes.ACCESS_TOKEN_EXPIRED:
-        return strings.errors.accessTokenExpired
+        return strings.errors.invalidSession
 
       case UserErrorCodes.INVALID_REFRESH_TOKEN:
-        return strings.errors.invalidRefreshToken
+        return strings.errors.invalidSession
 
       case UserErrorCodes.INVALID_SESSION:
+      case UserErrorCodes.USER_ILLEGAL_ACCOUNT_STATUS:
         return strings.errors.invalidSession
 
       case UserErrorCodes.USER_BANNED:
@@ -64,20 +63,15 @@ export class UserErrorParser implements AppErrorParser {
       case UserErrorCodes.USER_PENDING_DELETION:
         return strings.errors.pendingDeletion
 
-      case UserErrorCodes.USER_ILLEGAL_ACCOUNT_STATUS:
-        return strings.errors.illegalStatus
-
       case UserErrorCodes.USER_FORBIDDEN:
-        return strings.errors.forbidden
-
       case UserErrorCodes.USER_ROLE_NOT_ALLOWED:
-        return strings.errors.roleNotAllowed
+        return strings.errors.forbidden
 
       case UserErrorCodes.USER_MISSING_PERMISSIONS:
         return strings.errors.missingPermissions
 
       case UserErrorCodes.USER_INSUFFICIENT_AUTHORITY_LEVEL:
-        return strings.errors.insufficientAuthority
+        return strings.errors.roleTooHigh
 
       case UserErrorCodes.USER_NOT_FOUND:
         return strings.errors.notFound
@@ -124,7 +118,7 @@ export class UserErrorParser implements AppErrorParser {
           getAppErrorArgAsString(args, UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS)
         )
 
-      case ClientUserErrorCodes.REGISTRATION_DISABLED:
+      case UserErrorCodes.REGISTRATION_DISABLED:
         return strings.errors.registrationDisabled
 
       case ClientUserErrorCodes.EXTERNAL_AUTH_CANCELLED:

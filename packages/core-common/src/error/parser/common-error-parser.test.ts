@@ -12,8 +12,8 @@ describe('CommonErrorParser', () => {
 
   it('parses UNKNOWN error to internal error message (en & ru)', () => {
     const error = CommonError.unknown()
-    expect(parser.parse(error)).toBe('An error has occurred.')
-    expect(ruParser.parse(error)).toBe('Произошла ошибка.')
+    expect(parser.parse(error)).toBe('An unknown error has occurred.')
+    expect(ruParser.parse(error)).toBe('Произошла неизвестная ошибка.')
   })
 
   it('parses INTERNAL error to internal error message', () => {
@@ -54,8 +54,8 @@ describe('CommonErrorParser', () => {
     const error = new ServerError(testErrorId, CommonErrorCodes.MISSING_REQUIRED_PARAMETER, '', {
       [CommonErrorArgs.PARAMETER_NAME]: 'userId'
     }, false)
-    expect(parser.parse(error)).toBe("The required parameter 'userId' is missing.")
-    expect(ruParser.parse(error)).toBe('Отсутствует обязательный параметр «userId».')
+    expect(parser.parse(error)).toBe("The required field 'userId' is missing.")
+    expect(ruParser.parse(error)).toBe('Отсутствует обязательное поле «userId».')
   })
 
   it('parses MISSING_REQUIRED_FIELD error with arg', () => {
@@ -84,6 +84,6 @@ describe('CommonErrorParser', () => {
     expect(ruParser.parse(errorWithoutMsg)).toBe('Произошла неизвестная ошибка.')
 
     const errorWithMsg = new ServerError(testErrorId, 'UNKNOWN_CUSTOM_CODE', 'Custom error from server', {}, false)
-    expect(parser.parse(errorWithMsg)).toBe('Custom error from server')
+    expect(parser.parse(errorWithMsg)).toBe('An unknown error has occurred.')
   })
 })

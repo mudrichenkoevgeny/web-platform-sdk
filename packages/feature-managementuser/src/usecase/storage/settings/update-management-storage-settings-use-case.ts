@@ -2,24 +2,28 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { ManagementStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementStorageSettingsRepository } from '@/repository/storage/settings/management-storage-settings-repository'
 
-/** Updates management storage settings on the remote server and local state. */
+/**
+ * Pushes updated storage settings to the remote server via {@link ManagementStorageSettingsRepository}.
+ */
 export class UpdateManagementStorageSettingsUseCase {
   /**
    * Constructs a new {@link UpdateManagementStorageSettingsUseCase}.
    *
-   * @param managementStorageSettingsRepository - Management storage settings repository
+   * @param managementStorageSettingsRepository - Repository instance
    */
   public constructor(
     private readonly managementStorageSettingsRepository: ManagementStorageSettingsRepository
   ) {}
 
   /**
-   * Executes the use case.
+   * Pushes updated storage settings and updates local storage on success.
    *
-   * @param storageSettings - New storage configuration payload to apply
-   * @returns Empty success indicator or AppError
+   * @param storageSettings - New settings to apply
+   * @returns AppResult containing updated ManagementStorageSettings on success, or an AppError
    */
-  public async execute(storageSettings: ManagementStorageSettings): Promise<AppResult<void, AppError>> {
+  public async execute(
+    storageSettings: ManagementStorageSettings
+  ): Promise<AppResult<ManagementStorageSettings, AppError>> {
     return this.managementStorageSettingsRepository.saveRemoteManagementStorageSettings(storageSettings)
   }
 }

@@ -50,7 +50,7 @@ export type UserErrorTooManyConfirmationRequests = {
  */
 export type UserErrorRegistrationDisabled = {
   readonly id: ErrorId
-  readonly code: typeof ClientUserErrorCodes.REGISTRATION_DISABLED
+  readonly code: typeof UserErrorCodes.REGISTRATION_DISABLED
   readonly args: null
   readonly isRetryable: false
 }
@@ -130,7 +130,7 @@ export const UserError = {
    */
   registrationDisabled: (): UserErrorRegistrationDisabled => ({
     id: generateErrorId(),
-    code: ClientUserErrorCodes.REGISTRATION_DISABLED,
+    code: UserErrorCodes.REGISTRATION_DISABLED,
     args: null,
     isRetryable: false
   })

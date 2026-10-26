@@ -21,7 +21,7 @@ describe('ManagementAuthSettingsRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new ManagementAuthSettingsApiMock()
     mockApi.getManagementAuthSettingsResult = appResultSuccess(mockManagementAuthSettingsPayload)
-    mockApi.updateManagementAuthSettingsResult = appResultSuccess(undefined)
+    mockApi.updateManagementAuthSettingsResult = appResultSuccess(mockManagementAuthSettingsPayload)
     mockApi.resetManagementAuthSettingsResult = appResultSuccess(mockManagementAuthSettingsPayload)
 
     vi.spyOn(mockApi, 'getManagementAuthSettings')

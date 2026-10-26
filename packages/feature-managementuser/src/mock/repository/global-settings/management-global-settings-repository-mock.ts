@@ -12,7 +12,8 @@ export class ManagementGlobalSettingsRepositoryMock implements ManagementGlobalS
   public resultProvider: () => Promise<AppResult<ManagementGlobalSettings, AppError>> = async () =>
     appResultSuccess(this.settings)
 
-  public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)
+  public saveResultProvider: (globalSettings: ManagementGlobalSettings) => Promise<AppResult<ManagementGlobalSettings, AppError>> = async (globalSettings) =>
+    appResultSuccess(globalSettings)
 
   public resetResultProvider: () => Promise<AppResult<ManagementGlobalSettings, AppError>> = async () =>
     this.resultProvider()
@@ -27,10 +28,10 @@ export class ManagementGlobalSettingsRepositoryMock implements ManagementGlobalS
 
   public async saveRemoteManagementGlobalSettings(
     globalSettings: ManagementGlobalSettings
-  ): Promise<AppResult<void, AppError>> {
-    const result = await this.saveResultProvider()
+  ): Promise<AppResult<ManagementGlobalSettings, AppError>> {
+    const result = await this.saveResultProvider(globalSettings)
     if (result.success) {
-      this.settings = globalSettings
+      this.settings = result.data
       this.notifyListeners()
     }
     return result

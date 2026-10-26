@@ -15,7 +15,8 @@ export class ManagementAuthSettingsRepositoryMock implements ManagementAuthSetti
     return appResultSuccess({} as ManagementAuthSettings)
   }
 
-  public saveResultProvider: () => Promise<AppResult<void, AppError>> = async () => appResultSuccess(undefined)
+  public saveResultProvider: (authSettings: ManagementAuthSettings) => Promise<AppResult<ManagementAuthSettings, AppError>> = async (authSettings) =>
+    appResultSuccess(authSettings)
 
   public resetResultProvider: () => Promise<AppResult<ManagementAuthSettings, AppError>> = async () =>
     this.resultProvider()
@@ -39,10 +40,10 @@ export class ManagementAuthSettingsRepositoryMock implements ManagementAuthSetti
 
   public async saveRemoteManagementAuthSettings(
     authSettings: ManagementAuthSettings
-  ): Promise<AppResult<void, AppError>> {
-    const result = await this.saveResultProvider()
+  ): Promise<AppResult<ManagementAuthSettings, AppError>> {
+    const result = await this.saveResultProvider(authSettings)
     if (result.success) {
-      this.authSettings = authSettings
+      this.authSettings = result.data
       this.notifyListeners()
     }
     return result

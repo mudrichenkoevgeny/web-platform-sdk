@@ -2,22 +2,28 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { ManagementGlobalSettings } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettingsRepository } from '@/repository/global-settings/management-global-settings-repository'
 
-/** Updates global settings on the remote server and local state. */
+/**
+ * Pushes updated global application settings to the remote server via {@link ManagementGlobalSettingsRepository}.
+ */
 export class UpdateManagementGlobalSettingsUseCase {
   /**
    * Constructs a new {@link UpdateManagementGlobalSettingsUseCase}.
    *
-   * @param managementGlobalSettingsRepository - Management global settings repository
+   * @param managementGlobalSettingsRepository - Repository instance
    */
-  public constructor(private readonly managementGlobalSettingsRepository: ManagementGlobalSettingsRepository) {}
+  public constructor(
+    private readonly managementGlobalSettingsRepository: ManagementGlobalSettingsRepository
+  ) {}
 
   /**
-   * Executes the use case.
+   * Pushes updated global settings and updates local storage on success.
    *
-   * @param globalSettings - New global configuration payload to apply
-   * @returns Empty success indicator or AppError
+   * @param globalSettings - New settings to apply
+   * @returns AppResult containing updated ManagementGlobalSettings on success, or an AppError
    */
-  public async execute(globalSettings: ManagementGlobalSettings): Promise<AppResult<void, AppError>> {
+  public async execute(
+    globalSettings: ManagementGlobalSettings
+  ): Promise<AppResult<ManagementGlobalSettings, AppError>> {
     return this.managementGlobalSettingsRepository.saveRemoteManagementGlobalSettings(globalSettings)
   }
 }

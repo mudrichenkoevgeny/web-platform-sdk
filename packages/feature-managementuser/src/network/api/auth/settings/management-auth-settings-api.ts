@@ -14,9 +14,9 @@ export interface ManagementAuthSettingsApi {
    * Updates authentication settings and policies for the current account.
    *
    * @param request - New authentication settings payload
-   * @returns Void result or a mapped failure
+   * @returns Updated ManagementAuthSettingsPayload, or a mapped failure
    */
-  updateManagementAuthSettings(request: ManagementAuthSettingsPayload): Promise<AppResult<void, AppError>>
+  updateManagementAuthSettings(request: ManagementAuthSettingsPayload): Promise<AppResult<ManagementAuthSettingsPayload, AppError>>
 
   /**
    * Resets global authentication settings to default values.

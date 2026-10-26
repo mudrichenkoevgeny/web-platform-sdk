@@ -15,6 +15,7 @@
     "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk-core-storage": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-feature-managementuser": "workspace:*",
     "@mudrichenkoevgeny/web-platform-sdk-feature-user": "workspace:*",
     "@tanstack/react-router": "catalog:",

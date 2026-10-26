@@ -130,7 +130,7 @@ export class OpenSecuritySettingsRepositoryImpl implements OpenSecuritySettingsR
 
   private startWebSocketObservation(): void {
     this.webSocketService.observeEvents((frame: SocketFrame) => {
-      if (frame.type === SecurityWebSocketEventTypes.SECURITY_SETTINGS_UPDATED) {
+      if (frame.type === SecurityWebSocketEventTypes.OPEN_SECURITY_SETTINGS_UPDATED) {
         try {
           if (frame.payload) {
             const validationResult = openSecuritySettingsPayloadSchema.safeParse(frame.payload)
