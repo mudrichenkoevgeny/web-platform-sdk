@@ -159,9 +159,6 @@ export class ManagementAppComponent {
 
       this.managementUserComponent = new ManagementUserComponent({
         commonComponent: this.commonComponent,
-        openGlobalSettingsRepository: this.settingsComponent.globalSettingsRepository,
-        openSecuritySettingsRepository: this.securityComponent.securitySettingsRepository,
-        openStorageSettingsRepository: this.storageComponent.storageSettingsRepository,
         authStorage: this.authStorage,
         authServices,
         compositeActionTypeParser: config.compositeActionTypeParser,

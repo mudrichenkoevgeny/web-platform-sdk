@@ -1,6 +1,6 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementGlobalSettingsPayload, OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementGlobalSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementGlobalSettingsApi } from '@/network/api/global-settings/management-global-settings-api'
 
@@ -12,6 +12,19 @@ export class FetchManagementGlobalSettingsApi implements ManagementGlobalSetting
    * @param client - Network HTTP client
    */
   public constructor(private readonly client: HttpClient) {}
+
+  /**
+   * Retrieves open global settings for unauthenticated management users.
+   *
+   * @returns AppResult containing {@link OpenGlobalSettingsPayload} on success or {@link AppError} on failure
+   */
+  public async getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettingsPayload, AppError>> {
+    return callResult(() =>
+      this.client.request<OpenGlobalSettingsPayload>(
+        ManagementGlobalSettingsRoutes.GET_OPEN_GLOBAL_SETTINGS
+      )
+    )
+  }
 
   /**
    * Retrieves global platform settings for management.

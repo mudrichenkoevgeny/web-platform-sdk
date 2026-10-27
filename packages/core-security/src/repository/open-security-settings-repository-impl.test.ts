@@ -16,7 +16,7 @@ describe('OpenSecuritySettingsRepositoryImpl', () => {
 
   class MockApi implements OpenSecuritySettingsApi {
     public getSecuritySettingsCallCount = 0
-    public async getSecuritySettings(): Promise<AppResult<typeof samplePayload, AppError>> {
+    public async getOpenSecuritySettings(): Promise<AppResult<typeof samplePayload, AppError>> {
       this.getSecuritySettingsCallCount++
       return appResultSuccess(samplePayload)
     }

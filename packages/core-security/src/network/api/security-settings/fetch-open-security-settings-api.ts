@@ -20,7 +20,7 @@ export class FetchOpenSecuritySettingsApi implements OpenSecuritySettingsApi {
    *
    * @returns AppResult wrapping {@link OpenSecuritySettingsPayload}
    */
-  public async getSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
+  public async getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
     return callResult(() =>
       this.httpClient.request<OpenSecuritySettingsPayload>(
         OpenSecuritySettingsRoutes.GET_OPEN_SECURITY_SETTINGS,

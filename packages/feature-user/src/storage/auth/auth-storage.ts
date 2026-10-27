@@ -7,6 +7,13 @@ import type { AccessToken, RefreshToken, SessionToken } from '@mudrichenkoevgeny
  */
 export interface AuthStorage extends AccessTokenProvider {
   /**
+   * Checks whether a valid, non-expired active user session exists in storage.
+   *
+   * @returns True if active access token is present and valid, false otherwise
+   */
+  hasSession(): Promise<boolean>
+
+  /**
    * Retrieves parsed access token domain model, or null if absent or expired.
    *
    * @returns Parsed access token or null

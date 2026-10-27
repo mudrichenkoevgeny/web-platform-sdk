@@ -1,6 +1,6 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementStorageSettingsPayload, OpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementStorageSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementStorageSettingsApi } from '@/network/api/storage/settings/management-storage-settings-api'
 
@@ -12,6 +12,19 @@ export class FetchManagementStorageSettingsApi implements ManagementStorageSetti
    * @param client - Network HTTP client
    */
   public constructor(private readonly client: HttpClient) {}
+
+  /**
+   * Retrieves open storage settings for unauthenticated management users.
+   *
+   * @returns A promise resolving to an {@link AppResult} containing {@link OpenStorageSettingsPayload} or {@link AppError}
+   */
+  public async getOpenStorageSettings(): Promise<AppResult<OpenStorageSettingsPayload, AppError>> {
+    return callResult(() =>
+      this.client.request<OpenStorageSettingsPayload>(
+        ManagementStorageSettingsRoutes.GET_OPEN_STORAGE_SETTINGS
+      )
+    )
+  }
 
   /**
    * Retrieves the platform-wide storage settings.
@@ -29,7 +42,7 @@ export class FetchManagementStorageSettingsApi implements ManagementStorageSetti
   /**
    * Updates global storage settings and category upload limits.
    *
-   * @param settings - The updated settings payload to apply
+   * @param request - The updated settings payload to apply
    * @returns A promise resolving to an {@link AppResult} containing updated {@link ManagementStorageSettingsPayload} or {@link AppError}
    */
   public async updateManagementStorageSettings(

@@ -10,5 +10,5 @@ export interface OpenSecuritySettingsApi {
    *
    * @returns AppResult containing {@link OpenSecuritySettingsPayload} on success or {@link AppError} on failure
    */
-  getSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>>
+  getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>>
 }

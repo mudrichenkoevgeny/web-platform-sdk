@@ -97,7 +97,7 @@ export class OpenAuthSettingsRepositoryImpl implements OpenAuthSettingsRepositor
   }
 
   private async refreshOpenAuthSettingsInternal(): Promise<AppResult<OpenAuthSettings, AppError>> {
-    const result = await this.openAuthSettingsApi.getAuthSettings()
+    const result = await this.openAuthSettingsApi.getOpenAuthSettings()
     const mapped = mapSuccess(result, (payload) => toOpenAuthSettings(payload))
     if (isSuccess(mapped)) {
       await this.applySettingsUpdate(mapped.data)

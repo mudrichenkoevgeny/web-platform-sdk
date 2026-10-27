@@ -12,7 +12,7 @@ export class OpenAuthSettingsApiMock implements OpenAuthSettingsApi {
   )
   public callCount = 0
 
-  public async getAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>> {
+  public async getOpenAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>> {
     this.callCount++
     return this.result
   }

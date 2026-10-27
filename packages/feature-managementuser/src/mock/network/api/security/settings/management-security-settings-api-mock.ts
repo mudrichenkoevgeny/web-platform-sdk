@@ -1,10 +1,11 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementSecuritySettingsPayload, OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementSecuritySettingsApi } from '@/network/api/security/settings/management-security-settings-api'
 
 /** Mock implementation of {@link ManagementSecuritySettingsApi}. */
 export class ManagementSecuritySettingsApiMock implements ManagementSecuritySettingsApi {
+  public openResult: AppResult<OpenSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
   public getResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
   public updateResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
   public resetResult: AppResult<ManagementSecuritySettingsPayload, AppError> = appResultFailure(CommonError.unknown())
@@ -26,6 +27,10 @@ export class ManagementSecuritySettingsApiMock implements ManagementSecuritySett
   }
   public set resetManagementSecuritySettingsResult(val: AppResult<ManagementSecuritySettingsPayload, AppError>) {
     this.resetResult = val
+  }
+
+  public async getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
+    return this.openResult
   }
 
   public async getManagementSecuritySettings(): Promise<AppResult<ManagementSecuritySettingsPayload, AppError>> {

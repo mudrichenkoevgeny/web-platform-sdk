@@ -13,7 +13,7 @@ export class FetchOpenAuthSettingsApi implements OpenAuthSettingsApi {
    */
   public constructor(private readonly client: HttpClient) {}
 
-  public async getAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>> {
+  public async getOpenAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>> {
     return callResult(() =>
       this.client.request<OpenAuthSettingsPayload>(OpenAuthSettingsRoutes.GET_OPEN_AUTH_SETTINGS)
     )

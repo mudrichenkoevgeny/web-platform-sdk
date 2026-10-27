@@ -17,7 +17,7 @@ export const Route = createFileRoute('/auth/login/')({
           <LoginWelcomeScreen
             dependencies={{
               externalLauncher: appComponent.commonComponent.externalLauncher,
-              getOpenGlobalSettingsUseCase: appComponent.settingsComponent.getOpenGlobalSettingsUseCase,
+              getOpenGlobalSettingsUseCase: appComponent.managementUserComponent.getOpenGlobalSettingsUseCase,
               getAvailableUserAuthProvidersUseCase: appComponent.managementUserComponent.getAvailableUserAuthProvidersUseCase,
               loginByGoogleUseCase: null,
               onNavigateToLoginByEmail: () => void navigate({ to: ManagementAuthNavigation.LoginByEmail.ROUTE }),

@@ -13,6 +13,15 @@ export class FetchManagementUserConfigurationApi implements ManagementUserConfig
    */
   public constructor(private readonly client: HttpClient) {}
 
+  public async getOpenUserConfiguration(): Promise<AppResult<ManagementUserConfigurationPayload, AppError>> {
+    return callResult(async () => {
+      const response = await this.client.request<unknown>(
+        ManagementUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
+      )
+      return managementUserConfigurationPayloadSchema.parse(response)
+    })
+  }
+
   public async getManagementUserConfiguration(): Promise<AppResult<ManagementUserConfigurationPayload, AppError>> {
     return callResult(async () => {
       const response = await this.client.request<unknown>(

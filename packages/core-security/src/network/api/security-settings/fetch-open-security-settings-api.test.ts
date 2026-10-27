@@ -15,7 +15,7 @@ describe('FetchOpenSecuritySettingsApi', () => {
 
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
-    const result = await api.getSecuritySettings()
+    const result = await api.getOpenSecuritySettings()
     expect(result.success).toBe(true)
     if (result.success) {
       expect(result.data).toEqual(mockPayload)

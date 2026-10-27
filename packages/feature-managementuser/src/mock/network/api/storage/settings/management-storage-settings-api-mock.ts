@@ -1,5 +1,5 @@
-import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { createTestManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementStorageSettingsPayload, OpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestManagementStorageSettingsPayload, createTestOpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementStorageSettingsApi } from '@/network/api/storage/settings/management-storage-settings-api'
@@ -13,6 +13,13 @@ export class ManagementStorageSettingsApiMock implements ManagementStorageSettin
     private readonly mockPayload?: ManagementStorageSettingsPayload,
     private readonly shouldFail: boolean = false
   ) {}
+
+  public async getOpenStorageSettings(): Promise<AppResult<OpenStorageSettingsPayload, AppError>> {
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
+    return appResultSuccess(createTestOpenStorageSettingsPayload())
+  }
 
   public async getManagementStorageSettings(): Promise<AppResult<ManagementStorageSettingsPayload, AppError>> {
     this.getSettingsCallCount++

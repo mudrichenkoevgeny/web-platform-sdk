@@ -1,6 +1,6 @@
 import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementAuthSettingsPayload, OpenAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { ManagementAuthSettingsRoutes } from '@mudrichenkoevgeny/shared-foundation'
 import type { ManagementAuthSettingsApi } from '@/network/api/auth/settings/management-auth-settings-api'
 
@@ -12,6 +12,12 @@ export class FetchManagementAuthSettingsApi implements ManagementAuthSettingsApi
    * @param client - Network HTTP client
    */
   public constructor(private readonly client: HttpClient) {}
+
+  public async getAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>> {
+    return callResult(() =>
+      this.client.request<OpenAuthSettingsPayload>(ManagementAuthSettingsRoutes.GET_OPEN_AUTH_SETTINGS)
+    )
+  }
 
   public async getManagementAuthSettings(): Promise<AppResult<ManagementAuthSettingsPayload, AppError>> {
     return callResult(() =>

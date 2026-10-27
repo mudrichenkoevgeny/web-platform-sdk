@@ -1,8 +1,15 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementStorageSettingsPayload, OpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Fetch and update storage settings in management scope. */
 export interface ManagementStorageSettingsApi {
+  /**
+   * Loads open storage settings for unauthenticated management users.
+   *
+   * @returns OpenStorageSettingsPayload on success, or an error result
+   */
+  getOpenStorageSettings(): Promise<AppResult<OpenStorageSettingsPayload, AppError>>
+
   /**
    * Loads storage settings.
    *

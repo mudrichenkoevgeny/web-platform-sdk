@@ -13,19 +13,17 @@ import {
 import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import {
   OpenGlobalSettingsRepositoryImpl,
-  FetchOpenGlobalSettingsApi,
-  EncryptedOpenGlobalSettingsStorage
+  EncryptedOpenGlobalSettingsStorage,
+  GetOpenGlobalSettingsUseCase
 } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import {
   OpenSecuritySettingsRepositoryImpl,
-  FetchOpenSecuritySettingsApi,
   EncryptedOpenSecuritySettingsStorage
 } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import {
   OpenStorageSettingsRepositoryImpl,
-  FetchOpenStorageSettingsApi,
   EncryptedOpenStorageSettingsStorage
 } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 
@@ -335,6 +333,7 @@ export class ManagementUserComponent {
   public readonly selfManagementStorageApi: SelfManagementStorageApi
   public readonly selfManagementStorageRepository: SelfManagementStorageRepository
 
+  public readonly getOpenGlobalSettingsUseCase: GetOpenGlobalSettingsUseCase
   public readonly getManagementAuthSettingsUseCase: GetManagementAuthSettingsUseCase
   public readonly refreshManagementAuthSettingsUseCase: RefreshManagementAuthSettingsUseCase
   public readonly updateManagementAuthSettingsUseCase: UpdateManagementAuthSettingsUseCase
@@ -470,30 +469,6 @@ export class ManagementUserComponent {
     this.authServices = config.authServices ?? new UserAuthServicesMock()
     this.confirmationRepository = new ConfirmationRepositoryImpl()
 
-    this.openGlobalSettingsRepository =
-      config.openGlobalSettingsRepository ??
-      new OpenGlobalSettingsRepositoryImpl(
-        new FetchOpenGlobalSettingsApi(this.httpClient),
-        new EncryptedOpenGlobalSettingsStorage(this.encryptedSettings),
-        this.webSocketService
-      )
-
-    this.openSecuritySettingsRepository =
-      config.openSecuritySettingsRepository ??
-      new OpenSecuritySettingsRepositoryImpl(
-        new FetchOpenSecuritySettingsApi(this.httpClient),
-        new EncryptedOpenSecuritySettingsStorage(this.encryptedSettings),
-        this.webSocketService
-      )
-
-    this.openStorageSettingsRepository =
-      config.openStorageSettingsRepository ??
-      new OpenStorageSettingsRepositoryImpl(
-        new FetchOpenStorageSettingsApi(this.httpClient),
-        new EncryptedOpenStorageSettingsStorage(this.encryptedSettings),
-        this.webSocketService
-      )
-
     this.managementAuthSettingsApi =
       config.managementAuthSettingsApi ?? new FetchManagementAuthSettingsApi(this.httpClient)
     this.managementAuthSettingsStorage =
@@ -533,6 +508,30 @@ export class ManagementUserComponent {
       this.managementStorageSettingsStorage,
       this.webSocketService
     )
+
+    this.openGlobalSettingsRepository =
+      config.openGlobalSettingsRepository ??
+      new OpenGlobalSettingsRepositoryImpl(
+        this.managementGlobalSettingsApi,
+        new EncryptedOpenGlobalSettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
+
+    this.openSecuritySettingsRepository =
+      config.openSecuritySettingsRepository ??
+      new OpenSecuritySettingsRepositoryImpl(
+        this.managementSecuritySettingsApi,
+        new EncryptedOpenSecuritySettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
+
+    this.openStorageSettingsRepository =
+      config.openStorageSettingsRepository ??
+      new OpenStorageSettingsRepositoryImpl(
+        this.managementStorageSettingsApi,
+        new EncryptedOpenStorageSettingsStorage(this.encryptedSettings),
+        this.webSocketService
+      )
 
     this.selfManagementLoginApi = new FetchSelfManagementLoginApi(this.httpClient)
     this.selfManagementLoginRepository = new SelfManagementLoginRepositoryImpl(
@@ -627,6 +626,7 @@ export class ManagementUserComponent {
       this.webSocketService
     )
 
+    this.getOpenGlobalSettingsUseCase = new GetOpenGlobalSettingsUseCase(this.openGlobalSettingsRepository)
     this.getManagementAuthSettingsUseCase = new GetManagementAuthSettingsUseCase(this.managementAuthSettingsRepository)
     this.refreshManagementAuthSettingsUseCase = new RefreshManagementAuthSettingsUseCase(this.managementAuthSettingsRepository)
     this.updateManagementAuthSettingsUseCase = new UpdateManagementAuthSettingsUseCase(this.managementAuthSettingsRepository)
@@ -657,7 +657,8 @@ export class ManagementUserComponent {
       this.openGlobalSettingsRepository,
       this.openSecuritySettingsRepository,
       this.openStorageSettingsRepository,
-      this.managementAuthSettingsRepository
+      this.managementAuthSettingsRepository,
+      this.authStorage
     )
 
     this.managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCase(this.managementIdentifierRepository)

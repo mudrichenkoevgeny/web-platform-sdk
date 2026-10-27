@@ -16,6 +16,18 @@ describe('FetchManagementUserConfigurationApi', () => {
     api = new FetchManagementUserConfigurationApi(mockHttpClient)
   })
 
+  it('dispatches getOpenUserConfiguration request', async () => {
+    const mockConfigurationPayload = createTestManagementUserConfigurationPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockConfigurationPayload)
+
+    const result = await api.getOpenUserConfiguration()
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      ManagementUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
+    )
+    expect(result).toEqual({ success: true, data: mockConfigurationPayload })
+  })
+
   it('dispatches getManagementUserConfiguration request', async () => {
     const mockConfigurationPayload = createTestManagementUserConfigurationPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockConfigurationPayload)

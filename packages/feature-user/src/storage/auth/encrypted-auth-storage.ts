@@ -44,6 +44,16 @@ export class EncryptedAuthStorage implements AuthStorage, AccessTokenProvider {
   }
 
   /**
+   * Checks whether an active, non-expired user session exists.
+   *
+   * @returns True if session token is valid and unexpired
+   */
+  public async hasSession(): Promise<boolean> {
+    const tokenModel = await this.getAccessTokenModel()
+    return tokenModel !== null
+  }
+
+  /**
    * Synchronously retrieves the current cached access token string.
    *
    * @returns Access token string or null if unauthenticated

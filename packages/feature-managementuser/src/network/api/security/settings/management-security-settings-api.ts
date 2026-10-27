@@ -1,8 +1,15 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementSecuritySettingsPayload, OpenSecuritySettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Fetch and update security settings in management scope. */
 export interface ManagementSecuritySettingsApi {
+  /**
+   * Loads open security settings for unauthenticated management users.
+   *
+   * @returns OpenSecuritySettingsPayload on success, or an error result
+   */
+  getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>>
+
   /**
    * Loads security configuration.
    *

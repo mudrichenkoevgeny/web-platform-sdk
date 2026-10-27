@@ -1,8 +1,15 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementGlobalSettingsPayload, OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Fetch and update global settings in management scope. */
 export interface ManagementGlobalSettingsApi {
+  /**
+   * Loads open global settings without authentication.
+   *
+   * @returns OpenGlobalSettingsPayload on success, or an error result
+   */
+  getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettingsPayload, AppError>>
+
   /**
    * Loads global application configuration.
    *

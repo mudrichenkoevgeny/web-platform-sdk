@@ -1,8 +1,15 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementAuthSettingsPayload, OpenAuthSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Fetch and update authentication settings for the signed-in user. */
 export interface ManagementAuthSettingsApi {
+  /**
+   * Loads open auth-related settings for unauthenticated management users.
+   *
+   * @returns OpenAuthSettingsPayload DTO, or a mapped failure
+   */
+  getAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>>
+
   /**
    * Loads auth-related settings for the current session.
    *

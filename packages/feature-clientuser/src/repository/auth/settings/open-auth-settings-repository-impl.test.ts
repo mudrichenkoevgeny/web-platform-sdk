@@ -25,7 +25,7 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
   beforeEach(() => {
     mockApi = new OpenAuthSettingsApiMock()
     mockApi.result = appResultSuccess(mockAuthSettingsPayload)
-    vi.spyOn(mockApi, 'getAuthSettings')
+    vi.spyOn(mockApi, 'getOpenAuthSettings')
 
     mockStorage = new OpenAuthSettingsStorageMock()
     vi.spyOn(mockStorage, 'getOpenAuthSettings')
@@ -39,7 +39,7 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
   it('fetches settings from network when cache and storage are empty', async () => {
     const authSettingsResult = await repository.getOpenAuthSettings()
     expect(mockStorage.getOpenAuthSettings).toHaveBeenCalled()
-    expect(mockApi.getAuthSettings).toHaveBeenCalled()
+    expect(mockApi.getOpenAuthSettings).toHaveBeenCalled()
     expect(isSuccess(authSettingsResult)).toBe(true)
   })
 
@@ -49,7 +49,7 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
     const repositoryWithPreload = new OpenAuthSettingsRepositoryImpl(mockApi, mockStorage, mockWsService)
     const preloadSettingsResult = await repositoryWithPreload.getOpenAuthSettings()
 
-    expect(mockApi.getAuthSettings).not.toHaveBeenCalled()
+    expect(mockApi.getOpenAuthSettings).not.toHaveBeenCalled()
     expect(isSuccess(preloadSettingsResult)).toBe(true)
   })
 
@@ -59,7 +59,7 @@ describe('OpenAuthSettingsRepositoryImpl', () => {
 
     const [settingsRefreshResult1, settingsRefreshResult2] = await Promise.all([promise1, promise2])
 
-    expect(mockApi.getAuthSettings).toHaveBeenCalledTimes(1)
+    expect(mockApi.getOpenAuthSettings).toHaveBeenCalledTimes(1)
     expect(isSuccess(settingsRefreshResult1)).toBe(true)
     expect(isSuccess(settingsRefreshResult2)).toBe(true)
   })

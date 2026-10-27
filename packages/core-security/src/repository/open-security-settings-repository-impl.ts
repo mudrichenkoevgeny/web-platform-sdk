@@ -100,7 +100,7 @@ export class OpenSecuritySettingsRepositoryImpl implements OpenSecuritySettingsR
   }
 
   private async refreshOpenSecuritySettingsInternal(): Promise<AppResult<OpenSecuritySettings, AppError>> {
-    const response = await this.api.getSecuritySettings()
+    const response = await this.api.getOpenSecuritySettings()
     return mapSuccess(response, (payload) => {
       const settings = toOpenSecuritySettings(payload)
       void this.applySettingsUpdate(settings)

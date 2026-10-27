@@ -8,5 +8,5 @@ export interface OpenAuthSettingsApi {
    *
    * @returns Settings DTO from the shared contract, or a mapped failure
    */
-  getAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>>
+  getOpenAuthSettings(): Promise<AppResult<OpenAuthSettingsPayload, AppError>>
 }

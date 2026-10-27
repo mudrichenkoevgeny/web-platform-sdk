@@ -26,7 +26,7 @@ export class OpenSecuritySettingsApiMock implements OpenSecuritySettingsApi {
    *
    * @returns Configured mock result or error
    */
-  public async getSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
+  public async getOpenSecuritySettings(): Promise<AppResult<OpenSecuritySettingsPayload, AppError>> {
     this.getSecuritySettingsCallCount++
 
     if (this.shouldFail) {

@@ -13,11 +13,11 @@ describe('FetchOpenAuthSettingsApi', () => {
     api = new FetchOpenAuthSettingsApi(mockHttpClient)
   })
 
-  it('dispatches getAuthSettings request', async () => {
+  it('dispatches getOpenAuthSettings request', async () => {
     const mockAuthSettingsPayload = createTestAvailableAuthProvidersPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthSettingsPayload)
 
-    const result = await api.getAuthSettings()
+    const result = await api.getOpenAuthSettings()
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenAuthSettingsRoutes.GET_OPEN_AUTH_SETTINGS

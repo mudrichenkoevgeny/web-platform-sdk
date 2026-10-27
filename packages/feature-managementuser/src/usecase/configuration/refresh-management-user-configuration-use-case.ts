@@ -3,6 +3,7 @@ import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
 import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import type { AuthStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ManagementAuthSettingsRepository } from '@/repository/auth/settings/management-auth-settings-repository'
 import {
   toManagementGlobalSettings,
@@ -15,8 +16,8 @@ import type { ManagementUserConfigurationApi } from '@/network/api/configuration
 import type { ManagementUserConfiguration } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
- * Fetches the combined management user configuration bundle and, when the network call succeeds, writes each
- * slice into matching repositories (global, security, storage, and auth settings).
+ * Fetches the combined management user configuration bundle (open if unauthenticated, or protected if authenticated)
+ * and, when the network call succeeds, writes each slice into matching repositories.
  */
 export class RefreshManagementUserConfigurationUseCase {
   /**
@@ -27,13 +28,15 @@ export class RefreshManagementUserConfigurationUseCase {
    * @param openSecuritySettingsRepository Persists open security settings from the bundle
    * @param openStorageSettingsRepository Persists open storage settings from the bundle
    * @param managementAuthSettingsRepository Persists management auth settings from the bundle
+   * @param authStorage Auth storage to determine whether active session exists
    */
   public constructor(
     private readonly managementUserConfigurationApi: ManagementUserConfigurationApi,
     private readonly openGlobalSettingsRepository: OpenGlobalSettingsRepository,
     private readonly openSecuritySettingsRepository: OpenSecuritySettingsRepository,
     private readonly openStorageSettingsRepository: OpenStorageSettingsRepository,
-    private readonly managementAuthSettingsRepository: ManagementAuthSettingsRepository
+    private readonly managementAuthSettingsRepository: ManagementAuthSettingsRepository,
+    private readonly authStorage: AuthStorage
   ) {}
 
   /**
@@ -42,7 +45,11 @@ export class RefreshManagementUserConfigurationUseCase {
    * @returns Mapped {@link ManagementUserConfiguration} on success after repositories are updated; error on failure
    */
   public async execute(): Promise<AppResult<ManagementUserConfiguration, AppError>> {
-    const apiResult = await this.managementUserConfigurationApi.getManagementUserConfiguration()
+    const isAuthorized = await this.authStorage.hasSession()
+
+    const apiResult = isAuthorized
+      ? await this.managementUserConfigurationApi.getManagementUserConfiguration()
+      : await this.managementUserConfigurationApi.getOpenUserConfiguration()
 
     if (isSuccess(apiResult)) {
       await this.openGlobalSettingsRepository.updateOpenGlobalSettings(

@@ -19,6 +19,10 @@ export class AuthStorageMock implements AuthStorage {
 
   public isTokensCleared = false
 
+  public async hasSession(): Promise<boolean> {
+    return this.accessToken !== null
+  }
+
   public getAccessToken(): string | null {
     return this.accessToken ?? null
   }
