@@ -5,7 +5,7 @@ import type {
   UploadFileUseCase,
   DeleteFileUseCase,
   DeleteFilesBatchUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
 import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'

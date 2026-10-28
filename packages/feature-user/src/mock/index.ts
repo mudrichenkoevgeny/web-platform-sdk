@@ -62,6 +62,3 @@ export * from './usecase/user/security/enable-totp-use-case-mock.js'
 export * from './usecase/user/security/get-recovery-codes-use-case-mock.js'
 export * from './usecase/user/security/regenerate-recovery-codes-use-case-mock.js'
 export * from './usecase/user/security/setup-totp-use-case-mock.js'
-
-export * from './ui/screen/user/storage/detail/self-storage-file-detail-component-mock.js'
-export * from './ui/screen/user/storage/upload/self-storage-file-upload-component-mock.js'

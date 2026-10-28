@@ -1,12 +1,12 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type {
   PagedResult,
   SelfStorageFileListParams,
   StorageFileSummary
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageRepository } from '@/repository/storage/storage-repository'
 
-/** Fetches a paginated list of storage files uploaded by the authenticated user. */
+/** Fetches a paginated list of storage files. */
 export class GetFilesUseCase {
   /**
    * Constructs a new {@link GetFilesUseCase}.

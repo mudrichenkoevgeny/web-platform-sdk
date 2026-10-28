@@ -8,7 +8,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { StorageFileSummary } from '@mudrichenkoevgeny/shared-foundation'
-import { storageIcons } from '@/assets/icons'
+import { getStorageCategoryIcon, getStorageStatusIcon } from '@/ui/utils/storage-icon-mapper'
 
 /**
  * Test tags dictionary for {@link StorageFileItem}.
@@ -24,34 +24,6 @@ const isStorageCategory = (value: string): value is StorageCategory => {
 
 const isStorageStatus = (value: string): value is StorageFileStatus => {
   return Object.values(StorageFileStatus).some((v) => v === value)
-}
-
-const getCategoryIcon = (category: StorageCategory) => {
-  switch (category) {
-    case StorageCategory.IMAGE:
-      return storageIcons.fileImage
-    case StorageCategory.VIDEO:
-      return storageIcons.fileVideo
-    case StorageCategory.AUDIO:
-      return storageIcons.fileAudio
-    case StorageCategory.DOCUMENT:
-      return storageIcons.fileDocument
-    case StorageCategory.OTHER:
-      return storageIcons.fileOther
-  }
-}
-
-const getStatusIcon = (status: StorageFileStatus) => {
-  switch (status) {
-    case StorageFileStatus.PENDING_UPLOAD:
-      return storageIcons.fileStatusPendingUpload
-    case StorageFileStatus.PROCESSING:
-      return storageIcons.fileStatusProcessing
-    case StorageFileStatus.READY:
-      return storageIcons.fileStatusReady
-    case StorageFileStatus.DELETED:
-      return storageIcons.fileStatusDeleted
-  }
 }
 
 /**
@@ -126,12 +98,12 @@ export const StorageFileItem = forwardRef<HTMLDivElement, StorageFileItemProps>(
         {...rest}
       >
         <div className="flex items-center gap-3">
-          <CoreIcon src={getCategoryIcon(category)} size={24} className="text-muted-foreground flex-shrink-0" />
+          <CoreIcon src={getStorageCategoryIcon(category)} size={24} className="text-muted-foreground flex-shrink-0" />
           <span className="text-base font-bold text-surface-foreground truncate flex-1">
             {file.fileName}
           </span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-muted text-muted-foreground">
-            <CoreIcon src={getStatusIcon(status)} size={14} className="flex-shrink-0" />
+            <CoreIcon src={getStorageStatusIcon(status)} size={14} className="flex-shrink-0" />
             <span className="capitalize">{file.status}</span>
           </div>
           <span className="px-2 py-0.5 rounded text-xs font-semibold bg-muted text-muted-foreground uppercase">

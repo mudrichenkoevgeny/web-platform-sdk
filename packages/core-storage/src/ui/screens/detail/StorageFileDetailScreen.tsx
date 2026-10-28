@@ -183,7 +183,13 @@ const StorageFileDetailContent: React.FC<StorageFileDetailContentProps> = ({
 
           {showDeleteConfirmation && (
             <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-              <button type="button" onClick={onDismissDeleteDialog} className="absolute inset-0 bg-transparent cursor-default border-none outline-none" />
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label={commonModuleStrings.ui.no}
+                onClick={onDismissDeleteDialog}
+                className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
+              />
               <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
                 <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteFile}</h3>
                 <p className="text-sm text-muted-foreground">{strings.ui.deleteFileConfirm}</p>

@@ -41,22 +41,7 @@ export const StorageFileUploadAreaTestTags = {
   CATEGORY_SELECT: 'StorageFileUploadArea_CategorySelect'
 }
 
-import { storageIcons } from '@/assets/icons'
-
-const getCategoryIcon = (category: StorageCategory) => {
-  switch (category) {
-    case StorageCategory.IMAGE:
-      return storageIcons.fileImage
-    case StorageCategory.VIDEO:
-      return storageIcons.fileVideo
-    case StorageCategory.AUDIO:
-      return storageIcons.fileAudio
-    case StorageCategory.DOCUMENT:
-      return storageIcons.fileDocument
-    case StorageCategory.OTHER:
-      return storageIcons.fileOther
-  }
-}
+import { getStorageCategoryIcon } from '@/ui/utils/storage-icon-mapper'
 
 const isStorageCategory = (value: string): value is StorageCategory => {
   return Object.values(StorageCategory).some((v) => v === value)
@@ -98,7 +83,7 @@ const FilePreview: React.FC<{ file: File; category: StorageCategory }> = ({ file
 
   return (
     <div className="w-12 h-12 rounded-md bg-muted border border-border flex items-center justify-center shrink-0">
-      <CoreIcon src={getCategoryIcon(category)} size={24} className="text-muted-foreground" />
+      <CoreIcon src={getStorageCategoryIcon(category)} size={24} className="text-muted-foreground" />
     </div>
   )
 }

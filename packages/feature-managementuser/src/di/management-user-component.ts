@@ -157,7 +157,7 @@ import {
   UploadFileUseCase,
   DeleteFileUseCase,
   DeleteFilesBatchUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 
 import { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/management-delete-all-user-sessions-use-case'
 import { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'

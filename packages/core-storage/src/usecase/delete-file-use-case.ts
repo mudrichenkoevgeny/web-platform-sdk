@@ -1,7 +1,7 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import type { StorageRepository } from '@/repository/storage/storage-repository'
 
-/** Deletes a specific file uploaded by the authenticated user. */
+/** Deletes a specific storage file. */
 export class DeleteFileUseCase {
   /**
    * Constructs a new {@link DeleteFileUseCase}.

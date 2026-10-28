@@ -94,12 +94,6 @@ export * from './usecase/user/security/get-recovery-codes-use-case.js'
 export * from './usecase/user/security/regenerate-recovery-codes-use-case.js'
 export * from './usecase/user/security/setup-totp-use-case.js'
 
-export * from './usecase/storage/get-files-use-case.js'
-export * from './usecase/storage/get-file-detail-use-case.js'
-export * from './usecase/storage/upload-file-use-case.js'
-export * from './usecase/storage/delete-file-use-case.js'
-export * from './usecase/storage/delete-files-batch-use-case.js'
-
 export * from './ui/components/auth/button/auth-provider-button-mode.js'
 export * from './ui/components/auth/button/AuthProviderButton.js'
 export * from './ui/components/auth/item/AuthProviderItem.js'

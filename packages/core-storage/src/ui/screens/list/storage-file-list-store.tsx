@@ -20,10 +20,8 @@ import { searchParamsToListingStates } from './storage-file-list-search-converte
 
 /**
  * Contract for a usecase that fetches storage files.
- *
- * @template TParams - Query parameters type.
  */
-export interface StorageFileListGetFilesUseCase<TParams = Record<string, unknown>> {
+export interface StorageFileListGetFilesUseCase {
   /**
    * Executes storage file fetch operation.
    *
@@ -31,7 +29,7 @@ export interface StorageFileListGetFilesUseCase<TParams = Record<string, unknown
    * @returns AppResult containing paged storage file summaries.
    */
   execute(
-    params?: (TParams & { pageNumber?: number; ownerUserId?: string }) | null
+    params?: (Record<string, unknown> & { pageNumber?: number; ownerUserId?: string }) | null
   ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>>
 }
 
@@ -135,7 +133,7 @@ export type StorageFileListScreenState =
  */
 export interface StorageFileListStoreDependencies<
   TParams extends Record<string, unknown> = Record<string, unknown>,
-  TGetUseCase extends StorageFileListGetFilesUseCase<TParams> = StorageFileListGetFilesUseCase<TParams>,
+  TGetUseCase extends StorageFileListGetFilesUseCase = StorageFileListGetFilesUseCase,
   TDeleteUseCase extends StorageFileListDeleteFileUseCase = StorageFileListDeleteFileUseCase,
   TBatchDeleteUseCase extends StorageFileListBatchDeleteUseCase = StorageFileListBatchDeleteUseCase
 > {
@@ -161,22 +159,20 @@ export interface StorageFileListStoreDependencies<
 
 /**
  * Internal state and actions contract for {@link StorageFileListStore}.
- *
- * @template TParams - Query parameters type.
  */
-export interface StorageFileListStoreState<TParams extends Record<string, unknown> = Record<string, unknown>> {
+export interface StorageFileListStoreState {
   /** Injected store dependencies. */
-  dependencies: StorageFileListStoreDependencies<TParams>
+  dependencies: StorageFileListStoreDependencies
   /** Current screen UI state. */
   screenState: StorageFileListScreenState
   /** Initializes screen data using optional search parameters. */
-  initScreen: (searchParams?: TParams) => Promise<void>
+  initScreen: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Re-initializes pagination with updated search parameters. */
-  onSearchParamsUpdated: (searchParams?: TParams) => Promise<void>
+  onSearchParamsUpdated: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Fetches and appends the next page of storage files. */
-  onLoadNextPage: (searchParams?: TParams) => Promise<void>
+  onLoadNextPage: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Refreshes the first page of storage files. */
-  onRefresh: (searchParams?: TParams) => Promise<void>
+  onRefresh: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Triggers navigation to upload screen. */
   onUploadClick: () => void
   /** Triggers navigation to detail screen for selected file. */
@@ -186,7 +182,7 @@ export interface StorageFileListStoreState<TParams extends Record<string, unknow
   /** Dismisses delete confirmation dialogs. */
   onDismissDeleteDialog: () => void
   /** Confirms and executes single file deletion. */
-  onConfirmDeleteFile: (searchParams?: TParams) => Promise<void>
+  onConfirmDeleteFile: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Toggles selection status of a single file. */
   toggleSelectFile: (fileId: string) => void
   /** Selects all selectable files in the current page. */
@@ -196,17 +192,17 @@ export interface StorageFileListStoreState<TParams extends Record<string, unknow
   /** Opens confirmation dialog for batch file deletion. */
   onDeleteSelectedFilesClick: () => void
   /** Confirms and executes batch file deletion. */
-  onConfirmBatchDeleteFiles: (searchParams?: TParams) => Promise<void>
+  onConfirmBatchDeleteFiles: (searchParams?: Record<string, unknown>) => Promise<void>
   /** Triggers navigation back. */
   onBackClick: () => void
   /** Toggles filter panel expansion state. */
   onToggleFilterPanel: () => void
 }
 
-function applyLocalDeletion<TParams extends Record<string, unknown>>(
+function applyLocalDeletion(
   current: StorageFileListScreenState & { status: StorageFileListStatus.CONTENT },
   deletedIds: string[],
-  searchParams?: TParams
+  searchParams?: Record<string, unknown>
 ): StorageFileListScreenState {
   const { filterStates } = searchParamsToListingStates(searchParams)
 
@@ -265,43 +261,30 @@ function applyLocalDeletion<TParams extends Record<string, unknown>>(
 
 /**
  * Store instance type returned by {@link createStorageFileListStore}.
- *
- * @template TParams - Query parameters type.
  */
-export type StorageFileListStore<TParams extends Record<string, unknown> = Record<string, unknown>> = StoreApi<
-  StorageFileListStoreState<TParams>
->
+export type StorageFileListStore = StoreApi<StorageFileListStoreState>
 
-type SetState<TParams extends Record<string, unknown>> = StoreApi<StorageFileListStoreState<TParams>>['setState']
-type GetState<TParams extends Record<string, unknown>> = StoreApi<StorageFileListStoreState<TParams>>['getState']
+type SetState = StoreApi<StorageFileListStoreState>['setState']
+type GetState = StoreApi<StorageFileListStoreState>['getState']
 
 /**
  * Factory function creating a Zustand store instance for managing storage file list UI state.
  *
- * @template TParams - Query parameters type.
- * @template TGetUseCase - Fetch usecase execution contract.
- * @template TDeleteUseCase - Single delete usecase execution contract.
- * @template TBatchDeleteUseCase - Batch delete usecase execution contract.
  * @param deps - Storage file list store dependencies.
  * @param initialState - Optional initial screen state override.
  * @returns Initialized Zustand store instance.
  */
-export const createStorageFileListStore = <
-  TParams extends Record<string, unknown> = Record<string, unknown>,
-  TGetUseCase extends StorageFileListGetFilesUseCase<TParams> = StorageFileListGetFilesUseCase<TParams>,
-  TDeleteUseCase extends StorageFileListDeleteFileUseCase = StorageFileListDeleteFileUseCase,
-  TBatchDeleteUseCase extends StorageFileListBatchDeleteUseCase = StorageFileListBatchDeleteUseCase
->(
-  deps: StorageFileListStoreDependencies<TParams, TGetUseCase, TDeleteUseCase, TBatchDeleteUseCase>,
+export const createStorageFileListStore = (
+  deps: StorageFileListStoreDependencies,
   initialState?: StorageFileListScreenState
 ) => {
   let isFetching = false
 
   const fetchPage = async (
-    set: SetState<TParams>,
-    get: GetState<TParams>,
+    set: SetState,
+    get: GetState,
     pageNumber: number,
-    searchParams?: TParams
+    searchParams?: Record<string, unknown>
   ) => {
     if (isFetching) {
       return
@@ -310,7 +293,7 @@ export const createStorageFileListStore = <
 
     try {
       const activeDeps = get().dependencies
-      let queryParams: TParams | undefined = searchParams
+      let queryParams: Record<string, unknown> | undefined = searchParams
 
       if (activeDeps.parseParams && searchParams !== undefined) {
         queryParams = activeDeps.parseParams(toRecord(searchParams))
@@ -377,11 +360,11 @@ export const createStorageFileListStore = <
     }
   }
 
-  return createStore<StorageFileListStoreState<TParams>>()((set, get) => ({
+  return createStore<StorageFileListStoreState>()((set, get) => ({
     dependencies: deps,
     screenState: initialState ?? { status: StorageFileListStatus.LOADING },
 
-    initScreen: async (searchParams?: TParams) => {
+    initScreen: async (searchParams?: Record<string, unknown>) => {
       const current = get().screenState
       if (isFetching || current.status === StorageFileListStatus.CONTENT) {
         return
@@ -390,12 +373,12 @@ export const createStorageFileListStore = <
       await fetchPage(set, get, 1, searchParams)
     },
 
-    onSearchParamsUpdated: async (searchParams?: TParams) => {
+    onSearchParamsUpdated: async (searchParams?: Record<string, unknown>) => {
       set({ screenState: { status: StorageFileListStatus.LOADING } })
       await fetchPage(set, get, 1, searchParams)
     },
 
-    onLoadNextPage: async (searchParams?: TParams) => {
+    onLoadNextPage: async (searchParams?: Record<string, unknown>) => {
       const current = get().screenState
       if (current.status !== StorageFileListStatus.CONTENT || !canLoadMorePages(current.paging)) {
         return
@@ -406,7 +389,7 @@ export const createStorageFileListStore = <
       await fetchPage(set, get, getNextPageNumber(current.paging), searchParams)
     },
 
-    onRefresh: async (searchParams?: TParams) => {
+    onRefresh: async (searchParams?: Record<string, unknown>) => {
       set({ screenState: { status: StorageFileListStatus.LOADING } })
       await fetchPage(set, get, 1, searchParams)
     },
@@ -421,25 +404,35 @@ export const createStorageFileListStore = <
 
     onDeleteFileClick: (fileId: string) => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT || current.actionLoading) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            fileIdToDelete: fileId
+          }
+        })
       }
-      set({ screenState: { ...current, fileIdToDelete: fileId } })
     },
 
     onDismissDeleteDialog: () => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            fileIdToDelete: null,
+            showBatchDeleteConfirmation: false
+          }
+        })
       }
-      set({ screenState: { ...current, fileIdToDelete: null, showBatchDeleteConfirmation: false } })
     },
 
-    onConfirmDeleteFile: async (searchParams?: TParams) => {
+    onConfirmDeleteFile: async (searchParams?: Record<string, unknown>) => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT || current.fileIdToDelete === null) {
+      if (current.status !== StorageFileListStatus.CONTENT || !current.fileIdToDelete) {
         return
       }
+
       const fileId = current.fileIdToDelete
       const activeDeps = get().dependencies
       if (!activeDeps.deleteFileUseCase) {
@@ -447,18 +440,20 @@ export const createStorageFileListStore = <
       }
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
-
       const deleteResult = await activeDeps.deleteFileUseCase.execute(fileId)
+
       if (isSuccess(deleteResult)) {
-        const updatedState = applyLocalDeletion(current, [fileId], searchParams)
-        set({ screenState: updatedState })
+        const latest = get().screenState
+        if (latest.status === StorageFileListStatus.CONTENT) {
+          const updatedState = applyLocalDeletion(latest, [fileId], searchParams)
+          set({ screenState: updatedState })
+        }
       } else {
-        const updated = get().screenState
-        if (updated.status === StorageFileListStatus.CONTENT) {
+        const latest = get().screenState
+        if (latest.status === StorageFileListStatus.CONTENT) {
           set({
             screenState: {
-              ...updated,
-              fileIdToDelete: null,
+              ...latest,
               actionLoading: false,
               actionError: deleteResult.error
             }
@@ -469,92 +464,95 @@ export const createStorageFileListStore = <
 
     toggleSelectFile: (fileId: string) => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        const isSelected = Boolean(current.selectedFileIds[fileId])
+        set({
+          screenState: {
+            ...current,
+            selectedFileIds: {
+              ...current.selectedFileIds,
+              [fileId]: !isSelected
+            }
+          }
+        })
       }
-      const { [fileId]: isSelected, ...rest } = current.selectedFileIds
-      const nextSelected = isSelected ? rest : { ...current.selectedFileIds, [fileId]: true }
-      set({
-        screenState: {
-          ...current,
-          selectedFileIds: nextSelected
-        }
-      })
     },
 
     selectAllFiles: () => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        const allSelected: Record<string, boolean> = {}
+        current.paging.items.forEach((item) => {
+          if (item.status !== StorageFileStatus.DELETED) {
+            allSelected[item.id] = true
+          }
+        })
+        set({
+          screenState: {
+            ...current,
+            selectedFileIds: allSelected
+          }
+        })
       }
-      const allSelected = current.paging.items.reduce<Record<string, boolean>>((acc, item) => {
-        if (item.status !== StorageFileStatus.DELETED) {
-          acc[item.id] = true
-        }
-        return acc
-      }, {})
-      set({
-        screenState: {
-          ...current,
-          selectedFileIds: allSelected
-        }
-      })
     },
 
     clearFileSelection: () => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            selectedFileIds: {}
+          }
+        })
       }
-      set({
-        screenState: {
-          ...current,
-          selectedFileIds: {}
-        }
-      })
     },
 
     onDeleteSelectedFilesClick: () => {
       const current = get().screenState
-      if (current.status !== StorageFileListStatus.CONTENT || current.actionLoading) {
-        return
+      if (current.status === StorageFileListStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            showBatchDeleteConfirmation: true
+          }
+        })
       }
-      const fileIds = Object.keys(current.selectedFileIds).filter((id) => Boolean(current.selectedFileIds[id]))
-      if (fileIds.length === 0) {
-        return
-      }
-      set({ screenState: { ...current, showBatchDeleteConfirmation: true } })
     },
 
-    onConfirmBatchDeleteFiles: async (searchParams?: TParams) => {
+    onConfirmBatchDeleteFiles: async (searchParams?: Record<string, unknown>) => {
       const current = get().screenState
       if (current.status !== StorageFileListStatus.CONTENT) {
         return
       }
-      const activeDeps = get().dependencies
-      if (!activeDeps.deleteFilesBatchUseCase) {
-        return
-      }
-      const fileIds = Object.keys(current.selectedFileIds).filter((id) => Boolean(current.selectedFileIds[id]))
+
+      const fileIds = Object.keys(current.selectedFileIds).filter((id) => current.selectedFileIds[id])
       if (fileIds.length === 0) {
         return
       }
 
-      set({ screenState: { ...current, actionLoading: true, actionError: null } })
+      const activeDeps = get().dependencies
+      if (!activeDeps.deleteFilesBatchUseCase) {
+        return
+      }
 
-      const deleteResult = await activeDeps.deleteFilesBatchUseCase.execute({ fileIds })
-      if (isSuccess(deleteResult)) {
-        const updatedState = applyLocalDeletion(current, fileIds, searchParams)
-        set({ screenState: updatedState })
+      set({ screenState: { ...current, actionLoading: true, actionError: null } })
+      const batchDeleteResult = await activeDeps.deleteFilesBatchUseCase.execute({ fileIds })
+
+      if (isSuccess(batchDeleteResult)) {
+        const latest = get().screenState
+        if (latest.status === StorageFileListStatus.CONTENT) {
+          const updatedState = applyLocalDeletion(latest, fileIds, searchParams)
+          set({ screenState: updatedState })
+        }
       } else {
-        const updated = get().screenState
-        if (updated.status === StorageFileListStatus.CONTENT) {
+        const latest = get().screenState
+        if (latest.status === StorageFileListStatus.CONTENT) {
           set({
             screenState: {
-              ...updated,
-              showBatchDeleteConfirmation: false,
+              ...latest,
               actionLoading: false,
-              actionError: deleteResult.error
+              actionError: batchDeleteResult.error
             }
           })
         }
@@ -579,16 +577,14 @@ export const createStorageFileListStore = <
   }))
 }
 
-const StorageFileListContext = createContext<StoreApi<StorageFileListStoreState<Record<string, unknown>>> | null>(null)
+const StorageFileListContext = createContext<StorageFileListStore | null>(null)
 
 /**
  * Props for {@link StorageFileListProvider}.
- *
- * @template TParams - Query parameters type.
  */
-export interface StorageFileListProviderProps<TParams extends Record<string, unknown> = Record<string, unknown>> {
+export interface StorageFileListProviderProps {
   /** External dependencies injected into the storage file list store. */
-  dependencies: StorageFileListStoreDependencies<TParams>
+  dependencies: StorageFileListStoreDependencies
   /** Optional initial screen state override. */
   initialState?: StorageFileListScreenState
   /** React child elements wrapped by provider context. */
@@ -598,18 +594,15 @@ export interface StorageFileListProviderProps<TParams extends Record<string, unk
 /**
  * React Context Provider creating and binding a {@link StorageFileListStore} instance.
  *
- * @template TParams - Query parameters type.
  * @param props - Component props including dependencies, initial state, and children.
  * @returns Context provider element wrapping child components.
  */
-export const StorageFileListProvider = <TParams extends Record<string, unknown> = Record<string, unknown>>({
+export const StorageFileListProvider: React.FC<StorageFileListProviderProps> = ({
   dependencies,
   initialState,
   children
-}: StorageFileListProviderProps<TParams>) => {
-  const [store] = useState<StoreApi<StorageFileListStoreState<Record<string, unknown>>>>(
-    () => createStorageFileListStore<Record<string, unknown>>(dependencies, initialState)
-  )
+}) => {
+  const [store] = useState(() => createStorageFileListStore(dependencies, initialState))
 
   useEffect(() => {
     store.setState({ dependencies })
@@ -631,7 +624,7 @@ export const StorageFileListProvider = <TParams extends Record<string, unknown> 
  * @throws {Error} If called outside of {@link StorageFileListProvider}.
  */
 export const useStorageFileListStore = <T,>(
-  selector: (state: StorageFileListStoreState<Record<string, unknown>>) => T
+  selector: (state: StorageFileListStoreState) => T
 ): T => {
   const store = useContext(StorageFileListContext)
   if (!store) {

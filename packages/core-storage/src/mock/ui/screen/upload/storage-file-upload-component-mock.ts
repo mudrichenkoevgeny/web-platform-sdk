@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestStorageFilePrivate, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageFileUploadStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import type { StorageFileUploadStoreDependencies } from '@/ui/components/upload/storage-file-upload-store'
 
 /**
  * Creates mock dependencies for {@link StorageFileUploadStore}.
@@ -8,7 +8,7 @@ import type { StorageFileUploadStoreDependencies } from '@mudrichenkoevgeny/web-
  * @param overrides - Optional property overrides for store dependencies
  * @returns Fully constructed {@link StorageFileUploadStoreDependencies} mock instance
  */
-export const selfStorageFileUploadDependenciesMock = (
+export const storageFileUploadDependenciesMock = (
   overrides?: Partial<StorageFileUploadStoreDependencies>
 ): StorageFileUploadStoreDependencies => {
   return {

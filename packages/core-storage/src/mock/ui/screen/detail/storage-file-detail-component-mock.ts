@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestStorageFilePrivate, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageFileDetailStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import type { StorageFileDetailStoreDependencies } from '@/ui/screens/detail/storage-file-detail-store'
 
 /**
  * Creates mock dependencies for {@link StorageFileDetailStore}.
@@ -8,7 +8,7 @@ import type { StorageFileDetailStoreDependencies } from '@mudrichenkoevgeny/web-
  * @param overrides - Optional property overrides for store dependencies
  * @returns Fully constructed {@link StorageFileDetailStoreDependencies} mock instance
  */
-export const selfStorageFileDetailDependenciesMock = (
+export const storageFileDetailDependenciesMock = (
   overrides?: Partial<StorageFileDetailStoreDependencies>
 ): StorageFileDetailStoreDependencies => {
   return {

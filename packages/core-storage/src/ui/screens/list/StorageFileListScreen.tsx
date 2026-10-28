@@ -30,7 +30,10 @@ import {
 } from './storage-file-list-store'
 import type {
   StorageFileListStoreDependencies,
-  StorageFileListScreenState
+  StorageFileListScreenState,
+  StorageFileListGetFilesUseCase,
+  StorageFileListDeleteFileUseCase,
+  StorageFileListBatchDeleteUseCase
 } from './storage-file-list-store'
 
 /**
@@ -319,7 +322,13 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
 
       {screenState.status === StorageFileListStatus.CONTENT && screenState.fileIdToDelete !== null && (
         <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-          <button type="button" onClick={onDismissDeleteDialog} className="absolute inset-0 bg-transparent cursor-default border-none outline-none" />
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={commonModuleStrings.ui.no}
+            onClick={onDismissDeleteDialog}
+            className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
+          />
           <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
             <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteFile}</h3>
             <p className="text-sm text-muted-foreground">{strings.ui.deleteFileConfirm}</p>
@@ -333,7 +342,13 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
 
       {screenState.status === StorageFileListStatus.CONTENT && screenState.showBatchDeleteConfirmation && (
         <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-          <button type="button" onClick={onDismissDeleteDialog} className="absolute inset-0 bg-transparent cursor-default border-none outline-none" />
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={commonModuleStrings.ui.no}
+            onClick={onDismissDeleteDialog}
+            className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
+          />
           <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
             <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteSelected}</h3>
             <p className="text-sm text-muted-foreground">
@@ -354,11 +369,18 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
  * Props for {@link StorageFileListScreen}.
  *
  * @template TParams - Query parameters type.
+ * @template TGetUseCase - Fetch usecase execution contract.
+ * @template TDeleteUseCase - Single delete usecase execution contract.
+ * @template TBatchDeleteUseCase - Batch delete usecase execution contract.
  */
-export interface StorageFileListScreenProps<TParams extends Record<string, unknown> = Record<string, unknown>>
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface StorageFileListScreenProps<
+  TParams extends Record<string, unknown> = Record<string, unknown>,
+  TGetUseCase extends StorageFileListGetFilesUseCase = StorageFileListGetFilesUseCase,
+  TDeleteUseCase extends StorageFileListDeleteFileUseCase = StorageFileListDeleteFileUseCase,
+  TBatchDeleteUseCase extends StorageFileListBatchDeleteUseCase = StorageFileListBatchDeleteUseCase
+> extends React.HTMLAttributes<HTMLDivElement> {
   /** Dependencies injected into the store. */
-  dependencies: StorageFileListStoreDependencies<TParams>
+  dependencies: StorageFileListStoreDependencies<TParams, TGetUseCase, TDeleteUseCase, TBatchDeleteUseCase>
   /** Optional initial screen state. */
   initialState?: StorageFileListScreenState
   /** Optional storage module strings override. */
@@ -380,10 +402,7 @@ export interface StorageFileListScreenProps<TParams extends Record<string, unkno
  * @param ref - Optional forwarding ref bound to root container element.
  * @returns React node rendering storage file list screen.
  */
-export const StorageFileListScreen = forwardRef<
-  HTMLDivElement,
-  StorageFileListScreenProps<Record<string, unknown>>
->(
+export const StorageFileListScreen = forwardRef<HTMLDivElement, StorageFileListScreenProps>(
   (
     {
       dependencies,

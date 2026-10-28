@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageRepository } from '@/repository/storage/storage-repository'
 
 /** Input parameters for uploading a file in the self-service flow. */
 export interface UploadFileParams {
@@ -11,7 +11,7 @@ export interface UploadFileParams {
   onProgress?: (percent: number) => void
 }
 
-/** Executes the complete direct S3 upload flow for the authenticated user. */
+/** Executes the complete direct S3 upload flow. */
 export class UploadFileUseCase {
   /**
    * Constructs a new {@link UploadFileUseCase}.

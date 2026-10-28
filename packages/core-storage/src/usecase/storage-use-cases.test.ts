@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { createTestStorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageRepository } from '@/repository/storage/storage-repository'
 import { GetFilesUseCase } from './get-files-use-case'
 import { GetFileDetailUseCase } from './get-file-detail-use-case'
 import { UploadFileUseCase } from './upload-file-use-case'
@@ -17,7 +18,9 @@ describe('Storage Use Cases', () => {
   }
 
   it('GetFilesUseCase delegates to repository', async () => {
-    vi.mocked(mockRepo.getFiles).mockResolvedValue(appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalCount: 0, totalPages: 0 }))
+    vi.mocked(mockRepo.getFiles).mockResolvedValue(
+      appResultSuccess({ items: [], pageNumber: 1, pageSize: 10, totalElements: 0, totalCount: 0, totalPages: 0 })
+    )
     const useCase = new GetFilesUseCase(mockRepo)
 
     const pagedFilesResult = await useCase.execute({ pageNumber: 1 })
@@ -26,7 +29,8 @@ describe('Storage Use Cases', () => {
   })
 
   it('GetFileDetailUseCase delegates to repository', async () => {
-    vi.mocked(mockRepo.getFileDetail).mockResolvedValue(appResultSuccess({ fileId: 'file-123' } as any))
+    const mockFile = createTestStorageFilePrivate()
+    vi.mocked(mockRepo.getFileDetail).mockResolvedValue(appResultSuccess(mockFile))
     const useCase = new GetFileDetailUseCase(mockRepo)
 
     const fileDetailResult = await useCase.execute('file-123')
@@ -35,7 +39,8 @@ describe('Storage Use Cases', () => {
   })
 
   it('UploadFileUseCase delegates to repository', async () => {
-    vi.mocked(mockRepo.uploadFile).mockResolvedValue(appResultSuccess({ fileId: 'file-123' } as any))
+    const mockFile = createTestStorageFilePrivate()
+    vi.mocked(mockRepo.uploadFile).mockResolvedValue(appResultSuccess(mockFile))
     const useCase = new UploadFileUseCase(mockRepo)
 
     const file = new File(['content'], 'test.png', { type: 'image/png' })
