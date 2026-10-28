@@ -14,6 +14,7 @@ alwaysApply: true
 - **`packages/core-common`:** Native Fetch client, WebSocket lifecycle, `AppError` chain, WebCrypto storage.
 - **`packages/core-settings`:** Settings API, local storage.
 - **`packages/core-security`:** MFA models, security API.
+- **`packages/core-storage`:** File storage API, presigned S3 uploader, storage repository, storage UI screens & Zustand stores.
 - **`packages/feature-user`:** Identity domain, auth session storage.
 - **`packages/feature-clientuser`:** React UI for consumer auth, Tailwind styles, state machines.
 - **`packages/feature-managementuser`:** React UI for admins.

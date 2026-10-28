@@ -32,6 +32,7 @@ web-platform-sdk/
 │   ├── core-common/            # @mudrichenkoevgeny/web-platform-sdk-core-common
 │   ├── core-security/          # @mudrichenkoevgeny/web-platform-sdk-core-security
 │   ├── core-settings/          # @mudrichenkoevgeny/web-platform-sdk-core-settings
+│   ├── core-storage/           # @mudrichenkoevgeny/web-platform-sdk-core-storage
 │   ├── feature-user/           # @mudrichenkoevgeny/web-platform-sdk-feature-user
 │   ├── feature-clientuser/     # @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
 │   └── feature-managementuser/ # @mudrichenkoevgeny/web-platform-sdk-feature-managementuser

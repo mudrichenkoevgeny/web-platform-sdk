@@ -17,6 +17,7 @@ Managed as a monorepo via `pnpm` workspaces:
 | **`core-common`** | Foundation for all SDK packages: native Fetch HTTP client, WebSocket lifecycle management, WebCrypto encrypted storage, Chain of Responsibility error parser, React UI primitives, and design tokens. | [README](packages/core-common/README.md) |
 | **`core-security`** | Password policy validator, open security settings API, WebCrypto security settings cache, real-time WebSocket policy synchronization, and security error parser. | [README](packages/core-security/README.md) |
 | **`core-settings`** | Global application configuration management, Fetch API client, encrypted storage caching, real-time WebSocket settings sync, and Zustand reactive settings store. | [README](packages/core-settings/README.md) |
+| **`core-storage`** | File storage management solution: Fetch API client for storage and presigned S3 uploads, Direct S3 XMLHttpRequest uploader, storage error parser, and Zustand reactive UI components/screens. | [README](packages/core-storage/README.md) |
 | **`feature-user`** | Headless identity and auth domain foundation: Zod schemas, auth token storage (`AuthStorage`), session auto-refresh, TOTP 2FA, session management, multi-identifier linking, and shared React UI screens/components. | [README](packages/feature-user/README.md) |
 | **`feature-clientuser`** | Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, and ready-to-use React login screens. | [README](packages/feature-clientuser/README.md) |
 | **`feature-managementuser`** | Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, and audit inspection UI. | [README](packages/feature-managementuser/README.md) |
@@ -31,12 +32,12 @@ Packages in this repository are published to npm under the `@mudrichenkoevgeny` 
 
 ### For Client (Consumer) Web Applications
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-core-storage @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
 ```
 
 ### For Management / Admin Web Applications
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-core-storage @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
 ```
 
 To include design tokens and component styling, import the stylesheet into your application root:

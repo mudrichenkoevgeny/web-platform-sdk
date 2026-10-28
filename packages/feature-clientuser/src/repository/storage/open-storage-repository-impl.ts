@@ -46,7 +46,7 @@ export class OpenStorageRepositoryImpl implements OpenStorageRepository {
   public async getFiles(
     params?: SelfStorageFileListParams | null
   ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>> {
-    return this.getSelfFiles(params)
+    return this.api.getFiles(params)
   }
 
   /**
@@ -56,28 +56,6 @@ export class OpenStorageRepositoryImpl implements OpenStorageRepository {
    * @returns AppResult containing {@link StorageFilePrivate}
    */
   public async getFileDetail(fileId: string): Promise<AppResult<StorageFilePrivate, AppError>> {
-    return this.getSelfFileDetail(fileId)
-  }
-
-  /**
-   * Fetches a paginated list of files uploaded by current user.
-   *
-   * @param params - Optional listing query and filter parameters
-   * @returns AppResult containing {@link PagedResult} of {@link StorageFileSummary}
-   */
-  public async getSelfFiles(
-    params?: SelfStorageFileListParams | null
-  ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>> {
-    return this.api.getFiles(params)
-  }
-
-  /**
-   * Retrieves detailed private view of a specific file uploaded by current user.
-   *
-   * @param fileId - Unique file identifier
-   * @returns AppResult containing {@link StorageFilePrivate}
-   */
-  public async getSelfFileDetail(fileId: string): Promise<AppResult<StorageFilePrivate, AppError>> {
     return this.api.getFileDetail(fileId)
   }
 

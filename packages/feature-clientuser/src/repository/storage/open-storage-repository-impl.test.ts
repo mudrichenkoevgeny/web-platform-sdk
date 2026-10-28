@@ -31,7 +31,7 @@ describe('OpenStorageRepositoryImpl', () => {
     } as unknown as WebSocketService
   })
 
-  it('maps paged result DTOs to domain models in getSelfFiles', async () => {
+  it('maps paged result DTOs to domain models in getFiles', async () => {
     const mockPagedPayload = {
       items: [
         {
@@ -52,7 +52,7 @@ describe('OpenStorageRepositoryImpl', () => {
     vi.mocked(mockApi.getFiles).mockResolvedValue(appResultSuccess(mockPagedPayload as any))
 
     const repository = new OpenStorageRepositoryImpl(mockApi, mockWebSocketService)
-    const result = await repository.getSelfFiles({ pageNumber: 1 })
+    const result = await repository.getFiles({ pageNumber: 1 })
 
     expect(result.success).toBe(true)
     if (result.success) {

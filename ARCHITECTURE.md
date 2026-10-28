@@ -11,7 +11,7 @@ For detailed domain models, component relationships, and sequence diagrams of sp
 - **[WebSocket Synchronization](docs/architecture/flows/websockets.md)** — `WebWebSocketService` lifecycle, connection management, ping/pong heartbeats, message handler routing (`WebSocketMessageHandler`), and reactive Zustand store updates.
 - **[Security & Password Policy / TOTP / Unlock](docs/architecture/flows/security.md)** — Dynamic password policy validation (`PasswordPolicyValidator`), TOTP MFA lifecycle (setup, QR code, recovery codes), and account recovery (`UnlockRootContainer` for `SECURITY_HOLD`).
 - **[Account & User Management Flows](docs/architecture/flows/account_management_flows.md)** — Active sessions listing & remote revocation, identifier linking & OTP code throttling, password changes, and account deletion scheduling & restoration.
-- **[Encrypted Storage & Platform Infrastructure](docs/architecture/flows/storage_and_platform.md)** — `EncryptedSettings` abstraction (WebCrypto AES-GCM via browser `localStorage`), browser metadata (`DeviceInfoProvider`), external launchers, and pagination infrastructure (`PaginationState`).
+- **[File Storage, Encrypted Persistence & Platform Infrastructure](docs/architecture/flows/storage_and_platform.md)** — Direct S3 presigned upload flow (`uploadFileDirectly`), file WebSocket updates, `EncryptedSettings` abstraction (WebCrypto AES-GCM via browser `localStorage`), browser metadata (`DeviceInfoProvider`), and pagination infrastructure (`PaginationState`).
 
 ---
 
@@ -41,6 +41,7 @@ flowchart TD
         direction TB
         CoreSecurity["core-security\nPassword Policies, Security Storage"]
         CoreSettings["core-settings\nGlobal App Settings, Settings Repository"]
+        CoreStorage["core-storage\nFile Storage, Direct S3 Uploader,\nStorage Repository, Storage Screens"]
         CoreCommon["core-common\nFetch Client, WebWebSocketService, WebCryptoSettings,\nAppErrorParser, Pagination, React Components"]
     end
 
@@ -51,21 +52,25 @@ flowchart TD
     ClientApp --> ClientUser
     ClientApp --> CoreSettings
     ClientApp --> CoreSecurity
+    ClientApp --> CoreStorage
     ClientApp --> CoreCommon
 
     MgmtApp --> MgmtUser
     MgmtApp --> CoreSettings
     MgmtApp --> CoreSecurity
+    MgmtApp --> CoreStorage
     MgmtApp --> CoreCommon
 
     ClientUser --> BaseUser
     ClientUser --> CoreSecurity
     ClientUser --> CoreSettings
+    ClientUser --> CoreStorage
     ClientUser --> CoreCommon
 
     MgmtUser --> BaseUser
     MgmtUser --> CoreSecurity
     MgmtUser --> CoreSettings
+    MgmtUser --> CoreStorage
     MgmtUser --> CoreCommon
 
     BaseUser --> CoreSecurity
@@ -74,6 +79,7 @@ flowchart TD
 
     CoreSecurity --> CoreCommon
     CoreSettings --> CoreCommon
+    CoreStorage --> CoreCommon
 
     CoreCommon -->|HTTP Fetch / WebSockets| Backend
 ```
@@ -98,26 +104,33 @@ graph TD
     %% Core Modules
     CoreSecurity["packages/core-security"]
     CoreSettings["packages/core-settings"]
+    CoreStorage["packages/core-storage"]
     CoreCommon["packages/core-common"]
 
     %% Dependencies
     SampleClient --> FeatureClientUser
     SampleClient --> CoreSettings
     SampleClient --> CoreSecurity
+    SampleClient --> CoreStorage
     SampleClient --> CoreCommon
 
     SampleMgmt --> FeatureMgmtUser
     SampleMgmt --> CoreSettings
     SampleMgmt --> CoreSecurity
+    SampleMgmt --> CoreStorage
     SampleMgmt --> CoreCommon
 
     FeatureClientUser --> FeatureUser
     FeatureClientUser --> CoreSecurity
     FeatureClientUser --> CoreSettings
+    FeatureClientUser --> CoreStorage
     FeatureClientUser --> CoreCommon
 
     FeatureMgmtUser --> FeatureUser
     FeatureMgmtUser --> CoreSecurity
+    FeatureMgmtUser --> CoreSettings
+    FeatureMgmtUser --> CoreStorage
+    FeatureMgmtUser --> CoreCommon
     FeatureMgmtUser --> CoreSettings
     FeatureMgmtUser --> CoreCommon
 

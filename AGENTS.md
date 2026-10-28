@@ -36,6 +36,7 @@ This document is the entry point for architectural and coding standards. These r
 - **`core-common`:** Fetch client bootstrap, WebSocket lifecycle management, `EncryptedSettings` WebCrypto abstraction, Chain of Responsibility error parsing, and shared Design Tokens (`tokens.css` / `tokens.ts`).
 - **`core-security`:** Password policy validation, MFA state primitives, Fetch network client for security settings, and localized security error domains.
 - **`core-settings`:** Global application configuration logic, Fetch network client for global settings, encrypted LocalStorage caching, and Zustand reactive state.
+- **`core-storage`:** File storage management logic, Fetch network client for storage and presigned S3 uploads, Direct S3 XMLHttpRequest uploader, and Zustand reactive UI components.
 
 ### Feature Packages (`packages/feature-*`)
 - **`feature-user`:** Base Identity & Auth logic. Core models (Zod schemas), Zustand stores, use cases, and encrypted token storage.
