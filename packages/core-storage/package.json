@@ -17,13 +17,25 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
   "dependencies": {
     "@mudrichenkoevgeny/shared-foundation": "catalog:",
-    "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*"
+    "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*",
+    "zod": "catalog:",
+    "zustand": "catalog:"
   },
   "devDependencies": {
+    "@storybook/react": "^10.6.1",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@typescript/typescript6": "^6.0.2",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",

@@ -1,4 +1,11 @@
 import type { UserId } from '@mudrichenkoevgeny/shared-foundation'
+import type {
+  GetFilesUseCase,
+  GetFileDetailUseCase,
+  UploadFileUseCase,
+  DeleteFileUseCase,
+  DeleteFilesBatchUseCase
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
 import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'
@@ -52,6 +59,11 @@ export interface ManagementRootStoreDependencies {
   managementGetFileDetailUseCase?: ManagementGetFileDetailUseCase
   managementDeleteFileUseCase: ManagementDeleteFileUseCase
   managementDeleteFilesBatchUseCase: ManagementDeleteFilesBatchUseCase
+  selfManagementGetFilesUseCase?: GetFilesUseCase
+  selfManagementGetFileDetailUseCase?: GetFileDetailUseCase
+  selfManagementUploadFileUseCase?: UploadFileUseCase
+  selfManagementDeleteFileUseCase?: DeleteFileUseCase
+  selfManagementDeleteFilesBatchUseCase?: DeleteFilesBatchUseCase
   getUsersUseCase: GetUsersUseCase
   getUserUseCase: GetUserUseCase
   createUserUseCase: CreateUserUseCase

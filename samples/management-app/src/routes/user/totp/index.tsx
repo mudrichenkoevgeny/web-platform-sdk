@@ -16,7 +16,9 @@ export const Route = createFileRoute('/user/totp/')({
     const navigateUp = useNavigateUp()
     const search = Route.useSearch()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <TotpMainScreen

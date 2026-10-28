@@ -12,7 +12,9 @@ export const Route = createFileRoute('/user/identifiers/$identifierId')({
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <IdentifierDetailScreen

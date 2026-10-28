@@ -10,7 +10,7 @@ import {
   type SelfStorageFileListParams,
   type DeleteFilesBatchRequest
 } from '@mudrichenkoevgeny/shared-foundation'
-import { uploadFileToS3, type StorageApi } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { uploadFileDirectly, type StorageApi } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { OpenStorageRepository } from './open-storage-repository'
 
 /** Observer callback signature for file updates. */
@@ -115,7 +115,7 @@ export class OpenStorageRepositoryImpl implements OpenStorageRepository {
     }
 
     const presigned = presignedResult.data
-    const uploadResult = await uploadFileToS3(presigned.uploadUrl, file, onProgress)
+    const uploadResult = await uploadFileDirectly(presigned.uploadUrl, file, onProgress)
     if (isFailure(uploadResult)) {
       return uploadResult
     }

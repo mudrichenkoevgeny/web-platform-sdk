@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     dts({
       insertTypesEntry: true,
-      include: ['src/**/*.ts']
+      include: ['src/**/*.ts', 'src/**/*.tsx']
     })
   ],
   resolve: {
@@ -24,6 +24,9 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
         '@mudrichenkoevgeny/shared-foundation',
         '@mudrichenkoevgeny/web-platform-sdk-core-common'
       ],

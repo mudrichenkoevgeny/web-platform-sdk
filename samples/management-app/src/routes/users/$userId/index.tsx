@@ -30,6 +30,8 @@ export const Route = createFileRoute('/users/$userId/')({
             navigate({ to: '/users/$userId/identifiers', params: { userId: uid }, search: {} }),
           onNavigateToAuditEvents: (uid) =>
             navigate({ to: '/audit/events', search: (prev) => ({ ...prev, actor_id: [uid] }) }),
+          onNavigateToStorageFiles: (uid) =>
+            navigate({ to: '/storage/files', search: { ownerUserId: uid } }),
           onBack: () => navigateUp({ to: ManagementUsersNavigation.UserList.ROUTE, search: (prev) => prev })
         }}
       />

@@ -3,6 +3,7 @@ import { StorageFileUploadScreen } from '@mudrichenkoevgeny/web-platform-sdk-fea
 import { ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
+/** Route configuration for storage file upload screen. */
 export const Route = createFileRoute('/storage/upload')({
   component: function StorageFileUploadRoute() {
     const { appComponent } = Route.useRouteContext()
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/storage/upload')({
           onUploaded: () => navigateUp({ to: ClientUserNavigation.Main.route }),
           onBack: () => navigateUp({ to: ClientUserNavigation.Main.route })
         }}
+        config={{}}
       />
     )
   }

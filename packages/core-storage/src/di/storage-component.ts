@@ -5,8 +5,8 @@ import type { OpenStorageSettingsApi } from '@/network/api/storage-settings/open
 import { FetchOpenStorageSettingsApi } from '@/network/api/storage-settings/fetch-open-storage-settings-api'
 import type { OpenStorageSettingsRepository } from '@/repository/storage-settings/open-storage-settings-repository'
 import { OpenStorageSettingsRepositoryImpl } from '@/repository/storage-settings/open-storage-settings-repository-impl'
-import { GetOpenStorageSettingsUseCase } from '@/usecase/storage-settings/get-open-storage-settings-use-case'
-import { RefreshOpenStorageSettingsUseCase } from '@/usecase/storage-settings/refresh-open-storage-settings-use-case'
+import { GetOpenStorageSettingsUseCase } from '@/usecase/get-open-storage-settings-use-case'
+import { RefreshOpenStorageSettingsUseCase } from '@/usecase/refresh-open-storage-settings-use-case'
 import { StorageWebSocketMessageHandler } from '@/network/websocket/message-handler/storage-web-socket-message-handler'
 
 /**

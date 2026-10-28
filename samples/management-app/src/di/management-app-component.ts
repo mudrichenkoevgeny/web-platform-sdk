@@ -18,7 +18,7 @@ import {
   SecurityErrorParser
 } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { StorageComponent, StorageErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ManagementUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
 import type {
   AuthStorage,
@@ -206,7 +206,8 @@ export class ManagementAppComponent {
 
     this.commonComponent.init(undefined, [
       new SecurityErrorParser(),
-      new UserErrorParser()
+      new UserErrorParser(),
+      new StorageErrorParser()
     ])
 
     const handlers = [

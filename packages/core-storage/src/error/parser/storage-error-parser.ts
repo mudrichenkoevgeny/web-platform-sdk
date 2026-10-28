@@ -76,6 +76,14 @@ export class StorageErrorParser implements AppErrorParser {
           strings.errors.tooManyPendingUploadsWithoutArgs
         )
 
+      case StorageErrorCodes.MAX_BATCH_UPLOAD_COUNT_EXCEEDED:
+        return this.resolveLocalizedString(
+          args,
+          StorageErrorArgs.MAX_BATCH_UPLOAD_COUNT,
+          (maxBatchUploadCount) => strings.errors.maxBatchUploadCountExceeded(maxBatchUploadCount),
+          strings.errors.maxBatchUploadCountExceededWithoutArgs
+        )
+
       case StorageErrorCodes.PRESIGNED_URL_EXPIRED:
         return strings.errors.presignedUrlExpired
 

@@ -124,7 +124,7 @@ describe('OpenStorageRepositoryImpl', () => {
     }
 
     vi.mocked(mockApi.getPresignedUploadUrl).mockResolvedValue(appResultSuccess(presigned as any))
-    vi.spyOn(CoreStorageModule, 'uploadFileToS3').mockResolvedValue(appResultSuccess(undefined))
+    vi.spyOn(CoreStorageModule, 'uploadFileDirectly').mockResolvedValue(appResultSuccess(undefined))
     vi.mocked(mockApi.confirmUpload).mockResolvedValue(appResultSuccess(confirmedPayload as any))
 
     const result = await repository.uploadFile(file, 'IMAGE', 'PUBLIC', 'AVATAR')
@@ -137,7 +137,7 @@ describe('OpenStorageRepositoryImpl', () => {
       visibility: 'PUBLIC',
       targetScope: 'AVATAR'
     })
-    expect(CoreStorageModule.uploadFileToS3).toHaveBeenCalledWith('https://s3.example.com/upload-99', file, undefined)
+    expect(CoreStorageModule.uploadFileDirectly).toHaveBeenCalledWith('https://s3.example.com/upload-99', file, undefined)
     expect(mockApi.confirmUpload).toHaveBeenCalledWith('file-99')
   })
 

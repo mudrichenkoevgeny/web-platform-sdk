@@ -1,6 +1,6 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestStorageFilePrivate, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageFileDetailStoreDependencies } from '@/ui/screens/user/storage/detail/storage-file-detail-store'
+import type { StorageFileDetailStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 
 /**
  * Creates mock dependencies for {@link StorageFileDetailStore}.

@@ -11,7 +11,9 @@ export const Route = createFileRoute('/user/sessions/')({
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <SelfSessionListScreen

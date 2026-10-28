@@ -50,6 +50,14 @@ export type StorageErrorTooManyPendingUploads = {
   readonly isRetryable: false
 }
 
+/** Error indicating maximum permitted batch upload count was exceeded. */
+export type StorageErrorMaxBatchUploadCountExceeded = {
+  readonly id: ErrorId
+  readonly code: typeof StorageErrorCodes.MAX_BATCH_UPLOAD_COUNT_EXCEEDED
+  readonly args: Record<string, string> | null
+  readonly isRetryable: false
+}
+
 /** Error indicating presigned upload URL has expired. */
 export type StorageErrorPresignedUrlExpired = {
   readonly id: ErrorId
@@ -141,6 +149,7 @@ export type StorageError =
   | StorageErrorUnsupportedStorageCategory
   | StorageErrorStorageQuotaExceeded
   | StorageErrorTooManyPendingUploads
+  | StorageErrorMaxBatchUploadCountExceeded
   | StorageErrorPresignedUrlExpired
   | StorageErrorInvalidUploadToken
   | StorageErrorUploadAlreadyCompleted
@@ -283,6 +292,19 @@ export const StorageError = {
     id: generateErrorId(),
     code: StorageErrorCodes.TOO_MANY_PENDING_UPLOADS,
     args: maxPendingUploads != null ? { [StorageErrorArgs.MAX_PENDING_UPLOADS]: String(maxPendingUploads) } : null,
+    isRetryable: false
+  }),
+
+  /**
+   * Creates a max batch upload count exceeded error.
+   *
+   * @param maxBatchUploadCount - Maximum permitted files in a single batch
+   * @returns {@link StorageErrorMaxBatchUploadCountExceeded}
+   */
+  maxBatchUploadCountExceeded: (maxBatchUploadCount?: number): StorageErrorMaxBatchUploadCountExceeded => ({
+    id: generateErrorId(),
+    code: StorageErrorCodes.MAX_BATCH_UPLOAD_COUNT_EXCEEDED,
+    args: maxBatchUploadCount != null ? { [StorageErrorArgs.MAX_BATCH_UPLOAD_COUNT]: String(maxBatchUploadCount) } : null,
     isRetryable: false
   }),
 

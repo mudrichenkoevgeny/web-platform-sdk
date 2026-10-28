@@ -151,6 +151,13 @@ import { ManagementGetFilesUseCase } from '@/usecase/storage/management-get-file
 import { ManagementGetFileDetailUseCase } from '@/usecase/storage/management-get-file-detail-use-case'
 import { ManagementDeleteFileUseCase } from '@/usecase/storage/management-delete-file-use-case'
 import { ManagementDeleteFilesBatchUseCase } from '@/usecase/storage/management-delete-files-batch-use-case'
+import {
+  GetFilesUseCase,
+  GetFileDetailUseCase,
+  UploadFileUseCase,
+  DeleteFileUseCase,
+  DeleteFilesBatchUseCase
+} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 import { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/management-delete-all-user-sessions-use-case'
 import { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
@@ -359,6 +366,12 @@ export class ManagementUserComponent {
   public readonly managementDeleteFileUseCase: ManagementDeleteFileUseCase
   public readonly managementDeleteFilesBatchUseCase: ManagementDeleteFilesBatchUseCase
 
+  public readonly selfManagementGetFilesUseCase: GetFilesUseCase
+  public readonly selfManagementGetFileDetailUseCase: GetFileDetailUseCase
+  public readonly selfManagementUploadFileUseCase: UploadFileUseCase
+  public readonly selfManagementDeleteFileUseCase: DeleteFileUseCase
+  public readonly selfManagementDeleteFilesBatchUseCase: DeleteFilesBatchUseCase
+
   public readonly refreshManagementUserConfigurationUseCase: RefreshManagementUserConfigurationUseCase
 
   public readonly managementGetIdentifiersUseCase: ManagementGetIdentifiersUseCase
@@ -436,6 +449,11 @@ export class ManagementUserComponent {
       managementGetFileDetailUseCase: this.managementGetFileDetailUseCase,
       managementDeleteFileUseCase: this.managementDeleteFileUseCase,
       managementDeleteFilesBatchUseCase: this.managementDeleteFilesBatchUseCase,
+      selfManagementGetFilesUseCase: this.selfManagementGetFilesUseCase,
+      selfManagementGetFileDetailUseCase: this.selfManagementGetFileDetailUseCase,
+      selfManagementUploadFileUseCase: this.selfManagementUploadFileUseCase,
+      selfManagementDeleteFileUseCase: this.selfManagementDeleteFileUseCase,
+      selfManagementDeleteFilesBatchUseCase: this.selfManagementDeleteFilesBatchUseCase,
       getUsersUseCase: this.getUsersUseCase,
       getUserUseCase: this.getUserUseCase,
       createUserUseCase: this.createUserUseCase,
@@ -616,8 +634,7 @@ export class ManagementUserComponent {
 
     this.managementStorageApi = new FetchManagementStorageApi(this.httpClient)
     this.managementStorageRepository = new ManagementStorageRepositoryImpl(
-      this.managementStorageApi,
-      this.webSocketService
+      this.managementStorageApi
     )
 
     this.selfManagementStorageApi = new FetchSelfManagementStorageApi(this.httpClient)
@@ -651,6 +668,12 @@ export class ManagementUserComponent {
     this.managementGetFileDetailUseCase = new ManagementGetFileDetailUseCase(this.managementStorageRepository)
     this.managementDeleteFileUseCase = new ManagementDeleteFileUseCase(this.managementStorageRepository)
     this.managementDeleteFilesBatchUseCase = new ManagementDeleteFilesBatchUseCase(this.managementStorageRepository)
+
+    this.selfManagementGetFilesUseCase = new GetFilesUseCase(this.selfManagementStorageRepository)
+    this.selfManagementGetFileDetailUseCase = new GetFileDetailUseCase(this.selfManagementStorageRepository)
+    this.selfManagementUploadFileUseCase = new UploadFileUseCase(this.selfManagementStorageRepository)
+    this.selfManagementDeleteFileUseCase = new DeleteFileUseCase(this.selfManagementStorageRepository)
+    this.selfManagementDeleteFilesBatchUseCase = new DeleteFilesBatchUseCase(this.selfManagementStorageRepository)
 
     this.refreshManagementUserConfigurationUseCase = new RefreshManagementUserConfigurationUseCase(
       this.managementUserConfigurationApi,

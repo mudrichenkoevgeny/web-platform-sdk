@@ -8,7 +8,9 @@ export const Route = createFileRoute('/user/totp/recovery')({
     const { appComponent } = Route.useRouteContext()
     const navigateUp = useNavigateUp()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <TotpRecoveryCodesScreen

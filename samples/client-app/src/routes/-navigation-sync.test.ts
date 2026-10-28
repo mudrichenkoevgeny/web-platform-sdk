@@ -58,7 +58,10 @@ describe('Navigation Constants Sync', () => {
       ClientUserNavigation.IdentifierList.ROUTE,
       ClientUserNavigation.SessionList.ROUTE,
       ClientUserNavigation.TotpMain.ROUTE,
-      OpenStorageNavigation.FileList.ROUTE
+      OpenStorageNavigation.Main.route,
+      OpenStorageNavigation.FileList.ROUTE,
+      OpenStorageNavigation.FileDetail.ROUTE,
+      OpenStorageNavigation.FileUpload.ROUTE
     ]
 
     expectedNavigationRoutes.forEach((route) => {

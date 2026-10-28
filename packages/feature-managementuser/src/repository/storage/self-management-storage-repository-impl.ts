@@ -1,6 +1,6 @@
 import type { AppResult, AppError, WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { isFailure } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { uploadFileToS3 } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { uploadFileDirectly } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import {
   StorageWebSocketEventTypes,
   storageFilePrivatePayloadSchema,
@@ -92,7 +92,7 @@ export class SelfManagementStorageRepositoryImpl implements SelfManagementStorag
     }
 
     const presigned = presignedResult.data
-    const uploadResult = await uploadFileToS3(presigned.uploadUrl, file, onProgress)
+    const uploadResult = await uploadFileDirectly(presigned.uploadUrl, file, onProgress)
     if (isFailure(uploadResult)) {
       return uploadResult
     }

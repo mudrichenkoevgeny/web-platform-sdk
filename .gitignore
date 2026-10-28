@@ -53,3 +53,4 @@ Thumbs.db
 .cache/
 .parcel-cache/
 .turbo/
+.tanstack/

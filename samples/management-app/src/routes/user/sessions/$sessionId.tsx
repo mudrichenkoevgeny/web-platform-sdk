@@ -12,7 +12,9 @@ export const Route = createFileRoute('/user/sessions/$sessionId')({
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <SessionDetailScreen

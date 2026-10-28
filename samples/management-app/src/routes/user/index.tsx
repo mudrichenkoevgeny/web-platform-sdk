@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AppType, ManagementAuthNavigation, ManagementSelfUserNavigation, OpenStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { AppType, ManagementAuthNavigation, ManagementSelfUserNavigation, ManagementSelfStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Route configuration for self user main dashboard screen. */
 export const Route = createFileRoute('/user/')({
@@ -8,7 +8,9 @@ export const Route = createFileRoute('/user/')({
     const { appComponent } = Route.useRouteContext()
     const navigate = Route.useNavigate()
 
-    if (!appComponent) return null
+    if (!appComponent) {
+      return null
+    }
 
     return (
       <MainUserScreen
@@ -21,7 +23,7 @@ export const Route = createFileRoute('/user/')({
           onNavigateToTotp: () => navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE }),
           onNavigateToSessions: () => navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE }),
           onNavigateToIdentifiers: () => navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE }),
-          onNavigateToStorage: () => navigate({ to: OpenStorageNavigation.FileList.ROUTE })
+          onNavigateToStorage: () => navigate({ to: ManagementSelfStorageNavigation.FileList.ROUTE })
         }}
       />
     )
