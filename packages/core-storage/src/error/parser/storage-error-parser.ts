@@ -88,6 +88,7 @@ export class StorageErrorParser implements AppErrorParser {
         return strings.errors.presignedUrlExpired
 
       case StorageErrorCodes.INVALID_UPLOAD_TOKEN:
+      case StorageErrorCodes.STORAGE_ERROR:
         return strings.errors.storageError
 
       case StorageErrorCodes.UPLOAD_ALREADY_COMPLETED:

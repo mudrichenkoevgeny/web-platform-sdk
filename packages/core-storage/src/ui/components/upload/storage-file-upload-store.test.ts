@@ -50,8 +50,8 @@ describe('createStorageFileUploadStore', () => {
     const file = new File(['content'], 'test.jpg', { type: 'image/jpeg' })
     store.getState().addFiles([file])
 
-    const localId = store.getState().items[0]!.localId
-    store.getState().removeItem(localId)
+    const itemId = store.getState().items[0]!.id
+    store.getState().removeItem(itemId)
 
     expect(store.getState().items.length).toBe(0)
   })

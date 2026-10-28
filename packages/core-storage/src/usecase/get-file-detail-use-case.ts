@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageRepository } from '@/repository/storage/storage-repository'
+import type { StorageRepository } from '@/repository/storage-repository'
 
 /** Retrieves detailed private view of a specific storage file. */
 export class GetFileDetailUseCase {

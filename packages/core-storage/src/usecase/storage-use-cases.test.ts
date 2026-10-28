@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestStorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageRepository } from '@/repository/storage/storage-repository'
+import type { StorageRepository } from '@/repository/storage-repository'
 import { GetFilesUseCase } from './get-files-use-case'
 import { GetFileDetailUseCase } from './get-file-detail-use-case'
 import { UploadFileUseCase } from './upload-file-use-case'

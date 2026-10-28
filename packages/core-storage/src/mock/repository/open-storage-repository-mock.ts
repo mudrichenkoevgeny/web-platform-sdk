@@ -8,7 +8,7 @@ import type {
   SelfStorageFileListParams
 } from '@mudrichenkoevgeny/shared-foundation'
 import { createTestStorageFilePrivate, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageRepository } from '@/repository/storage/storage-repository'
+import type { StorageRepository } from '@/repository/storage-repository'
 
 /**
  * Mock implementation of {@link StorageRepository} for unit and integration testing.

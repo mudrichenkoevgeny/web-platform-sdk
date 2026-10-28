@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageRepository } from '@/repository/storage/storage-repository'
+import type { StorageRepository } from '@/repository/storage-repository'
 
 /** Deletes a specific storage file. */
 export class DeleteFileUseCase {

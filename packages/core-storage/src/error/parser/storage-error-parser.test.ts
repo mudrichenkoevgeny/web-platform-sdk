@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import {
+  StorageErrorCodes,
+  StorageErrorArgs,
   StorageModuleStrings,
   CommonLocales
 } from '@mudrichenkoevgeny/shared-foundation'
-import { CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { CommonError, generateErrorId } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { StorageErrorParser } from './storage-error-parser'
 import { StorageError } from '../model/storage-error'
 
@@ -16,15 +18,33 @@ describe('StorageErrorParser', () => {
     expect(parserEn.parse(sizeLimitError)).toBe('The file size exceeds the maximum permitted limit of 1 KB.')
     expect(parserRu.parse(sizeLimitError)).toBe('Размер файла превышает максимально допустимый лимит в 1 KB.')
 
-    const quotaError = StorageError.storageQuotaExceeded(10000, 12000)
+    const quotaError = {
+      id: generateErrorId(),
+      code: StorageErrorCodes.STORAGE_QUOTA_EXCEEDED,
+      args: {
+        [StorageErrorArgs.QUOTA_BYTES]: '10000',
+        [StorageErrorArgs.USED_BYTES]: '12000'
+      },
+      isRetryable: false
+    }
     expect(parserEn.parse(quotaError)).toBe('Storage quota exceeded (11 KB of 9 KB used).')
     expect(parserRu.parse(quotaError)).toBe('Превышен лимит хранилища (использовано 11 KB из 9 KB).')
 
-    const notFoundError = StorageError.fileNotFound('file-123')
+    const notFoundError = {
+      id: generateErrorId(),
+      code: StorageErrorCodes.FILE_NOT_FOUND,
+      args: { [StorageErrorArgs.FILE_ID]: 'file-123' },
+      isRetryable: false
+    }
     expect(parserEn.parse(notFoundError)).toBe('The requested file was not found.')
     expect(parserRu.parse(notFoundError)).toBe('Запрошенный файл не найден.')
 
-    const unsupportedCategoryError = StorageError.unsupportedStorageCategory('INVALID')
+    const unsupportedCategoryError = {
+      id: generateErrorId(),
+      code: StorageErrorCodes.UNSUPPORTED_STORAGE_CATEGORY,
+      args: { [StorageErrorArgs.CATEGORY]: 'INVALID' },
+      isRetryable: false
+    }
     expect(parserEn.parse(unsupportedCategoryError)).toBe('The specified storage category is not supported.')
     expect(parserRu.parse(unsupportedCategoryError)).toBe('Указанная категория хранилища не поддерживается.')
 
@@ -37,7 +57,12 @@ describe('StorageErrorParser', () => {
     const sizeLimitWithoutArgs = StorageError.fileSizeExceedsLimit()
     expect(parserEn.parse(sizeLimitWithoutArgs)).toBe('The file size exceeds the maximum permitted limit.')
 
-    const quotaWithoutArgs = StorageError.storageQuotaExceeded()
+    const quotaWithoutArgs = {
+      id: generateErrorId(),
+      code: StorageErrorCodes.STORAGE_QUOTA_EXCEEDED,
+      args: null,
+      isRetryable: false
+    }
     expect(parserEn.parse(quotaWithoutArgs)).toBe('Storage quota limit exceeded.')
   })
 

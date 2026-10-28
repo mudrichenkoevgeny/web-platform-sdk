@@ -2,6 +2,7 @@ import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
 import type { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonStorage } from '@/storage/common/common-storage'
 import { UserAgentParser } from '@/platform/parser/user-agent-parser'
+import { generateUuid } from '@/utils/uuid-utils'
 
 /**
  * Interface providing platform device metadata.
@@ -39,7 +40,7 @@ export class WebClientDeviceInfoProvider implements ClientDeviceInfoProvider {
   public async getClientDeviceInfo(): Promise<ClientDeviceInfoPayload> {
     let rawDeviceId = await this.commonStorage.getDeviceId()
     if (!rawDeviceId) {
-      rawDeviceId = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : this.generateUUID()
+      rawDeviceId = generateUuid()
       await this.commonStorage.updateDeviceId(rawDeviceId)
     }
 
@@ -57,13 +58,5 @@ export class WebClientDeviceInfoProvider implements ClientDeviceInfoProvider {
       app_version: this.appVersion,
       operation_system_version: osName
     }
-  }
-
-  private generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0
-      const v = c === 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
-    })
   }
 }

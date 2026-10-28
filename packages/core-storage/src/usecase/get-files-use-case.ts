@@ -4,7 +4,7 @@ import type {
   SelfStorageFileListParams,
   StorageFileSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageRepository } from '@/repository/storage/storage-repository'
+import type { StorageRepository } from '@/repository/storage-repository'
 
 /** Fetches a paginated list of storage files. */
 export class GetFilesUseCase {
