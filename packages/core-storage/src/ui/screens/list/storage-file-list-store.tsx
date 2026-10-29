@@ -2,12 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import type { StoreApi } from 'zustand'
 import { createStore, useStore } from 'zustand'
 import type {
-  DeleteFilesBatchRequest,
-  PagedResult,
   StorageFileSummary
 } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileStatus } from '@mudrichenkoevgeny/shared-foundation'
-import type { AppError, AppResult, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
   canLoadMorePages,
@@ -18,65 +16,7 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { searchParamsToListingStates } from './storage-file-list-search-converters'
 
-/**
- * Contract for a usecase that fetches storage files.
- */
-export interface StorageFileListGetFilesUseCase {
-  /**
-   * Executes storage file fetch operation.
-   *
-   * @param params - Optional query/filter parameters.
-   * @returns AppResult containing paged storage file summaries.
-   */
-  execute(
-    params?: (Record<string, unknown> & { pageNumber?: number; ownerUserId?: string }) | null
-  ): Promise<AppResult<PagedResult<StorageFileSummary>, AppError>>
-}
-
-/**
- * Contract for a usecase that deletes a single storage file.
- */
-export interface StorageFileListDeleteFileUseCase {
-  /**
-   * Executes single file deletion operation.
-   *
-   * @param fileId - Unique identifier of the target file.
-   * @returns AppResult containing void on success.
-   */
-  execute(fileId: string): Promise<AppResult<void, AppError>>
-}
-
-/**
- * Contract for a usecase that deletes multiple storage files in a batch operation.
- */
-export interface StorageFileListBatchDeleteUseCase {
-  /**
-   * Executes batch file deletion operation.
-   *
-   * @param request - Batch deletion payload containing file IDs.
-   * @returns AppResult containing void on success.
-   */
-  execute(request: DeleteFilesBatchRequest): Promise<AppResult<void, AppError>>
-}
-
-function toRecord(val: unknown): Record<string, string | number | boolean | null | undefined> {
-  if (typeof val !== 'object' || val === null) {
-    return {}
-  }
-  const result: Record<string, string | number | boolean | null | undefined> = {}
-  for (const [key, value] of Object.entries(val)) {
-    if (
-      value === null ||
-      value === undefined ||
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    ) {
-      result[key] = value
-    }
-  }
-  return result
-}
+import type { StorageFileListDataSource } from './storage-file-list-data-source'
 
 /**
  * Status enumeration for {@link StorageFileListScreenState}.
@@ -125,26 +65,14 @@ export type StorageFileListScreenState =
 
 /**
  * Dependencies required to construct and run {@link StorageFileListStore}.
- *
- * @template TParams - Query parameters type.
- * @template TGetUseCase - Fetch usecase execution contract.
- * @template TDeleteUseCase - Single delete usecase execution contract.
- * @template TBatchDeleteUseCase - Batch delete usecase execution contract.
  */
 export interface StorageFileListStoreDependencies<
-  TParams extends Record<string, unknown> = Record<string, unknown>,
-  TGetUseCase extends StorageFileListGetFilesUseCase = StorageFileListGetFilesUseCase,
-  TDeleteUseCase extends StorageFileListDeleteFileUseCase = StorageFileListDeleteFileUseCase,
-  TBatchDeleteUseCase extends StorageFileListBatchDeleteUseCase = StorageFileListBatchDeleteUseCase
+  TParams extends Record<string, unknown> = Record<string, unknown>
 > {
   /** Optional target user or owner ID for filtering user-specific files. */
   userId?: string | null
-  /** Use case execution contract for retrieving storage files. */
-  getFilesUseCase: Pick<TGetUseCase, 'execute'>
-  /** Optional use case execution contract for deleting a single storage file. */
-  deleteFileUseCase?: Pick<TDeleteUseCase, 'execute'>
-  /** Optional use case execution contract for batch deleting storage files. */
-  deleteFilesBatchUseCase?: Pick<TBatchDeleteUseCase, 'execute'>
+  /** Data source wrapper handling use case execution. */
+  dataSource: StorageFileListDataSource
   /** Optional navigation callback to open upload file screen. */
   onNavigateToUpload?: () => void
   /** Optional navigation callback to open file detail screen. */
@@ -153,8 +81,6 @@ export interface StorageFileListStoreDependencies<
   onBack: () => void
   /** Optional callback invoked when search parameters are updated. */
   onSearchParamsChanged?: (params: TParams) => void
-  /** Parser function converting search parameter object to query parameters. */
-  parseParams?: (raw: unknown) => TParams
 }
 
 /**
@@ -293,18 +219,14 @@ export const createStorageFileListStore = (
 
     try {
       const activeDeps = get().dependencies
-      let queryParams: Record<string, unknown> | undefined = searchParams
+      const { sortState, filterStates } = searchParamsToListingStates(searchParams)
 
-      if (activeDeps.parseParams && searchParams !== undefined) {
-        queryParams = activeDeps.parseParams(toRecord(searchParams))
-      }
-
-      const requestParams = Object.assign({}, queryParams, {
+      const filesResult = await activeDeps.dataSource.getFiles({
         pageNumber,
-        ...(activeDeps.userId ? { ownerUserId: activeDeps.userId } : {})
+        sortState,
+        filterStates,
+        ownerUserId: activeDeps.userId
       })
-
-      const filesResult = await activeDeps.getFilesUseCase.execute(requestParams)
 
       if (isSuccess(filesResult)) {
         const current = get().screenState
@@ -314,45 +236,53 @@ export const createStorageFileListStore = (
             : createInitialPaginationState<StorageFileSummary>()
         const nextPaging = appendResultToPaginationState(currentPaging, filesResult.data)
 
-        if (current.status === StorageFileListStatus.CONTENT) {
-          set({
-            screenState: {
-              ...current,
-              paging: nextPaging,
-              actionLoading: false
-            }
-          })
-        } else {
-          set({
-            screenState: {
-              status: StorageFileListStatus.CONTENT,
-              paging: nextPaging,
-              selectedFileIds: {},
-              isFilterPanelExpanded: false,
-              actionLoading: false,
-              actionError: null,
-              fileIdToDelete: null,
-              showBatchDeleteConfirmation: false
-            }
-          })
+        switch (current.status) {
+          case StorageFileListStatus.CONTENT:
+            set({
+              screenState: {
+                ...current,
+                paging: nextPaging,
+                actionLoading: false
+              }
+            })
+            break
+          case StorageFileListStatus.LOADING:
+          case StorageFileListStatus.ERROR:
+            set({
+              screenState: {
+                status: StorageFileListStatus.CONTENT,
+                paging: nextPaging,
+                selectedFileIds: {},
+                isFilterPanelExpanded: false,
+                actionLoading: false,
+                actionError: null,
+                fileIdToDelete: null,
+                showBatchDeleteConfirmation: false
+              }
+            })
+            break
         }
       } else {
         const current = get().screenState
-        if (current.status === StorageFileListStatus.CONTENT) {
-          set({
-            screenState: {
-              ...current,
-              actionLoading: false,
-              actionError: filesResult.error
-            }
-          })
-        } else {
-          set({
-            screenState: {
-              status: StorageFileListStatus.ERROR,
-              error: filesResult.error
-            }
-          })
+        switch (current.status) {
+          case StorageFileListStatus.CONTENT:
+            set({
+              screenState: {
+                ...current,
+                actionLoading: false,
+                actionError: filesResult.error
+              }
+            })
+            break
+          case StorageFileListStatus.LOADING:
+          case StorageFileListStatus.ERROR:
+            set({
+              screenState: {
+                status: StorageFileListStatus.ERROR,
+                error: filesResult.error
+              }
+            })
+            break
         }
       }
     } finally {
@@ -434,13 +364,13 @@ export const createStorageFileListStore = (
       }
 
       const fileId = current.fileIdToDelete
-      const activeDeps = get().dependencies
-      if (!activeDeps.deleteFileUseCase) {
+      const deleteFileFn = get().dependencies.dataSource.deleteFile
+      if (!deleteFileFn) {
         return
       }
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
-      const deleteResult = await activeDeps.deleteFileUseCase.execute(fileId)
+      const deleteResult = await deleteFileFn(fileId)
 
       if (isSuccess(deleteResult)) {
         const latest = get().screenState
@@ -531,13 +461,13 @@ export const createStorageFileListStore = (
         return
       }
 
-      const activeDeps = get().dependencies
-      if (!activeDeps.deleteFilesBatchUseCase) {
+      const deleteFilesBatchFn = get().dependencies.dataSource.deleteFilesBatch
+      if (!deleteFilesBatchFn) {
         return
       }
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
-      const batchDeleteResult = await activeDeps.deleteFilesBatchUseCase.execute({ fileIds })
+      const batchDeleteResult = await deleteFilesBatchFn({ fileIds })
 
       if (isSuccess(batchDeleteResult)) {
         const latest = get().screenState

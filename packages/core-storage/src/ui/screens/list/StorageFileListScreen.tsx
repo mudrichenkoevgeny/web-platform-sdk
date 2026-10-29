@@ -30,10 +30,7 @@ import {
 } from './storage-file-list-store'
 import type {
   StorageFileListStoreDependencies,
-  StorageFileListScreenState,
-  StorageFileListGetFilesUseCase,
-  StorageFileListDeleteFileUseCase,
-  StorageFileListBatchDeleteUseCase
+  StorageFileListScreenState
 } from './storage-file-list-store'
 
 /**
@@ -161,23 +158,6 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
     void initScreen(searchParams)
   }, [initScreen, searchParams])
 
-  if (screenState.status === StorageFileListStatus.LOADING) {
-    return <FullscreenLoading />
-  }
-
-  if (screenState.status === StorageFileListStatus.ERROR) {
-    return (
-      <FullscreenError
-        error={screenState.error}
-        onRetry={() => void onRefresh(searchParams)}
-        onBack={onBackClick}
-        title={strings.ui.storageFileListTitle}
-      />
-    )
-  }
-
-  const { paging, selectedFileIds, isFilterPanelExpanded, actionLoading, actionError } = screenState
-  const selectedCount = Object.values(selectedFileIds).filter(Boolean).length
   const optionsConfig = getStorageFileListOptionsConfig(commonModuleStrings, strings, includeOwnerFilter)
 
   const handleSortChange = (newSort: ListingSortState | null) => {
@@ -194,193 +174,218 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
 
   const tag = (base: string) => (testTagPrefix ? `${testTagPrefix}_${base}` : base)
 
-  return (
-    <div className="flex h-full w-full flex-col relative overflow-hidden bg-background">
-      <div className="w-full flex items-center justify-between p-6 pb-2 border-b border-border bg-surface z-10">
-        <CoreBackButton data-testid={tag(StorageFileListTestTags.BACK_BUTTON)} onClick={onBackClick} />
-        <CoreScreenTitleText
-          data-testid={tag(StorageFileListTestTags.TITLE)}
-          text={strings.ui.storageFileListTitle}
-        />
-        <div className="w-10" />
-      </div>
+  switch (screenState.status) {
+    case StorageFileListStatus.LOADING:
+      return <FullscreenLoading />
 
-      <div className="w-full p-4 border-b border-border bg-surface">
-        <ListingHeaderBar
-          addAriaLabel={strings.ui.uploadFileAction}
-          hasActiveFilters={Object.keys(activeFilterStates).length > 0}
-          onAddClick={deps.onNavigateToUpload ? onUploadClick : undefined}
-          onOptionsClick={onToggleFilterPanel}
-          onRefreshClick={() => void onRefresh(searchParams)}
+    case StorageFileListStatus.ERROR:
+      return (
+        <FullscreenError
+          error={screenState.error}
+          onRetry={() => void onRefresh(searchParams)}
+          onBack={onBackClick}
+          title={strings.ui.storageFileListTitle}
         />
+      )
 
-        {isFilterPanelExpanded && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <ListingOptionsPanel
-              config={optionsConfig}
-              filterStates={activeFilterStates}
-              sortState={activeSortState}
-              onFilterChanged={(filterId, newState) => {
-                const nextFilters = { ...activeFilterStates }
-                if (newState === null) {
-                  delete nextFilters[filterId]
-                } else {
-                  nextFilters[filterId] = newState
-                }
-                handleFilterChange(nextFilters)
-              }}
-              onSortChanged={handleSortChange}
-              onApplyClick={() => void onRefresh(searchParams)}
+    case StorageFileListStatus.CONTENT: {
+      const {
+        paging,
+        selectedFileIds,
+        isFilterPanelExpanded,
+        actionLoading,
+        actionError,
+        fileIdToDelete,
+        showBatchDeleteConfirmation
+      } = screenState
+
+      const selectedCount = Object.values(selectedFileIds).filter(Boolean).length
+      const isSingleDeleteAvailable = deps.dataSource.isSingleDeleteAvailable
+      const isBatchDeleteAvailable = deps.dataSource.isBatchDeleteAvailable
+
+      return (
+        <div className="flex h-full w-full flex-col relative overflow-hidden bg-background">
+          <div className="w-full flex items-center justify-between p-6 pb-2 border-b border-border bg-surface z-10">
+            <CoreBackButton data-testid={tag(StorageFileListTestTags.BACK_BUTTON)} onClick={onBackClick} />
+            <CoreScreenTitleText
+              data-testid={tag(StorageFileListTestTags.TITLE)}
+              text={strings.ui.storageFileListTitle}
             />
+            <div className="w-10" />
           </div>
-        )}
-      </div>
 
-      {actionError && (
-        <div className="p-4 bg-error/10 border-b border-error/20">
-          <CoreErrorText
-            data-testid={tag(StorageFileListTestTags.ACTION_ERROR_TEXT)}
-            text={errorParser.parse(actionError) ?? ''}
-          />
-        </div>
-      )}
+          <div className="w-full p-4 border-b border-border bg-surface">
+            <ListingHeaderBar
+              addAriaLabel={strings.ui.uploadFileAction}
+              hasActiveFilters={Object.keys(activeFilterStates).length > 0}
+              onAddClick={deps.onNavigateToUpload ? onUploadClick : undefined}
+              onOptionsClick={onToggleFilterPanel}
+              onRefreshClick={() => void onRefresh(searchParams)}
+            />
 
-      {selectedCount > 0 && (
-        <div
-          className="flex items-center justify-between p-4 bg-muted border-b border-border"
-          data-testid={tag(StorageFileListTestTags.BATCH_ACTION_BAR)}
-        >
-          <span className="text-sm font-medium text-surface-foreground">
-            {commonModuleStrings.ui.selectedCount(selectedCount)}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              className="px-3 py-1 text-xs font-semibold text-muted-foreground hover:text-surface-foreground rounded"
-              data-testid={tag(StorageFileListTestTags.SELECT_ALL_BUTTON)}
-              type="button"
-              onClick={selectAllFiles}
-            >
-              {commonModuleStrings.ui.selectAll}
-            </button>
-            <button
-              className="px-3 py-1 text-xs font-semibold text-muted-foreground hover:text-surface-foreground rounded"
-              data-testid={tag(StorageFileListTestTags.CLEAR_SELECTION_BUTTON)}
-              type="button"
-              onClick={clearFileSelection}
-            >
-              {commonModuleStrings.ui.clearAll}
-            </button>
-            {deps.deleteFilesBatchUseCase && (
-              <button
-                className="px-3 py-1.5 text-xs font-semibold bg-error text-error-foreground hover:bg-error/90 rounded transition-colors disabled:opacity-50"
-                data-testid={tag(StorageFileListTestTags.BATCH_DELETE_BUTTON)}
-                disabled={actionLoading}
-                type="button"
-                onClick={onDeleteSelectedFilesClick}
-              >
-                {strings.ui.deleteFileAction}
-              </button>
+            {isFilterPanelExpanded && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <ListingOptionsPanel
+                  config={optionsConfig}
+                  filterStates={activeFilterStates}
+                  sortState={activeSortState}
+                  onFilterChanged={(filterId, newState) => {
+                    const nextFilters = { ...activeFilterStates }
+                    if (newState === null) {
+                      delete nextFilters[filterId]
+                    } else {
+                      nextFilters[filterId] = newState
+                    }
+                    handleFilterChange(nextFilters)
+                  }}
+                  onSortChanged={handleSortChange}
+                  onApplyClick={() => void onRefresh(searchParams)}
+                />
+              </div>
             )}
           </div>
-        </div>
-      )}
 
-      <div
-        className="flex-1 overflow-y-auto p-6 flex flex-col gap-4"
-        data-testid={tag(StorageFileListTestTags.FILE_LIST)}
-      >
-        {paging.items.length === 0 ? (
-          <ListingEmptyState text={commonModuleStrings.ui.emptyList} />
-        ) : (
-          paging.items.map((file) => (
-            <StorageFileListItemRow
-              key={file.id}
-              batchDeleteUseCaseAvailable={Boolean(deps.deleteFilesBatchUseCase)}
-              deleteFileUseCaseAvailable={Boolean(deps.deleteFileUseCase)}
-              file={file}
-              isSelected={Boolean(selectedFileIds[file.id])}
-              strings={strings}
-              onDeleteFileClick={(id) => onDeleteFileClick(id)}
-              onFileClick={(id) => onFileClick(id)}
-              onToggleSelect={(id) => toggleSelectFile(id)}
-            />
-          ))
-        )}
-
-        {hasMorePages(paging) ? (
-          <PagingFooter
-            currentPage={paging.pageNumber}
-            totalPages={paging.totalPages}
-            onPageChange={(page) => {
-              const newParams = { ...(searchParams ?? {}), pageNumber: page }
-              deps.onSearchParamsChanged?.(newParams)
-              void onSearchParamsUpdated(newParams)
-            }}
-          />
-        ) : null}
-      </div>
-
-      {screenState.status === StorageFileListStatus.CONTENT && screenState.fileIdToDelete !== null && (
-        <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-          <button
-            type="button"
-            tabIndex={-1}
-            aria-label={commonModuleStrings.ui.no}
-            onClick={onDismissDeleteDialog}
-            className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
-          />
-          <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteFile}</h3>
-            <p className="text-sm text-muted-foreground">{strings.ui.deleteFileConfirm}</p>
-            <div className="flex justify-end gap-2 pt-2">
-              <CoreTextButton label={commonModuleStrings.ui.no} onClick={onDismissDeleteDialog} />
-              <CoreTextButton label={strings.ui.deleteFile} onClick={() => void onConfirmDeleteFile(searchParams)} />
+          {actionError && (
+            <div className="p-4 bg-error/10 border-b border-error/20">
+              <CoreErrorText
+                data-testid={tag(StorageFileListTestTags.ACTION_ERROR_TEXT)}
+                text={errorParser.parse(actionError) ?? ''}
+              />
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {screenState.status === StorageFileListStatus.CONTENT && screenState.showBatchDeleteConfirmation && (
-        <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-          <button
-            type="button"
-            tabIndex={-1}
-            aria-label={commonModuleStrings.ui.no}
-            onClick={onDismissDeleteDialog}
-            className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
-          />
-          <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
-            <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteSelected}</h3>
-            <p className="text-sm text-muted-foreground">
-              {strings.ui.deleteFilesBatchConfirm(selectedCount)}
-            </p>
-            <div className="flex justify-end gap-2 pt-2">
-              <CoreTextButton label={commonModuleStrings.ui.no} onClick={onDismissDeleteDialog} />
-              <CoreTextButton label={strings.ui.deleteSelected} onClick={() => void onConfirmBatchDeleteFiles(searchParams)} />
+          {selectedCount > 0 && (
+            <div
+              className="flex items-center justify-between p-4 bg-muted border-b border-border"
+              data-testid={tag(StorageFileListTestTags.BATCH_ACTION_BAR)}
+            >
+              <span className="text-sm font-medium text-surface-foreground">
+                {commonModuleStrings.ui.selectedCount(selectedCount)}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-3 py-1 text-xs font-semibold text-muted-foreground hover:text-surface-foreground rounded"
+                  data-testid={tag(StorageFileListTestTags.SELECT_ALL_BUTTON)}
+                  type="button"
+                  onClick={selectAllFiles}
+                >
+                  {commonModuleStrings.ui.selectAll}
+                </button>
+                <button
+                  className="px-3 py-1 text-xs font-semibold text-muted-foreground hover:text-surface-foreground rounded"
+                  data-testid={tag(StorageFileListTestTags.CLEAR_SELECTION_BUTTON)}
+                  type="button"
+                  onClick={clearFileSelection}
+                >
+                  {commonModuleStrings.ui.clearAll}
+                </button>
+                {isBatchDeleteAvailable && (
+                  <button
+                    className="px-3 py-1.5 text-xs font-semibold bg-error text-error-foreground hover:bg-error/90 rounded transition-colors disabled:opacity-50"
+                    data-testid={tag(StorageFileListTestTags.BATCH_DELETE_BUTTON)}
+                    disabled={actionLoading}
+                    type="button"
+                    onClick={onDeleteSelectedFilesClick}
+                  >
+                    {strings.ui.deleteFileAction}
+                  </button>
+                )}
+              </div>
             </div>
+          )}
+
+          <div
+            className="flex-1 overflow-y-auto p-6 flex flex-col gap-4"
+            data-testid={tag(StorageFileListTestTags.FILE_LIST)}
+          >
+            {paging.items.length === 0 ? (
+              <ListingEmptyState text={commonModuleStrings.ui.emptyList} />
+            ) : (
+              paging.items.map((file) => (
+                <StorageFileListItemRow
+                  key={file.id}
+                  batchDeleteUseCaseAvailable={isBatchDeleteAvailable}
+                  deleteFileUseCaseAvailable={isSingleDeleteAvailable}
+                  file={file}
+                  isSelected={Boolean(selectedFileIds[file.id])}
+                  strings={strings}
+                  onDeleteFileClick={(id) => onDeleteFileClick(id)}
+                  onFileClick={(id) => onFileClick(id)}
+                  onToggleSelect={(id) => toggleSelectFile(id)}
+                />
+              ))
+            )}
+
+            {hasMorePages(paging) ? (
+              <PagingFooter
+                currentPage={paging.pageNumber}
+                totalPages={paging.totalPages}
+                onPageChange={(page) => {
+                  const newParams = { ...(searchParams ?? {}), pageNumber: page }
+                  deps.onSearchParamsChanged?.(newParams)
+                  void onSearchParamsUpdated(newParams)
+                }}
+              />
+            ) : null}
           </div>
+
+          {fileIdToDelete !== null && (
+            <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label={commonModuleStrings.ui.no}
+                onClick={onDismissDeleteDialog}
+                className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
+              />
+              <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
+                <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteFile}</h3>
+                <p className="text-sm text-muted-foreground">{strings.ui.deleteFileConfirm}</p>
+                <div className="flex justify-end gap-2 pt-2">
+                  <CoreTextButton label={commonModuleStrings.ui.no} onClick={onDismissDeleteDialog} />
+                  <CoreTextButton label={strings.ui.deleteFile} onClick={() => void onConfirmDeleteFile(searchParams)} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showBatchDeleteConfirmation && (
+            <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label={commonModuleStrings.ui.no}
+                onClick={onDismissDeleteDialog}
+                className="absolute inset-0 bg-transparent cursor-default border-none outline-none"
+              />
+              <div className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4">
+                <h3 className="text-lg font-bold text-surface-foreground">{strings.ui.deleteSelected}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {strings.ui.deleteFilesBatchConfirm(selectedCount)}
+                </p>
+                <div className="flex justify-end gap-2 pt-2">
+                  <CoreTextButton label={commonModuleStrings.ui.no} onClick={onDismissDeleteDialog} />
+                  <CoreTextButton label={strings.ui.deleteSelected} onClick={() => void onConfirmBatchDeleteFiles(searchParams)} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  )
+      )
+    }
+  }
 }
 
 /**
  * Props for {@link StorageFileListScreen}.
  *
  * @template TParams - Query parameters type.
- * @template TGetUseCase - Fetch usecase execution contract.
- * @template TDeleteUseCase - Single delete usecase execution contract.
- * @template TBatchDeleteUseCase - Batch delete usecase execution contract.
  */
 export interface StorageFileListScreenProps<
-  TParams extends Record<string, unknown> = Record<string, unknown>,
-  TGetUseCase extends StorageFileListGetFilesUseCase = StorageFileListGetFilesUseCase,
-  TDeleteUseCase extends StorageFileListDeleteFileUseCase = StorageFileListDeleteFileUseCase,
-  TBatchDeleteUseCase extends StorageFileListBatchDeleteUseCase = StorageFileListBatchDeleteUseCase
+  TParams extends Record<string, unknown> = Record<string, unknown>
 > extends React.HTMLAttributes<HTMLDivElement> {
   /** Dependencies injected into the store. */
-  dependencies: StorageFileListStoreDependencies<TParams, TGetUseCase, TDeleteUseCase, TBatchDeleteUseCase>
+  dependencies: StorageFileListStoreDependencies<TParams>
   /** Optional initial screen state. */
   initialState?: StorageFileListScreenState
   /** Optional storage module strings override. */

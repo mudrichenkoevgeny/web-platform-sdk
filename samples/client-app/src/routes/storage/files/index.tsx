@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import {
   StorageFileListScreen,
   storageFileListSearchSchema,
-  DEFAULT_STORAGE_FILE_LIST_STATUSES
+  DEFAULT_STORAGE_FILE_LIST_STATUSES,
+  createSelfStorageFileListDataSource
 } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ClientUserNavigation, OpenStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -27,13 +28,17 @@ export const Route = createFileRoute('/storage/files/')({
       return null
     }
 
+    const dataSource = createSelfStorageFileListDataSource({
+      getFilesUseCase: appComponent.clientUserComponent.getFilesUseCase,
+      deleteFileUseCase: appComponent.clientUserComponent.deleteFileUseCase,
+      deleteFilesBatchUseCase: appComponent.clientUserComponent.deleteFilesBatchUseCase
+    })
+
     return (
       <StorageFileListScreen
         searchParams={searchParams}
         dependencies={{
-          getFilesUseCase: appComponent.clientUserComponent.getFilesUseCase,
-          deleteFileUseCase: appComponent.clientUserComponent.deleteFileUseCase,
-          deleteFilesBatchUseCase: appComponent.clientUserComponent.deleteFilesBatchUseCase,
+          dataSource,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToUpload: () =>

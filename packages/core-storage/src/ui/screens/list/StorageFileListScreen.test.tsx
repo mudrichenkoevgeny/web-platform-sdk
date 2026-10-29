@@ -4,14 +4,17 @@ import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-p
 import { createTestPagedResult, createTestStorageFileSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileListScreen, StorageFileListTestTags } from './StorageFileListScreen'
 import type { StorageFileListStoreDependencies } from './storage-file-list-store'
+import { createSelfStorageFileListDataSource } from './storage-file-list-data-source'
 
 describe('StorageFileListScreen', () => {
   const createMockDeps = (): StorageFileListStoreDependencies => ({
-    getFilesUseCase: {
-      execute: vi.fn().mockResolvedValue(
-        appResultSuccess(createTestPagedResult({ items: [createTestStorageFileSummary()] }))
-      )
-    },
+    dataSource: createSelfStorageFileListDataSource({
+      getFilesUseCase: {
+        execute: vi.fn().mockResolvedValue(
+          appResultSuccess(createTestPagedResult({ items: [createTestStorageFileSummary()] }))
+        )
+      }
+    }),
     onBack: vi.fn()
   })
 

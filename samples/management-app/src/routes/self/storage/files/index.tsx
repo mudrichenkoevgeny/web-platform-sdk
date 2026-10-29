@@ -2,7 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import {
   StorageFileListScreen,
   storageFileListSearchSchema,
-  DEFAULT_STORAGE_FILE_LIST_STATUSES
+  DEFAULT_STORAGE_FILE_LIST_STATUSES,
+  createSelfStorageFileListDataSource,
+  createManagementStorageFileListDataSource
 } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ManagementSelfStorageNavigation, ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
@@ -23,14 +25,19 @@ export const Route = createFileRoute('/self/storage/files/')({
     const navigate = Route.useNavigate()
     const navigateUp = useNavigateUp()
 
-    const getFilesUseCase =
-      managementDeps.selfManagementGetFilesUseCase ?? managementDeps.managementGetFilesUseCase
+    const selfGetUseCase = managementDeps.selfManagementGetFilesUseCase
 
-    const deleteFileUseCase =
-      managementDeps.selfManagementDeleteFileUseCase ?? managementDeps.managementDeleteFileUseCase
-
-    const deleteFilesBatchUseCase =
-      managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase
+    const dataSource = selfGetUseCase
+      ? createSelfStorageFileListDataSource({
+          getFilesUseCase: selfGetUseCase,
+          deleteFileUseCase: managementDeps.selfManagementDeleteFileUseCase ?? managementDeps.managementDeleteFileUseCase,
+          deleteFilesBatchUseCase: managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase
+        })
+      : createManagementStorageFileListDataSource({
+          getFilesUseCase: managementDeps.managementGetFilesUseCase,
+          deleteFileUseCase: managementDeps.managementDeleteFileUseCase,
+          deleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
+        })
 
     return (
       <StorageFileListScreen
@@ -38,9 +45,7 @@ export const Route = createFileRoute('/self/storage/files/')({
         testTagPrefix="SelfStorage"
         dependencies={{
           userId: managementDeps.currentUserId ?? undefined,
-          getFilesUseCase,
-          deleteFileUseCase,
-          deleteFilesBatchUseCase,
+          dataSource,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToUpload: () =>

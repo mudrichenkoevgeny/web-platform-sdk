@@ -3,6 +3,8 @@ import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-p
 import { createTestPagedResult, createTestStorageFileSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileListScreen } from './StorageFileListScreen'
 
+import { createSelfStorageFileListDataSource } from './storage-file-list-data-source'
+
 const meta: Meta<typeof StorageFileListScreen> = {
   title: 'Core/Storage/StorageFileListScreen',
   component: StorageFileListScreen,
@@ -15,10 +17,12 @@ const meta: Meta<typeof StorageFileListScreen> = {
   ],
   args: {
     dependencies: {
-      getFilesUseCase: {
-        execute: async () =>
-          appResultSuccess(createTestPagedResult({ items: [createTestStorageFileSummary()] }))
-      },
+      dataSource: createSelfStorageFileListDataSource({
+        getFilesUseCase: {
+          execute: async () =>
+            appResultSuccess(createTestPagedResult({ items: [createTestStorageFileSummary()] }))
+        }
+      }),
       onBack: () => {}
     }
   }

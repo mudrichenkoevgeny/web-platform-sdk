@@ -1,5 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { StorageFileListScreen, storageFileListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import {
+  StorageFileListScreen,
+  storageFileListSearchSchema,
+  createSelfStorageFileListDataSource,
+  createManagementStorageFileListDataSource
+} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ManagementMainNavigation, ManagementSelfStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -19,28 +24,28 @@ export const Route = createFileRoute('/storage/files/')({
         searchParams.ownerUserId === managementDeps.currentUserId
     )
 
-    const getFilesUseCase = isSelfView
-      ? (managementDeps.selfManagementGetFilesUseCase ?? managementDeps.managementGetFilesUseCase)
-      : managementDeps.managementGetFilesUseCase
+    const dataSource = isSelfView
+      ? createSelfStorageFileListDataSource({
+          getFilesUseCase: managementDeps.selfManagementGetFilesUseCase ?? managementDeps.managementGetFilesUseCase,
+          deleteFileUseCase: managementDeps.selfManagementDeleteFileUseCase ?? managementDeps.managementDeleteFileUseCase,
+          deleteFilesBatchUseCase: managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase
+        })
+      : createManagementStorageFileListDataSource({
+          getFilesUseCase: managementDeps.managementGetFilesUseCase,
+          deleteFileUseCase: managementDeps.managementDeleteFileUseCase,
+          deleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
+        })
 
-    const deleteFileUseCase = isSelfView
-      ? (managementDeps.selfManagementDeleteFileUseCase ?? managementDeps.managementDeleteFileUseCase)
-      : managementDeps.managementDeleteFileUseCase
-
-    const deleteFilesBatchUseCase = isSelfView
-      ? (managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase)
-      : managementDeps.managementDeleteFilesBatchUseCase
+    const isOwnerFiltered = Boolean(searchParams.ownerUserId)
 
     return (
       <StorageFileListScreen
-        includeOwnerFilter
+        includeOwnerFilter={!isOwnerFiltered}
         searchParams={searchParams}
         testTagPrefix={isSelfView ? "SelfStorage" : "GlobalStorage"}
         dependencies={{
           userId: searchParams.ownerUserId,
-          getFilesUseCase,
-          deleteFileUseCase,
-          deleteFilesBatchUseCase,
+          dataSource,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
           onNavigateToUpload: isSelfView
