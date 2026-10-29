@@ -4,7 +4,14 @@ import type {
   GetFileDetailUseCase,
   UploadFileUseCase,
   DeleteFileUseCase,
-  DeleteFilesBatchUseCase
+  DeleteFilesBatchUseCase,
+  GetManagementStorageSettingsUseCase,
+  ResetManagementStorageSettingsUseCase,
+  UpdateManagementStorageSettingsUseCase,
+  ManagementGetFilesUseCase,
+  ManagementGetFileDetailUseCase,
+  ManagementDeleteFileUseCase,
+  ManagementDeleteFilesBatchUseCase
 } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import type { GetAuditEventUseCase } from '@/usecase/audit/get-audit-event-use-case'
 import type { GetAuditEventsUseCase } from '@/usecase/audit/get-audit-events-use-case'
@@ -21,13 +28,6 @@ import type { ManagementGetIdentifiersUseCase } from '@/usecase/identifier/manag
 import type { GetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/get-management-security-settings-use-case'
 import type { ResetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/reset-management-security-settings-use-case'
 import type { UpdateManagementSecuritySettingsUseCase } from '@/usecase/security/settings/update-management-security-settings-use-case'
-import type { GetManagementStorageSettingsUseCase } from '@/usecase/storage/settings/get-management-storage-settings-use-case'
-import type { ResetManagementStorageSettingsUseCase } from '@/usecase/storage/settings/reset-management-storage-settings-use-case'
-import type { UpdateManagementStorageSettingsUseCase } from '@/usecase/storage/settings/update-management-storage-settings-use-case'
-import type { ManagementGetFilesUseCase } from '@/usecase/storage/management-get-files-use-case'
-import type { ManagementGetFileDetailUseCase } from '@/usecase/storage/management-get-file-detail-use-case'
-import type { ManagementDeleteFileUseCase } from '@/usecase/storage/management-delete-file-use-case'
-import type { ManagementDeleteFilesBatchUseCase } from '@/usecase/storage/management-delete-files-batch-use-case'
 import type { ManagementDeleteAllUserSessionsUseCase } from '@/usecase/session/management-delete-all-user-sessions-use-case'
 import type { ManagementDeleteSessionUseCase } from '@/usecase/session/management-delete-session-use-case'
 import type { ManagementGetSessionUseCase } from '@/usecase/session/management-get-session-use-case'

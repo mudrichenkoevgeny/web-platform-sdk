@@ -5,8 +5,17 @@ import type {
 import { AppType } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenSecuritySettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import type { OpenGlobalSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import type { OpenStorageSettingsRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import type { UserAuthServices } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { OpenStorageSettingsRepository, StorageApi, StorageRepository } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import {
+  FetchOpenStorageApi,
+  OpenStorageRepositoryImpl,
+  GetFilesUseCase,
+  GetFileDetailUseCase,
+  UploadFileUseCase,
+  DeleteFileUseCase,
+  DeleteFilesBatchUseCase
+} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import type { UserAuthServices, AuthStorage, ConfirmationRepository, IdentifierRepository, LoginRepository, OpenAuthSettingsRepository, OpenUserConfigurationApi, RefreshTokenRepository, RegistrationRepository, ResetPasswordRepository, SessionRepository, UnlockRepository, UserRepository, UserSecurityRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   AddUserIdentifierEmailUseCase,
   AddUserIdentifierGoogleUseCase,
@@ -15,8 +24,6 @@ import {
   DeleteAllOtherSessionsUseCase,
   DeletePasswordUseCase,
   DeleteSessionUseCase,
-  DeleteFileUseCase,
-  DeleteFilesBatchUseCase,
   DeleteUserIdentifierUseCase,
   DisabledGoogleAuthService,
   DisableTotpUseCase,
@@ -29,8 +36,6 @@ import {
   GetAuthSettingsUseCase,
   GetAvailableUserAuthProvidersUseCase,
   GetRecoveryCodesUseCase,
-  GetFileDetailUseCase,
-  GetFilesUseCase,
   GetSessionUseCase,
   GetSessionsUseCase,
   GetUserIdentifierUseCase,
@@ -42,6 +47,7 @@ import {
   LoginByTotpRecoveryCodeUseCase,
   LoginByTotpUseCase,
   LogoutUseCase,
+  ObserveOpenAuthSettingsUseCase,
   ReauthenticateSessionUseCase,
   RefreshTokenUseCase,
   RegenerateRecoveryCodesUseCase,
@@ -61,24 +67,7 @@ import {
   UnlockByExternalAuthProviderUseCase,
   UnlockByGoogleUseCase,
   UnlockByPhoneUseCase,
-  UploadFileUseCase,
   UserWebSocketMessageHandler
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type {
-  AuthStorage,
-  ConfirmationRepository,
-  IdentifierRepository,
-  LoginRepository,
-  OpenAuthSettingsRepository,
-  OpenUserConfigurationApi,
-  RefreshTokenRepository,
-  RegistrationRepository,
-  ResetPasswordRepository,
-  SessionRepository,
-  UnlockRepository,
-  UserRepository,
-  UserSecurityRepository,
-  UserStorage
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 import type { OpenAuthSettingsApi } from '@/network/api/auth/settings/open-auth-settings-api'
@@ -101,11 +90,6 @@ import type { OpenUserSecurityApi } from '@/network/api/user/security/open-user-
 import { FetchOpenUserSecurityApi } from '@/network/api/user/security/fetch-open-user-security-api'
 import type { SessionApi } from '@/network/api/session/open-session-api'
 import { FetchOpenSessionApi } from '@/network/api/session/fetch-open-session-api'
-
-import type { OpenStorageApi } from '@/network/api/storage/open-storage-api'
-import { FetchOpenStorageApi } from '@/network/api/storage/fetch-open-storage-api'
-import type { OpenStorageRepository } from '@/repository/storage/open-storage-repository'
-import { OpenStorageRepositoryImpl } from '@/repository/storage/open-storage-repository-impl'
 
 import { OpenAuthSettingsRepositoryImpl } from '@/repository/auth/settings/open-auth-settings-repository-impl'
 import { OpenIdentifierRepositoryImpl } from '@/repository/identifier/open-identifier-repository-impl'
@@ -142,112 +126,197 @@ export interface ClientUserComponentConfig {
   /** Optional custom user storage override. */
   userStorage?: UserStorage
   /** Optional custom open storage API override. */
-  openStorageApi?: OpenStorageApi
+  openStorageApi?: StorageApi
 }
 
 /**
  * Root dependency injection container for client user feature.
  */
 export class ClientUserComponent {
+  /** Core common infrastructure dependencies. */
   public readonly commonComponent: CommonComponent
+  /** Open global settings repository. */
   public readonly openGlobalSettingsRepository: OpenGlobalSettingsRepository
+  /** Open security settings repository. */
   public readonly openSecuritySettingsRepository: OpenSecuritySettingsRepository
+  /** Open storage settings repository. */
   public readonly openStorageSettingsRepository: OpenStorageSettingsRepository
+  /** External authentication provider services. */
   public readonly authServices: UserAuthServices
 
+  /** Auth tokens and session storage. */
   public readonly authStorage: AuthStorage
+  /** Signed-in user profile storage. */
   public readonly userStorage: UserStorage
+  /** Encrypted open auth settings storage. */
   public readonly openAuthSettingsStorage: EncryptedOpenAuthSettingsStorage
 
+  /** HTTP API client for open auth settings. */
   public readonly openAuthSettingsApi: OpenAuthSettingsApi
+  /** Open auth settings repository. */
   public readonly openAuthSettingsRepository: OpenAuthSettingsRepository
 
+  /** HTTP API client for open login endpoints. */
   public readonly openLoginApi: OpenLoginApi
+  /** Open login repository. */
   public readonly loginRepository: LoginRepository
 
+  /** HTTP API client for open token refresh endpoints. */
   public readonly openRefreshTokenApi: OpenRefreshTokenApi
+  /** Open refresh token repository. */
   public readonly refreshTokenRepository: RefreshTokenRepository
 
+  /** HTTP API client for registration endpoints. */
   public readonly openRegistrationApi: OpenRegistrationApi
+  /** Registration repository. */
   public readonly registrationRepository: RegistrationRepository
 
+  /** HTTP API client for password reset endpoints. */
   public readonly openResetPasswordApi: OpenResetPasswordApi
+  /** Password reset repository. */
   public readonly resetPasswordRepository: ResetPasswordRepository
 
+  /** HTTP API client for account unlock endpoints. */
   public readonly openUnlockApi: OpenUnlockApi
+  /** Account unlock repository. */
   public readonly unlockRepository: UnlockRepository
 
+  /** HTTP API client for client user configuration endpoint. */
   public readonly openUserConfigurationApi: OpenUserConfigurationApi
 
+  /** HTTP API client for user identifier endpoints. */
   public readonly openIdentifiersApi: OpenIdentifiersApi
+  /** User identifiers repository. */
   public readonly identifierRepository: IdentifierRepository
 
+  /** HTTP API client for session management endpoints. */
   public readonly sessionApi: SessionApi
+  /** User session repository. */
   public readonly sessionRepository: SessionRepository
 
+  /** HTTP API client for user security settings. */
   public readonly openUserSecurityApi: OpenUserSecurityApi
+  /** User security repository. */
   public readonly userSecurityRepository: UserSecurityRepository
 
+  /** HTTP API client for user profile management. */
   public readonly openUserApi: OpenUserApi
+  /** User profile repository. */
   public readonly userRepository: UserRepository
 
-  public readonly openStorageApi: OpenStorageApi
-  public readonly openStorageRepository: OpenStorageRepository
+  /** HTTP API client for public file storage endpoints. */
+  public readonly openStorageApi: StorageApi
+  /** Public file storage repository. */
+  public readonly openStorageRepository: StorageRepository
 
+  /** Confirmation code repository. */
   public readonly confirmationRepository: ConfirmationRepository
 
+  /** Refresh session token use case. */
   public readonly refreshTokenUseCase: RefreshTokenUseCase
+  /** Login by email use case. */
   public readonly loginByEmailUseCase: LoginByEmailUseCase
+  /** Login by phone number use case. */
   public readonly loginByPhoneUseCase: LoginByPhoneUseCase
+  /** Send login SMS confirmation use case. */
   public readonly sendLoginConfirmationToPhoneUseCase: SendLoginConfirmationToPhoneUseCase
+  /** Login by Google OAuth use case. */
   public readonly loginByGoogleUseCase: LoginByGoogleUseCase
+  /** Login by TOTP code use case. */
   public readonly loginByTotpUseCase: LoginByTotpUseCase
+  /** Login by TOTP recovery code use case. */
   public readonly loginByTotpRecoveryCodeUseCase: LoginByTotpRecoveryCodeUseCase
+  /** Account registration by email use case. */
   public readonly registrationByEmailUseCase: RegistrationByEmailUseCase
+  /** Send registration email confirmation use case. */
   public readonly sendRegistrationConfirmationToEmailUseCase: SendRegistrationConfirmationToEmailUseCase
+  /** Force refresh open auth settings use case. */
   public readonly refreshOpenAuthSettingsUseCase: RefreshOpenAuthSettingsUseCase
+  /** Observe open auth settings changes use case. */
+  public readonly observeOpenAuthSettingsUseCase: ObserveOpenAuthSettingsUseCase
+  /** Retrieve available login auth providers use case. */
   public readonly getAvailableUserAuthProvidersUseCase: GetAvailableUserAuthProvidersUseCase
+  /** Get open auth settings use case. */
   public readonly getAuthSettingsUseCase: GetAuthSettingsUseCase
+  /** Reset account password by email use case. */
   public readonly resetEmailPasswordUseCase: ResetEmailPasswordUseCase
+  /** Send reset password email confirmation use case. */
   public readonly sendResetPasswordConfirmationToEmailUseCase: SendResetPasswordConfirmationToEmailUseCase
+  /** Send unlock account email confirmation use case. */
   public readonly sendUnlockEmailConfirmationUseCase: SendUnlockEmailConfirmationUseCase
+  /** Unlock account by email confirmation code use case. */
   public readonly unlockByEmailUseCase: UnlockByEmailUseCase
+  /** Send unlock account phone confirmation use case. */
   public readonly sendUnlockPhoneConfirmationUseCase: SendUnlockPhoneConfirmationUseCase
+  /** Unlock account by phone confirmation code use case. */
   public readonly unlockByPhoneUseCase: UnlockByPhoneUseCase
+  /** Unlock account by external auth provider token use case. */
   public readonly unlockByExternalAuthProviderUseCase: UnlockByExternalAuthProviderUseCase
+  /** Unlock account by Google OAuth use case. */
   public readonly unlockByGoogleUseCase: UnlockByGoogleUseCase
+  /** Refresh client user configuration use case. */
   public readonly refreshUserConfigurationUseCase: RefreshClientUserConfigurationUseCase
+  /** Schedule user account deletion use case. */
   public readonly scheduleUserDeletionUseCase: ScheduleUserDeletionUseCase
+  /** Cancel scheduled user account deletion use case. */
   public readonly restoreUserUseCase: RestoreUserUseCase
+  /** Generate TOTP setup secret use case. */
   public readonly setupTotpUseCase: SetupTotpUseCase
+  /** Enable TOTP two-factor authentication use case. */
   public readonly enableTotpUseCase: EnableTotpUseCase
+  /** Disable TOTP two-factor authentication use case. */
   public readonly disableTotpUseCase: DisableTotpUseCase
+  /** Retrieve TOTP recovery codes use case. */
   public readonly getRecoveryCodesUseCase: GetRecoveryCodesUseCase
+  /** Regenerate TOTP recovery codes use case. */
   public readonly regenerateRecoveryCodesUseCase: RegenerateRecoveryCodesUseCase
+  /** Get paginated user sessions use case. */
   public readonly getSessionsUseCase: GetSessionsUseCase
+  /** Get user session detail use case. */
   public readonly getSessionUseCase: GetSessionUseCase
+  /** Terminate current user session use case. */
   public readonly logoutUseCase: LogoutUseCase
+  /** Terminate specific user session use case. */
   public readonly deleteSessionUseCase: DeleteSessionUseCase
+  /** Terminate all other user sessions use case. */
   public readonly deleteAllOtherSessionsUseCase: DeleteAllOtherSessionsUseCase
+  /** Re-authenticate current session use case. */
   public readonly reauthenticateSessionUseCase: ReauthenticateSessionUseCase
+  /** Get current user profile details use case. */
   public readonly getUserUseCase: GetUserUseCase
+  /** Get specific user identifier detail use case. */
   public readonly getUserIdentifierUseCase: GetUserIdentifierUseCase
+  /** Get paginated list of user identifiers use case. */
   public readonly getUserIdentifiersUseCase: GetUserIdentifiersUseCase
+  /** Delete user identifier use case. */
   public readonly deleteUserIdentifierUseCase: DeleteUserIdentifierUseCase
+  /** Delete password from email identifier use case. */
   public readonly deletePasswordUseCase: DeletePasswordUseCase
+  /** Add email identifier to account use case. */
   public readonly addUserIdentifierEmailUseCase: AddUserIdentifierEmailUseCase
+  /** Add phone number identifier to account use case. */
   public readonly addUserIdentifierPhoneUseCase: AddUserIdentifierPhoneUseCase
+  /** Add Google OAuth identifier to account use case. */
   public readonly addUserIdentifierGoogleUseCase: AddUserIdentifierGoogleUseCase
+  /** Send email confirmation to add identifier use case. */
   public readonly sendAddEmailIdentifierConfirmationUseCase: SendAddEmailIdentifierConfirmationUseCase
+  /** Send phone confirmation to add identifier use case. */
   public readonly sendAddPhoneIdentifierConfirmationUseCase: SendAddPhoneIdentifierConfirmationUseCase
+  /** Change email password use case. */
   public readonly emailChangePasswordUseCase: EmailChangePasswordUseCase
 
+  /** Get paginated storage files use case. */
   public readonly getFilesUseCase: GetFilesUseCase
+  /** Get storage file detail use case. */
   public readonly getFileDetailUseCase: GetFileDetailUseCase
+  /** Upload binary file to S3 storage use case. */
   public readonly uploadFileUseCase: UploadFileUseCase
+  /** Delete single storage file use case. */
   public readonly deleteFileUseCase: DeleteFileUseCase
+  /** Delete multiple storage files batch use case. */
   public readonly deleteFilesBatchUseCase: DeleteFilesBatchUseCase
 
+  /** User real-time WebSocket event message handler. */
   public readonly userWebSocketMessageHandler: UserWebSocketMessageHandler
 
   public constructor(config: ClientUserComponentConfig) {
@@ -351,6 +420,7 @@ export class ClientUserComponent {
     this.registrationByEmailUseCase = new RegistrationByEmailUseCase(this.registrationRepository, this.authStorage, this.userStorage)
     this.sendRegistrationConfirmationToEmailUseCase = new SendRegistrationConfirmationToEmailUseCase(this.registrationRepository)
     this.refreshOpenAuthSettingsUseCase = new RefreshOpenAuthSettingsUseCase(this.openAuthSettingsRepository)
+    this.observeOpenAuthSettingsUseCase = new ObserveOpenAuthSettingsUseCase(this.openAuthSettingsRepository)
     this.getAvailableUserAuthProvidersUseCase = new GetAvailableUserAuthProvidersUseCase(AppType.CLIENT, this.openAuthSettingsRepository)
     this.getAuthSettingsUseCase = new GetAuthSettingsUseCase(this.openAuthSettingsRepository)
     this.resetEmailPasswordUseCase = new ResetEmailPasswordUseCase(this.resetPasswordRepository)

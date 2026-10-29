@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { callResult, HttpClient, markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   OtpConfirmationPayload,
@@ -9,7 +9,6 @@ import type {
   UnlockByPhoneConfirmationRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenUnlockRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUnlockApi } from '@/network/api/auth/unlock/open-unlock-api'
 
 /** {@link OpenUnlockApi} implementation backed by {@link HttpClient}. */

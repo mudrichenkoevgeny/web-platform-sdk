@@ -1,13 +1,14 @@
 import type { EncryptedSettings, HttpClient, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenGlobalSettingsStorage } from '@/storage/global-settings/open-global-settings-storage'
-import { EncryptedOpenGlobalSettingsStorage } from '@/storage/global-settings/encrypted-open-global-settings-storage'
-import type { OpenGlobalSettingsApi } from '@/network/api/global-settings/open-global-settings-api'
-import { FetchOpenGlobalSettingsApi } from '@/network/api/global-settings/fetch-open-global-settings-api'
-import type { OpenGlobalSettingsRepository } from '@/repository/open-global-settings-repository'
-import { OpenGlobalSettingsRepositoryImpl } from '@/repository/open-global-settings-repository-impl'
-import { GetOpenGlobalSettingsUseCase } from '@/usecase/get-open-global-settings-use-case'
-import { RefreshOpenGlobalSettingsUseCase } from '@/usecase/refresh-open-global-settings-use-case'
-import { SettingsWebSocketMessageHandler } from '@/network/websocket/messagehandler/settings-web-socket-message-handler'
+import type { OpenGlobalSettingsStorage } from '../storage/global-settings/open-global-settings-storage'
+import { EncryptedOpenGlobalSettingsStorage } from '../storage/global-settings/encrypted-open-global-settings-storage'
+import type { OpenGlobalSettingsApi } from '../network/api/global-settings/open-global-settings-api'
+import { FetchOpenGlobalSettingsApi } from '../network/api/global-settings/fetch-open-global-settings-api'
+import type { OpenGlobalSettingsRepository } from '../repository/open-global-settings-repository'
+import { OpenGlobalSettingsRepositoryImpl } from '../repository/open-global-settings-repository-impl'
+import { GetOpenGlobalSettingsUseCase } from '../usecase/get-open-global-settings-use-case'
+import { RefreshOpenGlobalSettingsUseCase } from '../usecase/refresh-open-global-settings-use-case'
+import { ObserveOpenGlobalSettingsUseCase } from '../usecase/observe-open-global-settings-use-case'
+import { SettingsWebSocketMessageHandler } from '../network/websocket/messagehandler/settings-web-socket-message-handler'
 
 /**
  * Configuration options required to instantiate {@link SettingsComponent}.
@@ -41,6 +42,8 @@ export class SettingsComponent {
   public readonly getOpenGlobalSettingsUseCase: GetOpenGlobalSettingsUseCase
   /** Use case for forcing a network refresh of settings. */
   public readonly refreshOpenGlobalSettingsUseCase: RefreshOpenGlobalSettingsUseCase
+  /** Use case for observing live open global settings changes. */
+  public readonly observeOpenGlobalSettingsUseCase: ObserveOpenGlobalSettingsUseCase
   /** Handler offered to the shared WebSocket pipeline. */
   public readonly settingsWebSocketMessageHandler: SettingsWebSocketMessageHandler
 
@@ -69,6 +72,10 @@ export class SettingsComponent {
     )
 
     this.refreshOpenGlobalSettingsUseCase = new RefreshOpenGlobalSettingsUseCase(
+      this.globalSettingsRepository
+    )
+
+    this.observeOpenGlobalSettingsUseCase = new ObserveOpenGlobalSettingsUseCase(
       this.globalSettingsRepository
     )
 

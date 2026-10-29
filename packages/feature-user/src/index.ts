@@ -12,7 +12,6 @@ export * from './storage/auth/encrypted-auth-storage.js'
 export * from './storage/user/user-storage.js'
 export * from './storage/user/encrypted-user-storage.js'
 
-export * from './network/auth/is-public-api.js'
 export * from './network/contract/user-web-socket-event-types.js'
 export * from './network/api/auth/refresh-token/refresh-token-api.js'
 export * from './network/api/auth/reset-password/reset-password-api.js'
@@ -60,6 +59,7 @@ export * from './usecase/auth/reset-password/send-reset-password-confirmation-to
 
 export * from './usecase/auth/settings/get-auth-settings-use-case.js'
 export * from './usecase/auth/settings/get-available-user-auth-providers-use-case.js'
+export * from './usecase/auth/settings/observe-open-auth-settings-use-case.js'
 export * from './usecase/auth/unlock/send-unlock-email-confirmation-use-case.js'
 export * from './usecase/auth/unlock/send-unlock-phone-confirmation-use-case.js'
 export * from './usecase/auth/unlock/unlock-by-email-use-case.js'

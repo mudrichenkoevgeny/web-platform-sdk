@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { callResult, HttpClient, markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuthDataPayload,
@@ -7,7 +7,6 @@ import type {
   SendConfirmationToEmailRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenRegistrationRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { RegistrationApi } from '@/network/api/auth/registration/registration-api'
 
 /** {@link RegistrationApi} implementation backed by {@link HttpClient}. */

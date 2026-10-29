@@ -9,6 +9,7 @@ export * from './network/websocket/message-handler/security-web-socket-message-h
 export * from './repository/open-security-settings-repository.js'
 export * from './repository/open-security-settings-repository-impl.js'
 export * from './usecase/refresh-open-security-settings-use-case.js'
+export * from './usecase/observe-open-security-settings-use-case.js'
 export * from './usecase/validate-password-use-case.js'
 export * from './di/security-component.js'
 export * from './mock/network/open-security-settings-api-mock.js'

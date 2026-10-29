@@ -1,6 +1,6 @@
 import { sessionTokenPayloadSchema, UserErrorCodes } from '@mudrichenkoevgeny/shared-foundation'
 import type { HttpClientConfigPlugin } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { IS_PUBLIC_API_HEADER } from '@/network/auth/is-public-api'
+import { IS_PUBLIC_API_HEADER } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
 import { toSessionToken } from '@mudrichenkoevgeny/shared-foundation'
 

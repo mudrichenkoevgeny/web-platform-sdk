@@ -1,13 +1,13 @@
-import { StorageComponent } from '@/di/storage-component'
-import type { StorageComponentConfig } from '@/di/storage-component'
+import { StorageComponent } from '../../di/storage-component'
+import type { StorageComponentConfig } from '../../di/storage-component'
 import {
   WebSocketServiceMock,
   HttpClient,
   EncryptedSettingsMock,
   ClientDeviceInfoProviderMock
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { OpenStorageSettingsApiMock } from '@/mock/network/open-storage-settings-api-mock'
-import { OpenStorageSettingsStorageMock } from '@/mock/storage/open-storage-settings-storage-mock'
+import { OpenStorageSettingsApiMock } from '../network/open/open-storage-settings-api-mock'
+import { OpenStorageSettingsStorageMock } from '../storage/open/open-storage-settings-storage-mock'
 
 /**
  * Creates a pre-configured {@link StorageComponent} instance for testing and Storybook preview purposes.

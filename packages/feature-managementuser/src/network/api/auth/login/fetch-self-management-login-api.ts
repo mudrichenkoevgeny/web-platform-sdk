@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { callResult, HttpClient, markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuthDataPayload,
@@ -6,7 +6,6 @@ import type {
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementLoginRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
 
 /** {@link SelfManagementLoginApi} implementation backed by {@link HttpClient}. */

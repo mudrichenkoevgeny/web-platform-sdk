@@ -20,8 +20,6 @@ export * from './network/api/user/security/open-user-security-api.js'
 export * from './network/api/user/security/fetch-open-user-security-api.js'
 export * from './network/api/user/open-user-api.js'
 export * from './network/api/user/fetch-open-user-api.js'
-export * from './network/api/storage/open-storage-api.js'
-export * from './network/api/storage/fetch-open-storage-api.js'
 
 export * from './repository/auth/login/open-login-repository-impl.js'
 export * from './repository/auth/refresh-token/open-refresh-token-repository-impl.js'
@@ -34,8 +32,6 @@ export * from './repository/identifier/open-identifier-repository-impl.js'
 export * from './repository/session/open-session-repository-impl.js'
 export * from './repository/user/security/open-user-security-repository-impl.js'
 export * from './repository/user/open-user-repository-impl.js'
-export * from './repository/storage/open-storage-repository.js'
-export * from './repository/storage/open-storage-repository-impl.js'
 
 export * from './domain/model/configuration/open-user-configuration.js'
 

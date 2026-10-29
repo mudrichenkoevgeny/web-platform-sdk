@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { EditStorageSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { EditStorageSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
@@ -12,9 +12,9 @@ export const Route = createFileRoute('/settings/storage')({
     return (
       <EditStorageSettingsScreen
         dependencies={{
-          getManagementStorageSettingsUseCase: managementDeps.getManagementStorageSettingsUseCase,
-          updateManagementStorageSettingsUseCase: managementDeps.updateManagementStorageSettingsUseCase,
-          resetManagementStorageSettingsUseCase: managementDeps.resetManagementStorageSettingsUseCase,
+          getSettingsUseCase: managementDeps.getManagementStorageSettingsUseCase,
+          updateSettingsUseCase: managementDeps.updateManagementStorageSettingsUseCase,
+          resetSettingsUseCase: managementDeps.resetManagementStorageSettingsUseCase,
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })
         }}
       />

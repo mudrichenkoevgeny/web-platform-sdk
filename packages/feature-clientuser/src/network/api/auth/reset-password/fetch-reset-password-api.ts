@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { callResult, HttpClient, markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   OtpConfirmationPayload,
@@ -7,7 +7,6 @@ import type {
   UserIdentifierPrivatePayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenResetPasswordRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { ResetPasswordApi } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Open {@link ResetPasswordApi} implementation backed by {@link HttpClient}. */

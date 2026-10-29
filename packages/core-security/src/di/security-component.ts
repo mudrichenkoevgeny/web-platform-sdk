@@ -1,14 +1,15 @@
 import type { EncryptedSettings, HttpClient, WebSocketService } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { PasswordPolicyValidator } from '@mudrichenkoevgeny/shared-foundation'
-import type { OpenSecuritySettingsStorage } from '@/storage/security-settings/open-security-settings-storage'
-import { EncryptedOpenSecuritySettingsStorage } from '@/storage/security-settings/encrypted-open-security-settings-storage'
-import type { OpenSecuritySettingsApi } from '@/network/api/security-settings/open-security-settings-api'
-import { FetchOpenSecuritySettingsApi } from '@/network/api/security-settings/fetch-open-security-settings-api'
-import type { OpenSecuritySettingsRepository } from '@/repository/open-security-settings-repository'
-import { OpenSecuritySettingsRepositoryImpl } from '@/repository/open-security-settings-repository-impl'
-import { RefreshOpenSecuritySettingsUseCase } from '@/usecase/refresh-open-security-settings-use-case'
-import { ValidatePasswordUseCase } from '@/usecase/validate-password-use-case'
-import { SecurityWebSocketMessageHandler } from '@/network/websocket/message-handler/security-web-socket-message-handler'
+import type { OpenSecuritySettingsStorage } from '../storage/security-settings/open-security-settings-storage'
+import { EncryptedOpenSecuritySettingsStorage } from '../storage/security-settings/encrypted-open-security-settings-storage'
+import type { OpenSecuritySettingsApi } from '../network/api/security-settings/open-security-settings-api'
+import { FetchOpenSecuritySettingsApi } from '../network/api/security-settings/fetch-open-security-settings-api'
+import type { OpenSecuritySettingsRepository } from '../repository/open-security-settings-repository'
+import { OpenSecuritySettingsRepositoryImpl } from '../repository/open-security-settings-repository-impl'
+import { RefreshOpenSecuritySettingsUseCase } from '../usecase/refresh-open-security-settings-use-case'
+import { ObserveOpenSecuritySettingsUseCase } from '../usecase/observe-open-security-settings-use-case'
+import { ValidatePasswordUseCase } from '../usecase/validate-password-use-case'
+import { SecurityWebSocketMessageHandler } from '../network/websocket/message-handler/security-web-socket-message-handler'
 
 /**
  * Configuration options required to instantiate {@link SecurityComponent}.
@@ -44,6 +45,8 @@ export class SecurityComponent {
   public readonly passwordPolicyValidator: PasswordPolicyValidator
   /** Use case for forcing a network refresh of settings. */
   public readonly refreshSecuritySettingsUseCase: RefreshOpenSecuritySettingsUseCase
+  /** Use case for observing live open security settings changes. */
+  public readonly observeOpenSecuritySettingsUseCase: ObserveOpenSecuritySettingsUseCase
   /** Use case for validating password candidate strings against active policy. */
   public readonly validatePasswordUseCase: ValidatePasswordUseCase
   /** Handler offered to the shared WebSocket pipeline. */
@@ -73,6 +76,10 @@ export class SecurityComponent {
     )
 
     this.refreshSecuritySettingsUseCase = new RefreshOpenSecuritySettingsUseCase(
+      this.securitySettingsRepository
+    )
+
+    this.observeOpenSecuritySettingsUseCase = new ObserveOpenSecuritySettingsUseCase(
       this.securitySettingsRepository
     )
 

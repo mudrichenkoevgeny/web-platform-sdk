@@ -1,4 +1,4 @@
-import { callResult, HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { callResult, HttpClient, markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   OtpConfirmationPayload,
@@ -6,7 +6,6 @@ import type {
   UnlockByEmailConfirmationRequest
 } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementUnlockRoutes } from '@mudrichenkoevgeny/shared-foundation'
-import { markAsPublic } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementUnlockApi } from '@/network/api/auth/unlock/self-management-unlock-api'
 
 /** {@link SelfManagementUnlockApi} implementation backed by {@link HttpClient}. */

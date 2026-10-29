@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { StorageFileUploadScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { StorageFileUploadScreen } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 import { ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
