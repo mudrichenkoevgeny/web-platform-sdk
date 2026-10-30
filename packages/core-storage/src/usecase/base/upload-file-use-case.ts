@@ -1,11 +1,11 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageCategory, StorageFilePrivate, StorageFileVisibility } from '@mudrichenkoevgeny/shared-foundation'
 import type { StorageRepository } from '../../repository/base/storage-repository'
 
 export interface UploadFileUseCaseParams {
   file: File
-  category: string
-  visibility: string
+  category: StorageCategory
+  visibility: StorageFileVisibility
   targetScope: string
   onProgress?: (percent: number) => void
 }
@@ -20,31 +20,20 @@ export class UploadFileUseCase {
   public constructor(protected readonly storageRepository: StorageRepository) {}
 
   /**
-   * Executes the use case. Accepts either an options object or positional parameters.
+   * Executes the use case. Accepts a single options parameters object.
+   *
+   * @param params - Upload parameters options object
+   * @returns AppResult containing uploaded StorageFilePrivate on success
    */
   public async execute(
-    paramsOrFile: UploadFileUseCaseParams | File,
-    category?: string,
-    visibility?: string,
-    targetScope?: string,
-    onProgress?: (percent: number) => void
+    params: UploadFileUseCaseParams
   ): Promise<AppResult<StorageFilePrivate, AppError>> {
-    if (paramsOrFile instanceof File) {
-      return this.storageRepository.uploadFile(
-        paramsOrFile,
-        category ?? '',
-        visibility ?? '',
-        targetScope ?? '',
-        onProgress
-      )
-    }
-
     return this.storageRepository.uploadFile(
-      paramsOrFile.file,
-      paramsOrFile.category,
-      paramsOrFile.visibility,
-      paramsOrFile.targetScope,
-      paramsOrFile.onProgress
+      params.file,
+      params.category,
+      params.visibility,
+      params.targetScope,
+      params.onProgress
     )
   }
 }

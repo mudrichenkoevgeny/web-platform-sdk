@@ -24,8 +24,8 @@ export interface FileUploadQueueItem {
 export interface StorageFileUploadUseCaseContract {
   execute(params: {
     file: File
-    category: string
-    visibility: string
+    category: StorageCategory
+    visibility: StorageFileVisibility
     targetScope: string
     onProgress?: (percent: number) => void
   }): Promise<AppResult<StorageFilePrivate, AppError>>
