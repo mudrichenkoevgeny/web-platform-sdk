@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditGlobalSettingsScreen } from '@/ui/screens/management/settings/global/EditGlobalSettingsScreen'
-import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
+import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/edit-global-settings-store'
 
 describe('EditGlobalSettingsScreen', () => {
   const createMockDeps = (): EditGlobalSettingsStoreDependencies => ({

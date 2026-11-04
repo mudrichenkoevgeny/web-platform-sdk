@@ -5,7 +5,7 @@ import {
   LoginByPhoneUseCaseMock,
   SendLoginConfirmationToPhoneUseCaseMock
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
+import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/login-by-phone-store'
 
 export const loginByPhoneDependenciesMock = (
   overrides?: Partial<LoginByPhoneStoreDependencies>

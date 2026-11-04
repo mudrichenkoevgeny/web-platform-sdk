@@ -61,6 +61,7 @@ const SessionDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings
 }) => {
   const screenState = useSessionDetailStore((s) => s.screenState)
+  const deps = useSessionDetailStore((s) => s.dependencies)
   const initializeSession = useSessionDetailStore((s) => s.initializeSession)
   const onRevokeSessionClick = useSessionDetailStore((s) => s.onRevokeSessionClick)
   const onRetry = useSessionDetailStore((s) => s.onRetry)
@@ -90,6 +91,7 @@ const SessionDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
     case SessionDetailStatus.CONTENT: {
       const { session, isCurrentSession, isSelfUser, actionLoading, actionError } = screenState
+      const isRevokeAvailable = deps.dataSource ? deps.dataSource.isRevokeAvailable !== false : true
       const notAvailableText = '-'
       const IconComponent = getAuthProviderIcon(session.identifierAuthProvider)
 
@@ -220,7 +222,7 @@ const SessionDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
             </div>
 
             <div className="w-full pt-2 flex flex-col gap-2">
-              {!isCurrentSession && (
+              {!isCurrentSession && isRevokeAvailable && (
                 <CoreButton
                   type="button"
                   label={strings.ui.sessionRevoke}

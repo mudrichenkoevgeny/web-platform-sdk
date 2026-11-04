@@ -24,7 +24,8 @@ export const Route = createFileRoute('/user/')({
           onNavigateToTotp: () => void navigate({ to: ClientUserNavigation.TotpMain.ROUTE }),
           onNavigateToSessions: () => void navigate({ to: ClientUserNavigation.SessionList.ROUTE }),
           onNavigateToIdentifiers: () => void navigate({ to: ClientUserNavigation.IdentifierList.ROUTE }),
-          onNavigateToStorage: () => void navigate({ to: OpenStorageNavigation.FileList.ROUTE })
+          onNavigateToStorage: () => void navigate({ to: OpenStorageNavigation.FileList.ROUTE }),
+          onNavigateToEditUser: () => void navigate({ to: ClientUserNavigation.UserEdit.route })
         }}
       />
     )

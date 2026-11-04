@@ -17,8 +17,8 @@ import {
   EditSecuritySettingsProvider,
   EditSecuritySettingsStatus,
   useEditSecuritySettingsStore
-} from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
-import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
+} from '@/ui/screens/management/settings/security/edit-security-settings-store'
+import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/edit-security-settings-store'
 
 const EditSecuritySettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings

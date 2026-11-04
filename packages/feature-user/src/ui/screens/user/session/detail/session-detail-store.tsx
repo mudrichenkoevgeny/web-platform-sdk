@@ -5,6 +5,7 @@ import type { UserIdentifierId, UserId, UserSessionId, UserSessionPrivate } from
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuthStorage } from '@/storage/auth/auth-storage'
+import type { SessionDetailDataSource } from './session-detail-data-source'
 
 /** Status values for {@link SessionDetailScreenState}. */
 export enum SessionDetailStatus {
@@ -46,9 +47,11 @@ export interface SessionDetailStoreDependencies {
   session?: UserSessionPrivate
   /** Optional target session ID to fetch. */
   sessionId?: UserSessionId
-  /** Use case for loading user session details. */
+  /** Data source handling session detail retrieval and actions. */
+  dataSource?: SessionDetailDataSource
+  /** Legacy use case for loading user session details. */
   getSessionUseCase?: { execute: (sessionId: UserSessionId) => Promise<AppResult<UserSessionPrivate, AppError>> }
-  /** Use case for deleting/revoking a user session. */
+  /** Legacy use case for deleting/revoking a user session. */
   deleteSessionUseCase?: { execute: (sessionId: UserSessionId) => Promise<AppResult<void, AppError>> }
   /** Explicit override flag indicating if this is the active session. */
   isCurrentSession?: boolean
@@ -141,12 +144,19 @@ export const createSessionDetailStore = (
           return
         }
 
-        if (targetId && activeDeps.getSessionUseCase) {
-          set({ screenState: { status: SessionDetailStatus.LOADING } })
-          const sessionResult = await activeDeps.getSessionUseCase.execute(targetId)
+        const getSessionUseCase = activeDeps.getSessionUseCase
+        const getSessionFn =
+          activeDeps.dataSource?.getSession ??
+          (getSessionUseCase
+            ? (id: UserSessionId) => getSessionUseCase.execute(id)
+            : null)
 
-          if (isSuccess(sessionResult)) {
-            const loadedSession = sessionResult.data
+        if (targetId && getSessionFn) {
+          set({ screenState: { status: SessionDetailStatus.LOADING } })
+          const fetchSessionDetailResult = await getSessionFn(targetId)
+
+          if (isSuccess(fetchSessionDetailResult)) {
+            const loadedSession = fetchSessionDetailResult.data
             const isSelfActiveSession =
               activeDeps.isCurrentSession ??
               (activeSessionId != null && loadedSession.id === activeSessionId)
@@ -167,7 +177,7 @@ export const createSessionDetailStore = (
             set({
               screenState: {
                 status: SessionDetailStatus.ERROR,
-                error: sessionResult.error
+                error: fetchSessionDetailResult.error
               }
             })
           }
@@ -203,8 +213,15 @@ export const createSessionDetailStore = (
         }
       })
 
-      if (activeDeps.deleteSessionUseCase) {
-        const deleteSessionResult = await activeDeps.deleteSessionUseCase.execute(targetSessionId)
+      const deleteSessionUseCase = activeDeps.deleteSessionUseCase
+      const revokeSessionFn =
+        activeDeps.dataSource?.revokeSession ??
+        (deleteSessionUseCase
+          ? (id: UserSessionId) => deleteSessionUseCase.execute(id)
+          : null)
+
+      if (revokeSessionFn) {
+        const deleteSessionResult = await revokeSessionFn(targetSessionId)
         if (isSuccess(deleteSessionResult)) {
           activeDeps.onSessionRevoked?.(targetSessionId)
           activeDeps.onBack()
@@ -224,7 +241,7 @@ export const createSessionDetailStore = (
     },
 
     onRetry: () => {
-      get().initializeSession()
+      void get().initializeSession()
     },
 
     onBackClick: () => {

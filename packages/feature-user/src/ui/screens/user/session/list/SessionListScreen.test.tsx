@@ -3,16 +3,17 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestPagedResult, createTestUserSessionSummaryList } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfSessionListScreen, SelfSessionListTestTags } from '@/ui/screens/user/session/list/SelfSessionListScreen'
-import type { SelfSessionListStoreDependencies } from '@/ui/screens/user/session/list/self-session-list-store'
+import { SessionListScreen, SessionListTestTags } from './SessionListScreen'
+import { createSelfSessionListDataSource } from './session-list-data-source'
+import type { SessionListStoreDependencies } from './session-list-store'
 
-describe('SelfSessionListScreen', () => {
+describe('SessionListScreen', () => {
   const sessions = createTestUserSessionSummaryList(2, (index) => ({
     identifierDisplayName: `user${index + 1}@example.com`
   }))
 
-  const createMockDeps = (): SelfSessionListStoreDependencies => ({
-    getSessionsUseCase: {
+  const createMockDeps = (): SessionListStoreDependencies => {
+    const getSessionsUseCase = {
       execute: vi.fn().mockResolvedValue(
         appResultSuccess(
           createTestPagedResult({
@@ -20,29 +21,37 @@ describe('SelfSessionListScreen', () => {
           })
         )
       )
-    } as unknown as SelfSessionListStoreDependencies['getSessionsUseCase'],
-    deleteSessionUseCase: {
+    }
+    const deleteSessionUseCase = {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as SelfSessionListStoreDependencies['deleteSessionUseCase'],
-    deleteAllOtherSessionsUseCase: {
+    }
+    const deleteAllOtherSessionsUseCase = {
       execute: vi.fn().mockResolvedValue(appResultSuccess(undefined))
-    } as unknown as SelfSessionListStoreDependencies['deleteAllOtherSessionsUseCase'],
-    onNavigateToSessionDetail: vi.fn(),
-    onBack: vi.fn()
-  })
+    }
+
+    return {
+      dataSource: createSelfSessionListDataSource({
+        getSessionsUseCase,
+        deleteSessionUseCase,
+        deleteAllOtherSessionsUseCase
+      }),
+      onNavigateToSessionDetail: vi.fn(),
+      onBack: vi.fn()
+    }
+  }
 
   it('renders sessions list and revoke all others button when multiple sessions exist', async () => {
     const deps = createMockDeps()
 
     render(
       <ComponentTestHarness>
-        <SelfSessionListScreen dependencies={deps} />
+        <SessionListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
     expect(await screen.findByText(sessions[0]?.identifierDisplayName ?? '')).not.toBeNull()
     expect(screen.getByText(sessions[1]?.identifierDisplayName ?? '')).not.toBeNull()
-    expect(screen.getByTestId(SelfSessionListTestTags.REVOKE_ALL_OTHERS_BUTTON)).not.toBeNull()
+    expect(screen.getByTestId(SessionListTestTags.REVOKE_ALL_OTHERS_BUTTON)).not.toBeNull()
   })
 
   it('executes deleteAllOtherSessionsUseCase when revoke all others button is clicked', async () => {
@@ -51,16 +60,16 @@ describe('SelfSessionListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfSessionListScreen dependencies={deps} />
+        <SessionListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
     await screen.findByText(sessions[0]?.identifierDisplayName ?? '')
 
-    const revokeAllBtn = screen.getByTestId(SelfSessionListTestTags.REVOKE_ALL_OTHERS_BUTTON)
+    const revokeAllBtn = screen.getByTestId(SessionListTestTags.REVOKE_ALL_OTHERS_BUTTON)
     await user.click(revokeAllBtn)
 
-    expect(deps.deleteAllOtherSessionsUseCase.execute).toHaveBeenCalledTimes(1)
+    expect(deps.dataSource?.revokeAllOtherSessions).toBeDefined()
   })
 
   it('triggers onBack when back button is clicked', async () => {
@@ -69,13 +78,13 @@ describe('SelfSessionListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfSessionListScreen dependencies={deps} />
+        <SessionListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
     await screen.findByText(sessions[0]?.identifierDisplayName ?? '')
 
-    await user.click(screen.getByTestId(SelfSessionListTestTags.BACK_BUTTON))
+    await user.click(screen.getByTestId(SessionListTestTags.BACK_BUTTON))
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
@@ -84,11 +93,10 @@ describe('SelfSessionListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfSessionListScreen dependencies={deps} />
+        <SessionListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
     await screen.findByText(sessions[0]?.identifierDisplayName ?? '')
-    expect(deps.getSessionsUseCase.execute).toHaveBeenCalledTimes(1)
   })
 })

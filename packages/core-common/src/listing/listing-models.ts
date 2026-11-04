@@ -1,15 +1,5 @@
-import type { PagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import { ListingDefaultValues, type PagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError } from '@/error/model/app-error'
-
-/** Constants for listing operations. */
-export const ListingConstants = {
-  /** Default page size for paginated listing requests. */
-  DEFAULT_PAGE_SIZE: 20,
-  /** Large page size for extended listing queries. */
-  LARGE_PAGE_SIZE: 100,
-  /** Initial page number index (1-based). */
-  INITIAL_PAGE_NUMBER: 1
-} as const
 
 /**
  * Pagination state for a paginated list of items.
@@ -44,7 +34,7 @@ export const createInitialPaginationState = <T>(): PaginationState<T> => ({
 
 /** Computes the next page number to fetch. */
 export const getNextPageNumber = <T>(state: PaginationState<T>): number =>
-  state.pageNumber === 0 ? ListingConstants.INITIAL_PAGE_NUMBER : state.pageNumber + 1
+  state.pageNumber === 0 ? ListingDefaultValues.Pagination.INITIAL_PAGE_NUMBER : state.pageNumber + 1
 
 /** Checks whether more pages are available to fetch. */
 export const hasMorePages = <T>(state: PaginationState<T>): boolean =>

@@ -6,7 +6,7 @@ import {
   SendRegistrationConfirmationToEmailUseCaseMock
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ValidatePasswordUseCaseMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
+import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/registration-by-email-store'
 
 export const registrationByEmailDependenciesMock = (
   overrides?: Partial<RegistrationByEmailStoreDependencies>

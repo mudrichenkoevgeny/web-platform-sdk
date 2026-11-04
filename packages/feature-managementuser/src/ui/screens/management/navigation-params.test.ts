@@ -7,21 +7,13 @@ import {
   selfIdentifierListParamsSchema,
   selfSessionListParamsSchema,
   SortOrder,
-  TEST_EMAIL,
-  TEST_USER_ID,
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createAuditEventListStore } from '@/ui/screens/management/audit/list/AuditEventListStore'
-import { createGlobalUserListStore } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
-import { createGlobalSessionListStore } from '@/ui/screens/management/session/global-list/GlobalSessionListStore'
-import { createGlobalIdentifierListStore } from '@/ui/screens/management/identifier/global-list/GlobalIdentifierListStore'
+import { createAuditEventListStore } from '@/ui/screens/management/audit/list/audit-event-list-store'
+import { createGlobalUserListStore } from '@/ui/screens/management/user/global-list/global-user-list-store'
 import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
 import { GetUsersUseCaseMock } from '@/mock/usecase/user/get-users-use-case-mock'
-import { ManagementGetSessionsUseCaseMock } from '@/mock/usecase/session/management-get-sessions-use-case-mock'
-import { ManagementDeleteSessionUseCaseMock } from '@/mock/usecase/session/management-delete-session-use-case-mock'
-import { ManagementGetIdentifiersUseCaseMock } from '@/mock/usecase/identifier/management-get-identifiers-use-case-mock'
-import { ManagementDeleteIdentifierUseCaseMock } from '@/mock/usecase/identifier/management-delete-identifier-use-case-mock'
 
 describe('Unified Navigation Parameters & API Architecture Suite', () => {
   describe('Zod Search Parameter Schema Robustness & Defaults', () => {
@@ -239,73 +231,6 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
       await store.getState().initScreen()
 
       expect(getUsersUseCase.execute).toHaveBeenCalledWith(typedParams)
-    })
-
-    it('GlobalSessionListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const managementGetSessionsUseCase = new ManagementGetSessionsUseCaseMock()
-      vi.spyOn(managementGetSessionsUseCase, 'execute')
-      const managementDeleteSessionUseCase = new ManagementDeleteSessionUseCaseMock()
-
-      const typedParams = managementGlobalSessionListParamsSchema.parse({
-        pageNumber: 1,
-        pageSize: 20,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        userIds: [TEST_USER_ID],
-        userRoles: [],
-        identifiers: [],
-        identifierIds: [],
-        userAuthProviders: [],
-        clientTypes: [],
-        userAgents: [],
-        ipAddresses: [],
-        languages: [],
-        deviceIds: [],
-        deviceNames: [],
-        appVersions: [],
-        osVersions: []
-      })
-
-      const store = createGlobalSessionListStore({
-        managementGetSessionsUseCase,
-        managementDeleteSessionUseCase,
-        onNavigateToSessionDetail: vi.fn(),
-        onNavigateToUserDetail: vi.fn(),
-        onBack: vi.fn(),
-        searchParams: typedParams
-      })
-
-      await store.getState().initScreen()
-
-      expect(managementGetSessionsUseCase.execute).toHaveBeenCalledWith(typedParams)
-    })
-
-    it('GlobalIdentifierListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const managementGetIdentifiersUseCase = new ManagementGetIdentifiersUseCaseMock()
-      vi.spyOn(managementGetIdentifiersUseCase, 'execute')
-      const managementDeleteIdentifierUseCase = new ManagementDeleteIdentifierUseCaseMock()
-
-      const typedParams = managementGlobalIdentifierListParamsSchema.parse({
-        pageNumber: 1,
-        pageSize: 20,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        userIds: [],
-        userAuthProviders: [],
-        identifiers: [TEST_EMAIL]
-      })
-
-      const store = createGlobalIdentifierListStore({
-        managementGetIdentifiersUseCase,
-        managementDeleteIdentifierUseCase,
-        onNavigateToIdentifierDetail: vi.fn(),
-        onBack: vi.fn(),
-        searchParams: typedParams
-      })
-
-      await store.getState().initScreen()
-
-      expect(managementGetIdentifiersUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
   })
 })

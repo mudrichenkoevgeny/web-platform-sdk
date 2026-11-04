@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useId, useRef } from 'react'
-import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, UiValues, StorageCategory } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, UiValues } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
@@ -14,11 +14,10 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   CreateUserProvider,
-  SelectedFilePayload,
+  type SelectedFilePayload,
   useCreateUserStore
-} from '@/ui/screens/management/user/create/CreateUserStore'
-import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
-import { StorageFileImagePreview } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+} from '@/ui/screens/management/user/create/create-user-store'
+import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/create-user-store'
 
 /** Automation test tags for {@link CreateUserScreen}. */
 export const CreateUserTestTags = {
@@ -258,7 +257,7 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             <CoreButton
               type="button"
               data-testid={CreateUserTestTags.AVATAR_CHANGE_BUTTON}
-              label={`${strings.ui.editProfileTitle} (${strings.ui.avatar})`}
+              label={strings.ui.uploadAvatar}
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading}
             />
@@ -334,9 +333,9 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             data-testid={CreateUserTestTags.ROLE_SELECT}
             value={role}
             onChange={(e) => {
-              const val = e.target.value
-              if (isUserRole(val)) {
-                onRoleChanged(val)
+              const roleValue = e.target.value
+              if (isUserRole(roleValue)) {
+                onRoleChanged(roleValue)
               }
             }}
             disabled={isLoading}
@@ -359,9 +358,9 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             data-testid={CreateUserTestTags.STATUS_SELECT}
             value={status}
             onChange={(e) => {
-              const val = e.target.value
-              if (isUserAccountStatus(val)) {
-                onStatusChanged(val)
+              const statusValue = e.target.value
+              if (isUserAccountStatus(statusValue)) {
+                onStatusChanged(statusValue)
               }
             }}
             disabled={isLoading}

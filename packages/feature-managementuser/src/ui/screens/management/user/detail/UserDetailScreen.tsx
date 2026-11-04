@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useId, useRef } from 'react'
-import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, storageStrings, StorageCategory } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -15,13 +15,12 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   hasUserDetailChanges,
-  SelectedFilePayload,
+  type SelectedFilePayload,
   UserDetailProvider,
   UserDetailStatus,
   useUserDetailStore
-} from '@/ui/screens/management/user/detail/UserDetailStore'
-import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
-import { StorageFileImagePreview } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+} from '@/ui/screens/management/user/detail/user-detail-store'
+import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/user-detail-store'
 
 /** Automation test tags for {@link UserDetailScreen}. */
 export const UserDetailTestTags = {
@@ -213,8 +212,28 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
     }
   }, [])
 
-  if (screenState.status !== UserDetailStatus.CONTENT) {
-    return null
+  const initScreen = useUserDetailStore((s) => s.initScreen)
+  const onRetry = useUserDetailStore((s) => s.onRetry)
+  const onBackClick = useUserDetailStore((s) => s.onBackClick)
+
+  useEffect(() => {
+    void initScreen()
+  }, [initScreen])
+
+  if (screenState.status === UserDetailStatus.LOADING) {
+    return <FullscreenLoading />
+  }
+
+  if (screenState.status === UserDetailStatus.ERROR) {
+    return (
+      <FullscreenError
+        data-testid={UserDetailTestTags.GLOBAL_ERROR}
+        error={screenState.error}
+        onRetry={onRetry}
+        onBack={onBackClick}
+        title={strings.ui.userDetailsTitle}
+      />
+    )
   }
 
   const {
@@ -278,6 +297,16 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
   return (
     <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
+      <div className="w-full flex items-center justify-between relative mb-6">
+        <CoreBackButton data-testid={UserDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
+        <CoreScreenTitleText
+          data-testid={UserDetailTestTags.TITLE}
+          text={strings.ui.userDetailsTitle}
+          className="absolute left-1/2 -translate-x-1/2"
+        />
+        <div className="w-10" />
+      </div>
+
       <div className="w-full max-w-md mx-auto flex flex-col gap-4 mb-6">
         <div className="flex flex-col items-center gap-3 mb-2">
           <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-accent flex items-center justify-center relative">

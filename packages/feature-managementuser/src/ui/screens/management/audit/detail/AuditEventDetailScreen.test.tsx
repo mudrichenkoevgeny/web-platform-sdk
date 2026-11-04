@@ -6,7 +6,7 @@ import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-p
 import { AuditEventDetailScreen, AuditEventDetailTestTags } from '@/ui/screens/management/audit/detail/AuditEventDetailScreen'
 import { auditEventDetailDependenciesMock } from '@/mock/ui/screen/management/audit/detail/audit-event-detail-component-mock'
 import { GetAuditEventUseCaseMock } from '@/mock/usecase/audit/get-audit-event-use-case-mock'
-import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/AuditEventDetailStore'
+import type { AuditEventDetailStoreDependencies } from '@/ui/screens/management/audit/detail/audit-event-detail-store'
 
 describe('AuditEventDetailScreen', () => {
   const currentUserId = toUserIdOrThrow('usr_current_123')

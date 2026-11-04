@@ -23,7 +23,8 @@ export const Route = createFileRoute('/user/')({
           onNavigateToTotp: () => void navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE }),
           onNavigateToSessions: () => void navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE }),
           onNavigateToIdentifiers: () => void navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE }),
-          onNavigateToStorage: () => void navigate({ to: ManagementSelfStorageNavigation.FileList.ROUTE })
+          onNavigateToStorage: () => void navigate({ to: ManagementSelfStorageNavigation.FileList.ROUTE }),
+          onNavigateToEditUser: () => void navigate({ to: ManagementSelfUserNavigation.UserEdit.route })
         }}
       />
     )

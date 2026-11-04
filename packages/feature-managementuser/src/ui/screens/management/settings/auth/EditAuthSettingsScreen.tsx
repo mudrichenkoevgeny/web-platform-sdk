@@ -17,8 +17,8 @@ import {
   EditAuthSettingsProvider,
   EditAuthSettingsStatus,
   useEditAuthSettingsStore
-} from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
-import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
+} from '@/ui/screens/management/settings/auth/edit-auth-settings-store'
+import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/edit-auth-settings-store'
 
 const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings

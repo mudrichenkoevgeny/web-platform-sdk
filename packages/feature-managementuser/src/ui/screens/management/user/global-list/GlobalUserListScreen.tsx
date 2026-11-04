@@ -29,8 +29,8 @@ import {
   GlobalUserListProvider,
   GlobalUserListStatus,
   useGlobalUserListStore
-} from '@/ui/screens/management/user/global-list/GlobalUserListStore'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
+} from '@/ui/screens/management/user/global-list/global-user-list-store'
+import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/global-user-list-store'
 
 /** Automation test selectors for {@link GlobalUserListScreen}. */
 export const GlobalUserListTestTags = {

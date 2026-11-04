@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
-  createTestUserPrivatePayload,
-  toUserPrivate,
+  createTestUserPrivate,
+  toFileIdOrThrow,
   StorageCategory,
   StorageFileVisibility,
   UserStorageTargetScopes
@@ -26,12 +26,12 @@ describe('UserEditScreen', () => {
   let onSuccess: () => void
   let deps: UserEditStoreDependencies
 
-  const mockUser = toUserPrivate(createTestUserPrivatePayload({
+  const mockUser = createTestUserPrivate({
     nickname: 'jdoe',
-    display_name: 'John Doe',
-    avatar_file_id: null,
-    avatar_urls: null
-  }))
+    displayName: 'John Doe',
+    avatarFileId: null,
+    avatarUrls: null
+  })
 
   beforeEach(() => {
     vi.stubGlobal('URL', {
@@ -129,7 +129,7 @@ describe('UserEditScreen', () => {
         nickname: 'jdoe',
         displayName: 'John Smith',
         avatarFileId: null,
-        birthdate: 1
+        birthdate: 1700000000000
       })
       expect(onSuccess).toHaveBeenCalled()
       expect(onBack).toHaveBeenCalled()
@@ -144,7 +144,7 @@ describe('UserEditScreen', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByTestId(UserEditTestTags.UPLOAD_AVATAR_BUTTON)).toBeDefined()
+      expect(screen.getByTestId(UserEditTestTags.AVATAR_CHANGE_BUTTON)).toBeDefined()
     })
 
     const file = new File(['dummy content'], 'avatar.png', { type: 'image/png' })
@@ -178,10 +178,10 @@ describe('UserEditScreen', () => {
   })
 
   it('handles avatar removal when clicking remove avatar button', async () => {
-    const userWithAvatar = toUserPrivate(createTestUserPrivatePayload({
-      avatar_file_id: 'file-avatar-123',
-      avatar_urls: { original_url: 'https://cdn.example.com/avatar.jpg' }
-    }))
+    const userWithAvatar = createTestUserPrivate({
+      avatarFileId: toFileIdOrThrow('file-avatar-123'),
+      avatarUrls: { originalUrl: 'https://cdn.example.com/avatar.jpg' }
+    })
     getUserUseCase.resultProvider = async () => appResultSuccess(userWithAvatar)
 
     render(

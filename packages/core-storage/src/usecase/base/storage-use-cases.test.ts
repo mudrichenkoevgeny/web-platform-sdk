@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserStorageTargetScopes } from '@mudrichenkoevgeny/shared-foundation'
+import { StorageCategory, StorageFileVisibility, UserStorageTargetScopes } from '@mudrichenkoevgeny/shared-foundation'
 import type { StorageRepository } from '@/repository/base/storage-repository'
 import { GetFilesUseCase } from './get-files-use-case'
 import { GetFileDetailUseCase } from './get-file-detail-use-case'
@@ -42,8 +42,14 @@ describe('Base Storage UseCases', () => {
     vi.mocked(repository.uploadFile).mockResolvedValue(appResultSuccess({} as any))
     const useCase = new UploadFileUseCase(repository)
     const file = new File([], 'test.png')
-    await useCase.execute(file, 'IMAGE', 'PUBLIC', UserStorageTargetScopes.AVATAR)
-    expect(repository.uploadFile).toHaveBeenCalledWith(file, 'IMAGE', 'PUBLIC', UserStorageTargetScopes.AVATAR, undefined)
+    const params = {
+      file,
+      category: StorageCategory.IMAGE,
+      visibility: StorageFileVisibility.PUBLIC,
+      targetScope: UserStorageTargetScopes.AVATAR
+    }
+    await useCase.execute(params)
+    expect(repository.uploadFile).toHaveBeenCalledWith(params.file, params.category, params.visibility, params.targetScope, undefined)
   })
 
   it('delegates DeleteFileUseCase to repository', async () => {

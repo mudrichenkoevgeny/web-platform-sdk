@@ -46,7 +46,7 @@ alwaysApply: true
   - **NEVER** use generic `string` types in `ScreenState` for fields representing fixed value sets (statuses, roles, lockout types, etc.).
   - **ALWAYS** use specific imported TypeScript enums (e.g., `UserRole`, `UserAccountStatus`, `AccountLockoutType`). Avoid unsafe casting (`as any`) or string matching against `Object.values()`.
 - **Pagination State Rules:**
-  - **Initial Pagination State:** Initial state before the first fetch must use `pageNumber: 0` and `totalPages: 0` (not 1) to support correct IntersectionObserver logic.
+  - **Initial Pagination State:** Initial state before the first fetch must use `pageNumber: 1` and `totalPages: 0` (or `createInitialPaginationState<T>()`) to support 1-based indexing for subsequent `getNextPageNumber` calculations and initial loads.
   - **Pure Selector Functions:** Use pure selector functions (`getNextPageNumber`, `hasMorePages`, `isPaginationIdle`, `canLoadMorePages`) for derived pagination states. Pass the `PagedResult` object intact to `appendResultToPaginationState` without destructuring it in the store.
 
 ## 7. Dependency Injection & Domain Parsers

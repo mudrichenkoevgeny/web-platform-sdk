@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { StorageCategory, StorageFilePrivate, StorageFileVisibility } from '@mudrichenkoevgeny/shared-foundation'
 import type { StorageRepository } from '@/repository/base/storage-repository'
 
 export interface UploadFileUseCaseParams {

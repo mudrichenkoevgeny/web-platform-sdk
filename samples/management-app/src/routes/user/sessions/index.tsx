@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SelfSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SessionListScreen, createSelfSessionListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ManagementSelfUserNavigation, selfSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -17,11 +17,13 @@ export const Route = createFileRoute('/user/sessions/')({
     }
 
     return (
-      <SelfSessionListScreen
+      <SessionListScreen
         dependencies={{
-          getSessionsUseCase: appComponent.managementUserComponent.getSessionsUseCase,
-          deleteSessionUseCase: appComponent.managementUserComponent.deleteSessionUseCase,
-          deleteAllOtherSessionsUseCase: appComponent.managementUserComponent.deleteAllOtherSessionsUseCase,
+          dataSource: createSelfSessionListDataSource({
+            getSessionsUseCase: appComponent.managementUserComponent.getSessionsUseCase,
+            deleteSessionUseCase: appComponent.managementUserComponent.deleteSessionUseCase,
+            deleteAllOtherSessionsUseCase: appComponent.managementUserComponent.deleteAllOtherSessionsUseCase
+          }),
           authStorage: appComponent.managementUserComponent.authStorage,
           onNavigateToSessionDetail: (session) =>
             Boolean(session.id) && void navigate({ to: '/user/sessions/$sessionId', params: { sessionId: session.id! } }),

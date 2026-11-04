@@ -40,7 +40,11 @@ const createUserParamsMapperSchema = z
     role: z.nativeEnum(UserRole).nullable().optional(),
     status: z.nativeEnum(UserAccountStatus).nullable().optional(),
     authorityLevel: z.number().nullable().optional(),
-    storageConfiguration: storageConfigSchema
+    storageConfiguration: storageConfigSchema,
+    nickname: z.string().nullable().optional(),
+    displayName: z.string().nullable().optional(),
+    avatarFileId: z.any().nullable().optional(),
+    birthdate: z.number().nullable().optional()
   })
   .transform((params) =>
     createByEmailRequestSchema.parse({
@@ -49,6 +53,10 @@ const createUserParamsMapperSchema = z
       role: params.role ?? UserRole.USER,
       account_status: params.status ?? UserAccountStatus.ACTIVE,
       authority_level: params.authorityLevel ?? 0,
+      nickname: params.nickname ?? null,
+      display_name: params.displayName ?? null,
+      avatar_file_id: params.avatarFileId != null ? String(params.avatarFileId) : null,
+      birthdate: params.birthdate ?? null,
       permission_codes: [],
       storage_configuration: params.storageConfiguration
         ? {

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { CreateUserScreen, CreateUserTestTags } from '@/ui/screens/management/user/create/CreateUserScreen'
-import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
+import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/create-user-store'
 
 describe('CreateUserScreen', () => {
   const createMockDeps = (): CreateUserStoreDependencies => ({

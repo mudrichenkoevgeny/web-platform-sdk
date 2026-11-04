@@ -40,10 +40,10 @@ export * from './usecase/configuration/refresh-client-user-configuration-use-cas
 
 export * from './di/client-user-component.js'
 
-export * from './ui/screens/auth/login/phone/LoginByPhoneStore.js'
+export * from './ui/screens/auth/login/phone/login-by-phone-store.js'
 export * from './ui/screens/auth/login/phone/LoginByPhoneScreen.js'
 export * from './ui/screens/auth/login/phone/LoginByPhoneSearchSchema.js'
-export * from './ui/screens/auth/registration/email/RegistrationByEmailStore.js'
+export * from './ui/screens/auth/registration/email/registration-by-email-store.js'
 export * from './ui/screens/auth/registration/email/RegistrationByEmailScreen.js'
 export * from './ui/screens/auth/registration/email/RegistrationByEmailSearchSchema.js'
 

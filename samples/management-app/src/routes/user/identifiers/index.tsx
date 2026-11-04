@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SelfIdentifierListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { AppType, ManagementSelfUserNavigation, selfIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
+import { IdentifierListScreen, createSelfIdentifierListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ManagementSelfUserNavigation, selfIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
@@ -17,20 +17,21 @@ export const Route = createFileRoute('/user/identifiers/')({
     }
 
     return (
-      <SelfIdentifierListScreen
+      <IdentifierListScreen
         dependencies={{
-          appType: AppType.MANAGEMENT,
-          getUserIdentifiersUseCase: appComponent.managementUserComponent.getUserIdentifiersUseCase,
-          getAvailableUserAuthProvidersUseCase:
-            appComponent.managementUserComponent.getAvailableUserAuthProvidersUseCase,
-          sendAddEmailIdentifierConfirmationUseCase:
-            appComponent.managementUserComponent.sendAddEmailIdentifierConfirmationUseCase,
-          addUserIdentifierEmailUseCase:
-            appComponent.managementUserComponent.addUserIdentifierEmailUseCase,
-          sendAddPhoneIdentifierConfirmationUseCase:
-            appComponent.managementUserComponent.sendAddPhoneIdentifierConfirmationUseCase,
-          addUserIdentifierPhoneUseCase:
-            appComponent.managementUserComponent.addUserIdentifierPhoneUseCase,
+          dataSource: createSelfIdentifierListDataSource({
+            getIdentifiersUseCase: appComponent.managementUserComponent.getUserIdentifiersUseCase,
+            getAvailableUserAuthProvidersUseCase:
+              appComponent.managementUserComponent.getAvailableUserAuthProvidersUseCase,
+            sendAddEmailIdentifierConfirmationUseCase:
+              appComponent.managementUserComponent.sendAddEmailIdentifierConfirmationUseCase,
+            addEmailIdentifierUseCase:
+              appComponent.managementUserComponent.addUserIdentifierEmailUseCase,
+            sendAddPhoneIdentifierConfirmationUseCase:
+              appComponent.managementUserComponent.sendAddPhoneIdentifierConfirmationUseCase,
+            addPhoneIdentifierUseCase:
+              appComponent.managementUserComponent.addUserIdentifierPhoneUseCase
+          }),
           authStorage: appComponent.managementUserComponent.authStorage,
           onIdentifierSelect: (identifierId) =>
             void navigate({ to: '/user/identifiers/$identifierId', params: { identifierId } }),

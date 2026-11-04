@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GlobalIdentifierListScreen, globalIdentifierListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
-import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
+import { IdentifierListScreen, createManagementIdentifierListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ManagementMainNavigation, managementGlobalIdentifierListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for global user identifier list screen. */
 export const Route = createFileRoute('/identifiers/')({
-  validateSearch: (rawSearch) => parseSearchParams(globalIdentifierListSearchSchema, rawSearch),
+  validateSearch: (rawSearch) => parseSearchParams(managementGlobalIdentifierListParamsSchema, rawSearch),
   component: function GlobalIdentifierListRoute() {
     const { managementDeps } = Route.useRouteContext()
     const searchParams = Route.useSearch()
@@ -14,15 +14,16 @@ export const Route = createFileRoute('/identifiers/')({
     const navigateUp = useNavigateUp()
 
     return (
-      <GlobalIdentifierListScreen
+      <IdentifierListScreen
+        includeOwnerFilter
         dependencies={{
-          managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase,
-          managementDeleteIdentifierUseCase: managementDeps.managementDeleteIdentifierUseCase,
-          currentUserId: managementDeps.currentUserId,
+          dataSource: createManagementIdentifierListDataSource({
+            managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase
+          }),
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: newParams as Record<string, unknown>, replace: true }),
-          onNavigateToIdentifierDetail: (identifierId) =>
+          onIdentifierSelect: (identifierId) =>
             void navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })
         }}

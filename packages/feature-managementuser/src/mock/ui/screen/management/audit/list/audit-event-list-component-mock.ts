@@ -1,5 +1,5 @@
 import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
-import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
+import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/audit-event-list-store'
 
 export const auditEventListDependenciesMock = (
   overrides?: Partial<AuditEventListStoreDependencies>

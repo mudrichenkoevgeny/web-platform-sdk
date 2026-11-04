@@ -16,8 +16,8 @@ import {
   LoginByPhoneProvider,
   LoginByPhoneStep,
   useLoginByPhoneStore
-} from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
-import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/LoginByPhoneStore'
+} from '@/ui/screens/auth/login/phone/login-by-phone-store'
+import type { LoginByPhoneStoreDependencies } from '@/ui/screens/auth/login/phone/login-by-phone-store'
 
 const LoginByPhoneContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings

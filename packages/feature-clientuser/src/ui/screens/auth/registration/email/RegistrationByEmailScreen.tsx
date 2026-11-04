@@ -17,8 +17,8 @@ import {
   RegistrationByEmailProvider,
   RegistrationByEmailStep,
   useRegistrationByEmailStore
-} from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
-import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/RegistrationByEmailStore'
+} from '@/ui/screens/auth/registration/email/registration-by-email-store'
+import type { RegistrationByEmailStoreDependencies } from '@/ui/screens/auth/registration/email/registration-by-email-store'
 
 export const RegistrationByEmailTestTags = {
   BACK_BUTTON: 'RegistrationByEmail_BackButton',

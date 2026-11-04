@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
+import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/edit-security-settings-store'
 
 export const editSecuritySettingsDependenciesMock = (
   overrides?: Partial<EditSecuritySettingsStoreDependencies>

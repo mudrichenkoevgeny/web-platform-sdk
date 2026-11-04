@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
+import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/edit-global-settings-store'
 
 export const editGlobalSettingsDependenciesMock = (
   overrides?: Partial<EditGlobalSettingsStoreDependencies>

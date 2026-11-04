@@ -14,7 +14,7 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   hasUserEditChanges,
-  SelectedFilePayload,
+  type SelectedFilePayload,
   UserEditProvider,
   UserEditStatus,
   useUserEditStore

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { createStore, useStore } from 'zustand'
 import { AppType, toUserIdentifierIdOrNull, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { UserIdentifierId, UserId, UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
@@ -9,6 +9,7 @@ import type { GetUserIdentifierUseCase } from '@/usecase/identifier/get-user-ide
 import type { DeleteUserIdentifierUseCase } from '@/usecase/identifier/delete-user-identifier-use-case'
 import type { EmailChangePasswordUseCase } from '@/usecase/identifier/email-change-password-use-case'
 import type { DeletePasswordUseCase } from '@/usecase/identifier/delete-password-use-case'
+import type { IdentifierDetailDataSource } from './identifier-detail-data-source'
 
 /** Status values for {@link IdentifierDetailScreenState}. */
 export enum IdentifierDetailStatus {
@@ -58,17 +59,19 @@ export interface IdentifierDetailStoreDependencies {
   identifier?: UserIdentifierPrivate
   /** Optional target user identifier ID to fetch. */
   identifierId?: UserIdentifierId | null
+  /** Data source handling user identifier detail retrieval and actions. */
+  dataSource?: IdentifierDetailDataSource
   /** Optional current logged in user ID to check ownership. */
   currentUserId?: UserId | null
   /** Optional current active session identifier flag. */
   isCurrentIdentifier?: boolean
-  /** Use case for fetching single user identifier details. */
+  /** Legacy use case for fetching single user identifier details. */
   getUserIdentifierUseCase?: Pick<GetUserIdentifierUseCase, 'execute'>
-  /** Use case for deleting a user identifier. */
+  /** Legacy use case for deleting a user identifier. */
   deleteUserIdentifierUseCase?: Pick<DeleteUserIdentifierUseCase, 'execute'>
-  /** Use case for updating email password. */
+  /** Legacy use case for updating email password. */
   emailChangePasswordUseCase?: Pick<EmailChangePasswordUseCase, 'execute'>
-  /** Use case for deleting password credentials. */
+  /** Legacy use case for deleting password credentials. */
   deletePasswordUseCase?: Pick<DeletePasswordUseCase, 'execute'>
   /** Legacy callback for deleting password. */
   deletePassword?: (identifierId: UserIdentifierId) => Promise<void>
@@ -115,6 +118,14 @@ function computeIdentifierPermissions(
     deps.isCurrentIdentifier ??
     (activeIdentifierId != null ? identifier.id === activeIdentifierId : isSelfUser)
   const isEmail = identifier.userAuthProvider === UserAuthProvider.EMAIL
+
+  if (deps.dataSource) {
+    return {
+      isCurrentIdentifier: isCurrentSessionIdentifier,
+      canChangePassword: Boolean(deps.dataSource.isChangePasswordAvailable) && isEmail,
+      canDeletePassword: Boolean(deps.dataSource.isDeletePasswordAvailable) && isEmail
+    }
+  }
 
   if (isManagement) {
     if (isCurrentSessionIdentifier || isSelfUser) {
@@ -178,12 +189,19 @@ export const createIdentifierDetailStore = (
           return
         }
 
-        if (targetId && activeDeps.getUserIdentifierUseCase) {
-          set({ screenState: { status: IdentifierDetailStatus.LOADING } })
-          const userIdentifierResult = await activeDeps.getUserIdentifierUseCase.execute(targetId)
+        const getUserIdentifierUseCase = activeDeps.getUserIdentifierUseCase
+        const getIdentifierFn =
+          activeDeps.dataSource?.getIdentifier ??
+          (getUserIdentifierUseCase
+            ? (id: UserIdentifierId) => getUserIdentifierUseCase.execute(id)
+            : null)
 
-          if (isSuccess(userIdentifierResult)) {
-            const loaded = userIdentifierResult.data
+        if (targetId && getIdentifierFn) {
+          set({ screenState: { status: IdentifierDetailStatus.LOADING } })
+          const fetchIdentifierDetailResult = await getIdentifierFn(targetId)
+
+          if (isSuccess(fetchIdentifierDetailResult)) {
+            const loaded = fetchIdentifierDetailResult.data
             const permissions = computeIdentifierPermissions(loaded, activeDeps, activeIdentifierId)
 
             set({
@@ -201,7 +219,7 @@ export const createIdentifierDetailStore = (
             set({
               screenState: {
                 status: IdentifierDetailStatus.ERROR,
-                error: userIdentifierResult.error
+                error: fetchIdentifierDetailResult.error
               }
             })
           }
@@ -266,8 +284,15 @@ export const createIdentifierDetailStore = (
       }
 
       const activeDeps = get().dependencies
-      if (activeDeps.deleteUserIdentifierUseCase) {
-        const result = await activeDeps.deleteUserIdentifierUseCase.execute(id)
+      const deleteUserIdentifierUseCase = activeDeps.deleteUserIdentifierUseCase
+      const deleteFn =
+        activeDeps.dataSource?.deleteIdentifier ??
+        (deleteUserIdentifierUseCase
+          ? (identifierId: UserIdentifierId) => deleteUserIdentifierUseCase.execute(identifierId)
+          : null)
+
+      if (deleteFn) {
+        const result = await deleteFn(id)
         if (isSuccess(result)) {
           activeDeps.onIdentifierDeleted?.(id)
           if (current.isCurrentIdentifier) {
@@ -325,32 +350,38 @@ export const createIdentifierDetailStore = (
       }
 
       const activeDeps = get().dependencies
-      if (activeDeps.emailChangePasswordUseCase) {
-        const result = await activeDeps.emailChangePasswordUseCase.execute(
-          id,
-          oldPass,
-          newPass
-        )
+      const emailChangePasswordUseCase = activeDeps.emailChangePasswordUseCase
+      const changePasswordFn =
+        activeDeps.dataSource?.changePassword ??
+        (emailChangePasswordUseCase
+          ? (identifierId: UserIdentifierId, op: string, np: string) =>
+              emailChangePasswordUseCase.execute(
+                identifierId,
+                op,
+                np
+              )
+          : null)
+
+      if (changePasswordFn) {
+        const result = await changePasswordFn(id, oldPass, newPass)
         if (isSuccess(result)) {
           set({
             screenState: {
               ...current,
               actionLoading: false,
-              isChangePasswordDialogVisible: false,
-              actionError: null
+              actionError: null,
+              isChangePasswordDialogVisible: false
             }
           })
+          await get().initializeIdentifier()
         } else {
-          const updated = get().screenState
-          if (updated.status === IdentifierDetailStatus.CONTENT) {
-            set({
-              screenState: {
-                ...updated,
-                actionLoading: false,
-                actionError: result.error
-              }
-            })
-          }
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: result.error
+            }
+          })
         }
       }
     },
@@ -364,8 +395,7 @@ export const createIdentifierDetailStore = (
       set({
         screenState: {
           ...current,
-          isChangePasswordDialogVisible: false,
-          actionError: null
+          isChangePasswordDialogVisible: false
         }
       })
     },
@@ -390,43 +420,41 @@ export const createIdentifierDetailStore = (
       }
 
       const activeDeps = get().dependencies
-      if (activeDeps.deletePasswordUseCase) {
+
+      if (activeDeps.dataSource?.deletePassword) {
+        const result = await activeDeps.dataSource.deletePassword(id)
+        if (isSuccess(result)) {
+          await get().initializeIdentifier()
+        } else {
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: result.error
+            }
+          })
+        }
+      } else if (activeDeps.deletePasswordUseCase) {
         const result = await activeDeps.deletePasswordUseCase.execute(id)
         if (isSuccess(result)) {
           await get().initializeIdentifier()
         } else {
-          const updated = get().screenState
-          if (updated.status === IdentifierDetailStatus.CONTENT) {
-            set({
-              screenState: {
-                ...updated,
-                actionLoading: false,
-                actionError: result.error
-              }
-            })
-          }
+          set({
+            screenState: {
+              ...current,
+              actionLoading: false,
+              actionError: result.error
+            }
+          })
         }
       } else if (activeDeps.deletePassword) {
-        try {
-          await activeDeps.deletePassword(id)
-          await get().initializeIdentifier()
-        } catch {
-          const updated = get().screenState
-          if (updated.status === IdentifierDetailStatus.CONTENT) {
-            set({
-              screenState: {
-                ...updated,
-                actionLoading: false,
-                actionError: CommonError.unknown()
-              }
-            })
-          }
-        }
+        await activeDeps.deletePassword(id)
+        await get().initializeIdentifier()
       }
     },
 
-    onRetry: async () => {
-      await get().initializeIdentifier()
+    onRetry: () => {
+      void get().initializeIdentifier()
     },
 
     onBackClick: () => {
@@ -438,15 +466,19 @@ export const createIdentifierDetailStore = (
       if (current.status !== IdentifierDetailStatus.CONTENT) {
         return
       }
-      get().dependencies.onNavigateToUserDetail?.(current.identifier.userId)
+      const activeDeps = get().dependencies
+      if (activeDeps.onNavigateToUserDetail) {
+        activeDeps.onNavigateToUserDetail(current.identifier.userId)
+      } else {
+        activeDeps.onNavigateToUserMain?.()
+      }
     }
   }))
 
   return store
 }
 
-/** Context for providing {@link IdentifierDetailStore}. */
-export const IdentifierDetailContext = createContext<IdentifierDetailStore | null>(null)
+const IdentifierDetailContext = createContext<IdentifierDetailStore | null>(null)
 
 /** Props for {@link IdentifierDetailProvider}. */
 export interface IdentifierDetailProviderProps {
@@ -455,13 +487,17 @@ export interface IdentifierDetailProviderProps {
   children: React.ReactNode
 }
 
-/** Context Provider isolating {@link IdentifierDetailStore} per component tree. */
+/** React Context Provider for {@link IdentifierDetailStore}. */
 export const IdentifierDetailProvider: React.FC<IdentifierDetailProviderProps> = ({
   dependencies,
   initialState,
   children
 }) => {
   const [store] = useState(() => createIdentifierDetailStore(dependencies, initialState))
+
+  useEffect(() => {
+    store.setState((state) => ({ ...state, dependencies }))
+  }, [store, dependencies])
 
   return (
     <IdentifierDetailContext.Provider value={store}>
@@ -470,7 +506,7 @@ export const IdentifierDetailProvider: React.FC<IdentifierDetailProviderProps> =
   )
 }
 
-/** Custom hook to consume isolated {@link IdentifierDetailStore} state. */
+/** Custom hook to select state from {@link IdentifierDetailStore}. */
 export const useIdentifierDetailStore = <T,>(
   selector: (state: IdentifierDetailStoreState) => T
 ): T => {

@@ -88,7 +88,7 @@ export interface CreateUserStoreDependencies {
       file: File
       category: StorageCategory
       visibility: StorageFileVisibility
-      targetScope: UserStorageTargetScopes[keyof typeof UserStorageTargetScopes]
+      targetScope: UserStorageTargetScopes
       onProgress?: (percent: number) => void
     }): Promise<AppResult<{ id: string; fileUrls?: { originalUrl: string } | null }, AppError>>
   }
@@ -282,7 +282,7 @@ export const createCreateUserStore = (
 
       const birthdateMillis = current.birthdate.trim() ? parseInt(current.birthdate.trim(), 10) : null
 
-      const result = await deps.createUserUseCase.execute({
+      const createUserResult = await deps.createUserUseCase.execute({
         email: current.email.trim(),
         password: current.password.trim() || null,
         nickname: current.nickname.trim() || null,
@@ -295,10 +295,10 @@ export const createCreateUserStore = (
         storageConfiguration
       })
 
-      if (isSuccess(result)) {
+      if (isSuccess(createUserResult)) {
         deps.onSuccess()
       } else {
-        set({ screenState: { ...get().screenState, isLoading: false, error: result.error } })
+        set({ screenState: { ...get().screenState, isLoading: false, error: createUserResult.error } })
       }
     },
 

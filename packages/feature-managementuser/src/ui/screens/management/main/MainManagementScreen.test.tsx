@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { MainManagementScreen } from '@/ui/screens/management/main/MainManagementScreen'
-import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
+import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/main-management-store'
 
 describe('MainManagementScreen', () => {
   const createMockDeps = (): MainManagementStoreDependencies => ({

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
 import { EditAuthSettingsScreen } from '@/ui/screens/management/settings/auth/EditAuthSettingsScreen'
-import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
+import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/edit-auth-settings-store'
 
 describe('EditAuthSettingsScreen', () => {
   const createMockDeps = (): EditAuthSettingsStoreDependencies => ({

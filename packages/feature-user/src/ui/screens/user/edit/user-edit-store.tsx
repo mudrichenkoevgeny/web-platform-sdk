@@ -101,7 +101,7 @@ export interface UserEditStoreDependencies {
       file: File
       category: StorageCategory
       visibility: StorageFileVisibility
-      targetScope: UserStorageTargetScopes[keyof typeof UserStorageTargetScopes]
+      targetScope: UserStorageTargetScopes
       onProgress?: (percent: number) => void
     }): Promise<AppResult<{ id: string; fileUrls?: { originalUrl: string } | null }, AppError>>
   }

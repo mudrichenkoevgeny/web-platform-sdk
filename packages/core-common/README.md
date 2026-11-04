@@ -41,7 +41,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 - **Layout & Feedback:** `CoreScrollableScreenContent`, `FullscreenError`, `FullscreenLoading` (with delay timer), `FullscreenOverlayLoading` (with backdrop blur).
 
 ### 7. Listing, Filtering & Pagination
-- **Listing Infrastructure:** `PaginationState` and `ListingConstants` providing a standardized way to handle paginated data from `PagedResult`.
+- **Listing Infrastructure:** `PaginationState` and `ListingDefaultValues` providing a standardized way to handle paginated data from `PagedResult`.
 - **UI & Infinite Scroll:** `ListingEmptyState`, `ListingHeaderBar`, `PagingFooter`, `ListingChoiceDropdown`, `useInfiniteScroll` hook utilizing browser `IntersectionObserver`.
 
 ### 8. Testing & Mocks Infrastructure
@@ -63,7 +63,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 | `src/platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
 | `src/theme/` | `ThemeProvider`, design tokens (`tokens.css`, `tokens.ts`), and Tailwind preset. |
 | `src/ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
-| `src/listing/` | `PaginationState`, `ListingConstants`, `PagingFooter`, and `useInfiniteScroll`. |
+| `src/listing/` | `PaginationState`, `ListingDefaultValues`, `PagingFooter`, and `useInfiniteScroll`. |
 | `src/locales/` | Typed localization dictionaries (`CoreCommonStrings` with `enStrings` and `ruStrings`). |
 | `src/time/` | Date/time formatters (`DateTimeFormatter`) and resend countdown timers (`ResendCountdown`). |
 | `src/testing/` | `ComponentTestHarness` and Storybook decorators. |

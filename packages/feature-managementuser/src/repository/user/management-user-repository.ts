@@ -1,5 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
+  FileId,
   ManagementUserListParams,
   PagedResult,
   UserAccountStatus,
@@ -23,6 +24,8 @@ export interface CreateUserParams {
   storageConfiguration?: UserStorageConfiguration | null
   nickname?: string | null
   displayName?: string | null
+  avatarFileId?: FileId | null
+  birthdate?: number | null
 }
 
 /** Administrative repository providing staff and administrators full control over creating, fetching, filtering, updating, and removing user accounts across the system. */

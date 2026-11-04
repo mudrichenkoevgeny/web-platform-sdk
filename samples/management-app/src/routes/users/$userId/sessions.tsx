@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UserSessionListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { SessionListScreen, createManagementSessionListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { managementUserSessionListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -19,13 +19,14 @@ export const Route = createFileRoute('/users/$userId/sessions')({
     }
 
     return (
-      <UserSessionListScreen
+      <SessionListScreen
         dependencies={{
           userId: toUserIdOrThrow(userId),
-          managementGetSessionsUseCase: managementDeps.managementGetSessionsUseCase,
-          managementDeleteSessionUseCase: managementDeps.managementDeleteSessionUseCase,
-          managementDeleteAllUserSessionsUseCase: managementDeps.managementDeleteAllUserSessionsUseCase,
-          currentUserId: managementDeps.currentUserId,
+          dataSource: createManagementSessionListDataSource({
+            managementGetSessionsUseCase: managementDeps.managementGetSessionsUseCase,
+            managementDeleteSessionUseCase: managementDeps.managementDeleteSessionUseCase,
+            managementDeleteAllUserSessionsUseCase: managementDeps.managementDeleteAllUserSessionsUseCase
+          }),
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: newParams as Record<string, unknown>, replace: true }),

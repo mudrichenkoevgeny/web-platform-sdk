@@ -4,8 +4,8 @@ import { cn, CoreButton, CoreScreenTitleText } from '@mudrichenkoevgeny/web-plat
 import {
   MainManagementProvider,
   useMainManagementStore
-} from '@/ui/screens/management/main/MainManagementStore'
-import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
+} from '@/ui/screens/management/main/main-management-store'
+import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/main-management-store'
 
 const MainManagementContent: React.FC<{
   strings?: UserModuleStrings

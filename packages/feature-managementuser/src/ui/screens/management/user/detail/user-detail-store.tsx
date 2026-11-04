@@ -10,7 +10,7 @@ import {
   UserAccountStatus,
   type UserStorageConfiguration
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserPrivate, UserId, FileId } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
@@ -137,7 +137,7 @@ export interface UserDetailStoreDependencies {
       file: File
       category: StorageCategory
       visibility: StorageFileVisibility
-      targetScope: UserStorageTargetScopes[keyof typeof UserStorageTargetScopes]
+      targetScope: UserStorageTargetScopes
       onProgress?: (percent: number) => void
     }): Promise<AppResult<{ id: string; fileUrls?: { originalUrl: string } | null }, AppError>>
   }
@@ -229,7 +229,7 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
   const initialNickname = state.user.nickname ?? ''
   const initialDisplayName = state.user.displayName ?? ''
   const initialBirthdate = state.user.birthdate != null ? String(state.user.birthdate) : ''
-  const initialAvatarFileId = state.user.avatarFileId?.value?.toHexDashString() ?? ''
+  const initialAvatarFileId = state.user.avatarFileId != null ? String(state.user.avatarFileId) : ''
 
   return (
     currentAuthLevel !== initialAuthLevel ||
@@ -297,7 +297,7 @@ export const createUserDetailStore = (
               nicknameInput: user.nickname ?? '',
               displayNameInput: user.displayName ?? '',
               birthdateInput: user.birthdate != null ? String(user.birthdate) : '',
-              avatarFileIdInput: user.avatarFileId?.value?.toHexDashString() ?? '',
+              avatarFileIdInput: user.avatarFileId != null ? String(user.avatarFileId) : '',
               avatarUrl,
               selectedAvatarPayload: null,
               authorityLevelInput: String(user.authorityLevel),

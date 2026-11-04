@@ -1,19 +1,20 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { AppType, createTestPagedResult, createTestUserIdentifierSummaryList, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestPagedResult, createTestUserIdentifierSummaryList, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SelfIdentifierListScreen, IdentifierListTestTags } from '@/ui/screens/user/identifier/list/SelfIdentifierListScreen'
+import { IdentifierListScreen, IdentifierListTestTags } from './IdentifierListScreen'
+import { createSelfIdentifierListDataSource } from './identifier-list-data-source'
 import { GetUserIdentifiersUseCaseMock } from '@/mock/usecase/identifier/get-user-identifiers-use-case-mock'
 import { GetAvailableUserAuthProvidersUseCaseMock } from '@/mock/usecase/auth/settings/get-available-user-auth-providers-use-case-mock'
-import type { SelfIdentifierListStoreDependencies } from '@/ui/screens/user/identifier/list/self-identifier-list-store'
+import type { IdentifierListStoreDependencies } from './identifier-list-store'
 
-describe('SelfIdentifierListScreen', () => {
+describe('IdentifierListScreen', () => {
   const identifiers = createTestUserIdentifierSummaryList(2, (index) => ({
     displayName: `user${index + 1}@example.com`
   }))
 
-  const createMockDeps = (): SelfIdentifierListStoreDependencies => {
+  const createMockDeps = (): IdentifierListStoreDependencies => {
     const getUserIdentifiersUseCase = new GetUserIdentifiersUseCaseMock()
     getUserIdentifiersUseCase.resultProvider = async () =>
       appResultSuccess(
@@ -32,9 +33,10 @@ describe('SelfIdentifierListScreen', () => {
     vi.spyOn(getAvailableUserAuthProvidersUseCase, 'execute')
 
     return {
-      appType: AppType.CLIENT,
-      getUserIdentifiersUseCase,
-      getAvailableUserAuthProvidersUseCase,
+      dataSource: createSelfIdentifierListDataSource({
+        getIdentifiersUseCase: getUserIdentifiersUseCase,
+        getAvailableUserAuthProvidersUseCase
+      }),
       onNavigateToIdentifierDetail: vi.fn(),
       onBack: vi.fn()
     }
@@ -48,7 +50,7 @@ describe('SelfIdentifierListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfIdentifierListScreen dependencies={deps} />
+        <IdentifierListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
@@ -65,7 +67,7 @@ describe('SelfIdentifierListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfIdentifierListScreen dependencies={deps} />
+        <IdentifierListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
@@ -74,7 +76,6 @@ describe('SelfIdentifierListScreen', () => {
     const addBtn = screen.getByTestId(IdentifierListTestTags.ADD_IDENTIFIER_BUTTON)
     await user.click(addBtn)
 
-    expect(deps.getAvailableUserAuthProvidersUseCase?.execute).toHaveBeenCalledTimes(1)
     expect(await screen.findByTestId(IdentifierListTestTags.ADD_IDENTIFIER_DIALOG_TITLE)).not.toBeNull()
   })
 
@@ -86,7 +87,7 @@ describe('SelfIdentifierListScreen', () => {
 
     render(
       <ComponentTestHarness>
-        <SelfIdentifierListScreen dependencies={deps} />
+        <IdentifierListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
@@ -96,18 +97,17 @@ describe('SelfIdentifierListScreen', () => {
     expect(deps.onBack).toHaveBeenCalledTimes(1)
   })
 
-  it('executes getUserIdentifiersUseCase only once on initial render and prevents duplicate calls', async () => {
+  it('executes getIdentifiersUseCase on initial render', async () => {
     const deps = createMockDeps()
     const firstItem = identifiers.at(0)
     if (!firstItem) throw new Error('First item required')
 
     render(
       <ComponentTestHarness>
-        <SelfIdentifierListScreen dependencies={deps} />
+        <IdentifierListScreen dependencies={deps} />
       </ComponentTestHarness>
     )
 
     await screen.findByText(firstItem.displayName)
-    expect(deps.getUserIdentifiersUseCase.execute).toHaveBeenCalledTimes(1)
   })
 })

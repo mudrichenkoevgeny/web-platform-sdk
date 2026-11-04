@@ -1,5 +1,8 @@
 import React, { forwardRef, useEffect, useId } from 'react'
-import { UserModuleStrings, userStrings, commonStrings, type AvailableAuthProviders, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { UserModuleStrings, CommonModuleStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { userStrings, commonStrings, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   cn,
   CoreBackButton,
@@ -13,6 +16,8 @@ import {
   CoreTextButton,
   FullscreenError,
   FullscreenLoading,
+  ListingHeaderBar,
+  ListingOptionsPanel,
   hasMorePages,
   useAppErrorParser,
   useInfiniteScroll
@@ -21,21 +26,29 @@ import { IdentifierItem } from '@/ui/components/identifier/item/IdentifierItem'
 import { AuthProviderButton } from '@/ui/components/auth/button/AuthProviderButton'
 import { AuthProviderButtonMode } from '@/ui/components/auth/button/auth-provider-button-mode'
 import { AuthProviderGrid } from '@/ui/components/auth/grid/AuthProviderGrid'
+import { getIdentifierListOptionsConfig } from './identifier-list-options-config'
+import {
+  searchParamsToListingStates,
+  listingStatesToSearchParams
+} from './identifier-list-search-converters'
 import {
   AddIdentifierDialogType,
-  SelfIdentifierListProvider,
-  SelfIdentifierListStatus,
-  useSelfIdentifierListStore
-} from '@/ui/screens/user/identifier/list/self-identifier-list-store'
-import type { AddIdentifierDialogState, SelfIdentifierListStoreDependencies } from '@/ui/screens/user/identifier/list/self-identifier-list-store'
+  IdentifierListProvider,
+  IdentifierListStatus,
+  useIdentifierListStore
+} from './identifier-list-store'
+import type {
+  AddIdentifierDialogState,
+  IdentifierListStoreDependencies,
+  IdentifierListScreenState
+} from './identifier-list-store'
 
-/**
- * Automation test tags for {@link SelfIdentifierListScreen}.
- */
+/** Automation test tags for {@link IdentifierListScreen}. */
 export const IdentifierListTestTags = {
   TITLE: 'IdentifierList_Title',
   BACK_BUTTON: 'IdentifierList_BackButton',
   REFRESH_BUTTON: 'IdentifierList_RefreshButton',
+  FILTER_BUTTON: 'IdentifierList_FilterButton',
   GLOBAL_ERROR_TEXT: 'IdentifierList_GlobalErrorText',
   IDENTIFIER_LIST: 'IdentifierList_List',
   ADD_IDENTIFIER_BUTTON: 'IdentifierList_AddIdentifierButton',
@@ -48,15 +61,15 @@ const AddIdentifierDialogContent: React.FC<{
   availableAuthProviders: AvailableAuthProviders | null
   strings: UserModuleStrings
 }> = ({ dialogState, availableAuthProviders, strings }) => {
-  const onAddIdentifierSelectProvider = useSelfIdentifierListStore((s) => s.onAddIdentifierSelectProvider)
-  const onAddIdentifierEmailChanged = useSelfIdentifierListStore((s) => s.onAddIdentifierEmailChanged)
-  const onAddIdentifierSubmit = useSelfIdentifierListStore((s) => s.onAddIdentifierSubmit)
-  const onAddIdentifierPasswordChanged = useSelfIdentifierListStore((s) => s.onAddIdentifierPasswordChanged)
-  const onAddIdentifierTogglePasswordVisibility = useSelfIdentifierListStore((s) => s.onAddIdentifierTogglePasswordVisibility)
-  const onAddIdentifierPhoneChanged = useSelfIdentifierListStore((s) => s.onAddIdentifierPhoneChanged)
-  const onAddIdentifierCodeChanged = useSelfIdentifierListStore((s) => s.onAddIdentifierCodeChanged)
-  const onAddIdentifierSendCode = useSelfIdentifierListStore((s) => s.onAddIdentifierSendCode)
-  const onAddIdentifierDialogBack = useSelfIdentifierListStore((s) => s.onAddIdentifierDialogBack)
+  const onAddIdentifierSelectProvider = useIdentifierListStore((s) => s.onAddIdentifierSelectProvider)
+  const onAddIdentifierEmailChanged = useIdentifierListStore((s) => s.onAddIdentifierEmailChanged)
+  const onAddIdentifierSubmit = useIdentifierListStore((s) => s.onAddIdentifierSubmit)
+  const onAddIdentifierPasswordChanged = useIdentifierListStore((s) => s.onAddIdentifierPasswordChanged)
+  const onAddIdentifierTogglePasswordVisibility = useIdentifierListStore((s) => s.onAddIdentifierTogglePasswordVisibility)
+  const onAddIdentifierPhoneChanged = useIdentifierListStore((s) => s.onAddIdentifierPhoneChanged)
+  const onAddIdentifierCodeChanged = useIdentifierListStore((s) => s.onAddIdentifierCodeChanged)
+  const onAddIdentifierSendCode = useIdentifierListStore((s) => s.onAddIdentifierSendCode)
+  const onAddIdentifierDialogBack = useIdentifierListStore((s) => s.onAddIdentifierDialogBack)
   const errorParser = useAppErrorParser()
 
   const emailId = useId()
@@ -283,19 +296,57 @@ const AddIdentifierDialogContent: React.FC<{
   }
 }
 
-const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings = userStrings
+interface IdentifierListContentProps {
+  strings?: UserModuleStrings
+  commonModuleStrings?: CommonModuleStrings
+  includeFilters?: boolean
+  includeOwnerFilter?: boolean
+  searchParams?: Record<string, unknown>
+}
+
+const IdentifierListContent: React.FC<IdentifierListContentProps> = ({
+  strings = userStrings,
+  commonModuleStrings = commonStrings,
+  includeFilters = false,
+  includeOwnerFilter = false,
+  searchParams
 }) => {
-  const screenState = useSelfIdentifierListStore((s) => s.screenState)
-  const onRefresh = useSelfIdentifierListStore((s) => s.onRefresh)
-  const onIdentifierClick = useSelfIdentifierListStore((s) => s.onIdentifierClick)
-  const onAddIdentifierClick = useSelfIdentifierListStore((s) => s.onAddIdentifierClick)
-  const onAddIdentifierDialogDismiss = useSelfIdentifierListStore((s) => s.onAddIdentifierDialogDismiss)
-  const onLoadNextPage = useSelfIdentifierListStore((s) => s.onLoadNextPage)
-  const onBackClick = useSelfIdentifierListStore((s) => s.onBackClick)
+  const screenState = useIdentifierListStore((s) => s.screenState)
+  const deps = useIdentifierListStore((s) => s.dependencies)
+  const loadIdentifiers = useIdentifierListStore((s) => s.loadIdentifiers)
+  const onSearchParamsUpdated = useIdentifierListStore((s) => s.onSearchParamsUpdated)
+  const onRefresh = useIdentifierListStore((s) => s.onRefresh)
+  const onIdentifierClick = useIdentifierListStore((s) => s.onIdentifierClick)
+  const onAddIdentifierClick = useIdentifierListStore((s) => s.onAddIdentifierClick)
+  const onAddIdentifierDialogDismiss = useIdentifierListStore((s) => s.onAddIdentifierDialogDismiss)
+  const onLoadNextPage = useIdentifierListStore((s) => s.onLoadNextPage)
+  const onBackClick = useIdentifierListStore((s) => s.onBackClick)
+  const onToggleFilterPanel = useIdentifierListStore((s) => s.onToggleFilterPanel)
   const errorParser = useAppErrorParser()
 
-  const isContent = screenState.status === SelfIdentifierListStatus.CONTENT
+  const { sortState: activeSortState, filterStates: activeFilterStates } =
+    searchParamsToListingStates(searchParams)
+
+  useEffect(() => {
+    void loadIdentifiers(searchParams)
+  }, [loadIdentifiers, searchParams])
+
+  const showFilters = includeFilters || includeOwnerFilter
+  const optionsConfig = getIdentifierListOptionsConfig(commonModuleStrings, includeOwnerFilter)
+
+  const handleSortChange = (newSort: ListingSortState | null) => {
+    const listingSearchParameters = listingStatesToSearchParams(newSort, activeFilterStates)
+    deps.onSearchParamsChanged?.(listingSearchParameters)
+    void onSearchParamsUpdated(listingSearchParameters)
+  }
+
+  const handleFilterChange = (newFilters: Record<string, ListingFilterState>) => {
+    const listingSearchParameters = listingStatesToSearchParams(activeSortState, newFilters)
+    deps.onSearchParamsChanged?.(listingSearchParameters)
+    void onSearchParamsUpdated(listingSearchParameters)
+  }
+
+  const isContent = screenState.status === IdentifierListStatus.CONTENT
   const hasMore = isContent ? hasMorePages(screenState.paging) : false
   const isNextPageLoading = isContent ? Boolean(screenState.paging.isNextPageLoading) : false
 
@@ -306,27 +357,28 @@ const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
   })
 
   switch (screenState.status) {
-    case SelfIdentifierListStatus.LOADING:
+    case IdentifierListStatus.LOADING:
       return <FullscreenLoading />
 
-    case SelfIdentifierListStatus.ERROR:
+    case IdentifierListStatus.ERROR:
       return (
         <FullscreenError
           data-testid={IdentifierListTestTags.GLOBAL_ERROR_TEXT}
           error={screenState.error}
-          onRetry={onRefresh}
+          onRetry={() => void onRefresh(searchParams)}
           onBack={onBackClick}
           title={strings.ui.identifiers}
         />
       )
 
-    case SelfIdentifierListStatus.CONTENT: {
+    case IdentifierListStatus.CONTENT: {
       const {
         items,
         currentIdentifierId,
         availableAuthProviders,
         isAddIdentifierSupported,
         addIdentifierDialogState,
+        isFilterPanelExpanded,
         actionLoading,
         actionError
       } = screenState
@@ -343,13 +395,36 @@ const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
               className="absolute left-1/2 -translate-x-1/2"
               data-testid={IdentifierListTestTags.TITLE}
             />
-            <CoreTextButton
-              type="button"
-              label={commonStrings.ui.refresh}
-              onClick={onRefresh}
-              disabled={actionLoading}
-              data-testid={IdentifierListTestTags.REFRESH_BUTTON}
+            <div className="w-10" />
+          </div>
+
+          <div className="w-full p-4 border-b border-border bg-surface">
+            <ListingHeaderBar
+              hasActiveFilters={Object.keys(activeFilterStates).length > 0}
+              onOptionsClick={showFilters ? onToggleFilterPanel : undefined}
+              onRefreshClick={() => void onRefresh(searchParams)}
             />
+
+            {showFilters && isFilterPanelExpanded && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <ListingOptionsPanel
+                  config={optionsConfig}
+                  filterStates={activeFilterStates}
+                  sortState={activeSortState}
+                  onFilterChanged={(filterId, newState) => {
+                    const nextFilters = { ...activeFilterStates }
+                    if (newState === null) {
+                      delete nextFilters[filterId]
+                    } else {
+                      nextFilters[filterId] = newState
+                    }
+                    handleFilterChange(nextFilters)
+                  }}
+                  onSortChanged={handleSortChange}
+                  onApplyClick={() => void onRefresh(searchParams)}
+                />
+              </div>
+            )}
           </div>
 
           <div
@@ -404,7 +479,13 @@ const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
               role="dialog"
               aria-modal="true"
               aria-labelledby="add-identifier-dialog-title"
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              tabIndex={-1}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  onAddIdentifierDialogDismiss()
+                }
+              }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 outline-none"
             >
               <button
                 type="button"
@@ -444,42 +525,45 @@ const SelfIdentifierListContent: React.FC<{ strings?: UserModuleStrings }> = ({
   }
 }
 
-const SelfIdentifierListController: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings
-}) => {
-  const loadIdentifiers = useSelfIdentifierListStore((s) => s.loadIdentifiers)
-
-  useEffect(() => {
-    loadIdentifiers()
-  }, [loadIdentifiers])
-
-  return <SelfIdentifierListContent strings={strings} />
-}
-
-import type { SelfIdentifierListParams } from '@mudrichenkoevgeny/shared-foundation'
-
-/**
- * Props for {@link SelfIdentifierListScreen}.
- */
-export interface SelfIdentifierListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  searchParams?: SelfIdentifierListParams
-  dependencies: SelfIdentifierListStoreDependencies
+export interface IdentifierListProps extends React.HTMLAttributes<HTMLDivElement> {
+  searchParams?: Record<string, unknown>
+  dependencies: IdentifierListStoreDependencies
+  initialState?: IdentifierListScreenState
   strings?: UserModuleStrings
+  commonModuleStrings?: CommonModuleStrings
+  includeFilters?: boolean
+  includeOwnerFilter?: boolean
 }
 
-/**
- * Screen component displaying linked user identifiers (email/phone/Google) with options to add new identifiers.
- */
-export const SelfIdentifierListScreen = forwardRef<HTMLDivElement, SelfIdentifierListScreenProps>(
-  ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
+export const IdentifierListScreen = forwardRef<HTMLDivElement, IdentifierListProps>(
+  (
+    {
+      dependencies,
+      initialState,
+      strings = userStrings,
+      commonModuleStrings = commonStrings,
+      includeFilters,
+      includeOwnerFilter,
+      searchParams,
+      className,
+      ...rest
+    },
+    ref
+  ) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
-        <SelfIdentifierListProvider dependencies={dependencies}>
-          <SelfIdentifierListController strings={strings} />
-        </SelfIdentifierListProvider>
+        <IdentifierListProvider dependencies={dependencies} initialState={initialState}>
+          <IdentifierListContent
+            commonModuleStrings={commonModuleStrings}
+            includeFilters={includeFilters}
+            includeOwnerFilter={includeOwnerFilter}
+            searchParams={searchParams}
+            strings={strings}
+          />
+        </IdentifierListProvider>
       </div>
     )
   }
 )
 
-SelfIdentifierListScreen.displayName = 'SelfIdentifierListScreen'
+IdentifierListScreen.displayName = 'IdentifierListScreen'

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SessionDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SessionDetailScreen, createSelfSessionDetailDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { ClientUserNavigation, selfSessionListParamsSchema, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -19,8 +19,10 @@ export const Route = createFileRoute('/user/sessions/$sessionId')({
       <SessionDetailScreen
         dependencies={{
           sessionId: toUserSessionIdOrThrow(sessionId),
-          getSessionUseCase: appComponent.clientUserComponent.getSessionUseCase,
-          deleteSessionUseCase: appComponent.clientUserComponent.deleteSessionUseCase,
+          dataSource: createSelfSessionDetailDataSource({
+            getSessionUseCase: appComponent.clientUserComponent.getSessionUseCase,
+            deleteSessionUseCase: appComponent.clientUserComponent.deleteSessionUseCase
+          }),
           authStorage: appComponent.clientUserComponent.authStorage,
           onNavigateToIdentifierDetail: (identifierId) =>
             void navigate({ to: '/user/identifiers/$identifierId', params: { identifierId } }),

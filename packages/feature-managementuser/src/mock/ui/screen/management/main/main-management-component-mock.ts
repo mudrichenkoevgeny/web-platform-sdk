@@ -1,4 +1,4 @@
-import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/MainManagementStore'
+import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/main-management-store'
 
 export const mainManagementDependenciesMock = (
   overrides?: Partial<MainManagementStoreDependencies>

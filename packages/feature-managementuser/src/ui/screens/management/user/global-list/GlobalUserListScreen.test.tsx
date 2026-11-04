@@ -14,7 +14,7 @@ import {
 import { GlobalUserListScreen, GlobalUserListTestTags } from '@/ui/screens/management/user/global-list/GlobalUserListScreen'
 import { globalUserListDependenciesMock } from '@/mock/ui/screen/management/user/global-list/global-user-list-component-mock'
 import { GetUsersUseCaseMock } from '@/mock/usecase/user/get-users-use-case-mock'
-import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/GlobalUserListStore'
+import type { GlobalUserListStoreDependencies } from '@/ui/screens/management/user/global-list/global-user-list-store'
 import { getGlobalUserListingOptionsConfig } from './global-user-list-options-config'
 import {
   searchParamsToListingStates,

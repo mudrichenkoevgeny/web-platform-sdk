@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SessionDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
-import { ManagementUsersNavigation, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { globalSessionListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { ManagementUsersNavigation, managementGlobalSessionListParamsSchema, toUserSessionIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
@@ -66,7 +65,7 @@ export const Route = createFileRoute('/sessions/$sessionId')({
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToUserMain: () => void navigate({ to: '/user' }),
-          onBack: () => void navigateUp({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE, search: (raw) => cleanSearchParams(globalSessionListSearchSchema.parse(raw)) })
+          onBack: () => void navigateUp({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE, search: (raw) => cleanSearchParams(managementGlobalSessionListParamsSchema.parse(raw)) })
         }}
       />
     )

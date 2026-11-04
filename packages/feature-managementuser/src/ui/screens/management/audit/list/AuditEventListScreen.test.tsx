@@ -15,7 +15,7 @@ import {
 import { AuditEventListScreen, AuditEventListTestTags } from '@/ui/screens/management/audit/list/AuditEventListScreen'
 import { auditEventListDependenciesMock } from '@/mock/ui/screen/management/audit/list/audit-event-list-component-mock'
 import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
-import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
+import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/audit-event-list-store'
 import { getAuditEventListingOptionsConfig } from './audit-event-list-options-config'
 import {
   searchParamsToListingStates,

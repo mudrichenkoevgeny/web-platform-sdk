@@ -17,8 +17,8 @@ import {
   EditGlobalSettingsProvider,
   EditGlobalSettingsStatus,
   useEditGlobalSettingsStore
-} from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
-import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/EditGlobalSettingsStore'
+} from '@/ui/screens/management/settings/global/edit-global-settings-store'
+import type { EditGlobalSettingsStoreDependencies } from '@/ui/screens/management/settings/global/edit-global-settings-store'
 
 const EditGlobalSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
   strings = userStrings

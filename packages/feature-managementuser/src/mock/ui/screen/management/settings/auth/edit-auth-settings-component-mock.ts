@@ -1,5 +1,5 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/EditAuthSettingsStore'
+import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/edit-auth-settings-store'
 
 export const editAuthSettingsDependenciesMock = (
   overrides?: Partial<EditAuthSettingsStoreDependencies>

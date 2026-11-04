@@ -242,13 +242,23 @@ const IdentifierDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
               role="dialog"
               aria-modal="true"
               aria-labelledby="change-password-dialog-title"
-              className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
-              onClick={onDismissChangePasswordDialog}
+              tabIndex={-1}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  onDismissChangePasswordDialog()
+                }
+              }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 outline-none"
             >
+              <button
+                type="button"
+                aria-label={strings.ui.dialogCancel}
+                onClick={onDismissChangePasswordDialog}
+                className="absolute inset-0 bg-background/80 backdrop-blur-sm cursor-default border-none outline-none"
+              />
               <form
                 onSubmit={handleConfirmChangePassword}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
+                className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
               >
                 <h3 id="change-password-dialog-title" className="text-lg font-bold text-surface-foreground">
                   {strings.ui.changePassword}
@@ -302,12 +312,22 @@ const IdentifierDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
               role="alertdialog"
               aria-modal="true"
               aria-labelledby="delete-identifier-dialog-title"
-              className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
-              onClick={onDismissDeleteIdentifierDialog}
+              tabIndex={-1}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  onDismissDeleteIdentifierDialog()
+                }
+              }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 outline-none"
             >
+              <button
+                type="button"
+                aria-label={strings.ui.dialogCancel}
+                onClick={onDismissDeleteIdentifierDialog}
+                className="absolute inset-0 bg-background/80 backdrop-blur-sm cursor-default border-none outline-none"
+              />
               <div
-                onClick={(e) => e.stopPropagation()}
-                className="bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
+                className="relative z-10 bg-surface border border-border p-6 rounded-xl shadow-lg max-w-md w-full flex flex-col gap-4"
               >
                 <h3 id="delete-identifier-dialog-title" className="text-lg font-bold text-surface-foreground">
                   {strings.ui.dialogConfirmTitle}

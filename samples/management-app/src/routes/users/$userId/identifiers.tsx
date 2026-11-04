@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { UserIdentifierListScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { IdentifierListScreen, createManagementIdentifierListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { managementUserIdentifierListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
@@ -19,11 +19,12 @@ export const Route = createFileRoute('/users/$userId/identifiers')({
     }
 
     return (
-      <UserIdentifierListScreen
+      <IdentifierListScreen
         dependencies={{
           userId: toUserIdOrThrow(userId),
-          managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase,
-          currentUserId: managementDeps.currentUserId,
+          dataSource: createManagementIdentifierListDataSource({
+            managementGetIdentifiersUseCase: managementDeps.managementGetIdentifiersUseCase
+          }),
           searchParams,
           onSearchParamsChanged: (newParams) =>
             void navigate({ search: newParams as Record<string, unknown>, replace: true }),

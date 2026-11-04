@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EditSecuritySettingsScreen } from '@/ui/screens/management/settings/security/EditSecuritySettingsScreen'
-import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/EditSecuritySettingsStore'
+import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/edit-security-settings-store'
 
 const createMockDeps = (): EditSecuritySettingsStoreDependencies => ({
   getManagementSecuritySettingsUseCase: {

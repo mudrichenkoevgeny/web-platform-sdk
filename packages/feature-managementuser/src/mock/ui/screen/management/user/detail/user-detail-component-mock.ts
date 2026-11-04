@@ -3,7 +3,7 @@ import { GetUserUseCaseMock } from '@/mock/usecase/user/get-user-use-case-mock'
 import { UpdateUserUseCaseMock } from '@/mock/usecase/user/update-user-use-case-mock'
 import { DeleteUserUseCaseMock } from '@/mock/usecase/user/delete-user-use-case-mock'
 import { ManagementDisableTotpUseCaseMock } from '@/mock/usecase/user/security/management-disable-totp-use-case-mock'
-import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
+import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/user-detail-store'
 
 export const userDetailDependenciesMock = (
   overrides?: Partial<UserDetailStoreDependencies>

@@ -28,8 +28,8 @@ import {
   AuditEventListProvider,
   AuditEventListStatus,
   useAuditEventListStore
-} from '@/ui/screens/management/audit/list/AuditEventListStore'
-import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/AuditEventListStore'
+} from '@/ui/screens/management/audit/list/audit-event-list-store'
+import type { AuditEventListStoreDependencies } from '@/ui/screens/management/audit/list/audit-event-list-store'
 
 export const AuditEventListTestTags = {
   BACK_BUTTON: 'AuditEventList_BackButton',
