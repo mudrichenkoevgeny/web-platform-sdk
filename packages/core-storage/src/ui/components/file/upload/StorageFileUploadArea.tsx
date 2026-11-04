@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useId } from 'react'
 import {
   StorageModuleStrings,
   storageStrings,
@@ -53,7 +53,7 @@ export const StorageFileUploadAreaContent: React.FC<{ strings?: StorageModuleStr
   const setItemVisibility = useStorageFileUploadStore((s) => s.setItemVisibility)
   const upload = useStorageFileUploadStore((s) => s.upload)
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const inputId = useId()
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -73,13 +73,6 @@ export const StorageFileUploadAreaContent: React.FC<{ strings?: StorageModuleStr
     e.target.value = ''
   }
 
-  const handleDropzoneKeyDown = (e: React.KeyboardEvent) => {
-    if (!isUploading && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault()
-      fileInputRef.current?.click()
-    }
-  }
-
   const acceptAttr = config.acceptedFileTypes && config.acceptedFileTypes.length > 0
     ? config.acceptedFileTypes.join(',')
     : undefined
@@ -91,23 +84,21 @@ export const StorageFileUploadAreaContent: React.FC<{ strings?: StorageModuleStr
   return (
     <div className="w-full flex flex-col gap-6">
       <input
+        id={inputId}
         type="file"
         multiple
         accept={acceptAttr}
-        ref={fileInputRef}
         onChange={handleFileChange}
-        className="hidden"
+        className="sr-only"
         disabled={isUploading}
       />
 
-      <div
-        role="button"
+      <label
+        htmlFor={inputId}
         tabIndex={isUploading ? -1 : 0}
         data-testid={StorageFileUploadAreaTestTags.DROPZONE}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        onClick={() => !isUploading && fileInputRef.current?.click()}
-        onKeyDown={handleDropzoneKeyDown}
         className={cn(
           'w-full min-h-[8rem] border-2 border-dashed border-border rounded-xl bg-surface flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
           isUploading && 'opacity-50 cursor-not-allowed'
@@ -117,7 +108,7 @@ export const StorageFileUploadAreaContent: React.FC<{ strings?: StorageModuleStr
         <p className="text-sm text-muted-foreground">
           {strings.ui.fileUploadDropzonePrompt}
         </p>
-      </div>
+      </label>
 
       {items.length > 0 && (
         <div className="w-full flex flex-col gap-3">

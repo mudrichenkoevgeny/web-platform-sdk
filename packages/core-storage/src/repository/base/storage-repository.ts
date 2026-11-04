@@ -2,8 +2,10 @@ import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-co
 import type {
   DeleteFilesBatchRequest,
   PagedResult,
+  StorageCategory,
   StorageFileSummary,
   StorageFilePrivate,
+  StorageFileVisibility,
   SelfStorageFileListParams
 } from '@mudrichenkoevgeny/shared-foundation'
 
@@ -41,8 +43,8 @@ export interface StorageRepository {
    */
   uploadFile(
     file: File,
-    category: string,
-    visibility: string,
+    category: StorageCategory,
+    visibility: StorageFileVisibility,
     targetScope: string,
     onProgress?: (percent: number) => void
   ): Promise<AppResult<StorageFilePrivate, AppError>>
