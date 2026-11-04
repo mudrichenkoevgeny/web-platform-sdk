@@ -23,12 +23,12 @@ export const Route = createFileRoute('/audit/events/$eventId')({
           getAuditEventUseCase: managementDeps.getAuditEventUseCase,
           currentUserId: managementDeps.currentUserId,
           onNavigateToUserDetail: (userId) =>
-            navigate({ to: '/users/$userId', params: { userId } }),
+            void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToSessionDetail: (sessionId) =>
-            navigate({ to: '/sessions/$sessionId', params: { sessionId } }),
+            void navigate({ to: '/sessions/$sessionId', params: { sessionId } }),
           onNavigateToIdentifierDetail: (identifierId) =>
-            navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
-          onBack: () => navigateUp({ to: ManagementAuditNavigation.AuditEventList.ROUTE, search: (raw) => cleanSearchParams(auditEventListSearchSchema.parse(raw)) })
+            void navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
+          onBack: () => void navigateUp({ to: ManagementAuditNavigation.AuditEventList.ROUTE, search: (raw) => cleanSearchParams(auditEventListSearchSchema.parse(raw)) })
         }}
       />
     )

@@ -89,9 +89,6 @@ const AuditEventDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
       const subjectValue = `${event.actorType}${event.actorUserRole ? ` (${event.actorUserRole})` : ''}${event.actorId ? `: ${event.actorId}` : ''}`
 
       const formattedTimestamp = formatEpochMillisToDateTime(event.createdAt) ?? String(event.createdAt)
-      const formattedUpdatedAt = event.updatedAt
-        ? formatEpochMillisToDateTime(event.updatedAt) ?? String(event.updatedAt)
-        : null
 
       const metadataItems = Array.from(event.metadata ?? [])
 
@@ -141,12 +138,6 @@ const AuditEventDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
                 label={strings.ui.auditEventTimestamp}
                 value={formattedTimestamp}
               />
-              {formattedUpdatedAt && (
-                <DetailRow
-                  label={strings.ui.auditEventUpdatedAt}
-                  value={formattedUpdatedAt}
-                />
-              )}
             </div>
 
             {metadataItems.length > 0 && (

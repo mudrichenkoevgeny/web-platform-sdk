@@ -21,7 +21,7 @@ export const Route = createFileRoute('/identifiers/')({
           currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToIdentifierDetail: (identifierId) =>
             void navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })

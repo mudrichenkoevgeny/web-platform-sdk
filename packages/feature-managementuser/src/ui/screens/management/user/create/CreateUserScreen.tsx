@@ -1,5 +1,5 @@
-import React, { forwardRef, useId } from 'react'
-import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, UiValues } from '@mudrichenkoevgeny/shared-foundation'
+import React, { forwardRef, useEffect, useId, useRef } from 'react'
+import { UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, UiValues, StorageCategory } from '@mudrichenkoevgeny/shared-foundation'
 import { FieldValidator } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import {
   cn,
@@ -14,23 +14,47 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   CreateUserProvider,
+  SelectedFilePayload,
   useCreateUserStore
 } from '@/ui/screens/management/user/create/CreateUserStore'
 import type { CreateUserStoreDependencies } from '@/ui/screens/management/user/create/CreateUserStore'
+import { StorageFileImagePreview } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 
 /** Automation test tags for {@link CreateUserScreen}. */
 export const CreateUserTestTags = {
+  /** Test tag for back button. */
   BACK_BUTTON: 'CreateUser_BackButton',
+  /** Test tag for screen title. */
   TITLE: 'CreateUser_Title',
+  /** Test tag for email input field. */
   EMAIL_INPUT: 'CreateUser_EmailInput',
+  /** Test tag for password input field. */
   PASSWORD_INPUT: 'CreateUser_PasswordInput',
+  /** Test tag for nickname input field. */
+  NICKNAME_INPUT: 'CreateUser_NicknameInput',
+  /** Test tag for display name input field. */
+  DISPLAY_NAME_INPUT: 'CreateUser_DisplayNameInput',
+  /** Test tag for avatar change button. */
+  AVATAR_CHANGE_BUTTON: 'CreateUser_AvatarChangeButton',
+  /** Test tag for remove avatar button. */
+  REMOVE_AVATAR_BUTTON: 'CreateUser_RemoveAvatarButton',
+  /** Test tag for birthdate input field. */
+  BIRTHDATE_INPUT: 'CreateUser_BirthdateInput',
+  /** Test tag for role select element. */
   ROLE_SELECT: 'CreateUser_RoleSelect',
+  /** Test tag for status select element. */
   STATUS_SELECT: 'CreateUser_StatusSelect',
+  /** Test tag for authority level input field. */
   AUTHORITY_LEVEL_INPUT: 'CreateUser_AuthorityLevelInput',
+  /** Test tag for storage quota bytes input field. */
   STORAGE_QUOTA_INPUT: 'CreateUser_StorageQuotaInput',
+  /** Test tag for storage max upload size bytes input field. */
   STORAGE_MAX_UPLOAD_INPUT: 'CreateUser_StorageMaxUploadInput',
+  /** Test tag for storage max pending uploads input field. */
   STORAGE_MAX_PENDING_INPUT: 'CreateUser_StorageMaxPendingInput',
+  /** Test tag for create button. */
   CREATE_BUTTON: 'CreateUser_CreateButton',
+  /** Test tag for error text. */
   ERROR_TEXT: 'CreateUser_ErrorText'
 }
 
@@ -73,8 +97,6 @@ const getUserAccountStatusLabel = (status: UserAccountStatus, strings: CommonMod
       return strings.ui.securityHold
     case UserAccountStatus.PENDING_DELETION:
       return strings.ui.pendingDeletion
-    default:
-      return status
   }
 }
 
@@ -93,8 +115,6 @@ const getUserRoleLabel = (role: UserRole, strings: CommonModuleStrings): string 
       return strings.ui.staff
     case UserRole.ADMIN:
       return strings.ui.admin
-    default:
-      return role
   }
 }
 
@@ -104,7 +124,11 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const {
     email,
     password,
+    nickname,
+    displayName,
     isPasswordVisible,
+    selectedAvatarPayload,
+    birthdate,
     role,
     status,
     authorityLevel,
@@ -117,7 +141,12 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
   const onEmailChanged = useCreateUserStore((s) => s.onEmailChanged)
   const onPasswordChanged = useCreateUserStore((s) => s.onPasswordChanged)
+  const onNicknameChanged = useCreateUserStore((s) => s.onNicknameChanged)
+  const onDisplayNameChanged = useCreateUserStore((s) => s.onDisplayNameChanged)
   const onTogglePasswordVisibility = useCreateUserStore((s) => s.onTogglePasswordVisibility)
+  const onAvatarFileSelected = useCreateUserStore((s) => s.onAvatarFileSelected)
+  const onRemoveAvatarClick = useCreateUserStore((s) => s.onRemoveAvatarClick)
+  const onBirthdateChanged = useCreateUserStore((s) => s.onBirthdateChanged)
   const onRoleChanged = useCreateUserStore((s) => s.onRoleChanged)
   const onStatusChanged = useCreateUserStore((s) => s.onStatusChanged)
   const onAuthorityLevelChanged = useCreateUserStore((s) => s.onAuthorityLevelChanged)
@@ -130,6 +159,9 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
   const emailId = useId()
   const passwordId = useId()
+  const nicknameId = useId()
+  const displayNameId = useId()
+  const birthdateId = useId()
   const roleId = useId()
   const statusId = useId()
   const authLevelId = useId()
@@ -137,10 +169,51 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const storageMaxUploadId = useId()
   const storageMaxPendingId = useId()
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const previousAvatarUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previousAvatarUrlRef.current)
+      }
+    }
+  }, [])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previousAvatarUrlRef.current)
+      }
+      const localUri = URL.createObjectURL(file)
+      previousAvatarUrlRef.current = localUri
+
+      const payload: SelectedFilePayload = {
+        file,
+        fileName: file.name,
+        fileSizeBytes: file.size,
+        mimeType: file.type || 'application/octet-stream',
+        localUri
+      }
+      onAvatarFileSelected(payload)
+    }
+  }
+
+  const handleRemoveAvatar = () => {
+    if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+      URL.revokeObjectURL(previousAvatarUrlRef.current)
+      previousAvatarUrlRef.current = null
+    }
+    onRemoveAvatarClick()
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     void onCreateClick()
   }
+
+  const avatarUrl = selectedAvatarPayload?.localUri ?? null
 
   return (
     <form
@@ -158,6 +231,49 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
       </div>
 
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
+        <div className="flex flex-col items-center gap-3 mb-2">
+          <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-accent flex items-center justify-center relative">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={strings.ui.avatar}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl text-muted-foreground font-bold">
+                {(displayName || nickname || strings.ui.user || strings.ui.createUserTitle).charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          <div className="flex gap-2">
+            <CoreButton
+              type="button"
+              data-testid={CreateUserTestTags.AVATAR_CHANGE_BUTTON}
+              label={`${strings.ui.editProfileTitle} (${strings.ui.avatar})`}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+            />
+            {avatarUrl && (
+              <CoreButton
+                type="button"
+                data-testid={CreateUserTestTags.REMOVE_AVATAR_BUTTON}
+                label={strings.ui.removeAvatar}
+                onClick={handleRemoveAvatar}
+                disabled={isLoading}
+              />
+            )}
+          </div>
+        </div>
+
         <CoreEmailTextField
           id={emailId}
           data-testid={CreateUserTestTags.EMAIL_INPUT}
@@ -178,6 +294,34 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
           isPasswordVisible={isPasswordVisible}
           onTogglePasswordVisibility={onTogglePasswordVisibility}
           autoComplete="new-password"
+          disabled={isLoading}
+        />
+
+        <CoreOutlinedTextField
+          id={displayNameId}
+          data-testid={CreateUserTestTags.DISPLAY_NAME_INPUT}
+          value={displayName}
+          onChange={(e) => onDisplayNameChanged(e.target.value)}
+          label={strings.ui.user}
+          disabled={isLoading}
+        />
+
+        <CoreOutlinedTextField
+          id={nicknameId}
+          data-testid={CreateUserTestTags.NICKNAME_INPUT}
+          value={nickname}
+          onChange={(e) => onNicknameChanged(e.target.value)}
+          label={strings.ui.userLabel}
+          disabled={isLoading}
+        />
+
+        <CoreOutlinedTextField
+          id={birthdateId}
+          data-testid={CreateUserTestTags.BIRTHDATE_INPUT}
+          type="number"
+          value={birthdate}
+          onChange={(e) => onBirthdateChanged(e.target.value)}
+          label={strings.ui.birthdate}
           disabled={isLoading}
         />
 
@@ -290,7 +434,6 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
             type="submit"
             data-testid={CreateUserTestTags.CREATE_BUTTON}
             label={isLoading ? strings.ui.saving : strings.ui.createUser}
-            onClick={onCreateClick}
             disabled={isLoading || !FieldValidator.isValidEmail(email)}
           />
 
@@ -308,7 +451,9 @@ const CreateUserContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
 /** Props for {@link CreateUserScreen}. */
 export interface CreateUserScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Store dependencies required for initialization and creation flow. */
   dependencies: CreateUserStoreDependencies
+  /** Optional localized strings override. */
   strings?: UserModuleStrings
 }
 

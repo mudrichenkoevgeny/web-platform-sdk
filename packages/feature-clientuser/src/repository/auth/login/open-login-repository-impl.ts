@@ -1,6 +1,6 @@
 import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AuthData, OtpConfirmation, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuthData, LoginByExternalAuthProviderRequest, OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { ConfirmationType, toAuthData, toOtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import type { ConfirmationRepository, LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenLoginApi } from '@/network/api/auth/login/open-login-api'
@@ -31,10 +31,9 @@ export class OpenLoginRepositoryImpl implements LoginRepository {
   }
 
   public async loginByExternalAuthProvider(
-    authProvider: UserAuthProvider,
-    externalProviderToken: string
+    request: LoginByExternalAuthProviderRequest
   ): Promise<AppResult<AuthData, AppError>> {
-    const result = await this.openLoginApi.loginByExternalAuthProvider(authProvider, externalProviderToken)
+    const result = await this.openLoginApi.loginByExternalAuthProvider(request)
     return mapSuccess(result, (authDataPayload) => toAuthData(authDataPayload))
   }
 

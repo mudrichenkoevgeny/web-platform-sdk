@@ -21,7 +21,7 @@ export const Route = createFileRoute('/auth/login/pending-deletion')({
               restoreUserUseCase: appComponent.managementUserComponent.restoreUserUseCase,
               logoutUseCase: appComponent.managementUserComponent.logoutUseCase,
               onRestoreSuccess: () => void navigate({ to: ManagementMainNavigation.Main.route, replace: true }),
-              onSignOut: () => navigateUp({ to: ManagementAuthNavigation.Main.ROUTE })
+              onSignOut: () => void navigateUp({ to: ManagementAuthNavigation.Main.ROUTE })
             }}
           />
         </div>

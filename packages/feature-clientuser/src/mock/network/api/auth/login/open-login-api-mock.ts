@@ -7,7 +7,6 @@ import type {
   LoginByPhoneRequest,
   OtpConfirmationPayload,
   SendConfirmationToPhoneRequest,
-  UserAuthProvider,
   VerifyTotpPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenLoginApi } from '@/network/api/auth/login/open-login-api'
@@ -41,10 +40,9 @@ export class OpenLoginApiMock implements OpenLoginApi {
   }
 
   public async loginByExternalAuthProvider(
-    authProvider: UserAuthProvider,
-    externalProviderToken: string
+    request: LoginByExternalAuthProviderRequest
   ): Promise<AppResult<AuthDataPayload, AppError>> {
-    this.lastLoginByExternalAuthProviderRequest = { auth_provider: authProvider, external_provider_token: externalProviderToken }
+    this.lastLoginByExternalAuthProviderRequest = request
     return this.loginByExternalAuthProviderResult
   }
 

@@ -24,13 +24,13 @@ export const Route = createFileRoute('/user/totp/')({
         dependencies={{
           totpMode: search.totpMode,
           onTotpModeChange: (totpMode: TotpMainMode) =>
-            void navigate({ search: (prev) => ({ ...prev, totpMode }) }),
+            void navigate({ search: { totpMode }, replace: true }),
           userRepository: appComponent.clientUserComponent.userRepository,
           setupTotpUseCase: appComponent.clientUserComponent.setupTotpUseCase,
           enableTotpUseCase: appComponent.clientUserComponent.enableTotpUseCase,
           disableTotpUseCase: appComponent.clientUserComponent.disableTotpUseCase,
-          onNavigateToRecoveryCodes: () => navigate({ to: '/user/totp/recovery' }),
-          onBack: () => navigateUp({ to: ClientUserNavigation.Main.route })
+          onNavigateToRecoveryCodes: () => void navigate({ to: '/user/totp/recovery' }),
+          onBack: () => void navigateUp({ to: ClientUserNavigation.Main.route })
         }}
       />
     )

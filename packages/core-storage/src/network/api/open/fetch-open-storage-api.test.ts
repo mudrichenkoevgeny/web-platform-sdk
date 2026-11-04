@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { UserStorageTargetScopes } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenStorageApi } from './fetch-open-storage-api'
 
 describe('FetchOpenStorageApi', () => {
@@ -24,7 +25,7 @@ describe('FetchOpenStorageApi', () => {
       mimeType: 'image/jpeg',
       category: 'IMAGE',
       visibility: 'PUBLIC',
-      targetScope: 'AVATAR'
+      targetScope: UserStorageTargetScopes.AVATAR
     })
     expect(result.success).toBe(true)
     if (result.success) {

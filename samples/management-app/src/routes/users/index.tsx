@@ -20,7 +20,7 @@ export const Route = createFileRoute('/users/')({
           currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToCreateUser: () => void navigate({ to: '/users/new' }),

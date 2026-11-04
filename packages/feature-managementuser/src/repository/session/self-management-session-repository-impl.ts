@@ -26,7 +26,6 @@ class AsyncMutex {
 
 /**
  * Implements {@link SessionRepository} using {@link SessionApi}.
- * Falls back to {@link UserStorage} cache with client-side filtering and pagination if network calls fail.
  */
 export class SelfManagementSessionRepositoryImpl implements SessionRepository {
   private readonly mutex = new AsyncMutex()
@@ -35,7 +34,7 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
    * Constructs a new {@link SelfManagementSessionRepositoryImpl}.
    *
    * @param selfManagementSessionApi - HTTP endpoints for session management and re-authentication
-   * @param userStorage - Local persistent storage cache for user snapshots and data fallback
+   * @param userStorage - Local persistent storage for user snapshot
    * @param authStorage - Storage holding authentication tokens
    */
   public constructor(
@@ -49,20 +48,10 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.getSessions(params)
-      if (networkResult.success) {
-        await this.userStorage.updateUserSessionsPayloadList(networkResult.data)
-        return mapSuccess(networkResult, (pagedPayload) => ({
-          ...pagedPayload,
-          items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
-        }))
-      }
-
-      const cachedResult = await this.userStorage.getUserSessionsList()
-      if (cachedResult.items.length > 0) {
-        return appResultSuccess(cachedResult)
-      }
-
-      return networkResult
+      return mapSuccess(networkResult, (pagedPayload) => ({
+        ...pagedPayload,
+        items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
+      }))
     })
   }
 
@@ -89,30 +78,13 @@ export class SelfManagementSessionRepositoryImpl implements SessionRepository {
 
   public async deleteSession(userSessionId: UserSessionId): Promise<AppResult<void, AppError>> {
     return this.mutex.runExclusive(async () => {
-      const networkResult = await this.selfManagementSessionApi.deleteSession(userSessionId)
-      if (networkResult.success) {
-        await this.userStorage.removeUserSession(userSessionId)
-      }
-      return networkResult
+      return this.selfManagementSessionApi.deleteSession(userSessionId)
     })
   }
 
   public async deleteAllOtherSessions(): Promise<AppResult<void, AppError>> {
     return this.mutex.runExclusive(async () => {
       const networkResult = await this.selfManagementSessionApi.deleteAllOtherSessions()
-      if (networkResult.success) {
-        const deletedSessionIdsSet = new Set(networkResult.data.deletedSessionIds)
-        if (deletedSessionIdsSet.size > 0) {
-          const cachedList = await this.userStorage.getUserSessionsList()
-          const idsToRemove = cachedList.items
-            .map((item) => item.id)
-            .filter((id): id is UserSessionId => id != null && deletedSessionIdsSet.has(id))
-
-          if (idsToRemove.length > 0) {
-            await this.userStorage.removeUserSessions(idsToRemove)
-          }
-        }
-      }
       return mapSuccess(networkResult, () => undefined)
     })
   }

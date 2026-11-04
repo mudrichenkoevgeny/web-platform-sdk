@@ -38,7 +38,12 @@ describe('FetchOpenUserConfigurationApi', () => {
         max_email_identifiers: 2,
         max_phone_identifiers: 2,
         max_identifiers_per_external_provider: 1,
-        is_registration_enabled: true
+        is_registration_enabled: true,
+        user_nickname_min_length: 3,
+        user_nickname_max_length: 30,
+        user_display_name_min_length: 1,
+        user_display_name_max_length: 50,
+        is_user_nickname_change_allowed: true
       }
     }
 

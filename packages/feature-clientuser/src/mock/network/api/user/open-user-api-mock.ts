@@ -22,4 +22,8 @@ export class OpenUserApiMock implements OpenUserApi {
   public async restoreUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return this.restoreUserResult
   }
+
+  public async selfUpdateUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
+    return this.getUserResult
+  }
 }

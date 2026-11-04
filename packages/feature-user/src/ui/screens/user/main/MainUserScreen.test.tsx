@@ -41,6 +41,7 @@ describe('MainUserScreen', () => {
       onNavigateToSessions: vi.fn(),
       onNavigateToIdentifiers: vi.fn(),
       onNavigateToStorage: vi.fn(),
+      onNavigateToEditUser: vi.fn(),
       ...overrides
     }
   }
@@ -64,6 +65,15 @@ describe('MainUserScreen', () => {
 
     await user.click(screen.getByTestId(MainUserTestTags.SESSIONS_BUTTON))
     expect(deps.onNavigateToSessions).toHaveBeenCalledTimes(1)
+  })
+
+  it('navigates to edit user when edit button clicked', async () => {
+    const user = userEvent.setup()
+    const deps = createMockDependencies()
+    render(<MainUserScreen dependencies={deps} />)
+
+    await user.click(screen.getByTestId(MainUserTestTags.EDIT_USER_BUTTON))
+    expect(deps.onNavigateToEditUser).toHaveBeenCalledTimes(1)
   })
 
   it('triggers logout use case on logout confirm', async () => {

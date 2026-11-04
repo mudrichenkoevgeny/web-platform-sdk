@@ -1,15 +1,16 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { LoginByExternalAuthProviderRequest } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Cross-platform contract for Google Sign-In used by user login flows.
  */
 export interface GoogleAuthService {
   /**
-   * Runs interactive Google sign-in and returns a backend-ready credential (typically Google ID token string).
+   * Runs interactive Google sign-in and returns a backend-ready credential request payload.
    *
-   * @returns Success with token string or error AppResult
+   * @returns Success with LoginByExternalAuthProviderRequest or error AppResult
    */
-  signIn(): Promise<AppResult<string, AppError>>
+  signIn(): Promise<AppResult<LoginByExternalAuthProviderRequest, AppError>>
 
   /**
    * Clears on-device Google session state.

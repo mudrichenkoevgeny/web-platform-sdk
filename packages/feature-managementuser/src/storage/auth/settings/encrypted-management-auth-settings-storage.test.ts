@@ -20,6 +20,11 @@ describe('EncryptedManagementAuthSettingsStorage', () => {
     accountDeletionGracePeriodSeconds: 2592000,
     accountDeletionCheckIntervalSeconds: 3600,
     isRegistrationEnabled: true,
+    userNicknameMinLength: 3,
+    userNicknameMaxLength: 30,
+    userDisplayNameMinLength: 1,
+    userDisplayNameMaxLength: 50,
+    isUserNicknameChangeAllowed: true,
     openEmailRestrictionPolicy: { isBlacklistEnabled: false, blacklist: [], isWhitelistEnabled: false, whitelist: [] },
     managementEmailRestrictionPolicy: { isBlacklistEnabled: false, blacklist: [], isWhitelistEnabled: false, whitelist: [] }
   }

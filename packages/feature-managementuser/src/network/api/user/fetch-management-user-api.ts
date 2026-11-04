@@ -11,10 +11,10 @@ import type {
 import {
   AccountLockoutType,
   createByEmailRequestSchema,
+  managementUpdateUserRequestSchema,
   ManagementUserListParamsParser,
   ManagementUsersRoutes,
   pagedResultSchema,
-  updateUserRequestSchema,
   UserAccountStatus,
   UserApiPaths,
   userPrivatePayloadSchema,
@@ -68,22 +68,30 @@ const updateUserParamsMapperSchema = z
     accountLockoutType: z.nativeEnum(AccountLockoutType).nullable().optional(),
     lockoutType: z.nativeEnum(AccountLockoutType).nullable().optional(),
     temporaryLockoutUntil: z.number().nullable().optional(),
-    storageConfiguration: storageConfigSchema
+    storageConfiguration: storageConfigSchema,
+    nickname: z.string().nullable().optional(),
+    displayName: z.string().nullable().optional(),
+    avatarFileId: z.string().nullable().optional(),
+    birthdate: z.number().nullable().optional()
   })
   .transform((params) =>
-    updateUserRequestSchema.parse({
-      account_status: params.accountStatus ?? null,
-      authority_level: params.authorityLevel ?? null,
-      permission_codes: params.permissionCodes ?? null,
-      account_lockout_type: params.accountLockoutType ?? params.lockoutType ?? null,
-      temporary_lockout_until: params.temporaryLockoutUntil ?? null,
+    managementUpdateUserRequestSchema.parse({
+      account_status: params.accountStatus ?? undefined,
+      authority_level: params.authorityLevel ?? undefined,
+      permission_codes: params.permissionCodes ?? undefined,
+      account_lockout_type: params.accountLockoutType ?? params.lockoutType ?? undefined,
+      temporary_lockout_until: params.temporaryLockoutUntil ?? undefined,
       storage_configuration: params.storageConfiguration
         ? {
             quota_bytes: params.storageConfiguration.quotaBytes ?? null,
             max_upload_size_bytes: params.storageConfiguration.maxUploadSizeBytes ?? null,
             max_pending_uploads: params.storageConfiguration.maxPendingUploads ?? null
           }
-        : null
+        : undefined,
+      nickname: params.nickname ?? undefined,
+      display_name: params.displayName ?? undefined,
+      avatar_file_id: params.avatarFileId ?? undefined,
+      birthdate: params.birthdate ?? undefined
     })
   )
 

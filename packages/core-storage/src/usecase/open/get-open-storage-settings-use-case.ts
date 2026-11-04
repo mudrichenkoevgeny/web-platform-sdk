@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { OpenStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { OpenStorageSettingsRepository } from '../../repository/open/open-storage-settings-repository'
+import type { OpenStorageSettingsRepository } from '@/repository/open/open-storage-settings-repository'
 
 /** Retrieves open storage settings. */
 export class GetOpenStorageSettingsUseCase {

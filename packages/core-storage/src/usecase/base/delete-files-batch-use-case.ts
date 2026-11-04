@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteFilesBatchRequest } from '@mudrichenkoevgeny/shared-foundation'
-import type { StorageRepository } from '../../repository/base/storage-repository'
+import type { StorageRepository } from '@/repository/base/storage-repository'
 
 /** Deletes multiple files in a batch operation. */
 export class DeleteFilesBatchUseCase {

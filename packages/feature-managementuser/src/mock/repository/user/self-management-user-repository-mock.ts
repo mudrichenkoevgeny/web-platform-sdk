@@ -1,6 +1,7 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { UpdateUserParams } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 
 /** Mock implementation of {@link SelfManagementUserRepository} for self management. */
@@ -26,6 +27,10 @@ export class SelfManagementUserRepositoryMock implements SelfManagementUserRepos
   }
 
   public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
+    return this.handleUpdate()
+  }
+
+  public async selfUpdateUser(_params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>> {
     return this.handleUpdate()
   }
 

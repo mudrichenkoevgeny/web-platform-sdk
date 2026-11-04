@@ -26,10 +26,10 @@ export const Route = createFileRoute('/users/$userId/identifiers')({
           currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onIdentifierSelect: (identifierId) =>
-            navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
-          onBack: () => navigateUp({ to: '/users/$userId', params: { userId } })
+            void navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
+          onBack: () => void navigateUp({ to: '/users/$userId', params: { userId } })
         }}
       />
     )

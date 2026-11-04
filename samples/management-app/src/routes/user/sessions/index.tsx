@@ -24,8 +24,8 @@ export const Route = createFileRoute('/user/sessions/')({
           deleteAllOtherSessionsUseCase: appComponent.managementUserComponent.deleteAllOtherSessionsUseCase,
           authStorage: appComponent.managementUserComponent.authStorage,
           onNavigateToSessionDetail: (session) =>
-            session.id && void navigate({ to: '/user/sessions/$sessionId', params: { sessionId: session.id } }),
-          onBack: () => navigateUp({ to: ManagementSelfUserNavigation.Main.route })
+            Boolean(session.id) && void navigate({ to: '/user/sessions/$sessionId', params: { sessionId: session.id! } }),
+          onBack: () => void navigateUp({ to: ManagementSelfUserNavigation.Main.route })
         }}
       />
     )

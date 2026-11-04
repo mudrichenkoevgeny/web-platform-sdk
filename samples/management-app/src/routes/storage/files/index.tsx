@@ -31,9 +31,9 @@ export const Route = createFileRoute('/storage/files/')({
           deleteFilesBatchUseCase: managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase
         })
       : createManagementStorageFileListDataSource({
-          getFilesUseCase: managementDeps.managementGetFilesUseCase,
-          deleteFileUseCase: managementDeps.managementDeleteFileUseCase,
-          deleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
+          managementGetFilesUseCase: managementDeps.managementGetFilesUseCase,
+          managementDeleteFileUseCase: managementDeps.managementDeleteFileUseCase,
+          managementDeleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
         })
 
     const isOwnerFiltered = Boolean(searchParams.ownerUserId)
@@ -47,7 +47,7 @@ export const Route = createFileRoute('/storage/files/')({
           userId: searchParams.ownerUserId,
           dataSource,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToUpload: isSelfView
             ? () => void navigate({ to: ManagementSelfStorageNavigation.FileUpload.ROUTE })
             : undefined,

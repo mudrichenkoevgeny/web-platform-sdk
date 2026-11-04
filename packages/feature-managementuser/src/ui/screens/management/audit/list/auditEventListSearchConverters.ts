@@ -1,7 +1,7 @@
-import { AuditFilterValues, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementAuditEventListParams } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditEventFilterValues, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AuditEventListSearchParams } from '@/ui/screens/management/audit/list/auditEventListSearchSchema'
+import { auditEventListSearchSchema } from '@/ui/screens/management/audit/list/auditEventListSearchSchema'
 
 /** State representation of audit event list sorting and filtering options. */
 export interface AuditEventListingOptionsState {
@@ -13,90 +13,126 @@ export interface AuditEventListingOptionsState {
 
 /**
  * Converts audit event list search parameters into listing option states.
+ * Uses Zod schema parsing at the boundary to validate and normalize search parameters.
  *
- * @param params - Search parameters in snake_case (URL) or camelCase (internal) format
+ * @param params - Search parameters object in raw or validated format
  * @returns Parsed listing options state containing sort and filter states
  */
 export const searchParamsToListingStates = (
-  params?: ManagementAuditEventListParams | AuditEventListSearchParams
+  params?: unknown
 ): AuditEventListingOptionsState => {
-  if (!params) {
+  const parseResult = auditEventListSearchSchema.safeParse(params)
+
+  if (!parseResult.success) {
     return { sortState: null, filterStates: {} }
   }
 
-  const sortBy = 'sort_by' in params ? params.sort_by : ('sortBy' in params ? params.sortBy : undefined)
-  const sortOrder = 'sort_order' in params ? params.sort_order : ('sortOrder' in params ? params.sortOrder : undefined)
-  const actorIds = 'actor_id' in params ? params.actor_id : ('actorIds' in params ? params.actorIds : undefined)
-  const actorTypes = 'actor_type' in params ? params.actor_type : ('actorTypes' in params ? params.actorTypes : undefined)
-  const actorUserRoles = 'actor_user_role' in params ? params.actor_user_role : ('actorUserRoles' in params ? params.actorUserRoles : undefined)
-  const actions = 'action' in params ? params.action : ('actions' in params ? params.actions : undefined)
-  const resources = 'resource' in params ? params.resource : ('resources' in params ? params.resources : undefined)
-  const resourceIds = 'resource_id' in params ? params.resource_id : ('resourceIds' in params ? params.resourceIds : undefined)
-  const statuses = 'status' in params ? params.status : ('statuses' in params ? params.statuses : undefined)
-  const messages = 'message' in params ? params.message : ('messages' in params ? params.messages : undefined)
+  const validatedParams = parseResult.data
 
-  const sortState: ListingSortState | null = sortBy
+  const sortState: ListingSortState | null = validatedParams.sort_by
     ? {
-        optionId: sortBy,
-        isAscending: sortOrder === SortOrder.ASC
+        optionId: validatedParams.sort_by,
+        isAscending: validatedParams.sort_order === 'asc'
       }
     : null
 
   const filterStates: Record<string, ListingFilterState> = {}
 
-  if (actorIds && actorIds.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID] = {
+  if (validatedParams.event_id && validatedParams.event_id.length > 0) {
+    filterStates[AuditEventFilterValues.EVENT_ID] = {
       type: 'text',
-      value: actorIds[0] ?? ''
+      value: validatedParams.event_id[0] ?? ''
     }
   }
 
-  if (actorTypes && actorTypes.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE] = {
+  if (validatedParams.actor_id && validatedParams.actor_id.length > 0) {
+    filterStates[AuditEventFilterValues.ACTOR_ID] = {
+      type: 'text',
+      value: validatedParams.actor_id[0] ?? ''
+    }
+  }
+
+  if (validatedParams.actor_type && validatedParams.actor_type.length > 0) {
+    filterStates[AuditEventFilterValues.ACTOR_TYPE] = {
       type: 'choice',
-      selectedIds: new Set(actorTypes)
+      selectedIds: new Set(validatedParams.actor_type)
     }
   }
 
-  if (actorUserRoles && actorUserRoles.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE] = {
+  if (validatedParams.exclude_actor_type && validatedParams.exclude_actor_type.length > 0) {
+    filterStates[AuditEventFilterValues.EXCLUDE_ACTOR_TYPE] = {
       type: 'choice',
-      selectedIds: new Set(actorUserRoles)
+      selectedIds: new Set(validatedParams.exclude_actor_type)
     }
   }
 
-  if (actions && actions.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.ACTION] = {
-      type: 'text',
-      value: actions[0] ?? ''
-    }
-  }
-
-  if (resources && resources.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE] = {
-      type: 'text',
-      value: resources[0] ?? ''
-    }
-  }
-
-  if (resourceIds && resourceIds.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID] = {
-      type: 'text',
-      value: resourceIds[0] ?? ''
-    }
-  }
-
-  if (statuses && statuses.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.STATUS] = {
+  if (validatedParams.actor_user_role && validatedParams.actor_user_role.length > 0) {
+    filterStates[AuditEventFilterValues.ACTOR_USER_ROLE] = {
       type: 'choice',
-      selectedIds: new Set(statuses)
+      selectedIds: new Set(validatedParams.actor_user_role)
     }
   }
 
-  if (messages && messages.length > 0) {
-    filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE] = {
+  if (validatedParams.action && validatedParams.action.length > 0) {
+    filterStates[AuditEventFilterValues.ACTION] = {
       type: 'text',
-      value: messages[0] ?? ''
+      value: validatedParams.action[0] ?? ''
+    }
+  }
+
+  if (validatedParams.exclude_action && validatedParams.exclude_action.length > 0) {
+    filterStates[AuditEventFilterValues.EXCLUDE_ACTION] = {
+      type: 'text',
+      value: validatedParams.exclude_action[0] ?? ''
+    }
+  }
+
+  if (validatedParams.resource && validatedParams.resource.length > 0) {
+    filterStates[AuditEventFilterValues.RESOURCE] = {
+      type: 'text',
+      value: validatedParams.resource[0] ?? ''
+    }
+  }
+
+  if (validatedParams.resource_id && validatedParams.resource_id.length > 0) {
+    filterStates[AuditEventFilterValues.RESOURCE_ID] = {
+      type: 'text',
+      value: validatedParams.resource_id[0] ?? ''
+    }
+  }
+
+  if (validatedParams.status && validatedParams.status.length > 0) {
+    filterStates[AuditEventFilterValues.STATUS] = {
+      type: 'choice',
+      selectedIds: new Set(validatedParams.status)
+    }
+  }
+
+  if (validatedParams.exclude_status && validatedParams.exclude_status.length > 0) {
+    filterStates[AuditEventFilterValues.EXCLUDE_STATUS] = {
+      type: 'choice',
+      selectedIds: new Set(validatedParams.exclude_status)
+    }
+  }
+
+  if (validatedParams.created_at_from) {
+    filterStates[AuditEventFilterValues.CREATED_AT_FROM] = {
+      type: 'text',
+      value: validatedParams.created_at_from
+    }
+  }
+
+  if (validatedParams.created_at_to) {
+    filterStates[AuditEventFilterValues.CREATED_AT_TO] = {
+      type: 'text',
+      value: validatedParams.created_at_to
+    }
+  }
+
+  if (validatedParams.search_query) {
+    filterStates[AuditEventFilterValues.SEARCH_QUERY] = {
+      type: 'text',
+      value: validatedParams.search_query
     }
   }
 
@@ -117,14 +153,20 @@ export const listingStatesToSearchParams = (
   const searchParams: AuditEventListSearchParams = {
     sort_by: 'created_at',
     sort_order: SortOrder.DESC,
+    event_id: [],
     actor_id: [],
     actor_type: [],
+    exclude_actor_type: [],
     actor_user_role: [],
     action: [],
+    exclude_action: [],
     resource: [],
     resource_id: [],
     status: [],
-    message: []
+    exclude_status: [],
+    created_at_from: undefined,
+    created_at_to: undefined,
+    search_query: undefined
   }
 
   if (sortState) {
@@ -132,44 +174,74 @@ export const listingStatesToSearchParams = (
     searchParams.sort_order = sortState.isAscending ? SortOrder.ASC : SortOrder.DESC
   }
 
-  const actorIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
+  const eventIdFilter = filterStates[AuditEventFilterValues.EVENT_ID]
+  if (eventIdFilter?.type === 'text' && eventIdFilter.value.trim()) {
+    searchParams.event_id = [eventIdFilter.value.trim()]
+  }
+
+  const actorIdFilter = filterStates[AuditEventFilterValues.ACTOR_ID]
   if (actorIdFilter?.type === 'text' && actorIdFilter.value.trim()) {
     searchParams.actor_id = [actorIdFilter.value.trim()]
   }
 
-  const actorTypeFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_TYPE]
+  const actorTypeFilter = filterStates[AuditEventFilterValues.ACTOR_TYPE]
   if (actorTypeFilter?.type === 'choice' && actorTypeFilter.selectedIds.size > 0) {
     searchParams.actor_type = Array.from(actorTypeFilter.selectedIds)
   }
 
-  const actorRoleFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_USER_ROLE]
+  const excludeActorTypeFilter = filterStates[AuditEventFilterValues.EXCLUDE_ACTOR_TYPE]
+  if (excludeActorTypeFilter?.type === 'choice' && excludeActorTypeFilter.selectedIds.size > 0) {
+    searchParams.exclude_actor_type = Array.from(excludeActorTypeFilter.selectedIds)
+  }
+
+  const actorRoleFilter = filterStates[AuditEventFilterValues.ACTOR_USER_ROLE]
   if (actorRoleFilter?.type === 'choice' && actorRoleFilter.selectedIds.size > 0) {
     searchParams.actor_user_role = Array.from(actorRoleFilter.selectedIds)
   }
 
-  const actionFilter = filterStates[AuditFilterValues.AuditEventFilterValues.ACTION]
+  const actionFilter = filterStates[AuditEventFilterValues.ACTION]
   if (actionFilter?.type === 'text' && actionFilter.value.trim()) {
     searchParams.action = [actionFilter.value.trim()]
   }
 
-  const resourceFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE]
+  const excludeActionFilter = filterStates[AuditEventFilterValues.EXCLUDE_ACTION]
+  if (excludeActionFilter?.type === 'text' && excludeActionFilter.value.trim()) {
+    searchParams.exclude_action = [excludeActionFilter.value.trim()]
+  }
+
+  const resourceFilter = filterStates[AuditEventFilterValues.RESOURCE]
   if (resourceFilter?.type === 'text' && resourceFilter.value.trim()) {
     searchParams.resource = [resourceFilter.value.trim()]
   }
 
-  const resourceIdFilter = filterStates[AuditFilterValues.AuditEventFilterValues.RESOURCE_ID]
+  const resourceIdFilter = filterStates[AuditEventFilterValues.RESOURCE_ID]
   if (resourceIdFilter?.type === 'text' && resourceIdFilter.value.trim()) {
     searchParams.resource_id = [resourceIdFilter.value.trim()]
   }
 
-  const statusFilter = filterStates[AuditFilterValues.AuditEventFilterValues.STATUS]
+  const statusFilter = filterStates[AuditEventFilterValues.STATUS]
   if (statusFilter?.type === 'choice' && statusFilter.selectedIds.size > 0) {
     searchParams.status = Array.from(statusFilter.selectedIds)
   }
 
-  const messageFilter = filterStates[AuditFilterValues.AuditEventFilterValues.MESSAGE]
-  if (messageFilter?.type === 'text' && messageFilter.value.trim()) {
-    searchParams.message = [messageFilter.value.trim()]
+  const excludeStatusFilter = filterStates[AuditEventFilterValues.EXCLUDE_STATUS]
+  if (excludeStatusFilter?.type === 'choice' && excludeStatusFilter.selectedIds.size > 0) {
+    searchParams.exclude_status = Array.from(excludeStatusFilter.selectedIds)
+  }
+
+  const createdAtFromFilter = filterStates[AuditEventFilterValues.CREATED_AT_FROM]
+  if (createdAtFromFilter?.type === 'text' && createdAtFromFilter.value.trim()) {
+    searchParams.created_at_from = createdAtFromFilter.value.trim()
+  }
+
+  const createdAtToFilter = filterStates[AuditEventFilterValues.CREATED_AT_TO]
+  if (createdAtToFilter?.type === 'text' && createdAtToFilter.value.trim()) {
+    searchParams.created_at_to = createdAtToFilter.value.trim()
+  }
+
+  const searchQueryFilter = filterStates[AuditEventFilterValues.SEARCH_QUERY]
+  if (searchQueryFilter?.type === 'text' && searchQueryFilter.value.trim()) {
+    searchParams.search_query = searchQueryFilter.value.trim()
   }
 
   return searchParams

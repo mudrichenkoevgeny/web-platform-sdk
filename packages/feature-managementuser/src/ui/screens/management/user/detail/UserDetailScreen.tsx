@@ -1,5 +1,5 @@
-import React, { forwardRef, useEffect, useId } from 'react'
-import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, storageStrings } from '@mudrichenkoevgeny/shared-foundation'
+import React, { forwardRef, useEffect, useId, useRef } from 'react'
+import { AccountLockoutType, UserAccountStatus, UserRole, UserModuleStrings, CommonModuleStrings, userStrings, commonStrings, storageStrings, StorageCategory } from '@mudrichenkoevgeny/shared-foundation'
 import {
   cn,
   CoreBackButton,
@@ -15,40 +15,82 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   hasUserDetailChanges,
+  SelectedFilePayload,
   UserDetailProvider,
   UserDetailStatus,
   useUserDetailStore
 } from '@/ui/screens/management/user/detail/UserDetailStore'
 import type { UserDetailStoreDependencies } from '@/ui/screens/management/user/detail/UserDetailStore'
+import { StorageFileImagePreview } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
 
 /** Automation test tags for {@link UserDetailScreen}. */
 export const UserDetailTestTags = {
+  /** Test tag for back button. */
   BACK_BUTTON: 'UserDetail_BackButton',
+  /** Test tag for screen title. */
   TITLE: 'UserDetail_Title',
+  /** Test tag for user ID text. */
   USER_ID_TEXT: 'UserDetail_UserIdText',
+  /** Test tag for user role text. */
   USER_ROLE_TEXT: 'UserDetail_UserRoleText',
+  /** Test tag for TOTP enabled text. */
   TOTP_ENABLED_TEXT: 'UserDetail_TotpEnabledText',
+  /** Test tag for disable TOTP button. */
   DISABLE_TOTP_BUTTON: 'UserDetail_DisableTotpButton',
+  /** Test tag for disable TOTP error text. */
   DISABLE_TOTP_ERROR_TEXT: 'UserDetail_DisableTotpErrorText',
+  /** Test tag for sessions button. */
   SESSIONS_BUTTON: 'UserDetail_SessionsButton',
+  /** Test tag for identifiers button. */
   IDENTIFIERS_BUTTON: 'UserDetail_IdentifiersButton',
+  /** Test tag for storage files button. */
   STORAGE_FILES_BUTTON: 'UserDetail_StorageFilesButton',
+  /** Test tag for audit events button. */
   AUDIT_EVENTS_BUTTON: 'UserDetail_AuditEventsButton',
+  /** Test tag for avatar image preview. */
+  AVATAR_IMAGE: 'UserDetail_AvatarImage',
+  /** Test tag for avatar change button. */
+  AVATAR_CHANGE_BUTTON: 'UserDetail_AvatarChangeButton',
+  /** Test tag for remove avatar button. */
+  REMOVE_AVATAR_BUTTON: 'UserDetail_RemoveAvatarButton',
+  /** Test tag for account status select element. */
   ACCOUNT_STATUS_SELECT: 'UserDetail_AccountStatusSelect',
+  /** Test tag for authority level input field. */
   AUTHORITY_LEVEL_INPUT: 'UserDetail_AuthorityLevelInput',
+  /** Test tag for lockout type select element. */
   LOCKOUT_TYPE_SELECT: 'UserDetail_LockoutTypeSelect',
+  /** Test tag for lockout until input field. */
   LOCKOUT_UNTIL_INPUT: 'UserDetail_LockoutUntilInput',
+  /** Test tag for nickname input field. */
+  NICKNAME_INPUT: 'UserDetail_NicknameInput',
+  /** Test tag for display name input field. */
+  DISPLAY_NAME_INPUT: 'UserDetail_DisplayNameInput',
+  /** Test tag for birthdate input field. */
+  BIRTHDATE_INPUT: 'UserDetail_BirthdateInput',
+  /** Test tag for storage quota bytes input field. */
   STORAGE_QUOTA_INPUT: 'UserDetail_StorageQuotaInput',
+  /** Test tag for storage max upload size bytes input field. */
   STORAGE_MAX_UPLOAD_INPUT: 'UserDetail_StorageMaxUploadInput',
+  /** Test tag for storage max pending uploads input field. */
   STORAGE_MAX_PENDING_INPUT: 'UserDetail_StorageMaxPendingInput',
+  /** Test tag for update button. */
   UPDATE_BUTTON: 'UserDetail_UpdateButton',
+  /** Test tag for save error text. */
   SAVE_ERROR_TEXT: 'UserDetail_SaveErrorText',
+  /** Test tag for delete button. */
   DELETE_BUTTON: 'UserDetail_DeleteButton',
+  /** Test tag for delete error text. */
   DELETE_ERROR_TEXT: 'UserDetail_DeleteErrorText',
+  /** Test tag for confirm delete modal title. */
   CONFIRM_DELETE_TITLE: 'UserDetail_ConfirmDeleteTitle',
+  /** Test tag for confirm delete description. */
   CONFIRM_DELETE_DESC: 'UserDetail_ConfirmDeleteDesc',
+  /** Test tag for cancel delete button. */
   CANCEL_DELETE_BUTTON: 'UserDetail_CancelDeleteButton',
-  CONFIRM_DELETE_BUTTON: 'UserDetail_ConfirmDeleteButton'
+  /** Test tag for confirm delete button. */
+  CONFIRM_DELETE_BUTTON: 'UserDetail_ConfirmDeleteButton',
+  /** Test tag for global error container. */
+  GLOBAL_ERROR: 'UserDetail_GlobalError'
 }
 
 /**
@@ -90,8 +132,6 @@ const getUserAccountStatusLabel = (status: UserAccountStatus, strings: CommonMod
       return strings.ui.securityHold
     case UserAccountStatus.PENDING_DELETION:
       return strings.ui.pendingDeletion
-    default:
-      return status
   }
 }
 
@@ -110,8 +150,6 @@ const getAccountLockoutTypeLabel = (type: AccountLockoutType, strings: CommonMod
       return strings.ui.lockoutIndefinite
     case AccountLockoutType.TEMPORARY:
       return strings.ui.lockoutTemporary
-    default:
-      return type
   }
 }
 
@@ -124,12 +162,12 @@ const getAccountLockoutTypeLabel = (type: AccountLockoutType, strings: CommonMod
  */
 const getUserRoleLabel = (role: UserRole, strings: CommonModuleStrings): string => {
   switch (role) {
+    case UserRole.USER:
+      return strings.ui.user ?? 'User'
     case UserRole.STAFF:
       return strings.ui.staff
     case UserRole.ADMIN:
       return strings.ui.admin
-    default:
-      return role
   }
 }
 
@@ -139,6 +177,11 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
 }) => {
   const screenState = useUserDetailStore((s) => s.screenState)
   const onAuthorityLevelChanged = useUserDetailStore((s) => s.onAuthorityLevelChanged)
+  const onNicknameChanged = useUserDetailStore((s) => s.onNicknameChanged)
+  const onDisplayNameChanged = useUserDetailStore((s) => s.onDisplayNameChanged)
+  const onBirthdateChanged = useUserDetailStore((s) => s.onBirthdateChanged)
+  const onAvatarFileSelected = useUserDetailStore((s) => s.onAvatarFileSelected)
+  const onRemoveAvatarClick = useUserDetailStore((s) => s.onRemoveAvatarClick)
   const onAccountStatusChanged = useUserDetailStore((s) => s.onAccountStatusChanged)
   const onLockoutTypeChanged = useUserDetailStore((s) => s.onLockoutTypeChanged)
   const onTemporaryLockoutUntilChanged = useUserDetailStore((s) => s.onTemporaryLockoutUntilChanged)
@@ -154,324 +197,394 @@ const UserDetailContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onIdentifiersClick = useUserDetailStore((s) => s.onIdentifiersClick)
   const onStorageFilesClick = useUserDetailStore((s) => s.onStorageFilesClick)
   const onAuditEventsClick = useUserDetailStore((s) => s.onAuditEventsClick)
-  const onRetry = useUserDetailStore((s) => s.onRetry)
-  const onBackClick = useUserDetailStore((s) => s.onBackClick)
   const errorParser = useAppErrorParser()
 
-  const statusSelectId = useId()
-  const authLevelId = useId()
+  const accountStatusId = useId()
   const lockoutTypeId = useId()
-  const tempLockoutId = useId()
-  const storageQuotaId = useId()
-  const storageMaxUploadId = useId()
-  const storageMaxPendingId = useId()
 
-  switch (screenState.status) {
-    case UserDetailStatus.LOADING:
-      return <FullscreenLoading />
-
-    case UserDetailStatus.ERROR:
-      return (
-        <FullscreenError
-          data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT}
-          error={screenState.error}
-          onRetry={onRetry}
-          onBack={onBackClick}
-          title={strings.ui.userDetailsTitle}
-        />
-      )
-
-    case UserDetailStatus.CONTENT: {
-      const {
-        user,
-        isSelfUser,
-        authorityLevelInput,
-        accountStatusInput,
-        lockoutTypeInput,
-        temporaryLockoutUntilInput,
-        storageQuotaBytesInput,
-        storageMaxUploadSizeBytesInput,
-        storageMaxPendingUploadsInput,
-        isSaving,
-        saveError,
-        isDeleting,
-        deleteError,
-        isDisablingTotp,
-        disableTotpError,
-        isDeleteConfirmationVisible
-      } = screenState
-
-      const hasChanges = hasUserDetailChanges(screenState)
-
-      const createdAtText = formatEpochMillisToDateTime(user.createdAt) ?? String(user.createdAt)
-      const lastLoginText = user.lastLoginAt ? (formatEpochMillisToDateTime(user.lastLoginAt) ?? String(user.lastLoginAt)) : '-'
-      const lastActiveText = user.lastActiveAt ? (formatEpochMillisToDateTime(user.lastActiveAt) ?? String(user.lastActiveAt)) : '-'
-
-      return (
-        <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
-          <div className="w-full flex items-center justify-between relative mb-6">
-            <CoreBackButton data-testid={UserDetailTestTags.BACK_BUTTON} onClick={onBackClick} />
-            <CoreScreenTitleText
-              data-testid={UserDetailTestTags.TITLE}
-              text={strings.ui.userDetailsTitle}
-              className="absolute left-1/2 -translate-x-1/2"
-            />
-            <div className="w-10" />
-          </div>
-
-          <div className="w-full max-w-md mx-auto flex-1 flex flex-col gap-4 mb-6">
-            <CoreTitleText data-testid={UserDetailTestTags.USER_ID_TEXT} text={`${user.id ?? ''}`} />
-            <p data-testid={UserDetailTestTags.USER_ROLE_TEXT} className="text-sm text-surface-foreground">{`${strings.ui.userRole}: ${getUserRoleLabel(user.role, commonStrings)}`}</p>
-            <p data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT} className="text-sm text-surface-foreground">{strings.ui.totpEnabledLabel(user.isTotpEnabled ? commonStrings.ui.yes : commonStrings.ui.no)}</p>
-
-            {user.isTotpEnabled && (
-              <div className="flex flex-col gap-1">
-                <CoreButton
-                  type="button"
-                  data-testid={UserDetailTestTags.DISABLE_TOTP_BUTTON}
-                  label={isDisablingTotp ? strings.ui.disablingTotp : strings.ui.disableTotp}
-                  onClick={onDisableTotpClick}
-                  disabled={isSelfUser || isSaving || isDeleting || isDisablingTotp}
-                />
-                {disableTotpError && (
-                  <CoreErrorText data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT} text={errorParser.parse(disableTotpError) ?? ''} />
-                )}
-              </div>
-            )}
-
-            <p className="text-sm text-muted-foreground">{strings.ui.createdAtLabel(createdAtText)}</p>
-            <p className="text-sm text-muted-foreground">{strings.ui.lastLoginAtLabel(lastLoginText)}</p>
-            <p className="text-sm text-muted-foreground">{strings.ui.lastActiveAtLabel(lastActiveText)}</p>
-
-            {user.accountStatus === UserAccountStatus.PENDING_DELETION && user.scheduledPermanentDeletionAt && (
-              <CoreErrorText
-                text={strings.ui.scheduledDeletionAtLabel(
-                  formatEpochMillisToDateTime(user.scheduledPermanentDeletionAt) ?? String(user.scheduledPermanentDeletionAt)
-                )}
-              />
-            )}
-
-            <div className="grid grid-cols-2 gap-2">
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.SESSIONS_BUTTON}
-                label={strings.ui.userSessions}
-                onClick={onSessionsClick}
-              />
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
-                label={strings.ui.userIdentifiers}
-                onClick={onIdentifiersClick}
-              />
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.STORAGE_FILES_BUTTON}
-                label={storageStrings.ui.storageFileListTitle}
-                onClick={onStorageFilesClick}
-              />
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.AUDIT_EVENTS_BUTTON}
-                label={strings.ui.auditLogsTitle}
-                onClick={onAuditEventsClick}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor={statusSelectId} className="text-xs font-medium text-surface-foreground">
-                {strings.ui.userAccountStatus}
-              </label>
-              <select
-                id={statusSelectId}
-                data-testid={UserDetailTestTags.ACCOUNT_STATUS_SELECT}
-                value={accountStatusInput}
-                onChange={(e) => {
-                  const val = e.target.value
-                  if (isUserAccountStatus(val)) {
-                    onAccountStatusChanged(val)
-                  }
-                }}
-                disabled={isSelfUser || isSaving || isDeleting}
-                className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {Object.values(UserAccountStatus).map((status) => (
-                  <option key={status} value={status}>
-                    {getUserAccountStatusLabel(status, commonStrings)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <CoreOutlinedTextField
-              id={authLevelId}
-              data-testid={UserDetailTestTags.AUTHORITY_LEVEL_INPUT}
-              value={authorityLevelInput}
-              onChange={(e) => onAuthorityLevelChanged(e.target.value)}
-              label={strings.ui.authorityLevel}
-              disabled={isSelfUser || isSaving || isDeleting}
-            />
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor={lockoutTypeId} className="text-xs font-medium text-surface-foreground">
-                {commonStrings.ui.lockoutType}
-              </label>
-              <select
-                id={lockoutTypeId}
-                data-testid={UserDetailTestTags.LOCKOUT_TYPE_SELECT}
-                value={lockoutTypeInput}
-                onChange={(e) => {
-                  const val = e.target.value
-                  if (isAccountLockoutType(val)) {
-                    onLockoutTypeChanged(val)
-                  }
-                }}
-                disabled={isSelfUser || isSaving || isDeleting}
-                className="w-full p-2.5 rounded-md border border-input bg-surface text-surface-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {Object.values(AccountLockoutType).map((type) => (
-                  <option key={type} value={type}>
-                    {getAccountLockoutTypeLabel(type, commonStrings)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <CoreOutlinedTextField
-              id={tempLockoutId}
-              data-testid={UserDetailTestTags.LOCKOUT_UNTIL_INPUT}
-              value={temporaryLockoutUntilInput}
-              onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
-              label={commonStrings.ui.lockoutUntil}
-              disabled={isSelfUser || isSaving || isDeleting}
-            />
-
-            <div className="pt-2 border-t border-border flex flex-col gap-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                {strings.ui.customStorageConfiguration}
-              </p>
-
-              <CoreOutlinedTextField
-                id={storageQuotaId}
-                data-testid={UserDetailTestTags.STORAGE_QUOTA_INPUT}
-                type="number"
-                value={storageQuotaBytesInput}
-                onChange={(e) => onStorageQuotaBytesChanged(e.target.value)}
-                label={strings.ui.userStorageQuotaOptional}
-                placeholder={strings.ui.defaultNullPlaceholder}
-                disabled={isSelfUser || isSaving || isDeleting}
-              />
-
-              <CoreOutlinedTextField
-                id={storageMaxUploadId}
-                data-testid={UserDetailTestTags.STORAGE_MAX_UPLOAD_INPUT}
-                type="number"
-                value={storageMaxUploadSizeBytesInput}
-                onChange={(e) => onStorageMaxUploadSizeBytesChanged(e.target.value)}
-                label={strings.ui.userMaxUploadSizeOptional}
-                placeholder={strings.ui.defaultNullPlaceholder}
-                disabled={isSelfUser || isSaving || isDeleting}
-              />
-
-              <CoreOutlinedTextField
-                id={storageMaxPendingId}
-                data-testid={UserDetailTestTags.STORAGE_MAX_PENDING_INPUT}
-                type="number"
-                value={storageMaxPendingUploadsInput}
-                onChange={(e) => onStorageMaxPendingUploadsChanged(e.target.value)}
-                label={strings.ui.userMaxPendingUploadsOptional}
-                placeholder={strings.ui.defaultNullPlaceholder}
-                disabled={isSelfUser || isSaving || isDeleting}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 pt-2">
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.UPDATE_BUTTON}
-                label={isSaving ? strings.ui.saving : strings.ui.updateUser}
-                onClick={onUpdateClick}
-                disabled={isSelfUser || !hasChanges || isSaving || isDeleting}
-              />
-              {saveError && (
-                <CoreErrorText data-testid={UserDetailTestTags.SAVE_ERROR_TEXT} text={errorParser.parse(saveError) ?? ''} />
-              )}
-
-              <CoreButton
-                type="button"
-                data-testid={UserDetailTestTags.DELETE_BUTTON}
-                label={strings.ui.deleteUser}
-                onClick={onDeleteClick}
-                disabled={isSelfUser || isSaving || isDeleting}
-                className="bg-error hover:bg-error/90 text-error-foreground"
-              />
-              {deleteError && (
-                <CoreErrorText data-testid={UserDetailTestTags.DELETE_ERROR_TEXT} text={errorParser.parse(deleteError) ?? ''} />
-              )}
-            </div>
-          </div>
-
-          {isDeleteConfirmationVisible && (
-            <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50">
-              <div className="bg-card border border-border p-6 rounded-xl shadow-lg max-w-sm w-full flex flex-col gap-4">
-                <CoreTitleText data-testid={UserDetailTestTags.CONFIRM_DELETE_TITLE} text={strings.ui.deleteUser} />
-                <p data-testid={UserDetailTestTags.CONFIRM_DELETE_DESC} className="text-sm text-surface-foreground">{strings.ui.deleteUserConfirmationDesc}</p>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    data-testid={UserDetailTestTags.CANCEL_DELETE_BUTTON}
-                    onClick={onDismissDeleteDialog}
-                    disabled={isDeleting}
-                    className="px-4 py-2 text-sm rounded-md border border-border bg-surface text-surface-foreground hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {strings.ui.dialogCancel}
-                  </button>
-                  <button
-                    type="button"
-                    data-testid={UserDetailTestTags.CONFIRM_DELETE_BUTTON}
-                    onClick={onConfirmDeleteClick}
-                    disabled={isDeleting}
-                    className="px-4 py-2 text-sm rounded-md bg-error text-error-foreground hover:bg-error/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {strings.ui.dialogConfirm}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )
-    }
-  }
-}
-
-const UserDetailController: React.FC<{ strings?: UserModuleStrings }> = ({
-  strings
-}) => {
-  const initScreen = useUserDetailStore((s) => s.initScreen)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const previousAvatarUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
-    initScreen()
-  }, [initScreen])
+    return () => {
+      if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previousAvatarUrlRef.current)
+      }
+    }
+  }, [])
 
-  return <UserDetailContent strings={strings} />
+  if (screenState.status !== UserDetailStatus.CONTENT) {
+    return null
+  }
+
+  const {
+    user,
+    isSelfUser,
+    authorityLevelInput,
+    accountStatusInput,
+    lockoutTypeInput,
+    temporaryLockoutUntilInput,
+    nicknameInput,
+    displayNameInput,
+    birthdateInput,
+    avatarUrl,
+    storageQuotaBytesInput,
+    storageMaxUploadSizeBytesInput,
+    storageMaxPendingUploadsInput,
+    isSaving,
+    saveError,
+    isDeleting,
+    deleteError,
+    isDisablingTotp,
+    disableTotpError,
+    isDeleteConfirmationVisible
+  } = screenState
+
+  const hasChanges = hasUserDetailChanges(screenState)
+  const commonUi = commonStrings.ui
+  const storageUi = storageStrings.ui
+  const notAvailableText = commonUi.denied
+  const createdAtText = formatEpochMillisToDateTime(user.createdAt) ?? String(user.createdAt)
+  const lastLoginText = user.lastLoginAt ? (formatEpochMillisToDateTime(user.lastLoginAt) ?? String(user.lastLoginAt)) : notAvailableText
+  const lastActiveText = user.lastActiveAt ? (formatEpochMillisToDateTime(user.lastActiveAt) ?? String(user.lastActiveAt)) : notAvailableText
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previousAvatarUrlRef.current)
+      }
+      const localUri = URL.createObjectURL(file)
+      previousAvatarUrlRef.current = localUri
+
+      const payload: SelectedFilePayload = {
+        file,
+        fileName: file.name,
+        fileSizeBytes: file.size,
+        mimeType: file.type || 'application/octet-stream',
+        localUri
+      }
+      onAvatarFileSelected(payload)
+    }
+  }
+
+  const handleRemoveAvatar = () => {
+    if (previousAvatarUrlRef.current && previousAvatarUrlRef.current.startsWith('blob:')) {
+      URL.revokeObjectURL(previousAvatarUrlRef.current)
+      previousAvatarUrlRef.current = null
+    }
+    onRemoveAvatarClick()
+  }
+
+  return (
+    <div className="w-full h-full p-6 flex flex-col justify-between relative overflow-y-auto">
+      <div className="w-full max-w-md mx-auto flex flex-col gap-4 mb-6">
+        <div className="flex flex-col items-center gap-3 mb-2">
+          <div className="w-24 h-24 rounded-full overflow-hidden border border-border bg-accent flex items-center justify-center relative">
+            {avatarUrl ? (
+              <img
+                data-testid={UserDetailTestTags.AVATAR_IMAGE}
+                src={avatarUrl}
+                alt={strings.ui.avatar}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl text-muted-foreground font-bold">
+                {(displayNameInput || nicknameInput || strings.ui.user || strings.ui.editProfileTitle).charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
+          <div className="flex gap-2">
+            <CoreButton
+              type="button"
+              data-testid={UserDetailTestTags.AVATAR_CHANGE_BUTTON}
+              label={`${strings.ui.editProfileTitle} (${strings.ui.avatar})`}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isSaving || isDeleting}
+            />
+            {avatarUrl && (
+              <CoreButton
+                type="button"
+                data-testid={UserDetailTestTags.REMOVE_AVATAR_BUTTON}
+                label={strings.ui.removeAvatar}
+                onClick={handleRemoveAvatar}
+                disabled={isSaving || isDeleting}
+              />
+            )}
+          </div>
+        </div>
+
+        <CoreTitleText
+          data-testid={UserDetailTestTags.USER_ID_TEXT}
+          text={`${commonUi.userId}: ${user.id}`}
+        />
+        <CoreTitleText
+          data-testid={UserDetailTestTags.USER_ROLE_TEXT}
+          text={`${strings.ui.userRole}: ${getUserRoleLabel(user.role, commonStrings)}`}
+        />
+        <CoreTitleText
+          data-testid={UserDetailTestTags.TOTP_ENABLED_TEXT}
+          text={strings.ui.totpEnabledLabel(String(user.isTotpEnabled))}
+        />
+
+        {user.isTotpEnabled && (
+          <div className="flex flex-col gap-2">
+            <CoreButton
+              type="button"
+              data-testid={UserDetailTestTags.DISABLE_TOTP_BUTTON}
+              label={isDisablingTotp ? strings.ui.disablingTotp : strings.ui.disableTotp}
+              onClick={() => void onDisableTotpClick()}
+              disabled={isSaving || isDeleting || isDisablingTotp || isSelfUser}
+            />
+            {disableTotpError && (
+              <CoreErrorText
+                data-testid={UserDetailTestTags.DISABLE_TOTP_ERROR_TEXT}
+                text={errorParser.parse(disableTotpError) ?? ''}
+              />
+            )}
+          </div>
+        )}
+
+        <CoreTitleText text={strings.ui.createdAtLabel(createdAtText)} />
+        <CoreTitleText text={strings.ui.lastLoginAtLabel(lastLoginText)} />
+        <CoreTitleText text={strings.ui.lastActiveAtLabel(lastActiveText)} />
+
+        <div className="flex gap-2">
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.SESSIONS_BUTTON}
+            label={strings.ui.userSessions}
+            onClick={onSessionsClick}
+          />
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.IDENTIFIERS_BUTTON}
+            label={strings.ui.userIdentifiers}
+            onClick={onIdentifiersClick}
+          />
+        </div>
+
+        <div className="flex gap-2">
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.STORAGE_FILES_BUTTON}
+            label={storageUi.storageFileListTitle}
+            onClick={onStorageFilesClick}
+          />
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.AUDIT_EVENTS_BUTTON}
+            label={strings.ui.userDetailAuditEvents}
+            onClick={onAuditEventsClick}
+          />
+        </div>
+
+        <CoreOutlinedTextField
+          data-testid={UserDetailTestTags.DISPLAY_NAME_INPUT}
+          value={displayNameInput}
+          onChange={(e) => onDisplayNameChanged(e.target.value)}
+          label={strings.ui.user}
+          disabled={isSaving || isDeleting}
+        />
+
+        <CoreOutlinedTextField
+          data-testid={UserDetailTestTags.NICKNAME_INPUT}
+          value={nicknameInput}
+          onChange={(e) => onNicknameChanged(e.target.value)}
+          label={strings.ui.userLabel}
+          disabled={isSaving || isDeleting}
+        />
+
+        <CoreOutlinedTextField
+          data-testid={UserDetailTestTags.BIRTHDATE_INPUT}
+          type="number"
+          value={birthdateInput}
+          onChange={(e) => onBirthdateChanged(e.target.value)}
+          label={strings.ui.birthdate}
+          disabled={isSaving || isDeleting}
+        />
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor={accountStatusId} className="text-sm font-medium">
+            {strings.ui.userAccountStatus}
+          </label>
+          <select
+            id={accountStatusId}
+            data-testid={UserDetailTestTags.ACCOUNT_STATUS_SELECT}
+            value={accountStatusInput}
+            onChange={(e) => {
+              if (isUserAccountStatus(e.target.value)) {
+                onAccountStatusChanged(e.target.value)
+              }
+            }}
+            disabled={isSaving || isDeleting || isSelfUser}
+            className="w-full p-2 border border-border rounded bg-background text-foreground"
+          >
+            {Object.values(UserAccountStatus).map((status) => (
+              <option key={status} value={status}>
+                {getUserAccountStatusLabel(status, commonStrings)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <CoreOutlinedTextField
+          data-testid={UserDetailTestTags.AUTHORITY_LEVEL_INPUT}
+          type="number"
+          value={authorityLevelInput}
+          onChange={(e) => onAuthorityLevelChanged(e.target.value)}
+          label={strings.ui.authorityLevel}
+          disabled={isSaving || isDeleting || isSelfUser}
+        />
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor={lockoutTypeId} className="text-sm font-medium">
+            {commonUi.lockoutType}
+          </label>
+          <select
+            id={lockoutTypeId}
+            data-testid={UserDetailTestTags.LOCKOUT_TYPE_SELECT}
+            value={lockoutTypeInput}
+            onChange={(e) => {
+              if (isAccountLockoutType(e.target.value)) {
+                onLockoutTypeChanged(e.target.value)
+              }
+            }}
+            disabled={isSaving || isDeleting || isSelfUser}
+            className="w-full p-2 border border-border rounded bg-background text-foreground"
+          >
+            {Object.values(AccountLockoutType).map((type) => (
+              <option key={type} value={type}>
+                {getAccountLockoutTypeLabel(type, commonStrings)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <CoreOutlinedTextField
+          data-testid={UserDetailTestTags.LOCKOUT_UNTIL_INPUT}
+          type="number"
+          value={temporaryLockoutUntilInput}
+          onChange={(e) => onTemporaryLockoutUntilChanged(e.target.value)}
+          label={commonUi.lockoutUntil}
+          disabled={isSaving || isDeleting || isSelfUser}
+        />
+
+        <div className="flex flex-col gap-2 pt-2 border-t border-border">
+          <CoreTitleText text={strings.ui.customStorageConfiguration} className="text-base" />
+
+          <CoreOutlinedTextField
+            data-testid={UserDetailTestTags.STORAGE_QUOTA_INPUT}
+            type="number"
+            value={storageQuotaBytesInput}
+            onChange={(e) => onStorageQuotaBytesChanged(e.target.value)}
+            label={storageUi.storageQuotaBytes}
+            disabled={isSaving || isDeleting || isSelfUser}
+          />
+
+          <CoreOutlinedTextField
+            data-testid={UserDetailTestTags.STORAGE_MAX_UPLOAD_INPUT}
+            type="number"
+            value={storageMaxUploadSizeBytesInput}
+            onChange={(e) => onStorageMaxUploadSizeBytesChanged(e.target.value)}
+            label={storageUi.storageMaxUploadSizeBytes}
+            disabled={isSaving || isDeleting || isSelfUser}
+          />
+
+          <CoreOutlinedTextField
+            data-testid={UserDetailTestTags.STORAGE_MAX_PENDING_INPUT}
+            type="number"
+            value={storageMaxPendingUploadsInput}
+            onChange={(e) => onStorageMaxPendingUploadsChanged(e.target.value)}
+            label={storageUi.storageMaxPendingUploads}
+            disabled={isSaving || isDeleting || isSelfUser}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2 pt-4">
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.UPDATE_BUTTON}
+            label={isSaving ? strings.ui.saving : strings.ui.updateUser}
+            onClick={() => void onUpdateClick()}
+            disabled={!hasChanges || isSaving || isDeleting || isSelfUser}
+          />
+
+          {saveError && (
+            <CoreErrorText
+              data-testid={UserDetailTestTags.SAVE_ERROR_TEXT}
+              text={errorParser.parse(saveError) ?? ''}
+            />
+          )}
+
+          <CoreButton
+            type="button"
+            data-testid={UserDetailTestTags.DELETE_BUTTON}
+            label={isDeleting ? strings.ui.saving : strings.ui.deleteUser}
+            onClick={onDeleteClick}
+            disabled={isSaving || isDeleting || isSelfUser}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          />
+
+          {deleteError && (
+            <CoreErrorText
+              data-testid={UserDetailTestTags.DELETE_ERROR_TEXT}
+              text={errorParser.parse(deleteError) ?? ''}
+            />
+          )}
+        </div>
+      </div>
+
+      {isDeleteConfirmationVisible && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-background p-6 rounded-lg max-w-md w-full flex flex-col gap-4 shadow-lg">
+            <CoreTitleText data-testid={UserDetailTestTags.CONFIRM_DELETE_TITLE} text={strings.ui.dialogConfirmTitle} />
+            <CoreErrorText data-testid={UserDetailTestTags.CONFIRM_DELETE_DESC} text={strings.ui.deleteUser} />
+            <div className="flex justify-end gap-2">
+              <CoreButton
+                type="button"
+                data-testid={UserDetailTestTags.CANCEL_DELETE_BUTTON}
+                label={strings.ui.dialogCancel}
+                onClick={onDismissDeleteDialog}
+              />
+              <CoreButton
+                type="button"
+                data-testid={UserDetailTestTags.CONFIRM_DELETE_BUTTON}
+                label={strings.ui.dialogConfirm}
+                onClick={() => void onConfirmDeleteClick()}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 /** Props for {@link UserDetailScreen}. */
 export interface UserDetailScreenProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Dependencies required by store. */
+  /** Injected store dependencies. */
   dependencies: UserDetailStoreDependencies
   /** Optional localized strings override. */
   strings?: UserModuleStrings
 }
 
-/** Administrative screen component displaying detailed information and management actions for a single user account. */
+/** Administrative user detail screen component allowing inspection and modification of user accounts. */
 export const UserDetailScreen = forwardRef<HTMLDivElement, UserDetailScreenProps>(
   ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (
       <div ref={ref} className={cn('w-full h-full relative', className)} {...rest}>
         <UserDetailProvider dependencies={dependencies}>
-          <UserDetailController strings={strings} />
+          <UserDetailContent strings={strings} />
         </UserDetailProvider>
       </div>
     )

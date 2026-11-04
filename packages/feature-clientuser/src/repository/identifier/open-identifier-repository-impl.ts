@@ -1,4 +1,4 @@
-import { isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   OtpConfirmation,
@@ -16,8 +16,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   ConfirmationRepository,
-  IdentifierRepository,
-  UserStorage
+  IdentifierRepository
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenIdentifiersApi } from '@/network/api/identifier/open-identifiers-api'
 
@@ -30,12 +29,10 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
    *
    * @param openIdentifiersApi - HTTP endpoints for managing user identifiers and sending confirmations
    * @param confirmationRepository - Client-side cooldown manager for adding email and phone identifiers
-   * @param userStorage - Local user storage for updating identifier cache
    */
   public constructor(
     private readonly openIdentifiersApi: OpenIdentifiersApi,
-    private readonly confirmationRepository: ConfirmationRepository,
-    private readonly userStorage: UserStorage
+    private readonly confirmationRepository: ConfirmationRepository
   ) {}
 
   public async getUserIdentifier(userIdentifierId: UserIdentifierId): Promise<AppResult<UserIdentifierPrivate, AppError>> {
@@ -54,11 +51,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
   }
 
   public async deleteUserIdentifier(identifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
-    const result = await this.openIdentifiersApi.deleteUserIdentifier(identifierId)
-    if (isSuccess(result)) {
-      await this.userStorage.removeUserIdentifier(identifierId)
-    }
-    return result
+    return this.openIdentifiersApi.deleteUserIdentifier(identifierId)
   }
 
   public async deletePassword(userIdentifierId: UserIdentifierId): Promise<AppResult<void, AppError>> {
@@ -71,11 +64,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierEmail(email, password, confirmationCode)
-    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
-    if (isSuccess(mapped)) {
-      await this.userStorage.addUserIdentifier(mapped.data)
-    }
-    return mapped
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async addUserIdentifierPhone(
@@ -83,11 +72,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     confirmationCode: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierPhone(phoneNumber, confirmationCode)
-    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
-    if (isSuccess(mapped)) {
-      await this.userStorage.addUserIdentifier(mapped.data)
-    }
-    return mapped
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async addUserIdentifierExternalAuthProvider(
@@ -95,11 +80,7 @@ export class OpenIdentifierRepositoryImpl implements IdentifierRepository {
     externalProviderToken: string
   ): Promise<AppResult<UserIdentifierPrivate, AppError>> {
     const result = await this.openIdentifiersApi.addUserIdentifierExternalAuthProvider(authProvider, externalProviderToken)
-    const mapped = mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
-    if (isSuccess(mapped)) {
-      await this.userStorage.addUserIdentifier(mapped.data)
-    }
-    return mapped
+    return mapSuccess(result, (payload) => toUserIdentifierPrivate(payload))
   }
 
   public async sendAddEmailIdentifierConfirmation(email: string): Promise<AppResult<OtpConfirmation, AppError>> {

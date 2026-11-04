@@ -1,9 +1,7 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
-  AccountLockoutType,
   ManagementUserListParams,
   PagedResult,
-  PermissionCode,
   UserAccountStatus,
   UserId,
   UserPrivate,
@@ -11,6 +9,9 @@ import type {
   UserStorageConfiguration,
   UserSummary
 } from '@mudrichenkoevgeny/shared-foundation'
+import type { UpdateUserParams } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+
+export type { UpdateUserParams } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 /** Parameters for creating a user account administratively. */
 export interface CreateUserParams {
@@ -20,17 +21,8 @@ export interface CreateUserParams {
   status?: UserAccountStatus | null
   authorityLevel?: number | null
   storageConfiguration?: UserStorageConfiguration | null
-}
-
-/** Parameters for updating a user account administratively. */
-export interface UpdateUserParams {
-  accountStatus?: UserAccountStatus | null
-  authorityLevel?: number | null
-  permissionCodes?: PermissionCode[] | null
-  accountLockoutType?: AccountLockoutType | null
-  lockoutType?: AccountLockoutType | null
-  temporaryLockoutUntil?: number | null
-  storageConfiguration?: UserStorageConfiguration | null
+  nickname?: string | null
+  displayName?: string | null
 }
 
 /** Administrative repository providing staff and administrators full control over creating, fetching, filtering, updating, and removing user accounts across the system. */

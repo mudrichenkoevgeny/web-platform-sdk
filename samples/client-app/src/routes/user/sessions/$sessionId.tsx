@@ -23,11 +23,11 @@ export const Route = createFileRoute('/user/sessions/$sessionId')({
           deleteSessionUseCase: appComponent.clientUserComponent.deleteSessionUseCase,
           authStorage: appComponent.clientUserComponent.authStorage,
           onNavigateToIdentifierDetail: (identifierId) =>
-            navigate({ to: '/user/identifiers/$identifierId', params: { identifierId } }),
-          onNavigateToUserMain: () => navigate({ to: ClientUserNavigation.Main.route }),
-          onNavigateToUserDetail: () => navigate({ to: ClientUserNavigation.Main.route }),
+            void navigate({ to: '/user/identifiers/$identifierId', params: { identifierId } }),
+          onNavigateToUserMain: () => void navigate({ to: ClientUserNavigation.Main.route }),
+          onNavigateToUserDetail: () => void navigate({ to: ClientUserNavigation.Main.route }),
           onBack: () =>
-            navigateUp({
+            void navigateUp({
               to: ClientUserNavigation.SessionList.ROUTE,
               search: (raw) => cleanSearchParams(selfSessionListParamsSchema.parse(raw))
             })

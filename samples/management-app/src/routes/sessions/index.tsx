@@ -21,7 +21,7 @@ export const Route = createFileRoute('/sessions/')({
           currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToSessionDetail: (session) =>
             session.id && void navigate({ to: '/sessions/$sessionId', params: { sessionId: session.id } }),
           onNavigateToUserDetail: (userId) =>

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { WebSocketService, SocketFrame } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { StorageWebSocketEventTypes } from '@mudrichenkoevgeny/shared-foundation'
+import { StorageWebSocketEventTypes, UserStorageTargetScopes } from '@mudrichenkoevgeny/shared-foundation'
 import * as DirectUploaderModule from '../../uploader/direct-file-uploader'
 import type { StorageApi } from '../../network/api/base/storage-api'
 import { OpenStorageRepositoryImpl } from './open-storage-repository-impl'
@@ -40,7 +40,7 @@ describe('OpenStorageRepositoryImpl', () => {
           fileSizeBytes: 1024,
           mimeType: 'image/jpeg',
           category: 'IMAGE',
-          fileUrl: 'https://cdn.example.com/file-1'
+          fileUrls: { originalUrl: 'https://cdn.example.com/file-1' }
         }
       ],
       pageNumber: 1,
@@ -76,7 +76,7 @@ describe('OpenStorageRepositoryImpl', () => {
       mime_type: 'image/jpeg',
       visibility: 'PUBLIC',
       status: 'READY',
-      file_url: 'https://cdn.example.com/file-ws-1',
+      file_urls: { original_url: 'https://cdn.example.com/file-ws-1' },
       created_at: 1000,
       updated_at: 2000
     }
@@ -105,7 +105,7 @@ describe('OpenStorageRepositoryImpl', () => {
     const presigned = {
       fileId: 'file-99',
       uploadUrl: 'https://s3.example.com/upload-99',
-      fileUrl: 'https://cdn.example.com/file-99',
+      fileUrls: { originalUrl: 'https://cdn.example.com/file-99' },
       expiresAtMillis: Date.now() + 60000
     }
     const confirmedPayload = {
@@ -127,7 +127,7 @@ describe('OpenStorageRepositoryImpl', () => {
     vi.spyOn(DirectUploaderModule, 'uploadFileDirectly').mockResolvedValue(appResultSuccess(undefined))
     vi.mocked(mockApi.confirmUpload).mockResolvedValue(appResultSuccess(confirmedPayload as any))
 
-    const result = await repository.uploadFile(file, 'IMAGE', 'PUBLIC', 'AVATAR')
+    const result = await repository.uploadFile(file, 'IMAGE', 'PUBLIC', UserStorageTargetScopes.AVATAR)
     expect(result.success).toBe(true)
     expect(mockApi.getPresignedUploadUrl).toHaveBeenCalledWith({
       fileName: 'test.png',
@@ -135,7 +135,7 @@ describe('OpenStorageRepositoryImpl', () => {
       mimeType: 'image/png',
       category: 'IMAGE',
       visibility: 'PUBLIC',
-      targetScope: 'AVATAR'
+      targetScope: UserStorageTargetScopes.AVATAR
     })
     expect(DirectUploaderModule.uploadFileDirectly).toHaveBeenCalledWith('https://s3.example.com/upload-99', file, undefined)
     expect(mockApi.confirmUpload).toHaveBeenCalledWith('file-99')

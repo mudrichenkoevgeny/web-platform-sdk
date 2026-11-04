@@ -34,9 +34,9 @@ export const Route = createFileRoute('/self/storage/files/')({
           deleteFilesBatchUseCase: managementDeps.selfManagementDeleteFilesBatchUseCase ?? managementDeps.managementDeleteFilesBatchUseCase
         })
       : createManagementStorageFileListDataSource({
-          getFilesUseCase: managementDeps.managementGetFilesUseCase,
-          deleteFileUseCase: managementDeps.managementDeleteFileUseCase,
-          deleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
+          managementGetFilesUseCase: managementDeps.managementGetFilesUseCase,
+          managementDeleteFileUseCase: managementDeps.managementDeleteFileUseCase,
+          managementDeleteFilesBatchUseCase: managementDeps.managementDeleteFilesBatchUseCase
         })
 
     return (
@@ -47,7 +47,7 @@ export const Route = createFileRoute('/self/storage/files/')({
           userId: managementDeps.currentUserId ?? undefined,
           dataSource,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToUpload: () =>
             void navigate({ to: ManagementSelfStorageNavigation.FileUpload.ROUTE }),
           onNavigateToFileDetail: (fileId) =>

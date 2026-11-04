@@ -10,6 +10,7 @@ import {
 } from '@mudrichenkoevgeny/shared-foundation'
 import type {
   AvailableAuthProviders,
+  SelfIdentifierListParams,
   UserIdentifierId,
   UserIdentifierSummary
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -122,6 +123,8 @@ export interface SelfIdentifierListStoreDependencies {
   identifierRepository?: unknown
   onBack: () => void
   authStorage?: AuthStorage
+  searchParams?: SelfIdentifierListParams
+  onSearchParamsChanged?: (params: SelfIdentifierListParams) => void
 }
 
 /** State and actions contract managed by {@link SelfIdentifierListStore}. */
@@ -148,6 +151,13 @@ export interface SelfIdentifierListStoreState {
 
 export type SelfIdentifierListStore = ReturnType<typeof createSelfIdentifierListStore>
 
+/**
+ * Factory function creating a Zustand store instance for the self identifier list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createSelfIdentifierListStore = (
   deps: SelfIdentifierListStoreDependencies,
   initialState?: SelfIdentifierListScreenState

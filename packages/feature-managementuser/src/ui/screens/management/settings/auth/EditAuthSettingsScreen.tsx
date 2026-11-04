@@ -37,6 +37,11 @@ const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
   const onAccountDeletionGracePeriodSecondsChanged = useEditAuthSettingsStore((s) => s.onAccountDeletionGracePeriodSecondsChanged)
   const onAccountDeletionCheckIntervalSecondsChanged = useEditAuthSettingsStore((s) => s.onAccountDeletionCheckIntervalSecondsChanged)
   const onRegistrationEnabledToggled = useEditAuthSettingsStore((s) => s.onRegistrationEnabledToggled)
+  const onUserNicknameMinLengthChanged = useEditAuthSettingsStore((s) => s.onUserNicknameMinLengthChanged)
+  const onUserNicknameMaxLengthChanged = useEditAuthSettingsStore((s) => s.onUserNicknameMaxLengthChanged)
+  const onUserDisplayNameMinLengthChanged = useEditAuthSettingsStore((s) => s.onUserDisplayNameMinLengthChanged)
+  const onUserDisplayNameMaxLengthChanged = useEditAuthSettingsStore((s) => s.onUserDisplayNameMaxLengthChanged)
+  const onUserNicknameChangeAllowedToggled = useEditAuthSettingsStore((s) => s.onUserNicknameChangeAllowedToggled)
   const onOpenEmailBlacklistEnabledToggled = useEditAuthSettingsStore((s) => s.onOpenEmailBlacklistEnabledToggled)
   const onOpenEmailBlacklistChanged = useEditAuthSettingsStore((s) => s.onOpenEmailBlacklistChanged)
   const onOpenEmailWhitelistEnabledToggled = useEditAuthSettingsStore((s) => s.onOpenEmailWhitelistEnabledToggled)
@@ -52,6 +57,7 @@ const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
 
   const providerBaseId = useId()
   const isRegistrationId = useId()
+  const isNicknameChangeId = useId()
   const openBlacklistId = useId()
   const openWhitelistId = useId()
   const managementBlacklistId = useId()
@@ -85,6 +91,11 @@ const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
         accountDeletionGracePeriodSeconds,
         accountDeletionCheckIntervalSeconds,
         isRegistrationEnabled,
+        userNicknameMinLength,
+        userNicknameMaxLength,
+        userDisplayNameMinLength,
+        userDisplayNameMaxLength,
+        isUserNicknameChangeAllowed,
         openEmailBlacklistEnabled,
         openEmailBlacklist,
         openEmailWhitelistEnabled,
@@ -199,6 +210,52 @@ const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
                 placeholder={strings.ui.maxIdentifiersPerExternalProvider}
                 disabled={isSaving}
               />
+
+              <CoreOutlinedTextField
+                value={userNicknameMinLength}
+                onChange={(e) => onUserNicknameMinLengthChanged(e.target.value)}
+                label={strings.ui.userNicknameMinLength}
+                placeholder={strings.ui.userNicknameMinLength}
+                disabled={isSaving}
+              />
+
+              <CoreOutlinedTextField
+                value={userNicknameMaxLength}
+                onChange={(e) => onUserNicknameMaxLengthChanged(e.target.value)}
+                label={strings.ui.userNicknameMaxLength}
+                placeholder={strings.ui.userNicknameMaxLength}
+                disabled={isSaving}
+              />
+
+              <CoreOutlinedTextField
+                value={userDisplayNameMinLength}
+                onChange={(e) => onUserDisplayNameMinLengthChanged(e.target.value)}
+                label={strings.ui.userDisplayNameMinLength}
+                placeholder={strings.ui.userDisplayNameMinLength}
+                disabled={isSaving}
+              />
+
+              <CoreOutlinedTextField
+                value={userDisplayNameMaxLength}
+                onChange={(e) => onUserDisplayNameMaxLengthChanged(e.target.value)}
+                label={strings.ui.userDisplayNameMaxLength}
+                placeholder={strings.ui.userDisplayNameMaxLength}
+                disabled={isSaving}
+              />
+
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  id={isNicknameChangeId}
+                  type="checkbox"
+                  checked={isUserNicknameChangeAllowed}
+                  disabled={isSaving}
+                  onChange={(e) => onUserNicknameChangeAllowedToggled(e.target.checked)}
+                  className="rounded border-border text-primary focus:ring-primary h-4 w-4"
+                />
+                <label htmlFor={isNicknameChangeId} className="text-sm text-surface-foreground cursor-pointer">
+                  {strings.ui.isUserNicknameChangeAllowed}
+                </label>
+              </div>
 
               <CoreOutlinedTextField
                 value={maxActiveSessionsForOpenUser}
@@ -362,7 +419,6 @@ const EditAuthSettingsContent: React.FC<{ strings?: UserModuleStrings }> = ({
               type="submit"
               label={isSaving ? strings.ui.saving : strings.ui.save}
               disabled={isSaving}
-              onClick={onSaveClick}
             />
             <CoreTextButton
               type="button"
@@ -389,11 +445,18 @@ const EditAuthSettingsController: React.FC<{ strings?: UserModuleStrings }> = ({
   return <EditAuthSettingsContent strings={strings} />
 }
 
+/** Props for {@link EditAuthSettingsScreen}. */
 export interface EditAuthSettingsScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Screen dependencies configured at the router or provider level. */
   dependencies: EditAuthSettingsStoreDependencies
+  /** Optional localized strings. */
   strings?: UserModuleStrings
 }
 
+/**
+ * Screen component displaying the form to view and edit management authentication settings.
+ * Handles initialization, validation, toggling flags, and persisting configurations to backend.
+ */
 export const EditAuthSettingsScreen = forwardRef<HTMLDivElement, EditAuthSettingsScreenProps>(
   ({ dependencies, strings = userStrings, className, ...rest }, ref) => {
     return (

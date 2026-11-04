@@ -17,4 +17,8 @@ export class SelfManagementUserApiMock implements SelfManagementUserApi {
   public async getUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
     return this.userResult
   }
+
+  public async selfUpdateUser(): Promise<AppResult<UserPrivatePayload, AppError>> {
+    return this.userResult
+  }
 }

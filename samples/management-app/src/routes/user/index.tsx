@@ -19,11 +19,11 @@ export const Route = createFileRoute('/user/')({
           userRepository: appComponent.managementUserComponent.selfUserRepository,
           logoutUseCase: appComponent.managementUserComponent.logoutUseCase,
           scheduleUserDeletionUseCase: appComponent.managementUserComponent.scheduleUserDeletionUseCase,
-          onNavigateToLogin: () => navigate({ to: ManagementAuthNavigation.Main.ROUTE }),
-          onNavigateToTotp: () => navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE }),
-          onNavigateToSessions: () => navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE }),
-          onNavigateToIdentifiers: () => navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE }),
-          onNavigateToStorage: () => navigate({ to: ManagementSelfStorageNavigation.FileList.ROUTE })
+          onNavigateToLogin: () => void navigate({ to: ManagementAuthNavigation.Main.ROUTE }),
+          onNavigateToTotp: () => void navigate({ to: ManagementSelfUserNavigation.TotpMain.ROUTE }),
+          onNavigateToSessions: () => void navigate({ to: ManagementSelfUserNavigation.SessionList.ROUTE }),
+          onNavigateToIdentifiers: () => void navigate({ to: ManagementSelfUserNavigation.IdentifierList.ROUTE }),
+          onNavigateToStorage: () => void navigate({ to: ManagementSelfStorageNavigation.FileList.ROUTE })
         }}
       />
     )

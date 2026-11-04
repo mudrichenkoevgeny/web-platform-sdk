@@ -31,6 +31,7 @@ const createMockDependencies = (
     onNavigateToSessions: () => alert('Navigate to sessions'),
     onNavigateToIdentifiers: () => alert('Navigate to identifiers'),
     onNavigateToStorage: () => alert('Navigate to storage'),
+    onNavigateToEditUser: () => alert('Navigate to edit user'),
     ...overrides
   }
 }

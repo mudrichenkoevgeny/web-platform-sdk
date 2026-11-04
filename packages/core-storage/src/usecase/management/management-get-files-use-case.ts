@@ -4,7 +4,7 @@ import type {
   ManagementStorageFileListParams,
   StorageFileSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementStorageRepository } from '../../repository/management/management-storage-repository'
+import type { ManagementStorageRepository } from '@/repository/management/management-storage-repository'
 
 /** Fetches a paginated list of all files across the platform administratively. */
 export class ManagementGetFilesUseCase {

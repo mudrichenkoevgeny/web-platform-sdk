@@ -37,3 +37,6 @@ export type UserDestination =
   | {
       type: 'storageFileUpload'
     }
+  | {
+      type: 'editUser'
+    }

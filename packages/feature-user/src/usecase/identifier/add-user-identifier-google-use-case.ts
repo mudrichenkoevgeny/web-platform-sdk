@@ -1,9 +1,10 @@
 import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { GoogleAuthService } from '@/auth/google/google-auth-service'
 import type { IdentifierRepository } from '@/repository/identifier/identifier-repository'
 import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
+
 /** Google Sign-In flow for associating a Google identity record with current account. */
 export class AddUserIdentifierGoogleUseCase {
   /**
@@ -30,7 +31,7 @@ export class AddUserIdentifierGoogleUseCase {
 
     return this.identifierRepository.addUserIdentifierExternalAuthProvider(
       UserAuthProvider.GOOGLE,
-      signInResult.data
+      signInResult.data.external_provider_token
     )
   }
 }

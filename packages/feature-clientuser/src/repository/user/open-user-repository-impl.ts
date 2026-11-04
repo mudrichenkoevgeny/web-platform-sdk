@@ -11,7 +11,7 @@ import {
   userPrivatePayloadSchema,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { AuthStorage, UserRepository, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { AuthStorage, UserRepository, UserStorage, UpdateUserParams } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { OpenUserApi } from '@/network/api/user/open-user-api'
 
 /**
@@ -24,10 +24,10 @@ export class OpenUserRepositoryImpl implements UserRepository {
   /**
    * Constructs a new {@link OpenUserRepositoryImpl}.
    *
-   * @param userStorage - Local source for user data stream and persistence
-   * @param authStorage - Source for auth token clearance
-   * @param openUserApi - User HTTP API for user and account management
-   * @param webSocketService - Optional source of push updates for user changes
+   * @param userStorage - Local storage for user snapshot
+   * @param authStorage - Persistent storage for token clearance
+   * @param openUserApi - HTTP API client for current user operations
+   * @param webSocketService - Optional real-time WebSocket connection
    * @param logger - Optional diagnostic logger
    */
   public constructor(
@@ -40,10 +40,21 @@ export class OpenUserRepositoryImpl implements UserRepository {
     this.startWebSocketObservation()
   }
 
+  /**
+   * Observes changes to current cached user snapshot.
+   *
+   * @param listener - Callback function triggered on user change
+   * @returns Unsubscribe cleanup function
+   */
   public observeCurrentUser(listener: (user: UserPrivate | null) => void): () => void {
     return this.userStorage.observeCurrentUser(listener)
   }
 
+  /**
+   * Forces a network reload of current user details and updates local storage on success.
+   *
+   * @returns Mapped result with refreshed user domain model or an error
+   */
   public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
     if (this.inFlightRefreshPromise) {
       return this.inFlightRefreshPromise
@@ -56,6 +67,26 @@ export class OpenUserRepositoryImpl implements UserRepository {
     return this.inFlightRefreshPromise
   }
 
+  /**
+   * Partially updates account details and profile fields of the currently authenticated user.
+   *
+   * @param params - Patch domain parameters containing fields to update
+   * @returns Mapped result with updated user domain model or an error
+   */
+  public async selfUpdateUser(params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>> {
+    const result = await this.openUserApi.selfUpdateUser(params)
+    const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
+    if (isSuccess(mapped)) {
+      await this.userStorage.updateCurrentUser(mapped.data)
+    }
+    return mapped
+  }
+
+  /**
+   * Schedules current account for permanent deletion and updates local state.
+   *
+   * @returns Mapped result with updated user domain model reflecting deletion schedule or an error
+   */
   public async scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.openUserApi.scheduleUserDeletion()
     const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
@@ -65,6 +96,11 @@ export class OpenUserRepositoryImpl implements UserRepository {
     return mapped
   }
 
+  /**
+   * Cancels a pending account deletion request and updates local state.
+   *
+   * @returns Mapped result with restored user domain model or an error
+   */
   public async restoreUser(): Promise<AppResult<UserPrivate, AppError>> {
     const result = await this.openUserApi.restoreUser()
     const mapped = mapSuccess(result, (userPrivatePayload) => toUserPrivate(userPrivatePayload))
@@ -74,6 +110,9 @@ export class OpenUserRepositoryImpl implements UserRepository {
     return mapped
   }
 
+  /**
+   * Clears local user storage and authentication tokens.
+   */
   public async clearSession(): Promise<void> {
     await this.userStorage.clear()
     await this.authStorage.clearTokens()

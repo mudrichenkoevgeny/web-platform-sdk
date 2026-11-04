@@ -28,10 +28,10 @@ export const Route = createFileRoute('/users/$userId/sessions')({
           currentUserId: managementDeps.currentUserId,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToSessionDetail: (session) =>
-            session.id && navigate({ to: '/sessions/$sessionId', params: { sessionId: session.id } }),
-          onBack: () => navigateUp({ to: '/users/$userId', params: { userId } })
+            Boolean(session.id) && void navigate({ to: '/sessions/$sessionId', params: { sessionId: session.id! } }),
+          onBack: () => void navigateUp({ to: '/users/$userId', params: { userId } })
         }}
       />
     )

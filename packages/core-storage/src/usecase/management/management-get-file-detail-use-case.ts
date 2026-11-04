@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { StorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementStorageRepository } from '../../repository/management/management-storage-repository'
+import type { ManagementStorageRepository } from '@/repository/management/management-storage-repository'
 
 /** Retrieves detailed private view of any specific file across the platform administratively. */
 export class ManagementGetFileDetailUseCase {

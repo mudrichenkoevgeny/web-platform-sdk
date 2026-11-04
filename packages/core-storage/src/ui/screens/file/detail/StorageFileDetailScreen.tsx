@@ -94,9 +94,9 @@ const StorageFileDetailContent: React.FC<StorageFileDetailContentProps> = ({
           <div className="w-full max-w-lg mx-auto flex-1 flex flex-col gap-6">
             <div className="w-full h-64 rounded-xl bg-muted border border-border overflow-hidden flex items-center justify-center relative">
               {file.category === StorageCategory.IMAGE ? (
-                <img src={file.fileUrl} alt={file.fileName} className="w-full h-full object-contain" />
+                <img src={file.fileUrls?.originalUrl ?? ''} alt={file.fileName} className="w-full h-full object-contain" />
               ) : file.category === StorageCategory.VIDEO ? (
-                <video src={file.fileUrl} controls className="w-full h-full object-contain" />
+                <video src={file.fileUrls?.originalUrl ?? ''} controls className="w-full h-full object-contain" />
               ) : (
                 <CoreIcon src={icons.warning} size={64} className="text-muted-foreground" />
               )}

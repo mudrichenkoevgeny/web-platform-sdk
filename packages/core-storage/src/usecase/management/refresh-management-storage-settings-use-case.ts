@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { ManagementStorageSettings } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementStorageSettingsRepository } from '../../repository/management/management-storage-settings-repository'
+import type { ManagementStorageSettingsRepository } from '@/repository/management/management-storage-settings-repository'
 
 /** Forces a fresh fetch of management storage settings from server. */
 export class RefreshManagementStorageSettingsUseCase {

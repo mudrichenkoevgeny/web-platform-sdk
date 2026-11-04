@@ -13,7 +13,7 @@ describe('storage-file-list-search-converters', () => {
     })
 
     expect(filterStates.category).toBeDefined()
-    expect(filterStates.fileName).toBeDefined()
+    expect(filterStates.file_name).toBeDefined()
 
     const searchParams = listingStatesToSearchParams(sortState, filterStates)
     expect(searchParams.category).toBe(StorageCategory.IMAGE)

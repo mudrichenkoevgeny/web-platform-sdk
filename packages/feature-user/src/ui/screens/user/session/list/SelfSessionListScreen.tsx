@@ -160,7 +160,10 @@ const SelfSessionListController: React.FC<{ strings?: UserModuleStrings }> = ({
   return <SelfSessionListContent strings={strings} />
 }
 
+import type { SelfSessionListParams } from '@mudrichenkoevgeny/shared-foundation'
+
 export interface SelfSessionListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  searchParams?: SelfSessionListParams
   dependencies: SelfSessionListStoreDependencies
   strings?: UserModuleStrings
 }

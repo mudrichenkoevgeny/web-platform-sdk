@@ -1,5 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { UpdateUserParams } from '@/usecase/user/self-update-user-use-case'
 
 /**
  * Access to the signed-in user snapshot and user management operations.
@@ -15,6 +16,9 @@ export interface UserRepository {
 
   /** Forces a network reload of current user details and updates local storage on success. */
   refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>>
+
+  /** Partially updates account details and profile fields of the currently authenticated user. */
+  selfUpdateUser(params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>>
 
   /** Schedules current account for permanent deletion and updates local state. */
   scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>>

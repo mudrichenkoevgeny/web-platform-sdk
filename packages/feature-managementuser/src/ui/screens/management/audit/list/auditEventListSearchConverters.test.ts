@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { AuditFilterValues, managementAuditEventListParamsSchema, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
+import { AuditEventFilterValues, managementAuditEventListParamsSchema, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
 import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { searchParamsToListingStates, listingStatesToSearchParams } from './auditEventListSearchConverters'
 
@@ -16,8 +16,7 @@ describe('auditEventListSearchConverters', () => {
       actions: [],
       resources: [],
       resourceIds: [],
-      statuses: [],
-      messages: []
+      statuses: []
     })
 
     const result = searchParamsToListingStates(params)
@@ -27,7 +26,7 @@ describe('auditEventListSearchConverters', () => {
       isAscending: false
     })
 
-    const actorIdFilter = result.filterStates[AuditFilterValues.AuditEventFilterValues.ACTOR_ID]
+    const actorIdFilter = result.filterStates[AuditEventFilterValues.ACTOR_ID]
     expect(actorIdFilter).toEqual({
       type: 'text',
       value: 'user-123'
@@ -41,11 +40,11 @@ describe('auditEventListSearchConverters', () => {
     }
 
     const filterStates: Record<string, ListingFilterState> = {
-      [AuditFilterValues.AuditEventFilterValues.ACTOR_ID]: {
+      [AuditEventFilterValues.ACTOR_ID]: {
         type: 'text',
         value: 'user-456'
       },
-      [AuditFilterValues.AuditEventFilterValues.STATUS]: {
+      [AuditEventFilterValues.STATUS]: {
         type: 'choice',
         selectedIds: new Set(['success'])
       }

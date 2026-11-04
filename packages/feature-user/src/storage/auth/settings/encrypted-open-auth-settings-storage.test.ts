@@ -17,6 +17,11 @@ describe('EncryptedOpenAuthSettingsStorage', () => {
     maxEmailIdentifiers: 2,
     maxPhoneIdentifiers: 2,
     maxIdentifiersPerExternalProvider: 1,
+    userNicknameMinLength: 3,
+    userNicknameMaxLength: 30,
+    userDisplayNameMinLength: 2,
+    userDisplayNameMaxLength: 50,
+    isUserNicknameChangeAllowed: true,
     isRegistrationEnabled: true
   }
 

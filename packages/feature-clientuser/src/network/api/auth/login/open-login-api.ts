@@ -1,8 +1,8 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   AuthDataPayload,
-  OtpConfirmationPayload,
-  UserAuthProvider
+  LoginByExternalAuthProviderRequest,
+  OtpConfirmationPayload
 } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Remote login and phone confirmation entry points for the user feature. */
@@ -26,13 +26,14 @@ export interface OpenLoginApi {
   loginByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthDataPayload, AppError>>
 
   /**
-   * Signs in via an external identity provider.
+   * Signs in via an external identity provider (OAuth / social).
    *
-   * @param authProvider - Provider type
-   * @param externalProviderToken - OAuth token
+   * @param request - Provider-specific login payload from the shared contract
    * @returns Session tokens and related auth payload, or a mapped failure
    */
-  loginByExternalAuthProvider(authProvider: UserAuthProvider, externalProviderToken: string): Promise<AppResult<AuthDataPayload, AppError>>
+  loginByExternalAuthProvider(
+    request: LoginByExternalAuthProviderRequest
+  ): Promise<AppResult<AuthDataPayload, AppError>>
 
   /**
    * Completes multifactor authentication using TOTP.

@@ -12,7 +12,7 @@ import {
   isSuccess
 } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
+import type { SelfSessionListParams, UserSessionSummary } from '@mudrichenkoevgeny/shared-foundation'
 import type { GetSessionsUseCase } from '@/usecase/session/get-sessions-use-case'
 import type { DeleteSessionUseCase } from '@/usecase/session/delete-session-use-case'
 import type { DeleteAllOtherSessionsUseCase } from '@/usecase/session/delete-all-other-sessions-use-case'
@@ -25,6 +25,7 @@ export enum SelfSessionListStatus {
   CONTENT = 'content'
 }
 
+/** Discriminated union representing active screen state for self session list screen. */
 export type SelfSessionListScreenState =
   | {
       status: SelfSessionListStatus.LOADING
@@ -42,29 +43,58 @@ export type SelfSessionListScreenState =
       actionError: AppError | null
     }
 
+/** Dependencies required to construct and run {@link SelfSessionListStore}. */
+/** Dependencies required to construct and run {@link SelfSessionListStore}. */
 export interface SelfSessionListStoreDependencies {
+  /** Use case to get paginated user sessions. */
   getSessionsUseCase: GetSessionsUseCase
+  /** Use case to revoke a specific session. */
   deleteSessionUseCase: DeleteSessionUseCase
+  /** Use case to revoke all sessions except the current one. */
   deleteAllOtherSessionsUseCase: DeleteAllOtherSessionsUseCase
+  /** Optional callback to navigate to a session detail screen. */
   onNavigateToSessionDetail?: (session: UserSessionSummary) => void
+  /** Callback to navigate back to the previous screen. */
   onBack: () => void
+  /** Optional auth storage instance to identify current session ID. */
   authStorage?: AuthStorage
+  /** Initial parsed URL search parameters for fetching sessions. */
+  searchParams?: SelfSessionListParams
+  /** Callback invoked when search parameters change requiring URL update. */
+  onSearchParamsChanged?: (params: SelfSessionListParams) => void
 }
 
+/** State and actions contract managed by {@link SelfSessionListStore}. */
 export interface SelfSessionListStoreState {
+  /** Current screen UI state. */
   screenState: SelfSessionListScreenState
+  /** Initializes screen state by fetching first page of user sessions. */
   loadSessions: () => Promise<void>
+  /** Triggers manual data refresh. */
   onRefresh: () => Promise<void>
+  /** Handles click on a session item. */
   onSessionClick: (session: UserSessionSummary) => void
+  /** Optimistically updates state to remove a revoked session. */
   onSessionRevoked: (sessionId: UserSessionId) => void
+  /** Submits a request to revoke a specific session. */
   onRevokeSessionClick: (sessionId: UserSessionId) => Promise<void>
+  /** Submits a request to revoke all other sessions. */
   onRevokeAllOtherSessionsClick: () => Promise<void>
+  /** Loads next page of sessions if available. */
   onLoadNextPage: () => Promise<void>
+  /** Handles click on the back button. */
   onBackClick: () => void
 }
 
 export type SelfSessionListStore = ReturnType<typeof createSelfSessionListStore>
 
+/**
+ * Factory function creating a Zustand store instance for the self session list screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
 export const createSelfSessionListStore = (
   deps: SelfSessionListStoreDependencies,
   initialState?: SelfSessionListScreenState
@@ -90,10 +120,11 @@ export const createSelfSessionListStore = (
       const storedSessionIdRaw = deps.authStorage ? await deps.authStorage.getSessionId() : null
       const currentSessionId = storedSessionIdRaw ? toUserSessionIdOrNull(storedSessionIdRaw) : null
 
+      const pageNumber = deps.searchParams?.pageNumber ?? 1
       const sessionsResult = await deps.getSessionsUseCase.execute(
         selfSessionListParamsSchema.parse({
-          pageNumber: 1,
-          pageSize: DEFAULT_PAGE_SIZE,
+          pageNumber,
+          pageSize: deps.searchParams?.pageSize ?? DEFAULT_PAGE_SIZE,
           sortBy: 'created_at',
           sortOrder: SortOrder.DESC,
           identifiers: [],
@@ -259,10 +290,12 @@ export const createSelfSessionListStore = (
         }
       })
 
+      deps.onSearchParamsChanged?.({ pageNumber: nextPage, pageSize: deps.searchParams?.pageSize ?? DEFAULT_PAGE_SIZE })
+
       const sessionsResult = await deps.getSessionsUseCase.execute(
         selfSessionListParamsSchema.parse({
           pageNumber: nextPage,
-          pageSize: DEFAULT_PAGE_SIZE,
+          pageSize: deps.searchParams?.pageSize ?? DEFAULT_PAGE_SIZE,
           sortBy: 'created_at',
           sortOrder: SortOrder.DESC,
           identifiers: [],

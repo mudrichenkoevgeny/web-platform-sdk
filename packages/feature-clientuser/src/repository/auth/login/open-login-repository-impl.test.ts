@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { TEST_EMAIL, TEST_PHONE, UserAuthProvider, createTestAuthDataPayload, createTestOtpConfirmationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { TEST_EMAIL, TEST_PHONE, UserAuthProvider, createTestAuthDataPayload, createTestOtpConfirmationPayload, createTestLoginByExternalAuthProviderRequest } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenLoginRepositoryImpl } from '@/repository/auth/login/open-login-repository-impl'
 import { OpenLoginApiMock } from '@/mock/network/api/auth/login/open-login-api-mock'
 import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -49,9 +49,13 @@ describe('OpenLoginRepositoryImpl', () => {
   })
 
   it('delegates loginByExternalAuthProvider and maps response', async () => {
-    const loginResult = await repository.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token_xyz')
-    expect(mockApi.loginByExternalAuthProvider).toHaveBeenCalledWith(UserAuthProvider.GOOGLE, 'token_xyz')
-    expect(mockApi.lastLoginByExternalAuthProviderRequest).toEqual({ auth_provider: UserAuthProvider.GOOGLE, external_provider_token: 'token_xyz' })
+    const request = createTestLoginByExternalAuthProviderRequest({
+      auth_provider: UserAuthProvider.GOOGLE,
+      external_provider_token: 'token_xyz'
+    })
+    const loginResult = await repository.loginByExternalAuthProvider(request)
+    expect(mockApi.loginByExternalAuthProvider).toHaveBeenCalledWith(request)
+    expect(mockApi.lastLoginByExternalAuthProviderRequest).toEqual(request)
     expect(isSuccess(loginResult)).toBe(true)
   })
 

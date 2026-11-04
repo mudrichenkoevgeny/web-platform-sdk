@@ -1,7 +1,8 @@
 import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserRepository } from '@/repository/user/user-repository'
 import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { UpdateUserParams } from '@/usecase/user/self-update-user-use-case'
 
 /**
  * Mock implementation of {@link UserRepository}.
@@ -28,6 +29,10 @@ export class UserRepositoryMock implements UserRepository {
   }
 
   public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
+    return this.handleUpdate()
+  }
+
+  public async selfUpdateUser(_params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>> {
     return this.handleUpdate()
   }
 

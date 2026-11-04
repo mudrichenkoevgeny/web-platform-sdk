@@ -34,7 +34,7 @@ export const Route = createFileRoute('/user/identifiers/')({
           authStorage: appComponent.managementUserComponent.authStorage,
           onIdentifierSelect: (identifierId) =>
             void navigate({ to: '/user/identifiers/$identifierId', params: { identifierId } }),
-          onBack: () => navigateUp({ to: ManagementSelfUserNavigation.Main.route })
+          onBack: () => void navigateUp({ to: ManagementSelfUserNavigation.Main.route })
         }}
       />
     )

@@ -3,12 +3,11 @@ import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk
 import { SortOrder, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_PHONE, toUserIdentifierIdOrThrow, toUserIdentifierPrivatePayload, createTestUserIdentifierPrivate, createTestOtpConfirmationPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { OpenIdentifierRepositoryImpl } from '@/repository/identifier/open-identifier-repository-impl'
 import { OpenIdentifiersApiMock } from '@/mock/network/api/identifier/open-identifiers-api-mock'
-import { ConfirmationRepositoryMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ConfirmationRepositoryMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 
 describe('OpenIdentifierRepositoryImpl', () => {
   let mockApi: OpenIdentifiersApiMock
   let mockConfirmationRepo: ConfirmationRepositoryMock
-  let mockUserStorage: UserStorageMock
   let repository: OpenIdentifierRepositoryImpl
 
   const mockIdentifierPayload = toUserIdentifierPrivatePayload(createTestUserIdentifierPrivate({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) }))
@@ -38,11 +37,7 @@ describe('OpenIdentifierRepositoryImpl', () => {
     mockConfirmationRepo = new ConfirmationRepositoryMock()
     vi.spyOn(mockConfirmationRepo, 'executeWithTimer')
 
-    mockUserStorage = new UserStorageMock()
-    vi.spyOn(mockUserStorage, 'addUserIdentifier')
-    vi.spyOn(mockUserStorage, 'removeUserIdentifier')
-
-    repository = new OpenIdentifierRepositoryImpl(mockApi, mockConfirmationRepo, mockUserStorage)
+    repository = new OpenIdentifierRepositoryImpl(mockApi, mockConfirmationRepo)
   })
 
   it('delegates getUserIdentifier and maps response', async () => {
@@ -57,41 +52,35 @@ describe('OpenIdentifierRepositoryImpl', () => {
       pageNumber: 1,
       pageSize: 10,
       sortBy: 'created_at' as const,
-      sortOrder: SortOrder.DESC,
-      userAuthProviders: [],
-      identifiers: []
+      sortOrder: SortOrder.DESC
     }
     const identifierListResult = await repository.getUserIdentifiers(selfIdentifierListParams)
     expect(mockApi.getUserIdentifiers).toHaveBeenCalledWith(selfIdentifierListParams)
     expect(isSuccess(identifierListResult)).toBe(true)
   })
 
-  it('delegates deleteUserIdentifier and removes from storage', async () => {
+  it('delegates deleteUserIdentifier', async () => {
     const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const deleteIdentifierResult = await repository.deleteUserIdentifier(identifierId)
     expect(mockApi.deleteUserIdentifier).toHaveBeenCalledWith(identifierId)
-    expect(mockUserStorage.removeUserIdentifier).toHaveBeenCalledWith(identifierId)
     expect(isSuccess(deleteIdentifierResult)).toBe(true)
   })
 
-  it('delegates addUserIdentifierEmail and updates storage', async () => {
+  it('delegates addUserIdentifierEmail', async () => {
     const addEmailResult = await repository.addUserIdentifierEmail(TEST_EMAIL, 'secret', '123456')
     expect(mockApi.addUserIdentifierEmail).toHaveBeenCalledWith(TEST_EMAIL, 'secret', '123456')
-    expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(addEmailResult)).toBe(true)
   })
 
-  it('delegates addUserIdentifierPhone and updates storage', async () => {
+  it('delegates addUserIdentifierPhone', async () => {
     const addPhoneResult = await repository.addUserIdentifierPhone(TEST_PHONE, '123456')
     expect(mockApi.addUserIdentifierPhone).toHaveBeenCalledWith(TEST_PHONE, '123456')
-    expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(addPhoneResult)).toBe(true)
   })
 
-  it('delegates addUserIdentifierExternalAuthProvider and updates storage', async () => {
+  it('delegates addUserIdentifierExternalAuthProvider', async () => {
     const addExternalProviderResult = await repository.addUserIdentifierExternalAuthProvider('GOOGLE', 'token123')
     expect(mockApi.addUserIdentifierExternalAuthProvider).toHaveBeenCalledWith('GOOGLE', 'token123')
-    expect(mockUserStorage.addUserIdentifier).toHaveBeenCalled()
     expect(isSuccess(addExternalProviderResult)).toBe(true)
   })
 

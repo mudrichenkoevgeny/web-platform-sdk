@@ -11,7 +11,7 @@ import {
   userPrivatePayloadSchema,
   UserWebSocketEventTypes
 } from '@mudrichenkoevgeny/shared-foundation'
-import type { AuthStorage, UserStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import type { AuthStorage, UserStorage, UpdateUserParams } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementUserApi } from '@/network/api/user/self-management-user-api'
 import type { SelfManagementUserRepository } from '@/repository/user/self-management-user-repository'
 
@@ -54,10 +54,21 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
     this.startWebSocketObservation()
   }
 
+  /**
+   * Observes changes to current cached user snapshot.
+   *
+   * @param listener - Callback function triggered on user change
+   * @returns Unsubscribe cleanup function
+   */
   public observeCurrentUser(listener: (user: UserPrivate | null) => void): () => void {
     return this.userStorage.observeCurrentUser(listener)
   }
 
+  /**
+   * Forces a network reload of current user details and updates local storage on success.
+   *
+   * @returns Mapped result with refreshed user domain model or an error
+   */
   public async refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>> {
     return this.mutex.runExclusive(async () => {
       const result = await this.selfManagementUserApi.getUser()
@@ -69,14 +80,44 @@ export class SelfManagementUserRepositoryImpl implements SelfManagementUserRepos
     })
   }
 
+  /**
+   * Partially updates account details and profile fields of the currently authenticated staff member.
+   *
+   * @param params - Patch domain parameters containing fields to update
+   * @returns Mapped result with updated user domain model or an error
+   */
+  public async selfUpdateUser(params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>> {
+    return this.mutex.runExclusive(async () => {
+      const result = await this.selfManagementUserApi.selfUpdateUser(params)
+      const mapped = mapSuccess(result, (userDetailsPayload) => toUserPrivate(userDetailsPayload))
+      if (isSuccess(mapped)) {
+        await this.userStorage.updateCurrentUser(mapped.data)
+      }
+      return mapped
+    })
+  }
+
+  /**
+   * Schedules current account for permanent deletion (not supported in management context).
+   *
+   * @returns Failure AppResult
+   */
   public async scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>> {
     return appResultFailure(CommonError.unknown())
   }
 
+  /**
+   * Cancels a pending account deletion request (not supported in management context).
+   *
+   * @returns Failure AppResult
+   */
   public async restoreUser(): Promise<AppResult<UserPrivate, AppError>> {
     return appResultFailure(CommonError.unknown())
   }
 
+  /**
+   * Clears local user storage and authentication tokens.
+   */
   public async clearSession(): Promise<void> {
     await this.userStorage.clear()
     await this.authStorage.clearTokens()

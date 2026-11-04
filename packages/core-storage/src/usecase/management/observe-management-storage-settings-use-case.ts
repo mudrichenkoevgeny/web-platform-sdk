@@ -1,7 +1,7 @@
 import type {
   ManagementStorageSettingsObserver,
   ManagementStorageSettingsRepository
-} from '../../repository/management/management-storage-settings-repository'
+} from '@/repository/management/management-storage-settings-repository'
 
 /** Subscribes an observer to live management storage settings updates. */
 export class ObserveManagementStorageSettingsUseCase {

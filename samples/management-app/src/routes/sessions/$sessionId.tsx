@@ -62,11 +62,11 @@ export const Route = createFileRoute('/sessions/$sessionId')({
           authStorage: appComponent?.managementUserComponent.authStorage,
           currentUserId: managementDeps.currentUserId,
           onNavigateToIdentifierDetail: (identifierId) =>
-            navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
+            void navigate({ to: '/identifiers/$identifierId', params: { identifierId } }),
           onNavigateToUserDetail: (userId) =>
             void navigate({ to: '/users/$userId', params: { userId } }),
           onNavigateToUserMain: () => void navigate({ to: '/user' }),
-          onBack: () => navigateUp({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE, search: (raw) => cleanSearchParams(globalSessionListSearchSchema.parse(raw)) })
+          onBack: () => void navigateUp({ to: ManagementUsersNavigation.GlobalSessionList.ROUTE, search: (raw) => cleanSearchParams(globalSessionListSearchSchema.parse(raw)) })
         }}
       />
     )

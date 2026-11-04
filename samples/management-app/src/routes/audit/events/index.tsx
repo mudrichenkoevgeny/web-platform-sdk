@@ -19,7 +19,7 @@ export const Route = createFileRoute('/audit/events/')({
           getAuditEventsUseCase: managementDeps.getAuditEventsUseCase,
           searchParams,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToEventDetail: (eventId) =>
             void navigate({ to: '/audit/events/$eventId', params: { eventId } }),
           onBack: () => navigateUp({ to: ManagementMainNavigation.Main.route })

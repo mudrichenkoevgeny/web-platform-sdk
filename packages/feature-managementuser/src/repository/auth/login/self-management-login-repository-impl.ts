@@ -1,6 +1,6 @@
 import { appResultFailure, CommonError, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AuthData, OtpConfirmation, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuthData, LoginByExternalAuthProviderRequest, OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 import { toAuthData } from '@mudrichenkoevgeny/shared-foundation'
 import type { LoginRepository } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import type { SelfManagementLoginApi } from '@/network/api/auth/login/self-management-login-api'
@@ -29,8 +29,7 @@ export class SelfManagementLoginRepositoryImpl implements LoginRepository {
   }
 
   public async loginByExternalAuthProvider(
-    _authProvider: UserAuthProvider,
-    _externalProviderToken: string
+    _request: LoginByExternalAuthProviderRequest
   ): Promise<AppResult<AuthData, AppError>> {
     return this.methodNotSupported()
   }

@@ -27,6 +27,7 @@ export const MainUserTestTags = {
   AUTHORITY_LEVEL_TEXT: 'MainUser_AuthorityLevelText',
   PERMISSION_CODES_TEXT: 'MainUser_PermissionCodesText',
   USER_ID_TEXT: 'MainUser_UserIdText',
+  EDIT_USER_BUTTON: 'MainUser_EditUserButton',
   TOTP_MAIN_BUTTON: 'MainUser_TotpMainButton',
   SESSIONS_BUTTON: 'MainUser_SessionsButton',
   IDENTIFIERS_BUTTON: 'MainUser_IdentifiersButton',
@@ -54,6 +55,7 @@ const MainUserContent: React.FC<{
   const onSessionsClick = useMainUserStore((s) => s.onSessionsClick)
   const onIdentifiersClick = useMainUserStore((s) => s.onIdentifiersClick)
   const onStorageClick = useMainUserStore((s) => s.onStorageClick)
+  const onEditUserClick = useMainUserStore((s) => s.onEditUserClick)
   const onDeleteAccountClick = useMainUserStore((s) => s.onDeleteAccountClick)
   const onConfirmDeleteAccount = useMainUserStore((s) => s.onConfirmDeleteAccount)
   const onDismissDialog = useMainUserStore((s) => s.onDismissDialog)
@@ -142,6 +144,17 @@ const MainUserContent: React.FC<{
           </div>
 
           <div className="w-full flex-1 flex flex-col items-center justify-center gap-3 my-auto text-center">
+            {user.displayName && (
+              <span className="text-lg font-bold text-surface-foreground">
+                {user.displayName}
+              </span>
+            )}
+            {user.nickname && (
+              <span className="text-sm text-muted-foreground">
+                @{user.nickname}
+              </span>
+            )}
+
             <span
               className="text-base font-semibold text-surface-foreground"
               data-testid={MainUserTestTags.USER_ID_TEXT}
@@ -175,6 +188,14 @@ const MainUserContent: React.FC<{
             )}
 
             <div className="w-full max-w-sm flex flex-col gap-2 mt-4">
+              <CoreButton
+                type="button"
+                label={strings.ui.editProfileTitle}
+                onClick={onEditUserClick}
+                disabled={actionLoading}
+                data-testid={MainUserTestTags.EDIT_USER_BUTTON}
+              />
+
               <CoreButton
                 type="button"
                 label={strings.ui.totpMain}

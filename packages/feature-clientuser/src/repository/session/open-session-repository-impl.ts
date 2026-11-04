@@ -1,4 +1,4 @@
-import { appResultSuccess, isSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, mapSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type {
   PagedResult,
@@ -23,7 +23,7 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
    * Constructs a new {@link OpenSessionRepositoryImpl}.
    *
    * @param sessionApi - HTTP endpoints for session management and re-authentication
-   * @param userStorage - Local user storage for caching active sessions
+   * @param userStorage - Local user storage for clearing user data on logout
    * @param authStorage - Persistent authentication storage
    */
   public constructor(
@@ -37,26 +37,15 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
   ): Promise<AppResult<PagedResult<UserSessionSummary>, AppError>> {
     const networkResult = await this.sessionApi.getSessions(params)
 
-    if (isSuccess(networkResult)) {
-      await this.userStorage.updateUserSessionsPayloadList(networkResult.data)
-      return mapSuccess(networkResult, (pagedPayload) => ({
-        ...pagedPayload,
-        items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
-      }))
-    }
-
-    const cachedResult = await this.userStorage.getUserSessionsList()
-
-    if (cachedResult.items.length > 0) {
-      return appResultSuccess(cachedResult)
-    }
-
-    return networkResult
+    return mapSuccess(networkResult, (pagedPayload) => ({
+      ...pagedPayload,
+      items: pagedPayload.items.map((payload) => toUserSessionSummary(payload))
+    }))
   }
 
   public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivate, AppError>> {
     const networkResult = await this.sessionApi.getSession(userSessionId)
-    if (isSuccess(networkResult)) {
+    if (networkResult.success) {
       const session = toUserSessionPrivate(networkResult.data)
       return appResultSuccess(session)
     }
@@ -72,28 +61,11 @@ export class OpenSessionRepositoryImpl implements SessionRepository {
   }
 
   public async deleteSession(userSessionId: UserSessionId): Promise<AppResult<void, AppError>> {
-    const networkResult = await this.sessionApi.deleteSession(userSessionId)
-    if (isSuccess(networkResult)) {
-      await this.userStorage.removeUserSession(userSessionId)
-    }
-    return networkResult
+    return this.sessionApi.deleteSession(userSessionId)
   }
 
   public async deleteAllOtherSessions(): Promise<AppResult<void, AppError>> {
     const networkResult = await this.sessionApi.deleteAllOtherSessions()
-    if (isSuccess(networkResult)) {
-      const deletedSessionIdsSet = new Set(networkResult.data.deletedSessionIds)
-      if (deletedSessionIdsSet.size > 0) {
-        const cachedList = await this.userStorage.getUserSessionsList()
-        const idsToRemove = cachedList.items
-          .map((item) => item.id)
-          .filter((id): id is UserSessionId => id != null && deletedSessionIdsSet.has(id))
-
-        if (idsToRemove.length > 0) {
-          await this.userStorage.removeUserSessions(idsToRemove)
-        }
-      }
-    }
     return mapSuccess(networkResult, () => undefined)
   }
 

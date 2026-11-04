@@ -40,7 +40,7 @@ export const Route = createFileRoute('/storage/files/')({
         dependencies={{
           dataSource,
           onSearchParamsChanged: (newParams) =>
-            void navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...newParams }), replace: true }),
+            void navigate({ search: newParams as Record<string, unknown>, replace: true }),
           onNavigateToUpload: () =>
             void navigate({ to: OpenStorageNavigation.FileUpload.ROUTE }),
           onNavigateToFileDetail: (fileId) =>

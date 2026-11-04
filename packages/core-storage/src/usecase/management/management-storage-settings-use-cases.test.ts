@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageSettingsRepository } from '../../repository/management/management-storage-settings-repository'
+import type { ManagementStorageSettingsRepository } from '@/repository/management/management-storage-settings-repository'
 import { GetManagementStorageSettingsUseCase } from './get-management-storage-settings-use-case'
 import { RefreshManagementStorageSettingsUseCase } from './refresh-management-storage-settings-use-case'
 import { ResetManagementStorageSettingsUseCase } from './reset-management-storage-settings-use-case'

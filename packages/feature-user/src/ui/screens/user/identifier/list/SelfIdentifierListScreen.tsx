@@ -456,10 +456,13 @@ const SelfIdentifierListController: React.FC<{ strings?: UserModuleStrings }> = 
   return <SelfIdentifierListContent strings={strings} />
 }
 
+import type { SelfIdentifierListParams } from '@mudrichenkoevgeny/shared-foundation'
+
 /**
  * Props for {@link SelfIdentifierListScreen}.
  */
 export interface SelfIdentifierListScreenProps extends React.HTMLAttributes<HTMLDivElement> {
+  searchParams?: SelfIdentifierListParams
   dependencies: SelfIdentifierListStoreDependencies
   strings?: UserModuleStrings
 }

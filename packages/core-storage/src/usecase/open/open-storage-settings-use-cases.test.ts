@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenStorageSettingsRepository } from '../../repository/open/open-storage-settings-repository'
+import type { OpenStorageSettingsRepository } from '@/repository/open/open-storage-settings-repository'
 import { GetOpenStorageSettingsUseCase } from './get-open-storage-settings-use-case'
 import { RefreshOpenStorageSettingsUseCase } from './refresh-open-storage-settings-use-case'
 import { ObserveOpenStorageSettingsUseCase } from './observe-open-storage-settings-use-case'

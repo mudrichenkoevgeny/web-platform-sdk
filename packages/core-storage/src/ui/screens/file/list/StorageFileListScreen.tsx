@@ -304,8 +304,8 @@ const StorageFileListContent: React.FC<StorageFileListContentProps> = ({
               paging.items.map((file) => (
                 <StorageFileListItemRow
                   key={file.id}
-                  batchDeleteUseCaseAvailable={isBatchDeleteAvailable}
-                  deleteFileUseCaseAvailable={isSingleDeleteAvailable}
+                  batchDeleteUseCaseAvailable={Boolean(isBatchDeleteAvailable)}
+                  deleteFileUseCaseAvailable={Boolean(isSingleDeleteAvailable)}
                   file={file}
                   isSelected={Boolean(selectedFileIds[file.id])}
                   strings={strings}

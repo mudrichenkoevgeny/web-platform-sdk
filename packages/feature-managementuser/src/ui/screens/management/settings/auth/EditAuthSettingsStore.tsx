@@ -44,6 +44,11 @@ export type EditAuthSettingsScreenState =
       accountDeletionGracePeriodSeconds: string
       accountDeletionCheckIntervalSeconds: string
       isRegistrationEnabled: boolean
+      userNicknameMinLength: string
+      userNicknameMaxLength: string
+      userDisplayNameMinLength: string
+      userDisplayNameMaxLength: string
+      isUserNicknameChangeAllowed: boolean
       openEmailBlacklistEnabled: boolean
       openEmailBlacklist: string
       openEmailWhitelistEnabled: boolean
@@ -56,6 +61,7 @@ export type EditAuthSettingsScreenState =
       saveError: AppError | null
     }
 
+/** External dependencies required to create EditAuthSettingsStore. */
 export interface EditAuthSettingsStoreDependencies {
   getManagementAuthSettingsUseCase: GetManagementAuthSettingsUseCase
   updateManagementAuthSettingsUseCase: UpdateManagementAuthSettingsUseCase
@@ -63,6 +69,7 @@ export interface EditAuthSettingsStoreDependencies {
   onBack: () => void
 }
 
+/** State and actions contract managed by EditAuthSettingsStore. */
 export interface EditAuthSettingsStoreState {
   screenState: EditAuthSettingsScreenState
   initScreen: () => Promise<void>
@@ -79,6 +86,11 @@ export interface EditAuthSettingsStoreState {
   onAccountDeletionGracePeriodSecondsChanged: (value: string) => void
   onAccountDeletionCheckIntervalSecondsChanged: (value: string) => void
   onRegistrationEnabledToggled: (enabled: boolean) => void
+  onUserNicknameMinLengthChanged: (value: string) => void
+  onUserNicknameMaxLengthChanged: (value: string) => void
+  onUserDisplayNameMinLengthChanged: (value: string) => void
+  onUserDisplayNameMaxLengthChanged: (value: string) => void
+  onUserNicknameChangeAllowedToggled: (enabled: boolean) => void
   onOpenEmailBlacklistEnabledToggled: (enabled: boolean) => void
   onOpenEmailBlacklistChanged: (value: string) => void
   onOpenEmailWhitelistEnabledToggled: (enabled: boolean) => void
@@ -94,6 +106,7 @@ export interface EditAuthSettingsStoreState {
 
 export type EditAuthSettingsStore = ReturnType<typeof createEditAuthSettingsStore>
 
+/** Factory function for creating EditAuthSettingsStore instance. */
 export const createEditAuthSettingsStore = (
   deps: EditAuthSettingsStoreDependencies,
   initialState?: EditAuthSettingsScreenState
@@ -136,6 +149,11 @@ export const createEditAuthSettingsStore = (
               accountDeletionGracePeriodSeconds: String(settings.accountDeletionGracePeriodSeconds),
               accountDeletionCheckIntervalSeconds: String(settings.accountDeletionCheckIntervalSeconds),
               isRegistrationEnabled: settings.isRegistrationEnabled,
+              userNicknameMinLength: String(settings.userNicknameMinLength),
+              userNicknameMaxLength: String(settings.userNicknameMaxLength),
+              userDisplayNameMinLength: String(settings.userDisplayNameMinLength),
+              userDisplayNameMaxLength: String(settings.userDisplayNameMaxLength),
+              isUserNicknameChangeAllowed: settings.isUserNicknameChangeAllowed,
               openEmailBlacklistEnabled: settings.openEmailRestrictionPolicy.isBlacklistEnabled,
               openEmailBlacklist: settings.openEmailRestrictionPolicy.blacklist.join(','),
               openEmailWhitelistEnabled: settings.openEmailRestrictionPolicy.isWhitelistEnabled,
@@ -264,6 +282,41 @@ export const createEditAuthSettingsStore = (
       }
     },
 
+    onUserNicknameMinLengthChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
+        set({ screenState: { ...current, userNicknameMinLength: value, saveError: null } })
+      }
+    },
+
+    onUserNicknameMaxLengthChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
+        set({ screenState: { ...current, userNicknameMaxLength: value, saveError: null } })
+      }
+    },
+
+    onUserDisplayNameMinLengthChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
+        set({ screenState: { ...current, userDisplayNameMinLength: value, saveError: null } })
+      }
+    },
+
+    onUserDisplayNameMaxLengthChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
+        set({ screenState: { ...current, userDisplayNameMaxLength: value, saveError: null } })
+      }
+    },
+
+    onUserNicknameChangeAllowedToggled: (enabled: boolean) => {
+      const current = get().screenState
+      if (current.status === EditAuthSettingsStatus.CONTENT) {
+        set({ screenState: { ...current, isUserNicknameChangeAllowed: enabled, saveError: null } })
+      }
+    },
+
     onOpenEmailBlacklistEnabledToggled: (enabled: boolean) => {
       const current = get().screenState
       if (current.status === EditAuthSettingsStatus.CONTENT) {
@@ -351,6 +404,11 @@ export const createEditAuthSettingsStore = (
         accountDeletionGracePeriodSeconds: parseIntegerOrDefault(current.accountDeletionGracePeriodSeconds, 604800),
         accountDeletionCheckIntervalSeconds: parseIntegerOrDefault(current.accountDeletionCheckIntervalSeconds, 86400),
         isRegistrationEnabled: current.isRegistrationEnabled,
+        userNicknameMinLength: parseIntegerOrDefault(current.userNicknameMinLength, 3),
+        userNicknameMaxLength: parseIntegerOrDefault(current.userNicknameMaxLength, 30),
+        userDisplayNameMinLength: parseIntegerOrDefault(current.userDisplayNameMinLength, 1),
+        userDisplayNameMaxLength: parseIntegerOrDefault(current.userDisplayNameMaxLength, 50),
+        isUserNicknameChangeAllowed: current.isUserNicknameChangeAllowed,
         openEmailRestrictionPolicy: {
           isBlacklistEnabled: current.openEmailBlacklistEnabled,
           blacklist: current.openEmailBlacklist

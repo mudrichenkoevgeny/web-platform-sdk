@@ -1,6 +1,6 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteFilesBatchRequest } from '@mudrichenkoevgeny/shared-foundation'
-import type { ManagementStorageRepository } from '../../repository/management/management-storage-repository'
+import type { ManagementStorageRepository } from '@/repository/management/management-storage-repository'
 
 /** Deletes multiple files administratively across the platform in a batch operation. */
 export class ManagementDeleteFilesBatchUseCase {
@@ -17,7 +17,8 @@ export class ManagementDeleteFilesBatchUseCase {
    * @param request - Batch deletion request object containing file IDs
    * @returns Void result on success
    */
-  public async execute(request: DeleteFilesBatchRequest): Promise<AppResult<void, AppError>> {
-    return this.managementStorageRepository.deleteFilesBatch(request)
+  public async execute(request: DeleteFilesBatchRequest | string[]): Promise<AppResult<void, AppError>> {
+    const payload: DeleteFilesBatchRequest = Array.isArray(request) ? { fileIds: request } : request
+    return this.managementStorageRepository.deleteFilesBatch(payload)
   }
 }

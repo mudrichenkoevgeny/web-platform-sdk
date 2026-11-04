@@ -121,6 +121,46 @@ export class UserErrorParser implements AppErrorParser {
       case UserErrorCodes.REGISTRATION_DISABLED:
         return strings.errors.registrationDisabled
 
+      case UserErrorCodes.NICKNAME_ALREADY_TAKEN:
+        return strings.errors.nicknameAlreadyTaken
+
+      case UserErrorCodes.NICKNAME_CHANGE_DISABLED:
+        return strings.errors.nicknameChangeDisabled
+
+      case UserErrorCodes.NICKNAME_TOO_SHORT: {
+        const minLen = getAppErrorArgAsString(args, UserErrorArgs.NICKNAME_MIN_LENGTH)
+        return minLen
+          ? strings.errors.nicknameTooShort(minLen)
+          : strings.errors.nicknameTooShortWithoutArgs
+      }
+
+      case UserErrorCodes.NICKNAME_TOO_LONG: {
+        const maxLen = getAppErrorArgAsString(args, UserErrorArgs.NICKNAME_MAX_LENGTH)
+        return maxLen
+          ? strings.errors.nicknameTooLong(maxLen)
+          : strings.errors.nicknameTooLongWithoutArgs
+      }
+
+      case UserErrorCodes.INVALID_NICKNAME_CHARACTERS:
+        return strings.errors.invalidNicknameCharacters
+
+      case UserErrorCodes.DISPLAY_NAME_TOO_SHORT: {
+        const minLen = getAppErrorArgAsString(args, UserErrorArgs.DISPLAY_NAME_MIN_LENGTH)
+        return minLen
+          ? strings.errors.displayNameTooShort(minLen)
+          : strings.errors.displayNameTooShortWithoutArgs
+      }
+
+      case UserErrorCodes.DISPLAY_NAME_TOO_LONG: {
+        const maxLen = getAppErrorArgAsString(args, UserErrorArgs.DISPLAY_NAME_MAX_LENGTH)
+        return maxLen
+          ? strings.errors.displayNameTooLong(maxLen)
+          : strings.errors.displayNameTooLongWithoutArgs
+      }
+
+      case UserErrorCodes.INVALID_DISPLAY_NAME_CHARACTERS:
+        return strings.errors.invalidDisplayNameCharacters
+
       case ClientUserErrorCodes.EXTERNAL_AUTH_CANCELLED:
         return strings.errors.externalAuthCancelled
 

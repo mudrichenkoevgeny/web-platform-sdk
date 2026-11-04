@@ -32,7 +32,7 @@ export class UnlockByGoogleUseCase {
 
     return this.unlockRepository.unlockByExternalAuthProvider(
       UserAuthProvider.GOOGLE,
-      result.data
+      result.data.external_provider_token
     )
   }
 }

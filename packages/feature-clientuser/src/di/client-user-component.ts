@@ -41,6 +41,7 @@ import {
   GetUserIdentifierUseCase,
   GetUserIdentifiersUseCase,
   GetUserUseCase,
+  SelfUpdateUserUseCase,
   LoginByEmailUseCase,
   LoginByGoogleUseCase,
   LoginByPhoneUseCase,
@@ -284,6 +285,8 @@ export class ClientUserComponent {
   public readonly reauthenticateSessionUseCase: ReauthenticateSessionUseCase
   /** Get current user profile details use case. */
   public readonly getUserUseCase: GetUserUseCase
+  /** Update self user profile details use case. */
+  public readonly selfUpdateUserUseCase: SelfUpdateUserUseCase
   /** Get specific user identifier detail use case. */
   public readonly getUserIdentifierUseCase: GetUserIdentifierUseCase
   /** Get paginated list of user identifiers use case. */
@@ -360,8 +363,7 @@ export class ClientUserComponent {
     this.openIdentifiersApi = new FetchOpenIdentifiersApi(this.commonComponent.httpClient)
     this.identifierRepository = new OpenIdentifierRepositoryImpl(
       this.openIdentifiersApi,
-      this.confirmationRepository,
-      this.userStorage
+      this.confirmationRepository
     )
 
     this.openResetPasswordApi = new FetchResetPasswordApi(this.commonComponent.httpClient)
@@ -457,6 +459,7 @@ export class ClientUserComponent {
     this.reauthenticateSessionUseCase = new ReauthenticateSessionUseCase(this.sessionRepository)
 
     this.getUserUseCase = new GetUserUseCase(this.userRepository)
+    this.selfUpdateUserUseCase = new SelfUpdateUserUseCase(this.userRepository)
     this.getUserIdentifierUseCase = new GetUserIdentifierUseCase(this.identifierRepository)
     this.getUserIdentifiersUseCase = new GetUserIdentifiersUseCase(this.identifierRepository)
     this.deleteUserIdentifierUseCase = new DeleteUserIdentifierUseCase(this.identifierRepository)

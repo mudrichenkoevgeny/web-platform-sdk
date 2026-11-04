@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultFailure, appResultSuccess, isSuccess, toErrorIdOrThrow } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SortOrder, TEST_SESSION_ID, TEST_USER_ID_2, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestUserSessionSummaryPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
+import { SortOrder, TEST_SESSION_ID, toUserSessionIdOrThrow, createTestUserSessionPrivatePayload, createTestUserSessionSummaryPayload, createTestPagedResult } from '@mudrichenkoevgeny/shared-foundation'
 import { SelfManagementSessionRepositoryImpl } from '@/repository/session/self-management-session-repository-impl'
 import { SelfManagementSessionApiMock } from '@/mock/network/api/session/self-management-session-api-mock'
 import { AuthStorageMock, UserStorageMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
@@ -15,7 +15,6 @@ describe('SelfManagementSessionRepositoryImpl', () => {
   const mockSummaryPayload = createTestUserSessionSummaryPayload()
   const mockPrivatePayload = createTestUserSessionPrivatePayload()
   const mockSessionId = toUserSessionIdOrThrow(TEST_SESSION_ID)
-  const mockSessionId2 = toUserSessionIdOrThrow(TEST_USER_ID_2)
 
   const mockError: AppError = {
     id: toErrorIdOrThrow('123e4567-e89b-12d3-a456-426614174000'),
@@ -36,7 +35,7 @@ describe('SelfManagementSessionRepositoryImpl', () => {
     mockApi.logoutResult = appResultSuccess(undefined)
     mockApi.deleteSessionResult = appResultSuccess(undefined)
     mockApi.deleteAllOtherSessionsResult = appResultSuccess({
-      deletedSessionIds: [toUserSessionIdOrThrow(TEST_USER_ID_2)]
+      deletedSessionIds: [toUserSessionIdOrThrow('sess_456')]
     })
     mockApi.reauthenticateSessionResult = appResultSuccess(undefined)
 
@@ -48,11 +47,6 @@ describe('SelfManagementSessionRepositoryImpl', () => {
     vi.spyOn(mockApi, 'reauthenticateSession')
 
     mockUserStorage = new UserStorageMock()
-    mockUserStorage.updateUserSessionsPayloadList(createTestPagedResult({ items: [mockSummaryPayload] }))
-    vi.spyOn(mockUserStorage, 'getUserSessionsList')
-    vi.spyOn(mockUserStorage, 'updateUserSessionsPayloadList')
-    vi.spyOn(mockUserStorage, 'removeUserSession')
-    vi.spyOn(mockUserStorage, 'removeUserSessions')
     vi.spyOn(mockUserStorage, 'clear')
 
     mockAuthStorage = new AuthStorageMock()
@@ -61,52 +55,22 @@ describe('SelfManagementSessionRepositoryImpl', () => {
     repository = new SelfManagementSessionRepositoryImpl(mockApi, mockUserStorage, mockAuthStorage)
   })
 
-  it('delegates getSessions and caches payload on network success', async () => {
+  it('delegates getSessions and maps items on success', async () => {
     const managementSessionListParams = {
       pageNumber: 1,
       pageSize: 10,
       sortBy: 'created_at' as const,
-      sortOrder: SortOrder.DESC,
-      identifiers: [],
-      identifierIds: [],
-      userAuthProviders: [],
-      clientTypes: [],
-      userAgents: [],
-      ipAddresses: [],
-      languages: [],
-      deviceIds: [],
-      deviceNames: [],
-      appVersions: [],
-      osVersions: []
+      sortOrder: SortOrder.DESC
     }
     const sessionsResult = await repository.getSessions(managementSessionListParams)
     expect(mockApi.getSessions).toHaveBeenCalled()
-    expect(mockUserStorage.updateUserSessionsPayloadList).toHaveBeenCalled()
     expect(isSuccess(sessionsResult)).toBe(true)
   })
 
-  it('falls back to cache in getSessions on network error', async () => {
-    const managementSessionListParams = {
-      pageNumber: 1,
-      pageSize: 10,
-      sortBy: 'created_at' as const,
-      sortOrder: SortOrder.DESC,
-      identifiers: [],
-      identifierIds: [],
-      userAuthProviders: [],
-      clientTypes: [],
-      userAgents: [],
-      ipAddresses: [],
-      languages: [],
-      deviceIds: [],
-      deviceNames: [],
-      appVersions: [],
-      osVersions: []
-    }
+  it('returns failure when network fails in getSessions', async () => {
     mockApi.getSessionsResult = appResultFailure(mockError)
-    const sessionsResult = await repository.getSessions(managementSessionListParams)
-    expect(mockUserStorage.getUserSessionsList).toHaveBeenCalled()
-    expect(isSuccess(sessionsResult)).toBe(true)
+    const sessionsResult = await repository.getSessions()
+    expect(isSuccess(sessionsResult)).toBe(false)
   })
 
   it('delegates getSession', async () => {
@@ -123,23 +87,15 @@ describe('SelfManagementSessionRepositoryImpl', () => {
     expect(isSuccess(logoutResult)).toBe(true)
   })
 
-  it('delegates deleteSession and removes from cache', async () => {
+  it('delegates deleteSession', async () => {
     const deleteResult = await repository.deleteSession(mockSessionId)
     expect(mockApi.deleteSession).toHaveBeenCalledWith(mockSessionId)
-    expect(mockUserStorage.removeUserSession).toHaveBeenCalledWith(mockSessionId)
     expect(isSuccess(deleteResult)).toBe(true)
   })
 
-  it('delegates deleteAllOtherSessions and removes deleted sessions from cache', async () => {
-    mockUserStorage.updateUserSessionsPayloadList(
-      createTestPagedResult({
-        items: [createTestUserSessionSummaryPayload({ id: toUserSessionIdOrThrow(TEST_USER_ID_2) })]
-      })
-    )
-
+  it('delegates deleteAllOtherSessions', async () => {
     const deleteAllOtherResult = await repository.deleteAllOtherSessions()
     expect(mockApi.deleteAllOtherSessions).toHaveBeenCalled()
-    expect(mockUserStorage.removeUserSessions).toHaveBeenCalledWith([mockSessionId2])
     expect(isSuccess(deleteAllOtherResult)).toBe(true)
   })
 

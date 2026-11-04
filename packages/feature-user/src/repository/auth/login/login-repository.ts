@@ -1,7 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
-import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+import type { AuthData, LoginByExternalAuthProviderRequest, OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
 
 /**
  * Unified sign-in entry points for both client and management applications.
@@ -13,10 +11,9 @@ export interface LoginRepository {
   /** Completes phone login using phoneNumber and confirmationCode. */
   loginByPhone(phoneNumber: string, confirmationCode: string): Promise<AppResult<AuthData, AppError>>
 
-  /** Signs in via an external authProvider using identity externalProviderToken. */
+  /** Signs in via an external identity provider (OAuth / social). */
   loginByExternalAuthProvider(
-    authProvider: UserAuthProvider,
-    externalProviderToken: string
+    request: LoginByExternalAuthProviderRequest
   ): Promise<AppResult<AuthData, AppError>>
 
   /** Completes the MFA flow using a TOTP code. */

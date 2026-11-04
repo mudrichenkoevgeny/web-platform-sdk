@@ -24,10 +24,10 @@ export const Route = createFileRoute('/user/identifiers/$identifierId')({
           deleteUserIdentifierUseCase: appComponent.clientUserComponent.deleteUserIdentifierUseCase,
           emailChangePasswordUseCase: appComponent.clientUserComponent.emailChangePasswordUseCase,
           authStorage: appComponent.clientUserComponent.authStorage,
-          onNavigateToUserMain: () => navigate({ to: ClientUserNavigation.Main.route }),
-          onNavigateToUserDetail: () => navigate({ to: ClientUserNavigation.Main.route }),
+          onNavigateToUserMain: () => void navigate({ to: ClientUserNavigation.Main.route }),
+          onNavigateToUserDetail: () => void navigate({ to: ClientUserNavigation.Main.route }),
           onBack: () =>
-            navigateUp({
+            void navigateUp({
               to: ClientUserNavigation.IdentifierList.ROUTE,
               search: (raw) => cleanSearchParams(selfIdentifierListParamsSchema.parse(raw))
             })

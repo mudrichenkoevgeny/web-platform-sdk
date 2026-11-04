@@ -1,9 +1,8 @@
 import { appResultFailure, CommonError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-core-common";
-import type { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AuthData, LoginByExternalAuthProviderRequest, OtpConfirmation, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { LoginRepository } from '@/repository/auth/login/login-repository'
-import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
-import type { OtpConfirmation } from '@mudrichenkoevgeny/shared-foundation'
+
 /**
  * Mock implementation of {@link LoginRepository}.
  */
@@ -16,6 +15,8 @@ export class LoginRepositoryMock implements LoginRepository {
   public lastToken: string | null = null
   public lastMfaToken: string | null = null
   public lastCode: string | null = null
+  public lastLoginByExternalAuthProviderRequest: LoginByExternalAuthProviderRequest | null = null
+  public lastDisplayName: string | null = null
 
   public authDataResultProvider: () => Promise<AppResult<AuthData, AppError>> = async () =>
     appResultFailure(CommonError.contractViolation(new Error('No mock AuthData provided.')))
@@ -38,11 +39,11 @@ export class LoginRepositoryMock implements LoginRepository {
   }
 
   public async loginByExternalAuthProvider(
-    authProvider: UserAuthProvider,
-    externalProviderToken: string
+    request: LoginByExternalAuthProviderRequest
   ): Promise<AppResult<AuthData, AppError>> {
-    this.lastAuthProvider = authProvider
-    this.lastToken = externalProviderToken
+    this.lastLoginByExternalAuthProviderRequest = request
+    this.lastToken = request.external_provider_token
+    this.lastDisplayName = request.display_name ?? null
     return this.authDataResultProvider()
   }
 

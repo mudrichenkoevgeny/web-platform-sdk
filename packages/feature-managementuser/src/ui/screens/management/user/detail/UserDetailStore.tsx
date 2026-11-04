@@ -1,13 +1,36 @@
 import React, { createContext, useContext, useState } from 'react'
 import { createStore, useStore } from 'zustand'
-import { AccountLockoutType, toUserIdOrNull, UserAccountStatus, type UserStorageConfiguration } from '@mudrichenkoevgeny/shared-foundation'
-import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import {
+  AccountLockoutType,
+  StorageCategory,
+  StorageFileVisibility,
+  UserStorageTargetScopes,
+  toUserIdOrNull,
+  toFileIdOrNull,
+  UserAccountStatus,
+  type UserStorageConfiguration
+} from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate, UserId, FileId } from '@mudrichenkoevgeny/shared-foundation'
 import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { DeleteUserUseCase } from '@/usecase/user/delete-user-use-case'
 import type { GetUserUseCase } from '@/usecase/user/get-user-use-case'
 import type { UpdateUserUseCase } from '@/usecase/user/update-user-use-case'
 import type { ManagementDisableTotpUseCase } from '@/usecase/user/security/management-disable-totp-use-case'
+
+/** Selected file payload containing file details and local preview URI for avatar upload. */
+export interface SelectedFilePayload {
+  /** The native File object to upload. */
+  file: File
+  /** Name of the selected file. */
+  fileName: string
+  /** Size of the selected file in bytes. */
+  fileSizeBytes: number
+  /** MIME type of the selected file. */
+  mimeType: string
+  /** Local object URL for rendering a preview before upload. */
+  localUri: string
+}
 
 const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
   const parsed = parseInt(value, 10)
@@ -25,8 +48,11 @@ const parseNullableInteger = (value: string): number | null => {
 
 /** Status values for {@link UserDetailScreenState}. */
 export enum UserDetailStatus {
+  /** Loading phase while initial user details are fetched. */
   LOADING = 'loading',
+  /** Error phase when loading user details fails. */
   ERROR = 'error',
+  /** Content phase displaying user profile and management controls. */
   CONTENT = 'content'
 }
 
@@ -57,6 +83,18 @@ export type UserDetailScreenState =
       lockoutTypeInput: AccountLockoutType
       /** Input string value for temporary lockout until timestamp. */
       temporaryLockoutUntilInput: string
+      /** Input string value for nickname field. */
+      nicknameInput: string
+      /** Input string value for display name field. */
+      displayNameInput: string
+      /** Input string value for birthdate epoch millis. */
+      birthdateInput: string
+      /** Avatar file ID string. */
+      avatarFileIdInput: string
+      /** Avatar URL string. */
+      avatarUrl: string | null
+      /** Selected local avatar file payload. */
+      selectedAvatarPayload: SelectedFilePayload | null
       /** Input string value for storage quota bytes field. */
       storageQuotaBytesInput: string
       /** Input string value for max upload size bytes field. */
@@ -93,6 +131,16 @@ export interface UserDetailStoreDependencies {
   deleteUserUseCase: Pick<DeleteUserUseCase, 'execute'>
   /** Use case for disabling TOTP MFA. */
   managementDisableTotpUseCase: Pick<ManagementDisableTotpUseCase, 'execute'>
+  /** Optional use case for uploading avatar file with typed domain parameters. */
+  uploadFileUseCase?: {
+    execute(params: {
+      file: File
+      category: StorageCategory
+      visibility: StorageFileVisibility
+      targetScope: UserStorageTargetScopes[keyof typeof UserStorageTargetScopes]
+      onProgress?: (percent: number) => void
+    }): Promise<AppResult<{ id: string; fileUrls?: { originalUrl: string } | null }, AppError>>
+  }
   /** Navigation callback to open user sessions list. */
   onNavigateToSessions: (userId: UserId) => void
   /** Navigation callback to open user identifiers list. */
@@ -113,6 +161,16 @@ export interface UserDetailStoreState {
   initScreen: () => Promise<void>
   /** Handles authority level input value change. */
   onAuthorityLevelChanged: (value: string) => void
+  /** Handles nickname input value change. */
+  onNicknameChanged: (value: string) => void
+  /** Handles display name input value change. */
+  onDisplayNameChanged: (value: string) => void
+  /** Handles birthdate input value change. */
+  onBirthdateChanged: (value: string) => void
+  /** Handles avatar file selection. */
+  onAvatarFileSelected: (payload: SelectedFilePayload) => void
+  /** Handles avatar removal click. */
+  onRemoveAvatarClick: () => void
   /** Handles account status select option change. */
   onAccountStatusChanged: (value: UserAccountStatus) => void
   /** Handles lockout type select option change. */
@@ -168,6 +226,11 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
   const initialMaxUpload = state.user.storageConfiguration?.maxUploadSizeBytes != null ? String(state.user.storageConfiguration.maxUploadSizeBytes) : ''
   const initialMaxPending = state.user.storageConfiguration?.maxPendingUploads != null ? String(state.user.storageConfiguration.maxPendingUploads) : ''
 
+  const initialNickname = state.user.nickname ?? ''
+  const initialDisplayName = state.user.displayName ?? ''
+  const initialBirthdate = state.user.birthdate != null ? String(state.user.birthdate) : ''
+  const initialAvatarFileId = state.user.avatarFileId?.value?.toHexDashString() ?? ''
+
   return (
     currentAuthLevel !== initialAuthLevel ||
     state.accountStatusInput !== state.user.accountStatus ||
@@ -175,7 +238,12 @@ export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { sta
     state.temporaryLockoutUntilInput.trim() !== initialTempLockout ||
     state.storageQuotaBytesInput.trim() !== initialQuota ||
     state.storageMaxUploadSizeBytesInput.trim() !== initialMaxUpload ||
-    state.storageMaxPendingUploadsInput.trim() !== initialMaxPending
+    state.storageMaxPendingUploadsInput.trim() !== initialMaxPending ||
+    state.nicknameInput.trim() !== initialNickname ||
+    state.displayNameInput.trim() !== initialDisplayName ||
+    state.birthdateInput.trim() !== initialBirthdate ||
+    state.avatarFileIdInput !== initialAvatarFileId ||
+    state.selectedAvatarPayload !== null
   )
 }
 
@@ -220,11 +288,18 @@ export const createUserDetailStore = (
         if (isSuccess(userResult)) {
           const user = userResult.data
           const isSelfUser = deps.currentUserId != null && user.id === deps.currentUserId
+          const avatarUrl = user.avatarUrls?.originalUrl ?? null
           set({
             screenState: {
               status: UserDetailStatus.CONTENT,
               user,
               isSelfUser,
+              nicknameInput: user.nickname ?? '',
+              displayNameInput: user.displayName ?? '',
+              birthdateInput: user.birthdate != null ? String(user.birthdate) : '',
+              avatarFileIdInput: user.avatarFileId?.value?.toHexDashString() ?? '',
+              avatarUrl,
+              selectedAvatarPayload: null,
               authorityLevelInput: String(user.authorityLevel),
               accountStatusInput: user.accountStatus,
               lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
@@ -268,6 +343,56 @@ export const createUserDetailStore = (
       const num = parseIntegerOrDefault(value, -1)
       if (num >= 0 && num <= 100) {
         set({ screenState: { ...current, authorityLevelInput: value, saveError: null } })
+      }
+    },
+
+    onNicknameChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, nicknameInput: value, saveError: null } })
+      }
+    },
+
+    onDisplayNameChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, displayNameInput: value, saveError: null } })
+      }
+    },
+
+    onBirthdateChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, birthdateInput: value, saveError: null } })
+      }
+    },
+
+    onAvatarFileSelected: (payload: SelectedFilePayload) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            selectedAvatarPayload: payload,
+            avatarUrl: payload.localUri,
+            saveError: null
+          }
+        })
+      }
+    },
+
+    onRemoveAvatarClick: () => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            avatarFileIdInput: '',
+            avatarUrl: null,
+            selectedAvatarPayload: null,
+            saveError: null
+          }
+        })
       }
     },
 
@@ -321,6 +446,28 @@ export const createUserDetailStore = (
 
       set({ screenState: { ...current, isSaving: true, saveError: null } })
 
+      let uploadedAvatarFileId = current.user.avatarFileId ?? null
+      const avatarPayload = current.selectedAvatarPayload
+
+      if (avatarPayload != null && deps.uploadFileUseCase != null) {
+        const uploadResult = await deps.uploadFileUseCase.execute({
+          file: avatarPayload.file,
+          category: StorageCategory.IMAGE,
+          visibility: StorageFileVisibility.PUBLIC,
+          targetScope: UserStorageTargetScopes.AVATAR
+        })
+
+        if (isSuccess(uploadResult)) {
+          uploadedAvatarFileId = toFileIdOrNull(uploadResult.data.id)
+        } else {
+          const latest = get().screenState
+          if (latest.status === UserDetailStatus.CONTENT) {
+            set({ screenState: { ...latest, isSaving: false, saveError: uploadResult.error } })
+          }
+          return
+        }
+      }
+
       const authLevel = parseIntegerOrDefault(current.authorityLevelInput, 0)
       const tempLockout = current.temporaryLockoutUntilInput.trim().length > 0
         ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
@@ -339,13 +486,21 @@ export const createUserDetailStore = (
           }
         : null
 
+      const birthdateNum = current.birthdateInput.trim()
+        ? parseInt(current.birthdateInput.trim(), 10)
+        : null
+
       const updateUserResult = await deps.updateUserUseCase.execute(deps.userId, {
         accountStatus: current.accountStatusInput,
         authorityLevel: authLevel,
         permissionCodes: null,
         lockoutType: current.lockoutTypeInput,
         temporaryLockoutUntil: tempLockout,
-        storageConfiguration
+        storageConfiguration,
+        nickname: current.nicknameInput.trim() || null,
+        displayName: current.displayNameInput.trim() || null,
+        avatarFileId: toFileIdOrNull(uploadedAvatarFileId),
+        birthdate: birthdateNum
       })
 
       if (isSuccess(updateUserResult)) {

@@ -1,7 +1,7 @@
 import type {
   OpenStorageSettingsObserver,
   OpenStorageSettingsRepository
-} from '../../repository/open/open-storage-settings-repository'
+} from '@/repository/open/open-storage-settings-repository'
 
 /** Subscribes an observer to live open storage settings updates. */
 export class ObserveOpenStorageSettingsUseCase {

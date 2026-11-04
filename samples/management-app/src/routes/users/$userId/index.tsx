@@ -25,14 +25,14 @@ export const Route = createFileRoute('/users/$userId/')({
           deleteUserUseCase: managementDeps.deleteUserUseCase,
           managementDisableTotpUseCase: managementDeps.managementDisableTotpUseCase,
           onNavigateToSessions: (uid) =>
-            navigate({ to: '/users/$userId/sessions', params: { userId: uid }, search: {} }),
+            void navigate({ to: '/users/$userId/sessions', params: { userId: uid }, search: {} }),
           onNavigateToIdentifiers: (uid) =>
-            navigate({ to: '/users/$userId/identifiers', params: { userId: uid }, search: {} }),
+            void navigate({ to: '/users/$userId/identifiers', params: { userId: uid }, search: {} }),
           onNavigateToAuditEvents: (uid) =>
-            navigate({ to: '/audit/events', search: (prev) => ({ ...prev, actor_id: [uid] }) }),
+            void navigate({ to: '/audit/events', search: { actor_id: [uid] } }),
           onNavigateToStorageFiles: (uid) =>
-            navigate({ to: '/storage/files', search: { ownerUserId: uid } }),
-          onBack: () => navigateUp({ to: ManagementUsersNavigation.UserList.ROUTE, search: (prev) => prev })
+            void navigate({ to: '/storage/files', search: { ownerUserId: uid } }),
+          onBack: () => void navigateUp({ to: ManagementUsersNavigation.UserList.ROUTE, search: (prev) => prev })
         }}
       />
     )

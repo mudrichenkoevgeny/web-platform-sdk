@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserAuthProvider, createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import { UserAuthProvider, createTestLoginByExternalAuthProviderRequest, createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
 import { GoogleAuthServiceMock } from '@/mock/auth/google/google-auth-service-mock'
 import { IdentifierRepositoryMock } from '@/mock/repository/identifier/identifier-repository-mock'
@@ -18,7 +18,13 @@ describe('AddUserIdentifierGoogleUseCase', () => {
 
   beforeEach(() => {
     mockAuthService = new GoogleAuthServiceMock()
-    mockAuthService.signInResultProvider = async () => appResultSuccess('google-id-token')
+    mockAuthService.signInResultProvider = async () =>
+      appResultSuccess(
+        createTestLoginByExternalAuthProviderRequest({
+          auth_provider: UserAuthProvider.GOOGLE,
+          external_provider_token: 'google-id-token'
+        })
+      )
 
     mockRepository = new IdentifierRepositoryMock()
     mockRepository.addUserIdentifierResultProvider = async () => appResultSuccess(mockIdentifier)

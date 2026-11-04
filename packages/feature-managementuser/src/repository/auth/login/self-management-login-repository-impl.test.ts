@@ -35,7 +35,10 @@ describe('SelfManagementLoginRepositoryImpl', () => {
   })
 
   it('returns contract violation for loginByExternalAuthProvider', async () => {
-    const loginResult = await repository.loginByExternalAuthProvider(UserAuthProvider.GOOGLE, 'token')
+    const loginResult = await repository.loginByExternalAuthProvider({
+      auth_provider: UserAuthProvider.GOOGLE,
+      external_provider_token: 'token'
+    })
     expect(isFailure(loginResult)).toBe(true)
   })
 

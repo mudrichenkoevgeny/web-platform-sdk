@@ -31,8 +31,11 @@ export const UserItem = forwardRef<HTMLButtonElement, UserItemProps>(
         )}
         {...rest}
       >
-        <div className="text-sm font-bold text-surface-foreground">
-          {user.id ?? ''}
+        <div className="text-sm font-bold text-surface-foreground flex flex-col">
+          <span>{user.displayName ?? user.nickname ?? user.id ?? ''}</span>
+          {(user.displayName || user.nickname) && (
+            <span className="text-xs font-normal text-muted-foreground">{user.id}</span>
+          )}
         </div>
         <div className="text-xs text-muted-foreground">
           {strings.ui.userRole}: {user.role}

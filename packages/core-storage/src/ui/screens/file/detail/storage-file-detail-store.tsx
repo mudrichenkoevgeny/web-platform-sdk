@@ -161,7 +161,7 @@ export const createStorageFileDetailStore = (
     onCopyUrlClick: () => {
       const current = get().screenState
       if (current.status === StorageFileDetailStatus.CONTENT) {
-        navigator.clipboard.writeText(current.file.fileUrl)
+        navigator.clipboard.writeText(current.file.fileUrls?.originalUrl ?? '')
         set({
           screenState: {
             ...current,

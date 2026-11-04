@@ -63,6 +63,7 @@ export interface MainUserStoreDependencies {
   onNavigateToSessions: () => void
   onNavigateToIdentifiers: () => void
   onNavigateToStorage: () => void
+  onNavigateToEditUser?: () => void
 }
 
 /**
@@ -79,6 +80,7 @@ export interface MainUserStoreState {
   onSessionsClick: () => void
   onIdentifiersClick: () => void
   onStorageClick: () => void
+  onEditUserClick: () => void
   onDeleteAccountClick: () => void
   onConfirmDeleteAccount: () => Promise<void>
   onDismissDialog: () => void
@@ -250,6 +252,10 @@ export const createMainUserStore = (
 
     onStorageClick: () => {
       deps.onNavigateToStorage()
+    },
+
+    onEditUserClick: () => {
+      deps.onNavigateToEditUser?.()
     },
 
     onDeleteAccountClick: () => {

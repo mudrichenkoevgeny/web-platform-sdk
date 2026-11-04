@@ -1,5 +1,5 @@
 import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageRepository } from '../../repository/management/management-storage-repository'
+import type { ManagementStorageRepository } from '@/repository/management/management-storage-repository'
 
 /** Deletes a specific file administratively across the platform. */
 export class ManagementDeleteFileUseCase {

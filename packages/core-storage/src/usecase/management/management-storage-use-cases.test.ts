@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { ManagementStorageRepository } from '../../repository/management/management-storage-repository'
+import type { ManagementStorageRepository } from '@/repository/management/management-storage-repository'
 import { ManagementGetFilesUseCase } from './management-get-files-use-case'
 import { ManagementGetFileDetailUseCase } from './management-get-file-detail-use-case'
 import { ManagementDeleteFileUseCase } from './management-delete-file-use-case'

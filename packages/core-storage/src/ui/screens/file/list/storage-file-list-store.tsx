@@ -4,7 +4,7 @@ import { createStore, useStore } from 'zustand'
 import type {
   StorageFileSummary
 } from '@mudrichenkoevgeny/shared-foundation'
-import { StorageFileStatus } from '@mudrichenkoevgeny/shared-foundation'
+import { StorageFileStatus, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import type { AppError, PaginationState } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   appendResultToPaginationState,
@@ -370,7 +370,7 @@ export const createStorageFileListStore = (
       }
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
-      const deleteResult = await deleteFileFn(fileId)
+      const deleteResult = await deleteFileFn(toFileIdOrThrow(fileId))
 
       if (isSuccess(deleteResult)) {
         const latest = get().screenState
@@ -467,7 +467,7 @@ export const createStorageFileListStore = (
       }
 
       set({ screenState: { ...current, actionLoading: true, actionError: null } })
-      const batchDeleteResult = await deleteFilesBatchFn({ fileIds })
+      const batchDeleteResult = await deleteFilesBatchFn(fileIds.map((id) => toFileIdOrThrow(id)))
 
       if (isSuccess(batchDeleteResult)) {
         const latest = get().screenState
