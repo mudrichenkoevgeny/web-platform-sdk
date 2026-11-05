@@ -24,6 +24,7 @@ export const Route = createFileRoute('/users/$userId/')({
           updateUserUseCase: managementDeps.updateUserUseCase,
           deleteUserUseCase: managementDeps.deleteUserUseCase,
           managementDisableTotpUseCase: managementDeps.managementDisableTotpUseCase,
+          uploadFileUseCase: managementDeps.selfManagementUploadFileUseCase,
           onNavigateToSessions: (uid) =>
             void navigate({ to: '/users/$userId/sessions', params: { userId: uid }, search: {} }),
           onNavigateToIdentifiers: (uid) =>

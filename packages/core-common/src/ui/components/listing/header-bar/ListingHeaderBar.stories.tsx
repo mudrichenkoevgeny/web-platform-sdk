@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ListingHeaderBar } from '@/ui/components/listing/header-bar/ListingHeaderBar'
 
 const meta: Meta<typeof ListingHeaderBar> = {

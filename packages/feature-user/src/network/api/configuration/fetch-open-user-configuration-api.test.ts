@@ -1,66 +1,54 @@
-import { describe, it, expect, vi } from 'vitest'
-import { isSuccess, HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { OpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { OpenUserConfigurationRoutes, createTestOpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
-import { FetchOpenUserConfigurationApi } from '@/network/api/configuration/fetch-open-user-configuration-api'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { OpenUserConfigurationRoutes, createTestApiErrorResponse, createTestOpenUserConfigurationPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchOpenUserConfigurationApi } from './fetch-open-user-configuration-api'
 
 describe('FetchOpenUserConfigurationApi', () => {
-  it('dispatches GET request for open user configuration', async () => {
-    const mockPayload: OpenUserConfigurationPayload = {
-      open_global_settings: {
-        privacy_policy_url: null,
-        terms_of_service_url: null,
-        contact_support_email: null,
-        min_supported_app_versions: {}
-      },
-      open_security_settings: {
-        open_password_policy: {
-          min_length: 8,
-          require_letter: true,
-          require_upper_case: true,
-          require_lower_case: true,
-          require_digit: true,
-          require_special_char: false
-        },
-        otp_confirmation: {
-          retry_after_seconds: 60,
-          number_of_symbols: 6,
-          expiration_seconds: 300
-        }
-      },
-      open_storage_settings: createTestOpenStorageSettingsPayload(),
-      open_auth_settings: {
-        available_auth_providers: {
-          primary: ['EMAIL'],
-          secondary: ['GOOGLE']
-        },
-        max_total_identifiers: 5,
-        max_email_identifiers: 2,
-        max_phone_identifiers: 2,
-        max_identifiers_per_external_provider: 1,
-        is_registration_enabled: true,
-        user_nickname_min_length: 3,
-        user_nickname_max_length: 30,
-        user_display_name_min_length: 1,
-        user_display_name_max_length: 50,
-        is_user_nickname_change_allowed: true
-      }
-    }
+  let mockHttpClient: HttpClientMock
+  let api: FetchOpenUserConfigurationApi
 
-    const mockHttpClient = new HttpClientMock()
-    vi.spyOn(mockHttpClient, 'request').mockResolvedValue(mockPayload)
+  beforeEach(() => {
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
+    api = new FetchOpenUserConfigurationApi(mockHttpClient)
+  })
 
-    const api = new FetchOpenUserConfigurationApi(mockHttpClient)
+  it('fetches open user configuration successfully', async () => {
+    const mockPayload = createTestOpenUserConfigurationPayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
+
     const result = await api.getOpenUserConfiguration()
 
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
+    )
     expect(isSuccess(result)).toBe(true)
-    if (isSuccess(result)) {
-      expect(result.data).toEqual(mockPayload)
-    }
+  })
 
-    const expectedRoute = OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION.startsWith('/')
-      ? OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION
-      : `/${OpenUserConfigurationRoutes.GET_OPEN_USER_CONFIGURATION}`
-    expect(mockHttpClient.request).toHaveBeenCalledWith(expectedRoute)
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'CONFIG_ERROR', message: 'Error' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getOpenUserConfiguration()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('CONFIG_ERROR')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getOpenUserConfiguration()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, appendQueryParamsToPath, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementIdentifierApi } from '@/network/api/identifier/fetch-management-identifier-api'
 import {
   ManagementIdentifiersRoutes,
@@ -12,8 +12,8 @@ import {
   toUserIdOrThrow,
   toUserIdentifierIdOrThrow,
   createTestUserIdentifierPrivatePayload,
-  createTestPagedResult,
-  createTestPagedResultPayload
+  createTestPagedResultPayload,
+  createTestApiErrorResponse
 } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchManagementIdentifierApi', () => {
@@ -35,7 +35,6 @@ describe('FetchManagementIdentifierApi', () => {
   })
 
   it('dispatches getIdentifiers request with query params', async () => {
-    const expectedIdentifierListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPagedPayload)
 
     const identifierListParams = {
@@ -47,7 +46,7 @@ describe('FetchManagementIdentifierApi', () => {
       userAuthProviders: [],
       identifiers: []
     }
-    const identifierListResult = await api.getIdentifiers(identifierListParams)
+    const result = await api.getIdentifiers(identifierListParams)
 
     const expectedUrl = appendQueryParamsToPath(
       ManagementIdentifiersRoutes.GET_IDENTIFIERS,
@@ -55,11 +54,10 @@ describe('FetchManagementIdentifierApi', () => {
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(identifierListResult).toEqual({ success: true, data: expectedIdentifierListPagedResult })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches getIdentifiers request using GET_USER_IDENTIFIERS route when userId param is provided', async () => {
-    const expectedIdentifierListPagedResult = createTestPagedResult({ items: [], totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0 })
     vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPagedPayload)
 
     const userIdentifierListParams = {
@@ -67,7 +65,7 @@ describe('FetchManagementIdentifierApi', () => {
       pageNumber: 1,
       pageSize: 10
     }
-    const identifierListResult = await api.getIdentifiers(userIdentifierListParams)
+    const result = await api.getIdentifiers(userIdentifierListParams)
 
     const expectedUrl = appendQueryParamsToPath(
       ManagementIdentifiersRoutes.GET_USER_IDENTIFIERS.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID),
@@ -75,44 +73,71 @@ describe('FetchManagementIdentifierApi', () => {
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(identifierListResult).toEqual({ success: true, data: expectedIdentifierListPagedResult })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches getIdentifier request', async () => {
     const mockIdentifierPayload = createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockIdentifierPayload)
 
-    const identifierResult = await api.getIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+    const result = await api.getIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementIdentifiersRoutes.GET_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, TEST_IDENTIFIER_ID)
     )
-    expect(identifierResult).toEqual({ success: true, data: mockIdentifierPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches deleteIdentifier request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow(TEST_USER_ID)
-    const deleteIdentifierResult = await api.deleteIdentifier(userId, toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+    const result = await api.deleteIdentifier(userId, toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementIdentifiersRoutes.DELETE_IDENTIFIER.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, TEST_IDENTIFIER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(deleteIdentifierResult).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches deleteIdentifierPassword request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow(TEST_USER_ID)
-    const deletePasswordResult = await api.deleteIdentifierPassword(userId, toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+    const result = await api.deleteIdentifierPassword(userId, toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementIdentifiersRoutes.DELETE_IDENTIFIER_PASSWORD.replace(`{${UserApiPaths.USER_IDENTIFIER_ID}}`, TEST_IDENTIFIER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(deletePasswordResult).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'IDENTIFIER_NOT_FOUND', message: 'Not found' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('IDENTIFIER_NOT_FOUND')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

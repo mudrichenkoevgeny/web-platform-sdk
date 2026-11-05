@@ -551,7 +551,7 @@ export const StorageFileListProvider: React.FC<StorageFileListProviderProps> = (
  * @template T - Selected state slice return type.
  * @param selector - Selector function extracting values from store state.
  * @returns Selected slice of store state.
- * @throws {Error} If called outside of {@link StorageFileListProvider}.
+ * @throws Error - If called outside of {@link StorageFileListProvider}.
  */
 export const useStorageFileListStore = <T,>(
   selector: (state: StorageFileListStoreState) => T

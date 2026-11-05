@@ -48,4 +48,10 @@ describe('EncryptedManagementAuthSettingsStorage', () => {
     await storage.clearManagementAuthSettings()
     expect(await storage.getManagementAuthSettings()).toBeNull()
   })
+
+  it('returns null and cleans up entry when JSON is corrupted', async () => {
+    await mockSettingsStorage.put('auth_management_settings', 'corrupted-{')
+    expect(await storage.getManagementAuthSettings()).toBeNull()
+    expect(await mockSettingsStorage.get('auth_management_settings')).toBeNull()
+  })
 })

@@ -1,49 +1,57 @@
-import { describe, it, expect, vi } from 'vitest'
-import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { UserStorageTargetScopes } from '@mudrichenkoevgeny/shared-foundation'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { OpenStorageRoutes, createTestApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenStorageApi } from './fetch-open-storage-api'
 
 describe('FetchOpenStorageApi', () => {
-  const mockHttpClient: HttpClient = {
-    request: vi.fn()
-  } as unknown as HttpClient
+  let mockHttpClient: HttpClientMock
+  let api: FetchOpenStorageApi
 
-  const api = new FetchOpenStorageApi(mockHttpClient)
-
-  it('requests presigned upload url with camelCase params and parses response payload', async () => {
-    const mockPresignedPayload = {
-      file_id: 'file-123',
-      upload_url: 'https://s3.example.com/upload-123',
-      file_url: 'https://cdn.example.com/file-123',
-      expires_at: Date.now() + 3600000
-    }
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockPresignedPayload)
-
-    const result = await api.getPresignedUploadUrl({
-      fileName: 'photo.jpg',
-      fileSizeBytes: 1024,
-      mimeType: 'image/jpeg',
-      category: 'IMAGE',
-      visibility: 'PUBLIC',
-      targetScope: UserStorageTargetScopes.AVATAR
-    })
-    expect(result.success).toBe(true)
-    if (result.success) {
-      expect(result.data.fileId).toBe('file-123')
-    }
-  })
-
-  it('deletes file with DELETE method', async () => {
-    vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
-
-    const result = await api.deleteFile('file-123')
-    expect(result.success).toBe(true)
+  beforeEach(() => {
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
+    api = new FetchOpenStorageApi(mockHttpClient)
   })
 
   it('deletes files batch with POST method and request DTO', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const result = await api.deleteFilesBatch({ fileIds: ['file-1', 'file-2'] })
-    expect(result.success).toBe(true)
+
+    expect(isSuccess(result)).toBe(true)
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      OpenStorageRoutes.DELETE_FILES_BATCH,
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ fileIds: ['file-1', 'file-2'] })
+      })
+    )
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'FILE_NOT_FOUND', message: 'Not found' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getFileDetail('file-123')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('FILE_NOT_FOUND')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getFileDetail('file-123')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

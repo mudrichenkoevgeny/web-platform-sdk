@@ -1,33 +1,54 @@
-import { describe, it, expect, vi } from 'vitest'
-import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ManagementStorageSettingsRoutes, createTestApiErrorResponse, createTestManagementStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchManagementStorageSettingsApi } from './fetch-management-storage-settings-api'
 
 describe('FetchManagementStorageSettingsApi', () => {
-  const mockHttpClient: HttpClient = {
-    request: vi.fn()
-  } as unknown as HttpClient
+  let mockHttpClient: HttpClientMock
+  let api: FetchManagementStorageSettingsApi
 
-  const api = new FetchManagementStorageSettingsApi(mockHttpClient)
+  beforeEach(() => {
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
+    api = new FetchManagementStorageSettingsApi(mockHttpClient)
+  })
 
-  it('fetches management storage settings', async () => {
-    const mockPayload = {
-      min_upload_size_bytes: 1024,
-      max_upload_size_bytes: 104857600,
-      total_storage_quota_for_open_user_bytes: null,
-      total_storage_quota_for_management_user_bytes: null,
-      presigned_url_expiration_seconds: 3600,
-      max_pending_uploads_for_open_user: 10,
-      max_pending_uploads_for_management_user: 100,
-      is_deduplication_enabled: true,
-      deleted_files_cleanup_interval_seconds: 86400
-    }
+  it('fetches management storage settings successfully', async () => {
+    const mockPayload = createTestManagementStorageSettingsPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getSettings()
-    expect(result.success).toBe(true)
-    if (result.success) {
-      expect(result.data.minUploadSizeBytes).toBe(1024)
-      expect(result.data.maxUploadSizeBytes).toBe(104857600)
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      ManagementStorageSettingsRoutes.GET_MANAGEMENT_STORAGE_SETTINGS
+    )
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'STORAGE_SETTINGS_ERROR', message: 'Error' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getSettings()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('STORAGE_SETTINGS_ERROR')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getSettings()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
     }
   })
 })

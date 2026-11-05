@@ -27,11 +27,35 @@ describe('EncryptedAuthStorage', () => {
     storage = new EncryptedAuthStorage(mockEncryptedSettings)
   })
 
-  it('initially has no token', () => {
+  it('initially has no token and hasSession returns false', async () => {
     expect(storage.getAccessToken()).toBeNull()
+    expect(await storage.hasSession()).toBe(false)
   })
 
-  it('persists tokens and notifies observers', async () => {
+  it('initializes token cache in init() if token is unexpired', async () => {
+    await storage.updateTokens(mockSessionToken)
+
+    const newStorage = new EncryptedAuthStorage(mockEncryptedSettings)
+    await newStorage.init()
+
+    expect(newStorage.getAccessToken()).toBe('test-access-token')
+  })
+
+  it('clears expired tokens in init() if token is expired', async () => {
+    const expiredToken: SessionToken = {
+      ...mockSessionToken,
+      expiresAt: Date.now() - 1000
+    }
+    await storage.updateTokens(expiredToken)
+
+    const newStorage = new EncryptedAuthStorage(mockEncryptedSettings)
+    await newStorage.init()
+
+    expect(newStorage.getAccessToken()).toBeNull()
+    expect(await newStorage.getRefreshToken()).toBeNull()
+  })
+
+  it('persists tokens, returns domain models, and notifies observers', async () => {
     const listener = vi.fn()
     storage.observeAccessToken(listener)
 
@@ -43,6 +67,8 @@ describe('EncryptedAuthStorage', () => {
     expect(await storage.getRefreshToken()).toBe('test-refresh-token')
     expect(await storage.getSessionId()).toBe('session-123')
     expect(await storage.getIdentifierId()).toBe('identifier-456')
+    expect(await storage.getExpiresAt()).toBe(mockSessionToken.expiresAt)
+    expect(await storage.hasSession()).toBe(true)
     expect(listener).toHaveBeenCalledWith('test-access-token')
   })
 
@@ -56,10 +82,24 @@ describe('EncryptedAuthStorage', () => {
     expect(storage.getAccessToken()).toBeNull()
     expect(await storage.getAccessTokenModel()).toBeNull()
     expect(await storage.getRefreshToken()).toBeNull()
+    expect(await storage.getSessionId()).toBeNull()
+    expect(await storage.getIdentifierId()).toBeNull()
+    expect(await storage.hasSession()).toBe(false)
     expect(listener).toHaveBeenCalledWith(null)
   })
 
-  it('auto-clears expired tokens on access', async () => {
+  it('does not trigger listener after unsubscribing', async () => {
+    const listener = vi.fn()
+    const unsubscribe = storage.observeAccessToken(listener)
+    listener.mockClear()
+
+    unsubscribe()
+    await storage.updateTokens(mockSessionToken)
+
+    expect(listener).not.toHaveBeenCalled()
+  })
+
+  it('auto-clears expired tokens when getAccessTokenModel is called', async () => {
     const expiredToken: SessionToken = {
       ...mockSessionToken,
       expiresAt: Date.now() - 1000

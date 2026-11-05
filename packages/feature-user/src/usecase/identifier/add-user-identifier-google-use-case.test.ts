@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, appResultSuccess, CommonError, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserAuthProvider, createTestLoginByExternalAuthProviderRequest, createTestUserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { AddUserIdentifierGoogleUseCase } from '@/usecase/identifier/add-user-identifier-google-use-case'
 import { GoogleAuthServiceMock } from '@/mock/auth/google/google-auth-service-mock'
@@ -32,11 +32,26 @@ describe('AddUserIdentifierGoogleUseCase', () => {
     useCase = new AddUserIdentifierGoogleUseCase(mockAuthService, mockRepository)
   })
 
-  it('signs in with google and adds external auth provider identifier', async () => {
+  it('signs in with google and adds external auth provider identifier on success', async () => {
     const result = await useCase.execute()
 
     expect(isSuccess(result)).toBe(true)
+    if (isSuccess(result)) {
+      expect(result.data).toEqual(mockIdentifier)
+    }
     expect(mockRepository.lastAuthProvider).toBe(UserAuthProvider.GOOGLE)
     expect(mockRepository.lastToken).toBe('google-id-token')
+  })
+
+  it('returns failure when Google sign-in fails', async () => {
+    const expectedError = CommonError.unknown()
+    mockAuthService.signInResultProvider = async () => appResultFailure(expectedError)
+
+    const result = await useCase.execute()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error.code).toEqual(expectedError.code)
+    }
   })
 })

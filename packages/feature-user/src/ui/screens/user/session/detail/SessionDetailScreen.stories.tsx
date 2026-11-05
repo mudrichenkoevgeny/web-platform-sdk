@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ClientType, CommonLocales, TEST_EMAIL, TEST_IDENTIFIER_ID, TEST_IP_ADDRESS, TEST_SESSION_ID, TEST_USER_AGENT, TEST_USER_ID, toUserIdentifierIdOrThrow, toUserIdOrThrow, toUserSessionIdOrThrow, UserAuthProvider, UserRole } from '@mudrichenkoevgeny/shared-foundation'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { UserSessionPrivate } from '@mudrichenkoevgeny/shared-foundation'

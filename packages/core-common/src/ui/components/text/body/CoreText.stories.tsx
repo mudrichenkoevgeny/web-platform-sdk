@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CoreBodyText } from '@/ui/components/text/body/CoreText'
 
 const meta: Meta<typeof CoreBodyText> = {

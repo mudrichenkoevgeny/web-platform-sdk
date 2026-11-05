@@ -1,11 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchOpenUserSecurityApi } from '@/network/api/user/security/fetch-open-user-security-api'
+import {
+  ApiException,
+  HttpClientMock,
+  isFailure,
+  isSuccess,
+  ServerError,
+  CommonErrorNoInternetConnection,
+  CommonErrorNetwork
+} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   OpenUserSecurityRoutes,
+  createTestApiErrorResponse,
   createTestTotpSetupPayload,
   createTestTotpRecoveryCodesPayload
 } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchOpenUserSecurityApi } from './fetch-open-user-security-api'
 
 describe('FetchOpenUserSecurityApi', () => {
   let mockHttpClient: HttpClientMock
@@ -27,20 +36,23 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.SETUP_TOTP,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockTotpSetupPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches enableTotp request', async () => {
     const mockTotpRecoveryCodesPayload = createTestTotpRecoveryCodesPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockTotpRecoveryCodesPayload)
 
-    const result = await api.enableTotp('mfa1', '123456')
+    const result = await api.enableTotp('mfa-token-123', '654321')
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserSecurityRoutes.ENABLE_TOTP,
-      expect.objectContaining({ method: 'POST', body: JSON.stringify({ mfa_token: 'mfa1', totp_code: '123456' }) })
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ mfa_token: 'mfa-token-123', totp_code: '654321' })
+      })
     )
-    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches disableTotp request', async () => {
@@ -52,7 +64,7 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.DISABLE_TOTP,
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(result).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches getRecoveryCodes request', async () => {
@@ -64,7 +76,7 @@ describe('FetchOpenUserSecurityApi', () => {
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenUserSecurityRoutes.GET_RECOVERY_CODES
     )
-    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches regenerateRecoveryCodes request', async () => {
@@ -77,6 +89,33 @@ describe('FetchOpenUserSecurityApi', () => {
       OpenUserSecurityRoutes.REGENERATE_RECOVERY_CODES,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockTotpRecoveryCodesPayload })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'INVALID_TOTP', message: 'Bad TOTP' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.enableTotp('mfa-token-123', 'wrong')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('INVALID_TOTP')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.setupTotp()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

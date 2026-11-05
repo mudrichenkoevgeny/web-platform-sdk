@@ -71,4 +71,10 @@ describe('EncryptedManagementSecuritySettingsStorage', () => {
     await storage.clearManagementSecuritySettings()
     expect(await storage.getManagementSecuritySettings()).toBeNull()
   })
+
+  it('returns null and cleans up entry when JSON is corrupted', async () => {
+    await mockSettingsStorage.put('security_management_settings', 'corrupted-{')
+    expect(await storage.getManagementSecuritySettings()).toBeNull()
+    expect(await mockSettingsStorage.get('security_management_settings')).toBeNull()
+  })
 })

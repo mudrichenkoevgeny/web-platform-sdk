@@ -5,6 +5,14 @@
   },
   "include": [],
   "references": [
-    { "path": "./packages/core-common" }
+    { "path": "./packages/core-common" },
+    { "path": "./packages/core-security" },
+    { "path": "./packages/core-settings" },
+    { "path": "./packages/core-storage" },
+    { "path": "./packages/feature-user" },
+    { "path": "./packages/feature-clientuser" },
+    { "path": "./packages/feature-managementuser" },
+    { "path": "./samples/client-app" },
+    { "path": "./samples/management-app" }
   ]
 }

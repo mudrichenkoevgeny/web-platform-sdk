@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, appendQueryParamsToPath, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementIdentifiersApi } from '@/network/api/identifier/fetch-self-management-identifiers-api'
 import {
   createTestUserIdentifierPrivatePayload,
+  createTestApiErrorResponse,
   SelfManagementIdentifierRoutes,
   SelfIdentifierListParamsParser,
   SortOrder,
@@ -35,12 +36,12 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(identifierPayload)
 
     const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
-    const identifierResult = await api.getUserIdentifier(identifierId)
+    const result = await api.getUserIdentifier(identifierId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementIdentifierRoutes.GET_IDENTIFIER.replace('{user_identifier_id}', TEST_IDENTIFIER_ID)
     )
-    expect(identifierResult).toEqual({ success: true, data: identifierPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches getUserIdentifiers request with query params', async () => {
@@ -55,7 +56,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
       userAuthProviders: [],
       identifiers: []
     }
-    const identifierListResult = await api.getUserIdentifiers(selfIdentifierListParams)
+    const result = await api.getUserIdentifiers(selfIdentifierListParams)
 
     const expectedUrl = appendQueryParamsToPath(
       SelfManagementIdentifierRoutes.GET_IDENTIFIERS,
@@ -63,7 +64,7 @@ describe('FetchSelfManagementIdentifiersApi', () => {
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(identifierListResult).toEqual({ success: true, data: expectedIdentifierListPagedResult })
+    expect(result).toEqual({ success: true, data: expectedIdentifierListPagedResult })
   })
 
   it('dispatches emailChangePassword request', async () => {
@@ -71,12 +72,39 @@ describe('FetchSelfManagementIdentifiersApi', () => {
 
     const identifierId = toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID)
     const emailPasswordChangeRequest = { old_password: 'old', new_password: 'new' }
-    const emailChangePasswordResult = await api.emailChangePassword(identifierId, emailPasswordChangeRequest)
+    const result = await api.emailChangePassword(identifierId, emailPasswordChangeRequest)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       SelfManagementIdentifierRoutes.IDENTIFIER_EMAIL_CHANGE_PASSWORD.replace('{user_identifier_id}', TEST_IDENTIFIER_ID),
       expect.objectContaining({ method: 'POST', body: JSON.stringify(emailPasswordChangeRequest) })
     )
-    expect(emailChangePasswordResult).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'INVALID_PASSWORD', message: 'Wrong password' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.emailChangePassword(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID), { old_password: 'wrong', new_password: 'new' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('INVALID_PASSWORD')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getUserIdentifier(toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID))
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createTestUserPrivate, TEST_USER_ID, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { EncryptedSettingsMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedUserStorage } from '@/storage/user/encrypted-user-storage'
@@ -32,5 +32,33 @@ describe('EncryptedUserStorage', () => {
 
     const retrieved = await storage.getCurrentUser()
     expect(retrieved).toBeNull()
+  })
+
+  it('returns null when stored user JSON is corrupted', async () => {
+    await mockEncryptedSettings.put('current_user', 'invalid-json-{')
+
+    const retrieved = await storage.getCurrentUser()
+    expect(retrieved).toBeNull()
+  })
+
+  it('returns null when stored user JSON fails schema validation', async () => {
+    await mockEncryptedSettings.put('current_user', JSON.stringify({ invalid_schema: true }))
+
+    const retrieved = await storage.getCurrentUser()
+    expect(retrieved).toBeNull()
+  })
+
+  it('observes current user changes via encryptedSettings listener', async () => {
+    const listener = vi.fn()
+    const unsubscribe = storage.observeCurrentUser(listener)
+
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(listener).toHaveBeenCalledWith(null)
+
+    await storage.updateCurrentUser(mockUser)
+
+    expect(listener).toHaveBeenCalledWith(mockUser)
+
+    unsubscribe()
   })
 })

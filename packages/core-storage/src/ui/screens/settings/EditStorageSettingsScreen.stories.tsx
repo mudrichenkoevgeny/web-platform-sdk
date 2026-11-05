@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { EditStorageSettingsScreen } from './EditStorageSettingsScreen'
 
 const meta: Meta<typeof EditStorageSettingsScreen> = {

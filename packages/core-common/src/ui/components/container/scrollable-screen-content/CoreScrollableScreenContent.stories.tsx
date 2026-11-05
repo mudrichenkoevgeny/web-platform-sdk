@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CoreScrollableScreenContent } from '@/ui/components/container/scrollable-screen-content/CoreScrollableScreenContent'
 
 const meta: Meta<typeof CoreScrollableScreenContent> = {

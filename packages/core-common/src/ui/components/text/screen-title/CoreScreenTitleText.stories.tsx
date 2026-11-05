@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { CoreScreenTitleText } from '@/ui/components/text/screen-title/CoreScreenTitleText'
 
 const meta: Meta<typeof CoreScreenTitleText> = {

@@ -38,7 +38,7 @@ describe('ConfirmationRepositoryImpl', () => {
 
     await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, TEST_EMAIL, action)
 
-    now += 10000 // 10 seconds later
+    now += 10000
     const secondAction = vi.fn()
     const secondResult = await repo.executeWithTimer(ConfirmationType.ADD_EMAIL, TEST_EMAIL, secondAction)
 

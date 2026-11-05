@@ -54,3 +54,6 @@ Thumbs.db
 .parcel-cache/
 .turbo/
 .tanstack/
+
+*storybook.log
+storybook-static

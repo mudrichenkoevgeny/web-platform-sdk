@@ -27,6 +27,7 @@ export const Route = createFileRoute('/user/edit')({
           selfUpdateUserUseCase: appComponent.clientUserComponent.selfUpdateUserUseCase,
           validateNicknameUseCase,
           validateDisplayNameUseCase,
+          uploadFileUseCase: appComponent.clientUserComponent.uploadFileUseCase,
           onSuccess: () => void navigateUp({ to: ClientUserNavigation.Main.route }),
           onBack: () => void navigateUp({ to: ClientUserNavigation.Main.route })
         }}

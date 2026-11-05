@@ -23,12 +23,12 @@ export class RefreshManagementUserConfigurationUseCase {
   /**
    * Constructs a new {@link RefreshManagementUserConfigurationUseCase}.
    *
-   * @param managementUserConfigurationApi Remote source for the bundled configuration DTO
-   * @param openGlobalSettingsRepository Persists open global settings from the bundle
-   * @param openSecuritySettingsRepository Persists open security settings from the bundle
-   * @param openStorageSettingsRepository Persists open storage settings from the bundle
-   * @param managementAuthSettingsRepository Persists management auth settings from the bundle
-   * @param authStorage Auth storage to determine whether active session exists
+   * @param managementUserConfigurationApi - Remote source for the bundled configuration DTO
+   * @param openGlobalSettingsRepository - Persists open global settings from the bundle
+   * @param openSecuritySettingsRepository - Persists open security settings from the bundle
+   * @param openStorageSettingsRepository - Persists open storage settings from the bundle
+   * @param managementAuthSettingsRepository - Persists management auth settings from the bundle
+   * @param authStorage - Auth storage to determine whether active session exists
    */
   public constructor(
     private readonly managementUserConfigurationApi: ManagementUserConfigurationApi,

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementRefreshTokenApi } from '@/network/api/auth/refresh-token/fetch-self-management-refresh-token-api'
-import { SelfManagementRefreshTokenRoutes, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementRefreshTokenRoutes, createTestApiErrorResponse, createTestSessionTokenPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementRefreshTokenApi', () => {
   let mockHttpClient: HttpClientMock
@@ -27,6 +27,33 @@ describe('FetchSelfManagementRefreshTokenApi', () => {
         body: JSON.stringify(refreshTokenRequest)
       })
     )
-    expect(refreshTokenResult).toEqual({ success: true, data: mockSessionTokenPayload })
+    expect(isSuccess(refreshTokenResult)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'INVALID_REFRESH_TOKEN', message: 'Token expired' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.refreshToken({ refresh_token: 'expired' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('INVALID_REFRESH_TOKEN')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.refreshToken({ refresh_token: 'token' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

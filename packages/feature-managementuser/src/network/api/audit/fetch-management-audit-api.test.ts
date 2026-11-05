@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, appendQueryParamsToPath, isFailure, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementAuditApi } from '@/network/api/audit/fetch-management-audit-api'
 import {
   createTestAuditEventPrivatePayload,
+  createTestApiErrorResponse,
   ManagementAuditRoutes,
   ManagementAuditEventListParamsParser,
   SortOrder,
@@ -90,8 +91,32 @@ describe('FetchManagementAuditApi', () => {
     const auditEventResult = await api.getAuditEvent('')
 
     expect(auditEventResult.success).toBe(false)
-    if (!auditEventResult.success) {
-      expect(auditEventResult.error.code).toBeDefined()
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'AUDIT_EVENT_NOT_FOUND', message: 'Not found' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getAuditEvent(TEST_AUDIT_EVENT_ID)
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('AUDIT_EVENT_NOT_FOUND')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getAuditEvent(TEST_AUDIT_EVENT_ID)
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
     }
   })
 })

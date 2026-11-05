@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ListingOptionsPanel } from '@/ui/components/listing/option/panel/ListingOptionsPanel'
 
 const meta: Meta<typeof ListingOptionsPanel> = {

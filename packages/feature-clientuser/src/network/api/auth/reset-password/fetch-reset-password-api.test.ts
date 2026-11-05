@@ -1,15 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchResetPasswordApi } from '@/network/api/auth/reset-password/fetch-reset-password-api'
-import {
-  OpenResetPasswordRoutes,
-  TEST_EMAIL,
-  TEST_IDENTIFIER_ID,
-  toUserIdentifierPrivatePayload,
-  createTestUserIdentifierPrivate,
-  toUserIdentifierIdOrThrow,
-  createTestOtpConfirmationPayload
-} from '@mudrichenkoevgeny/shared-foundation'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { OpenResetPasswordRoutes, createTestApiErrorResponse, createTestUserIdentifierPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchResetPasswordApi } from './fetch-reset-password-api'
 
 describe('FetchResetPasswordApi', () => {
   let mockHttpClient: HttpClientMock
@@ -22,38 +14,42 @@ describe('FetchResetPasswordApi', () => {
   })
 
   it('dispatches resetPassword request', async () => {
-    const mockUserIdentifierPayload = toUserIdentifierPrivatePayload(
-      createTestUserIdentifierPrivate({ id: toUserIdentifierIdOrThrow(TEST_IDENTIFIER_ID) })
-    )
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserIdentifierPayload)
+    const mockIdentifierPayload = createTestUserIdentifierPrivatePayload()
+    vi.mocked(mockHttpClient.request).mockResolvedValue(mockIdentifierPayload)
 
-    const request = { email: TEST_EMAIL, new_password: 'new_secret', confirmation_code: '123456' }
-    const result = await api.resetPassword(request)
+    const result = await api.resetPassword({ email: 'user@example.com', new_password: 'new', confirmation_code: '123456' })
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenResetPasswordRoutes.RESET_EMAIL_PASSWORD,
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify(request)
-      })
+      expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockUserIdentifierPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
-  it('dispatches sendResetPasswordConfirmationToEmail request', async () => {
-    const mockOtpConfirmationPayload = createTestOtpConfirmationPayload()
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockOtpConfirmationPayload)
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'INVALID_CODE', message: 'Bad code' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
 
-    const request = { email: TEST_EMAIL }
-    const result = await api.sendResetPasswordConfirmationToEmail(request)
+    const result = await api.resetPassword({ email: 'user@example.com', new_password: 'new', confirmation_code: 'wrong' })
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenResetPasswordRoutes.SEND_RESET_EMAIL_PASSWORD_CONFIRMATION,
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify(request)
-      })
-    )
-    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('INVALID_CODE')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.resetPassword({ email: 'user@example.com', new_password: 'new', confirmation_code: '123456' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

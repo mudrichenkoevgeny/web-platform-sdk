@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { TotpRecoveryCodesScreen } from '@/ui/screens/user/totp/recovery/TotpRecoveryCodesScreen'
 import type { TotpRecoveryCodesStoreDependencies } from '@/ui/screens/user/totp/recovery/totp-recovery-codes-store'

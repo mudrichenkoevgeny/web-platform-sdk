@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { PendingDeletionScreen } from '@/ui/screens/auth/login/pending-deletion/PendingDeletionScreen'
 import type { PendingDeletionStoreDependencies } from '@/ui/screens/auth/login/pending-deletion/pending-deletion-store'

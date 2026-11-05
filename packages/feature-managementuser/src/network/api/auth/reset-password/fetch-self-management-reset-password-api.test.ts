@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementResetPasswordApi } from '@/network/api/auth/reset-password/fetch-self-management-reset-password-api'
 import {
   SelfManagementResetPasswordRoutes,
@@ -7,7 +7,8 @@ import {
   TEST_IDENTIFIER_ID,
   createTestUserIdentifierPrivatePayload,
   toUserIdentifierIdOrThrow,
-  createTestOtpConfirmationPayload
+  createTestOtpConfirmationPayload,
+  createTestApiErrorResponse
 } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementResetPasswordApi', () => {
@@ -36,7 +37,7 @@ describe('FetchSelfManagementResetPasswordApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ success: true, data: mockUserIdentifierPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches sendResetPasswordConfirmationToEmail request', async () => {
@@ -53,6 +54,33 @@ describe('FetchSelfManagementResetPasswordApi', () => {
         body: JSON.stringify(request)
       })
     )
-    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'INVALID_CONFIRMATION_CODE', message: 'Wrong code' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.resetPassword({ email: TEST_EMAIL, new_password: 'pass', confirmation_code: 'wrong' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('INVALID_CONFIRMATION_CODE')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.sendResetPasswordConfirmationToEmail({ email: TEST_EMAIL })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

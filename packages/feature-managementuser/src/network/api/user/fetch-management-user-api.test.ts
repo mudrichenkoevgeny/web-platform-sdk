@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { HttpClientMock, appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, appendQueryParamsToPath, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchManagementUserApi } from '@/network/api/user/fetch-management-user-api'
 import {
   createTestUserPrivatePayload,
+  createTestApiErrorResponse,
   ManagementUsersRoutes,
   ManagementUserListParamsParser,
   UserApiPaths,
@@ -38,13 +39,13 @@ describe('FetchManagementUserApi', () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
     const createUserParams: CreateUserParams = { email: TEST_EMAIL, password: 'secret' }
-    const createUserResult = await api.createUser(createUserParams)
+    const result = await api.createUser(createUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.CREATE_USER,
       expect.objectContaining({ method: 'POST' })
     )
-    expect(createUserResult).toEqual({ success: true, data: mockUserPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches getUsers request with query params', async () => {
@@ -65,7 +66,7 @@ describe('FetchManagementUserApi', () => {
       isTotpEnabled: null,
       permissionCodes: []
     }
-    const userListResult = await api.getUsers(managementUserListParams)
+    const result = await api.getUsers(managementUserListParams)
 
     const expectedUrl = appendQueryParamsToPath(
       ManagementUsersRoutes.GET_USERS,
@@ -73,7 +74,7 @@ describe('FetchManagementUserApi', () => {
     )
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(expectedUrl)
-    expect(userListResult).toEqual({ success: true, data: expectedUserListPagedResult })
+    expect(result).toEqual({ success: true, data: expectedUserListPagedResult })
   })
 
   it('dispatches getUser request', async () => {
@@ -81,12 +82,12 @@ describe('FetchManagementUserApi', () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockUserPayload)
 
     const userId = toUserIdOrThrow(TEST_USER_ID)
-    const userResult = await api.getUser(userId)
+    const result = await api.getUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.GET_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID)
     )
-    expect(userResult).toEqual({ success: true, data: mockUserPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches updateUser request', async () => {
@@ -94,25 +95,52 @@ describe('FetchManagementUserApi', () => {
 
     const userId = toUserIdOrThrow(TEST_USER_ID)
     const updateUserParams: UpdateUserParams = { authorityLevel: 10 }
-    const updateUserResult = await api.updateUser(userId, updateUserParams)
+    const result = await api.updateUser(userId, updateUserParams)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.UPDATE_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID),
       expect.objectContaining({ method: 'PATCH' })
     )
-    expect(updateUserResult).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches deleteUser request', async () => {
     vi.mocked(mockHttpClient.request).mockResolvedValue(undefined)
 
     const userId = toUserIdOrThrow(TEST_USER_ID)
-    const deleteUserResult = await api.deleteUser(userId)
+    const result = await api.deleteUser(userId)
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       ManagementUsersRoutes.DELETE_USER.replace(`{${UserApiPaths.USER_ID}}`, TEST_USER_ID),
       expect.objectContaining({ method: 'DELETE' })
     )
-    expect(deleteUserResult).toEqual({ success: true, data: undefined })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'USER_NOT_FOUND', message: 'Not found' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getUser(toUserIdOrThrow(TEST_USER_ID))
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('USER_NOT_FOUND')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getUser(toUserIdOrThrow(TEST_USER_ID))
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

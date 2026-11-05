@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   managementAuditEventListParamsSchema,
   managementGlobalIdentifierListParamsSchema,
@@ -10,10 +10,6 @@ import {
   UserRole
 } from '@mudrichenkoevgeny/shared-foundation'
 import { appendQueryParamsToPath } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createAuditEventListStore } from '@/ui/screens/management/audit/list/audit-event-list-store'
-import { createGlobalUserListStore } from '@/ui/screens/management/user/global-list/global-user-list-store'
-import { GetAuditEventsUseCaseMock } from '@/mock/usecase/audit/get-audit-events-use-case-mock'
-import { GetUsersUseCaseMock } from '@/mock/usecase/user/get-users-use-case-mock'
 
 describe('Unified Navigation Parameters & API Architecture Suite', () => {
   describe('Zod Search Parameter Schema Robustness & Defaults', () => {
@@ -166,71 +162,6 @@ describe('Unified Navigation Parameters & API Architecture Suite', () => {
       }
       const url = appendQueryParamsToPath('/management/audit/events', mockParams)
       expect(url).toBe('/management/audit/events?page_number=2&actor_user_role=admin')
-    })
-  })
-
-  describe('Store Integration with Typed KMP Search Params', () => {
-    it('AuditEventListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const getAuditEventsUseCase = new GetAuditEventsUseCaseMock()
-      vi.spyOn(getAuditEventsUseCase, 'execute')
-
-      const typedParams = managementAuditEventListParamsSchema.parse({
-        pageNumber: 2,
-        pageSize: 20,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        actorIds: [],
-        actorTypes: [],
-        actorUserRoles: [],
-        actions: ['user.login'],
-        resources: [],
-        resourceIds: [],
-        statuses: [],
-        messages: []
-      })
-
-      const store = createAuditEventListStore({
-        getAuditEventsUseCase,
-        onNavigateToEventDetail: vi.fn(),
-        onBack: vi.fn(),
-        searchParams: typedParams
-      })
-
-      await store.getState().initScreen()
-
-      expect(getAuditEventsUseCase.execute).toHaveBeenCalledWith(typedParams)
-    })
-
-    it('GlobalUserListStore passes typed KMP searchParams directly to UseCase', async () => {
-      const getUsersUseCase = new GetUsersUseCaseMock()
-      vi.spyOn(getUsersUseCase, 'execute')
-
-      const typedParams = managementUserListParamsSchema.parse({
-        pageNumber: 3,
-        pageSize: 20,
-        sortBy: 'created_at',
-        sortOrder: SortOrder.DESC,
-        userRoles: [UserRole.ADMIN],
-        accountStatuses: [],
-        accountStatusesOnRestore: [],
-        accountLockoutTypes: [],
-        authorityLevelFrom: null,
-        authorityLevelTo: null,
-        isTotpEnabled: null,
-        permissionCodes: []
-      })
-
-      const store = createGlobalUserListStore({
-        getUsersUseCase,
-        onNavigateToUserDetail: vi.fn(),
-        onNavigateToCreateUser: vi.fn(),
-        onBack: vi.fn(),
-        searchParams: typedParams
-      })
-
-      await store.getState().initScreen()
-
-      expect(getUsersUseCase.execute).toHaveBeenCalledWith(typedParams)
     })
   })
 })

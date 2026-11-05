@@ -1,5 +1,8 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { EditAuthSettingsStoreDependencies } from '@/ui/screens/management/settings/auth/edit-auth-settings-store'
+import type { GetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/get-management-auth-settings-use-case'
+import type { UpdateManagementAuthSettingsUseCase } from '@/usecase/auth/settings/update-management-auth-settings-use-case'
+import type { ResetManagementAuthSettingsUseCase } from '@/usecase/auth/settings/reset-management-auth-settings-use-case'
 
 export const editAuthSettingsDependenciesMock = (
   overrides?: Partial<EditAuthSettingsStoreDependencies>
@@ -35,13 +38,13 @@ export const editAuthSettingsDependenciesMock = (
           whitelist: []
         }
       })
-  } as any,
+  } as unknown as GetManagementAuthSettingsUseCase,
   updateManagementAuthSettingsUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  } as unknown as UpdateManagementAuthSettingsUseCase,
   resetManagementAuthSettingsUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  } as unknown as ResetManagementAuthSettingsUseCase,
   onBack: () => {},
   ...overrides
 })

@@ -36,4 +36,10 @@ describe('EncryptedManagementGlobalSettingsStorage', () => {
     await storage.clearManagementGlobalSettings()
     expect(await storage.getManagementGlobalSettings()).toBeNull()
   })
+
+  it('returns null and cleans up entry when JSON is corrupted', async () => {
+    await mockSettingsStorage.put('global_management_settings', 'corrupted-{')
+    expect(await storage.getManagementGlobalSettings()).toBeNull()
+    expect(await mockSettingsStorage.get('global_management_settings')).toBeNull()
+  })
 })

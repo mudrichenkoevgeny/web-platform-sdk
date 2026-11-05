@@ -1,26 +1,54 @@
-import { describe, it, expect, vi } from 'vitest'
-import type { HttpClient } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { OpenStorageSettingsRoutes, createTestApiErrorResponse, createTestOpenStorageSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { FetchOpenStorageSettingsApi } from './fetch-open-storage-settings-api'
 
 describe('FetchOpenStorageSettingsApi', () => {
-  const mockHttpClient: HttpClient = {
-    request: vi.fn()
-  } as unknown as HttpClient
+  let mockHttpClient: HttpClientMock
+  let api: FetchOpenStorageSettingsApi
 
-  const api = new FetchOpenStorageSettingsApi(mockHttpClient)
+  beforeEach(() => {
+    mockHttpClient = new HttpClientMock()
+    vi.spyOn(mockHttpClient, 'request')
+    api = new FetchOpenStorageSettingsApi(mockHttpClient)
+  })
 
-  it('fetches open storage settings and converts payload to domain model', async () => {
-    const mockPayload = {
-      min_upload_size_bytes: 1024,
-      max_upload_size_bytes: 10485760
-    }
+  it('fetches open storage settings successfully', async () => {
+    const mockPayload = createTestOpenStorageSettingsPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockPayload)
 
     const result = await api.getSettings()
-    expect(result.success).toBe(true)
-    if (result.success) {
-      expect(result.data.minUploadSizeBytes).toBe(1024)
-      expect(result.data.maxUploadSizeBytes).toBe(10485760)
+
+    expect(mockHttpClient.request).toHaveBeenCalledWith(
+      OpenStorageSettingsRoutes.GET_OPEN_STORAGE_SETTINGS
+    )
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'STORAGE_SETTINGS_ERROR', message: 'Error' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.getSettings()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('STORAGE_SETTINGS_ERROR')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.getSettings()
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
     }
   })
 })

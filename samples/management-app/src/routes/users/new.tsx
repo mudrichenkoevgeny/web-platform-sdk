@@ -14,6 +14,7 @@ export const Route = createFileRoute('/users/new')({
       <CreateUserScreen
         dependencies={{
           createUserUseCase: managementDeps.createUserUseCase,
+          uploadFileUseCase: managementDeps.selfManagementUploadFileUseCase,
           onSuccess: () => navigateUp({ to: ManagementUsersNavigation.CreateUser.parentRoute, search: (raw) => cleanSearchParams(globalUserListSearchSchema.parse(raw)) }),
           onBack: () => navigateUp({ to: ManagementUsersNavigation.CreateUser.parentRoute, search: (raw) => cleanSearchParams(globalUserListSearchSchema.parse(raw)) })
         }}

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestUserSummary } from '@mudrichenkoevgeny/shared-foundation'
 import { UserItem } from '@/ui/components/user/item/UserItem'

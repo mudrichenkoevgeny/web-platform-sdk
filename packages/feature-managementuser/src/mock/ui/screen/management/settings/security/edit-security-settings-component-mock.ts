@@ -1,5 +1,8 @@
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import type { EditSecuritySettingsStoreDependencies } from '@/ui/screens/management/settings/security/edit-security-settings-store'
+import type { GetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/get-management-security-settings-use-case'
+import type { UpdateManagementSecuritySettingsUseCase } from '@/usecase/security/settings/update-management-security-settings-use-case'
+import type { ResetManagementSecuritySettingsUseCase } from '@/usecase/security/settings/reset-management-security-settings-use-case'
 
 export const editSecuritySettingsDependenciesMock = (
   overrides?: Partial<EditSecuritySettingsStoreDependencies>
@@ -50,13 +53,13 @@ export const editSecuritySettingsDependenciesMock = (
         rateLimitPeriodSeconds: 60,
         refreshTokenRotationGracePeriodSeconds: 30
       })
-  } as any,
+  } as unknown as GetManagementSecuritySettingsUseCase,
   updateManagementSecuritySettingsUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  } as unknown as UpdateManagementSecuritySettingsUseCase,
   resetManagementSecuritySettingsUseCase: {
     execute: async () => appResultSuccess(undefined)
-  } as any,
+  } as unknown as ResetManagementSecuritySettingsUseCase,
   onBack: () => {},
   ...overrides
 })

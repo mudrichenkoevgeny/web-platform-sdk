@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { createTestStorageFileSummary, StorageCategory, toFileIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileItem } from './StorageFileItem'
 

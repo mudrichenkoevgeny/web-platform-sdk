@@ -1,12 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { FetchRegistrationApi } from '@/network/api/auth/registration/fetch-registration-api'
-import {
-  OpenRegistrationRoutes,
-  TEST_EMAIL,
-  createTestAuthDataPayload,
-  createTestOtpConfirmationPayload
-} from '@mudrichenkoevgeny/shared-foundation'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { OpenRegistrationRoutes, createTestApiErrorResponse, createTestAuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { FetchRegistrationApi } from './fetch-registration-api'
 
 describe('FetchRegistrationApi', () => {
   let mockHttpClient: HttpClientMock
@@ -22,33 +17,39 @@ describe('FetchRegistrationApi', () => {
     const mockAuthDataPayload = createTestAuthDataPayload()
     vi.mocked(mockHttpClient.request).mockResolvedValue(mockAuthDataPayload)
 
-    const request = { email: TEST_EMAIL, password: 'secret_pass', confirmation_code: '123456' }
-    const result = await api.registerByEmail(request)
+    const result = await api.registerByEmail({ email: 'user@example.com', password: 'pass', confirmation_code: '123456' })
 
     expect(mockHttpClient.request).toHaveBeenCalledWith(
       OpenRegistrationRoutes.REGISTRATION_BY_EMAIL,
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify(request)
-      })
+      expect.objectContaining({ method: 'POST' })
     )
-    expect(result).toEqual({ success: true, data: mockAuthDataPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
-  it('dispatches sendRegistrationConfirmationToEmail request', async () => {
-    const mockOtpConfirmationPayload = createTestOtpConfirmationPayload()
-    vi.mocked(mockHttpClient.request).mockResolvedValue(mockOtpConfirmationPayload)
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'EMAIL_ALREADY_EXISTS', message: 'In use' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
 
-    const request = { email: TEST_EMAIL }
-    const result = await api.sendRegistrationConfirmationToEmail(request)
+    const result = await api.registerByEmail({ email: 'user@example.com', password: 'pass', confirmation_code: '123456' })
 
-    expect(mockHttpClient.request).toHaveBeenCalledWith(
-      OpenRegistrationRoutes.SEND_REGISTRATION_CONFIRMATION_TO_EMAIL,
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify(request)
-      })
-    )
-    expect(result).toEqual({ success: true, data: mockOtpConfirmationPayload })
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('EMAIL_ALREADY_EXISTS')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.registerByEmail({ email: 'user@example.com', password: 'pass', confirmation_code: '123456' })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

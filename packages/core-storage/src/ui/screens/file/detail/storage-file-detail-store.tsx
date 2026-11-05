@@ -285,7 +285,7 @@ export const StorageFileDetailProvider: React.FC<StorageFileDetailProviderProps>
  * @template T - Selected state slice return type.
  * @param selector - Selector function extracting values from store state.
  * @returns Selected slice of store state.
- * @throws {Error} If called outside of {@link StorageFileDetailProvider}.
+ * @throws Error - If called outside of {@link StorageFileDetailProvider}.
  */
 export const useStorageFileDetailStore = <T,>(
   selector: (state: StorageFileDetailStoreState) => T

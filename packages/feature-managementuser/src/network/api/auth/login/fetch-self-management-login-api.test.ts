@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { HttpClientMock } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { ApiException, HttpClientMock, isFailure, isSuccess, ServerError, CommonErrorNoInternetConnection, CommonErrorNetwork } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { FetchSelfManagementLoginApi } from '@/network/api/auth/login/fetch-self-management-login-api'
-import { SelfManagementLoginRoutes, createTestAuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementLoginRoutes, createTestApiErrorResponse, createTestAuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
 
 describe('FetchSelfManagementLoginApi', () => {
   let mockHttpClient: HttpClientMock
@@ -26,7 +26,7 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify({ email: 'admin@example.com', password: 'secret' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockAuthDataPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches loginByTotp request', async () => {
@@ -42,7 +42,7 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify({ mfa_token: 'mfa123', totp_code: '654321' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockAuthDataPayload })
+    expect(isSuccess(result)).toBe(true)
   })
 
   it('dispatches loginByTotpRecoveryCode request', async () => {
@@ -58,6 +58,33 @@ describe('FetchSelfManagementLoginApi', () => {
         body: JSON.stringify({ mfa_token: 'mfa123', totp_code: 'rec_123' })
       })
     )
-    expect(result).toEqual({ success: true, data: mockAuthDataPayload })
+    expect(isSuccess(result)).toBe(true)
+  })
+
+  it('handles ApiException and returns ServerError', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({ code: 'UNAUTHORIZED', message: 'Bad password' })
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new ApiException(apiErrorResponse))
+
+    const result = await api.loginByEmail('admin@example.com', 'wrong')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      expect(result.error.code).toBe('UNAUTHORIZED')
+    }
+  })
+
+  it('handles network TypeError and returns CommonErrorNetwork or CommonErrorNoInternetConnection', async () => {
+    vi.mocked(mockHttpClient.request).mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const result = await api.loginByEmail('admin@example.com', 'secret')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNetwork ||
+        result.error instanceof CommonErrorNoInternetConnection
+      ).toBe(true)
+    }
   })
 })

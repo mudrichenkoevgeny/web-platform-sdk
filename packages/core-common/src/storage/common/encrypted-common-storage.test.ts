@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { EncryptedCommonStorage } from '@/storage/common/encrypted-common-storage'
-import { createInMemoryEncryptedSettings } from '@/mock/storage/encrypted-settings-mock'
+import { createInMemoryEncryptedSettings, EncryptedSettingsMock } from '@/mock/storage/encrypted-settings-mock'
 
 describe('EncryptedCommonStorage', () => {
-  it('returns null when deviceId is not set', async () => {
+  it('returns null when deviceId is not set in storage', async () => {
     const settings = createInMemoryEncryptedSettings()
     const storage = new EncryptedCommonStorage(settings)
 
@@ -30,5 +30,13 @@ describe('EncryptedCommonStorage', () => {
 
     const deviceId = await storage.getDeviceId()
     expect(deviceId).toBeNull()
+  })
+
+  it('handles encryptedSettings errors when reading or writing deviceId', async () => {
+    const settings = new EncryptedSettingsMock()
+    vi.spyOn(settings, 'get').mockRejectedValue(new Error('Storage access error'))
+    const storage = new EncryptedCommonStorage(settings)
+
+    await expect(storage.getDeviceId()).rejects.toThrow('Storage access error')
   })
 })

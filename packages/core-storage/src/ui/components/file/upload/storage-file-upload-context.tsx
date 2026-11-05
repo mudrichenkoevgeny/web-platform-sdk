@@ -44,7 +44,7 @@ export const StorageFileUploadProvider: React.FC<StorageFileUploadProviderProps>
  * @template T - Selected state slice return type.
  * @param selector - Selector function extracting values from store state.
  * @returns Selected slice of store state.
- * @throws {Error} If called outside of {@link StorageFileUploadProvider}.
+ * @throws Error - If called outside of {@link StorageFileUploadProvider}.
  */
 export const useStorageFileUploadStore = <T,>(
   selector: (state: StorageFileUploadStoreState) => T
