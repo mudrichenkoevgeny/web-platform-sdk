@@ -15,6 +15,7 @@ catalog:
   '@mudrichenkoevgeny/shared-foundation': '^0.1.7'
   #'@mudrichenkoevgeny/shared-foundation': 'file:D:\Documents\Projects\shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.6.tgz'
   '@tanstack/react-router': '^1.111.0'
+  '@tanstack/router-cli': '^1.111.0'
   '@tanstack/router-plugin': '^1.111.0'
   '@testing-library/react': '^16.0.0'
   '@testing-library/user-event': '^14.5.0'

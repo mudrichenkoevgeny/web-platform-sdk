@@ -19,7 +19,7 @@
     "version:set": "pnpm -r --filter \"./packages/*\" exec npm version --no-git-tag-version",
     "change": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish --provenance",
+    "release": "pnpm build && changeset publish",
     "audit": "pnpm audit --audit-level critical",
     "deps:check": "pnpm outdated",
     "deps:upgrade": "pnpm update --interactive --latest",
