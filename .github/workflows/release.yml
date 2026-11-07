@@ -20,6 +20,11 @@ jobs:
       attestations: write
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
@@ -49,6 +54,11 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 

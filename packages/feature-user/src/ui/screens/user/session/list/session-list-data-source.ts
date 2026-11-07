@@ -101,7 +101,7 @@ export const createManagementSessionListDataSource = (
     }),
   revokeSession: deps.managementDeleteSessionUseCase
     ? (sessionId, userId) =>
-        deps.managementDeleteSessionUseCase!.execute(userId ?? ('' as UserId), sessionId)
+        deps.managementDeleteSessionUseCase!.execute(userId!, sessionId)
     : undefined,
   revokeAllOtherSessions: deps.managementDeleteAllUserSessionsUseCase
     ? () => deps.managementDeleteAllUserSessionsUseCase!.execute('')

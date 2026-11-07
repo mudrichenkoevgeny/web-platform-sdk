@@ -1,5 +1,5 @@
-import { ClientType } from '@mudrichenkoevgeny/shared-foundation'
-import type { ClientDeviceInfoPayload, ClientDeviceId } from '@mudrichenkoevgeny/shared-foundation'
+import { ClientType, toClientDeviceIdOrNull } from '@mudrichenkoevgeny/shared-foundation'
+import type { ClientDeviceInfoPayload } from '@mudrichenkoevgeny/shared-foundation'
 import type { CommonStorage } from '@/storage/common/common-storage'
 import { UserAgentParser } from '@/platform/parser/user-agent-parser'
 import { generateUuid } from '@/utils/uuid-utils'
@@ -53,7 +53,7 @@ export class WebClientDeviceInfoProvider implements ClientDeviceInfoProvider {
     return {
       client_type: ClientType.WEB,
       language: language ?? null,
-      device_id: (rawDeviceId as ClientDeviceId) ?? null,
+      device_id: toClientDeviceIdOrNull(rawDeviceId),
       device_name: deviceName,
       app_version: this.appVersion,
       operation_system_version: osName

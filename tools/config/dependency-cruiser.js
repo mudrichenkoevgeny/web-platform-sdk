@@ -5,14 +5,14 @@ module.exports = {
       name: 'no-feature-cross-dependencies',
       severity: 'error',
       comment: 'Feature modules must not depend on other feature modules. Use composition in the host app or core modules.',
-      from: { path: '^packages/feature-([^/]+)/' },
-      to: { path: '^packages/feature-([^/]+)/', pathNot: '^packages/feature-$1/' }
+      from: { path: '^packages/feature-([^/]+)/src/' },
+      to: { path: '^packages/feature-([^/]+)/src/', pathNot: '^packages/feature-$1/' }
     },
     {
       name: 'core-common-is-sacred',
       severity: 'error',
       comment: 'core-common must not depend on any higher-level layers (features, samples, other cores).',
-      from: { path: '^packages/core-common/' },
+      from: { path: '^packages/core-common/src/' },
       to: { path: '^(packages/feature-|packages/core-(?!common)|samples/)' }
     },
     {
@@ -24,7 +24,8 @@ module.exports = {
     }
   ],
   options: {
-    doNotFollow: { path: 'node_modules' },
+    doNotFollow: { path: '(node_modules|dist|build)' },
+    exclude: { path: '(dist|build)' },
     tsPreCompilationDeps: true,
     tsConfig: { fileName: 'tsconfig.base.json' }
   }

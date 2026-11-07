@@ -1,0 +1,5 @@
+{
+  "name": "eslint-plugin-sdk-arch",
+  "private": true,
+  "type": "module"
+}

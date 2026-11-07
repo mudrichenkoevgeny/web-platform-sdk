@@ -13,6 +13,11 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
@@ -24,6 +29,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
@@ -44,6 +54,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
@@ -61,6 +76,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
@@ -78,6 +98,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies with Playwright
         uses: ./.github/actions/setup-env
         with:
@@ -104,6 +129,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Environment & Dependencies with Playwright
         uses: ./.github/actions/setup-env
         with:

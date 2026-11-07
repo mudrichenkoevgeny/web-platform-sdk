@@ -3,6 +3,7 @@ import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk-co
 import { AppType, UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
 import type { OpenAuthSettingsRepository } from '@/repository/auth/settings/open-auth-settings-repository'
 import type { AvailableAuthProviders } from '@mudrichenkoevgeny/shared-foundation'
+
 /**
  * Loads auth settings and exposes which sign-in providers the backend allows for this app.
  */
@@ -45,7 +46,9 @@ export class GetAvailableUserAuthProvidersUseCase {
       }
       default: {
         const exhaustiveCheck: never = this.appType
-        throw new Error(`Unsupported AppType: ${exhaustiveCheck}`)
+        return appResultFailure(
+          CommonError.contractViolation(`Unsupported AppType: ${exhaustiveCheck}`)
+        )
       }
     }
   }

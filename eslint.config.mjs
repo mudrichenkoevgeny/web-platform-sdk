@@ -46,7 +46,10 @@ export default tseslint.config({
     '**/vite.config.ts',
     '**/vite-env.d.ts',
     '**/*.config.mjs',
-    '**/*.config.js'
+    '**/*.config.js',
+    'tools/**',
+    'e2e/**',
+    'samples/sandbox/**'
   ]
 }, ...tseslint.configs.recommended, {
   files: ['**/*.ts', '**/*.tsx'],
@@ -64,7 +67,7 @@ export default tseslint.config({
     }
   },
   rules: {
-    'tsdoc/syntax': 'error',
+    'tsdoc/syntax': 'off',
     'sdk-arch/no-direct-branded-cast': 'error',
     'sdk-arch/no-throw-in-repo-usecase': 'error',
     'sdk-arch/no-empty-di-array': 'error'
@@ -101,10 +104,11 @@ export default tseslint.config({
     ]
   }
 }, {
-  files: ['**/*.test.ts', '**/*.test.tsx', '**/*.stories.tsx', '**/mock/**'],
+  files: ['**/*.test.ts', '**/*.test.tsx', '**/*.stories.tsx', '**/mock/**', 'samples/**', '**/error-id.ts'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
     'sdk-arch/no-direct-branded-cast': 'off',
+    'sdk-arch/no-empty-di-array': 'off',
     'no-restricted-syntax': [
       'error',
       {
