@@ -2,8 +2,6 @@ name: Automated Release & Semantic Versioning
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
 
