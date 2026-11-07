@@ -14,6 +14,7 @@ alwaysApply: true
 ## 2. Operational Constraints
 - **Git Ban (Strict Prohibition):** NEVER run git commands (git add, git commit, git push, etc.) via shell. Version control, staging, and committing are strictly the developer's responsibility. Do not attempt to save or document changes into git history.
 - **Execution Ban (Tests):** Do not suggest, initiate, or invite the user to run test suites (`pnpm test`, `vitest`).
+- **Mandatory Sub-Agent Audit (Dual-Agent Review):** After implementing non-trivial code changes or new features, the AI agent MUST invoke an independent reviewer sub-agent via `task` to audit modified files against project standards, type safety, and error handling before completing the task.
 - **Permitted Commands:** Commands that do not trigger tests are allowed (e.g., `pnpm install`, `pnpm build`).
 - **Redundant Build Prohibition:** Do not invoke builds after editing TSDoc or Markdown.
 - **Complete Code:** Provide full, runnable implementations. Avoid `// ... rest of code` or `TODO` markers.

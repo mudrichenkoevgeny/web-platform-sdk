@@ -12,8 +12,8 @@ allowBuilds:
   canvas: true
 
 catalog:
-  # '@mudrichenkoevgeny/shared-foundation': '^0.0.55'
-  '@mudrichenkoevgeny/shared-foundation': 'file:D:\Documents\Projects\shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.6.tgz'
+  '@mudrichenkoevgeny/shared-foundation': '^0.1.7'
+  #'@mudrichenkoevgeny/shared-foundation': 'file:D:\Documents\Projects\shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.6.tgz'
   '@tanstack/react-router': '^1.111.0'
   '@tanstack/router-plugin': '^1.111.0'
   '@testing-library/react': '^16.0.0'
@@ -41,4 +41,4 @@ catalog:
   "@vitest/coverage-v8": ^5.0.4
 
 minimumReleaseAgeExclude:
-  - '@mudrichenkoevgeny/shared-foundation@0.0.55'
+  - '@mudrichenkoevgeny/shared-foundation@0.1.7'

@@ -224,7 +224,7 @@ export function App({ clientAppComponent }: { clientAppComponent: ClientAppCompo
   }
 
   return (
-    <SdkProvider value={{ commonComponent: clientAppComponent.commonComponent, clientUserComponent: clientAppComponent.clientUserComponent }}>
+    <SdkProvider component={clientAppComponent.commonComponent}>
       <ClientLoginRootScreen />
     </SdkProvider>
   )

@@ -1,7 +1,10 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk-core-common",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,0 +1,32 @@
+# Authentication & Multi-Factor Auth Flows
+
+The Web Platform SDK handles complex state-machine authentication lifecycle steps automatically.
+
+## Standard Auth State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Anonymous
+    Anonymous --> Authenticating: Submit Login Credentials
+    Authenticating --> MFA_Required: Server Demands TOTP/SMS
+    Authenticating --> Authenticated: Login Succeeded
+    MFA_Required --> Authenticated: Submit Valid MFA Code
+    Authenticated --> Anonymous: Session Revoked / Logout
+```
+
+## Consuming Auth State via React Context Store Selector
+
+```tsx
+import React from 'react'
+import { useClientUserStoreContext } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+
+export const UserProfileBadge: React.FC = () => {
+  const user = useClientUserStoreContext((state) => state.currentUser)
+
+  if (!user) {
+    return <span>Guest User</span>
+  }
+
+  return <span>{user.email}</span>
+}
+```

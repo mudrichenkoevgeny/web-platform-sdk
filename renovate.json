@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+  "pnpm": {
+    "enabled": true
+  },
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "packageRules": [
+    {
+      "description": "Combine all non-major (minor & patch) updates into a single PR",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "All non-major dependencies",
+      "groupSlug": "all-non-major"
+    },
+    {
+      "description": "Keep major releases in separate individual PRs for manual safety review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}

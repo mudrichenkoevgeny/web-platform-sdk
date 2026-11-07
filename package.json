@@ -7,31 +7,43 @@
     "dev:management": "pnpm --filter @web-platform-sdk/sample-management-app dev",
     "build": "pnpm -r --filter \"./packages/*\" run build",
     "lint": "eslint . --max-warnings 0",
-    "lint:deps": "depcruise --config .dependency-cruiser.js packages samples",
+    "lint:deps": "depcruise --config tools/config/dependency-cruiser.js packages samples",
     "typecheck": "pnpm -r run typecheck",
     "test": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest run --passWithNoTests",
     "test:watch": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest",
-    "api:extract": "pnpm -r --filter \"./packages/*\" exec api-extractor run --local",
-    "api:extract-ci": "pnpm -r --filter \"./packages/*\" exec api-extractor run",
+    "test:e2e": "playwright test",
+    "api:extract": "pnpm -r --filter \"./packages/*\" exec api-extractor run --config ../../tools/config/api-extractor.template.json --local",
+    "api:extract-ci": "pnpm -r --filter \"./packages/*\" exec api-extractor run --config ../../tools/config/api-extractor.template.json",
     "version:patch": "pnpm -r --filter \"./packages/*\" exec npm version patch --no-git-tag-version",
     "version:minor": "pnpm -r --filter \"./packages/*\" exec npm version minor --no-git-tag-version",
     "version:set": "pnpm -r --filter \"./packages/*\" exec npm version --no-git-tag-version",
+    "change": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish --provenance",
+    "audit": "pnpm audit --audit-level high",
+    "deps:check": "pnpm outdated",
+    "deps:upgrade": "pnpm update --interactive --latest",
+    "size": "size-limit",
+    "lint:exports": "publint",
+    "docs:generate": "typedoc --options tools/config/typedoc.json",
+    "generate": "plop --plopfile tools/generators/plopfile.mjs",
+    "generate:usecase": "plop --plopfile tools/generators/plopfile.mjs usecase",
+    "generate:component": "plop --plopfile tools/generators/plopfile.mjs component",
+    "sandbox:dev": "pnpm --filter @web-platform-sdk/sandbox dev",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.12",
     "@chromatic-com/storybook": "latest",
     "@eslint/compat": "^1.2.7",
     "@microsoft/api-extractor": "^7.52.0",
-    "@storybook/addon-a11y": "^10.6.5",
-    "@storybook/addon-docs": "^10.6.5",
-    "@storybook/addon-mcp": "^10.6.5",
-    "@storybook/addon-vitest": "^10.6.5",
-    "@storybook/jest": "^0.2.3",
-    "@storybook/react-vite": "^10.6.5",
+    "@storybook/addon-a11y": "^8.6.15",
+    "@storybook/addon-docs": "^8.6.15",
+    "@storybook/addon-mcp": "^10.6.6",
+    "@storybook/addon-vitest": "^10.6.6",
+    "@storybook/react-vite": "^8.6.15",
     "@storybook/test": "^8.6.15",
-    "@types/jest": "^30.0.0",
-    "@types/jest-axe": "^3.5.9",
     "@types/node": "catalog:",
     "@vitest/browser": "^5.1.0",
     "@vitest/browser-playwright": "catalog:",
@@ -41,11 +53,18 @@
     "chromatic": "^18.13.9",
     "dependency-cruiser": "^16.10.0",
     "eslint": "catalog:",
-    "eslint-plugin-storybook": "^10.6.5",
+    "eslint-plugin-storybook": "^0.11.3",
     "eslint-plugin-tsdoc": "^0.4.0",
     "msw": "^2.7.0",
     "playwright": "latest",
-    "storybook": "^10.6.5",
+    "@playwright/test": "^1.50.0",
+    "@size-limit/file": "^11.1.6",
+    "plop": "^4.0.1",
+    "publint": "^0.3.9",
+    "size-limit": "^11.1.6",
+    "storybook": "^8.6.15",
+    "typedoc": "^0.27.6",
+    "typedoc-plugin-markdown": "^4.4.1",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
     "vite": "catalog:",
@@ -55,5 +74,42 @@
   },
   "dependencies": {
     "@mudrichenkoevgeny/shared-foundation": "catalog:"
-  }
+  },
+  "size-limit": [
+    {
+      "name": "core-common",
+      "path": "packages/core-common/dist/index.js",
+      "limit": "25 KB"
+    },
+    {
+      "name": "core-security",
+      "path": "packages/core-security/dist/index.js",
+      "limit": "15 KB"
+    },
+    {
+      "name": "core-settings",
+      "path": "packages/core-settings/dist/index.js",
+      "limit": "15 KB"
+    },
+    {
+      "name": "core-storage",
+      "path": "packages/core-storage/dist/index.js",
+      "limit": "20 KB"
+    },
+    {
+      "name": "feature-user",
+      "path": "packages/feature-user/dist/index.js",
+      "limit": "30 KB"
+    },
+    {
+      "name": "feature-clientuser",
+      "path": "packages/feature-clientuser/dist/index.js",
+      "limit": "40 KB"
+    },
+    {
+      "name": "feature-managementuser",
+      "path": "packages/feature-managementuser/dist/index.js",
+      "limit": "40 KB"
+    }
+  ]
 }

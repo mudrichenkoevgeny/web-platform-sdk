@@ -1,0 +1,29 @@
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+
+/**
+ * Input parameters for {@link {{pascalCase name}}UseCase}.
+ */
+export interface {{pascalCase name}}Params {
+  /** Targeted resource or entity payload. */
+  payload: string
+}
+
+/**
+ * Executable domain use case for {{lowerCase name}}.
+ */
+export class {{pascalCase name}}UseCase {
+  /**
+   * Executes the {{lowerCase name}} business logic.
+   *
+   * @param params - Input parameters for execution
+   * @returns AppResult wrapping operation outcome
+   */
+  public async execute(params: {{pascalCase name}}Params): Promise<AppResult<boolean, AppError>> {
+    if (!params.payload) {
+      return appResultSuccess(false)
+    }
+
+    return appResultSuccess(true)
+  }
+}

@@ -17,7 +17,7 @@ alwaysApply: true
   1. Instantiate `CommonComponent` (passing `baseUrl`).
   2. Initialize feature components (`ClientUserComponent`).
   3. Call `commonComponent.init(errorParsers)`.
-- **Context Injection:** Pass the initialized instances into the React tree via `<SdkProvider value={{ commonComponent, clientUserComponent }}>`.
+- **Context Injection:** Pass the initialized instances into the React tree via `<SdkProvider component={commonComponent}>`.
 
 ## 3. Networking & Data Layering (Fetch API & Zod Schemas)
 - **HttpClient:** Centralized in `core-common` wrapping the native `fetch` API. Do not use Axios.

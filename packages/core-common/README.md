@@ -101,7 +101,7 @@ const commonComponent = new CommonComponent({
 export const App = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider>
-      <SdkProvider commonComponent={commonComponent}>
+      <SdkProvider component={commonComponent}>
         {children}
       </SdkProvider>
     </ThemeProvider>

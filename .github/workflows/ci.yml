@@ -1,0 +1,123 @@
+name: Continuous Integration & Quality Gates
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  changeset-validation-gate:
+    name: Validate Changeset Entry on Pull Requests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Setup Environment & Dependencies
+        uses: ./.github/actions/setup-env
+
+      - name: Verify Changeset File Exists for PR
+        run: pnpm changeset status --since=origin/main
+
+  quality-gate:
+    name: Lint, Typecheck, Dependency Cruiser & API Extractor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Environment & Dependencies
+        uses: ./.github/actions/setup-env
+
+      - name: Run ESLint & Custom AST Rules
+        run: pnpm lint
+
+      - name: Run TypeScript Typecheck
+        run: pnpm typecheck
+
+      - name: Run Module Boundary Enforcement (Dependency Cruiser)
+        run: pnpm lint:deps
+
+      - name: Run API Extractor Guard
+        run: pnpm api:extract-ci
+
+  bundle-budget-and-exports-gate:
+    name: Bundle Size Limits & Package Export Tracing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Environment & Dependencies
+        uses: ./.github/actions/setup-env
+
+      - name: Build Packages
+        run: pnpm build
+
+      - name: Check Package Exports & ESM Compatibility
+        run: pnpm lint:exports
+
+      - name: Run Bundle Size Limits Enforcement
+        run: pnpm size
+
+  security-vulnerability-scan:
+    name: Vulnerability & Dependency Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Environment & Dependencies
+        uses: ./.github/actions/setup-env
+
+      - name: Run Dependency Vulnerability Audit
+        run: pnpm audit
+
+      - name: Dependency Review (PRs)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  test-and-coverage:
+    name: Vitest Unit/Integration Tests & Coverage Guard
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Environment & Dependencies with Playwright
+        uses: ./.github/actions/setup-env
+        with:
+          install-playwright: 'true'
+
+      - name: Run Tests with Coverage
+        run: pnpm test --coverage
+
+      - name: Upload Coverage Summary Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+
+  e2e-tests:
+    name: Host Integration E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Environment & Dependencies with Playwright
+        uses: ./.github/actions/setup-env
+        with:
+          install-playwright: 'true'
+
+      - name: Run E2E Tests for Host Apps
+        run: pnpm test:e2e
+
+      - name: Upload Playwright Test Report on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

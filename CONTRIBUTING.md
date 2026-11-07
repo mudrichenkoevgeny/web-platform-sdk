@@ -142,11 +142,11 @@ Dependencies across the workspace are centralized in `pnpm-workspace.yaml` under
 
 ```yaml
 catalog:
-  '@mudrichenkoevgeny/shared-foundation': '^0.0.55'
-  'react': '^19.0.0'
-  'react-dom': '^19.0.0'
-  'typescript': '^7.0.2'
-  'vitest': '^5.0.3'
+  '@mudrichenkoevgeny/shared-foundation': '^x.y.z'
+  'react': '^x.y.z'
+  'react-dom': '^x.y.z'
+  'typescript': '^x.y.z'
+  'vitest': '^x.y.z'
 ```
 
 ### Adding a Dependency to a Package

@@ -14,8 +14,19 @@ export default defineWorkspace([
       name: 'unit',
       environment: 'jsdom',
       include: ['packages/**/*.{test,spec}.{ts,tsx}'],
-      setupFiles: [path.resolve(__dirname, 'vitest-setup.ts')],
-      passWithNoTests: true
+      setupFiles: [path.resolve(__dirname, 'tools/testing/vitest-setup.ts')],
+      passWithNoTests: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'lcov', 'json-summary'],
+        reportsDirectory: './coverage',
+        thresholds: {
+          lines: 80,
+          functions: 80,
+          branches: 80,
+          statements: 80
+        }
+      }
     }
   },
   {

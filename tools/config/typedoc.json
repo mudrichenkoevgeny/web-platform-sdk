@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/core-common/src/index.ts",
+    "packages/core-security/src/index.ts",
+    "packages/core-settings/src/index.ts",
+    "packages/core-storage/src/index.ts",
+    "packages/feature-user/src/index.ts",
+    "packages/feature-clientuser/src/index.ts",
+    "packages/feature-managementuser/src/index.ts"
+  ],
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "README.md",
+  "name": "Web Platform SDK API Reference",
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": false
+  }
+}

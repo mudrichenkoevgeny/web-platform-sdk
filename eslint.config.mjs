@@ -3,6 +3,7 @@ import storybook from "eslint-plugin-storybook";
 
 import tseslint from 'typescript-eslint'
 import tsdocPlugin from 'eslint-plugin-tsdoc'
+import sdkArchPlugin from './tools/eslint-rules/index.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -50,7 +51,8 @@ export default tseslint.config({
 }, ...tseslint.configs.recommended, {
   files: ['**/*.ts', '**/*.tsx'],
   plugins: {
-    tsdoc: tsdocPluginCompat
+    tsdoc: tsdocPluginCompat,
+    'sdk-arch': sdkArchPlugin
   },
   languageOptions: {
     parser: tseslint.parser,
@@ -62,7 +64,10 @@ export default tseslint.config({
     }
   },
   rules: {
-    'tsdoc/syntax': 'error'
+    'tsdoc/syntax': 'error',
+    'sdk-arch/no-direct-branded-cast': 'error',
+    'sdk-arch/no-throw-in-repo-usecase': 'error',
+    'sdk-arch/no-empty-di-array': 'error'
   }
 }, {
   rules: {
@@ -99,6 +104,7 @@ export default tseslint.config({
   files: ['**/*.test.ts', '**/*.test.tsx', '**/*.stories.tsx', '**/mock/**'],
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
+    'sdk-arch/no-direct-branded-cast': 'off',
     'no-restricted-syntax': [
       'error',
       {

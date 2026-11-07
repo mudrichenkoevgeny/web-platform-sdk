@@ -1,0 +1,14 @@
+import { describe, it, expect } from 'vitest'
+import { {{pascalCase name}}UseCase } from './{{kebabCase name}}-use-case'
+
+describe('{{pascalCase name}}UseCase', () => {
+  it('executes successfully with valid params', async () => {
+    const useCase = new {{pascalCase name}}UseCase()
+    const result = await useCase.execute({ payload: 'test' })
+
+    expect(result.type).toBe('success')
+    if (result.type === 'success') {
+      expect(result.data).toBe(true)
+    }
+  })
+})

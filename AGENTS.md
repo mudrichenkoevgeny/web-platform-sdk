@@ -28,6 +28,7 @@ This document is the entry point for architectural and coding standards. These r
 - **Accessibility (a11y):** Always use `useId()` to generate unique IDs for form fields and link labels via `htmlFor`.
 - **Manual Test Execution:** AI agents must not run tests or suggest running them. Execution is always triggered explicitly by the developer.
 - **No Redundant Builds:** Do not run Vite build tasks or attempt compilation after modifying documentation (TSDoc), markdown, or other non-executable changes.
+- **Mandatory Sub-Agent Audit (Dual-Agent Review):** After implementing non-trivial code changes, new features, or complex refactorings, the AI agent MUST automatically invoke an independent reviewer sub-agent via the `task` tool to audit modified files against `AGENTS.md` guidelines, type safety, edge cases, and error handling before presenting the final result.
 - **Git Ban (Strict Prohibition):** NEVER run git commands (git add, git commit, git push, etc.) via shell. Version control, staging, and committing are strictly the developer's responsibility. Do not attempt to save or document changes into git history.
 
 ## Module Map

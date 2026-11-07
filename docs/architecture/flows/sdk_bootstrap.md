@@ -39,7 +39,7 @@ sequenceDiagram
     Host->>Host: Execute SyncDataUseCase / refreshUserConfigurationUseCase
     Host->>WS: Start WebSocket connection (if authenticated)
 
-    Host->>UI: Render <SdkProvider commonComponent={...} ... />
+    Host->>UI: Render <SdkProvider component={...} ... />
 ```
 
 ---
