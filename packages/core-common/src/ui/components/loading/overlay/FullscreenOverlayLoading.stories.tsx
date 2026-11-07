@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { FullscreenOverlayLoading } from '@/ui/components/loading/overlay/FullscreenOverlayLoading'
 
 const meta: Meta<typeof FullscreenOverlayLoading> = {

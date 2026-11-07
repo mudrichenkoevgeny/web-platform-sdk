@@ -1,26 +1,29 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
-import React from 'react'
+
 import { render, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { AccountLockoutType, userStrings, createTestAuthDataPayload, createTestPagedResultPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { AccountLockoutType, createTestAuthDataPayload, createTestPagedResultPayload, createTestUserIdentifierPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
 import { createMockCommonComponent, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ValidatePasswordUseCaseMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import {
   ResetEmailPasswordScreen,
   UnlockMethodSelectionScreen
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ValidatePasswordUseCaseMock } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
 import { clientUserComponentMock } from '../mock/di/client-user-component-mock'
 
 const server = setupServer(
-  http.post('https://api.example.com/auth/registration/email', async () => {
+  http.post('https://api.example.com/auth/registration/email', () => {
     return HttpResponse.json(createTestAuthDataPayload())
   }),
-  http.post('https://api.example.com/open/v1/auth/reset-password/email', async () => {
-    return HttpResponse.json({ retry_after_seconds: 30, number_of_symbols: 6, expiration_seconds: 300 })
+  http.post('https://api.example.com/open/v1/auth/registration/email', () => {
+    return HttpResponse.json(createTestAuthDataPayload())
   }),
-  http.get('https://api.example.com/user/identifiers', () => {
-    return HttpResponse.json(createTestPagedResultPayload({ items: [] }))
+  http.get('https://api.example.com/user/identifiers*', () => {
+    return HttpResponse.json(createTestPagedResultPayload({ items: [createTestUserIdentifierPrivatePayload()] }))
+  }),
+  http.get('https://api.example.com/open/v1/identifiers*', () => {
+    return HttpResponse.json(createTestPagedResultPayload({ items: [createTestUserIdentifierPrivatePayload()] }))
   })
 )
 
@@ -35,7 +38,8 @@ describe('Client User Registration & Recovery Flows Integration Suite', () => {
 
     const result = await clientUserComponent.registrationByEmailUseCase.execute(
       'newuser@test.com',
-      'ValidPass123!'
+      'ValidPass123!',
+      '123456'
     )
 
     expect(isSuccess(result)).toBe(true)
@@ -71,6 +75,7 @@ describe('Client User Registration & Recovery Flows Integration Suite', () => {
       <UnlockMethodSelectionScreen
         dependencies={{
           lockoutType: AccountLockoutType.TEMPORARY,
+          lockoutUntil: null,
           getUserIdentifiersUseCase: clientUserComponent.getUserIdentifiersUseCase,
           unlockByGoogleUseCase: clientUserComponent.unlockByGoogleUseCase,
           onNavigateToEmailInput: vi.fn(),
@@ -82,7 +87,7 @@ describe('Client User Registration & Recovery Flows Integration Suite', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByText(userStrings.ui.unlockChooseMethod)).toBeDefined()
+      expect(screen.getByRole('button', { name: /unlock/i })).toBeDefined()
     })
   })
 })

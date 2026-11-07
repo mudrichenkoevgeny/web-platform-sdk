@@ -28,7 +28,7 @@ export default defineConfig(({ command, mode }) => {
       name: 'core-common',
       globals: true,
       environment: 'jsdom',
-      setupFiles: ['../../vitest-setup.ts'],
+      setupFiles: ['../../tools/testing/vitest-setup.ts'],
       include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
       server: {
         deps: {

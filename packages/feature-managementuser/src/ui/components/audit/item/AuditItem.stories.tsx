@@ -1,5 +1,5 @@
 import { createTestAuditEventPrivate } from '@mudrichenkoevgeny/shared-foundation'
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AuditItem } from '@/ui/components/audit/item/AuditItem'
 

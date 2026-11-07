@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { CoreErrorText } from '@/ui/components/text/error/CoreErrorText'
 
 const meta: Meta<typeof CoreErrorText> = {

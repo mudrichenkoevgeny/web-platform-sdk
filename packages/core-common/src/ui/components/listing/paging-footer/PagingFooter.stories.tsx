@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { PagingFooter } from '@/ui/components/listing/paging-footer/PagingFooter'
 
 const meta: Meta<typeof PagingFooter> = {

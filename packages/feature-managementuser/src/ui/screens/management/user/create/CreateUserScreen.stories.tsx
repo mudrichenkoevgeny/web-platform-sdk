@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { CreateUserScreen } from '@/ui/screens/management/user/create/CreateUserScreen'
 import { createUserDependenciesMock } from '@/mock/ui/screen/management/user/create/create-user-component-mock'

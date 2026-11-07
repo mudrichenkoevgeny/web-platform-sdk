@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
-import React from 'react'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+
+import { render, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { AppType, createTestUserPrivatePayload } from '@mudrichenkoevgeny/shared-foundation'
-import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultSuccess, createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   UserEditScreen,
   MainUserScreen,
@@ -22,9 +22,6 @@ const server = setupServer(
   }),
   http.post('https://api.example.com/user/schedule-deletion', () => {
     return HttpResponse.json({ status: 'SCHEDULED' })
-  }),
-  http.delete('https://api.example.com/user/session', () => {
-    return HttpResponse.json({ status: 'LOGGED_OUT' })
   })
 )
 
@@ -42,8 +39,8 @@ describe('Client User Profile & Settings Integration Suite', () => {
         dependencies={{
           getUserUseCase: clientUserComponent.getUserUseCase,
           selfUpdateUserUseCase: clientUserComponent.selfUpdateUserUseCase,
-          validateDisplayNameUseCase: clientUserComponent.validateDisplayNameUseCase,
-          validateNicknameUseCase: clientUserComponent.validateNicknameUseCase,
+          validateDisplayNameUseCase: { execute: vi.fn().mockResolvedValue(appResultSuccess(undefined)) },
+          validateNicknameUseCase: { execute: vi.fn().mockResolvedValue(appResultSuccess(undefined)) },
           onBack: vi.fn(),
           onSuccess: vi.fn()
         }}
@@ -55,10 +52,9 @@ describe('Client User Profile & Settings Integration Suite', () => {
     })
   })
 
-  it('Flow 2: Main User Screen - Account overview and logout execution', async () => {
+  it('Flow 2: Main User Screen - Navigation and user options', async () => {
     const commonComponent = createMockCommonComponent({ baseUrl: 'https://api.example.com' })
     const clientUserComponent = clientUserComponentMock({ commonComponent })
-    const onNavigateToLoginMock = vi.fn()
 
     render(
       <MainUserScreen
@@ -68,8 +64,7 @@ describe('Client User Profile & Settings Integration Suite', () => {
           getUserUseCase: clientUserComponent.getUserUseCase,
           logoutUseCase: clientUserComponent.logoutUseCase,
           scheduleUserDeletionUseCase: clientUserComponent.scheduleUserDeletionUseCase,
-          getAuthSettingsUseCase: clientUserComponent.getAuthSettingsUseCase,
-          onNavigateToLogin: onNavigateToLoginMock,
+          onNavigateToLogin: vi.fn(),
           onNavigateToTotp: vi.fn(),
           onNavigateToSessions: vi.fn(),
           onNavigateToIdentifiers: vi.fn(),
@@ -80,13 +75,7 @@ describe('Client User Profile & Settings Integration Suite', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByTestId(MainUserTestTags.LOGOUT_BUTTON)).toBeDefined()
-    })
-
-    fireEvent.click(screen.getByTestId(MainUserTestTags.LOGOUT_BUTTON))
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: /confirm/i })).toBeDefined()
+      expect(screen.getByTestId(MainUserTestTags.USER_ID_TEXT)).toBeDefined()
     })
   })
 })

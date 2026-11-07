@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { createTestStorageFilePrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { StorageFileDetailScreen } from './StorageFileDetailScreen'

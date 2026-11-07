@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { AppType, createTestUserPrivate } from '@mudrichenkoevgeny/shared-foundation'
 import { MainUserScreen } from '@/ui/screens/user/main/MainUserScreen'

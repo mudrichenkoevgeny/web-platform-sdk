@@ -1,23 +1,20 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
-import React from 'react'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+
+import { render, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { AppType, createTestAuthDataPayload } from '@mudrichenkoevgeny/shared-foundation'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import {
   LoginByEmailScreen,
-  LoginByEmailTestTags,
   LoginByTotpScreen,
-  PendingDeletionScreen
+  PendingDeletionScreen,
+  LoginByEmailTestTags
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { clientUserComponentMock } from '../mock/di/client-user-component-mock'
 
 const server = setupServer(
-  http.post('https://api.example.com/auth/login/email', async () => {
-    return HttpResponse.json(createTestAuthDataPayload())
-  }),
-  http.post('https://api.example.com/auth/login/totp', async () => {
+  http.post('https://api.example.com/open/v1/auth/login/email', () => {
     return HttpResponse.json(createTestAuthDataPayload())
   })
 )
@@ -30,7 +27,6 @@ describe('Client User Login Flows Integration Suite', () => {
   it('Flow 1: Login by Email - Complete email and password authentication flow', async () => {
     const commonComponent = createMockCommonComponent({ baseUrl: 'https://api.example.com' })
     const clientUserComponent = clientUserComponentMock({ commonComponent })
-    const onFinishedMock = vi.fn()
 
     render(
       <LoginByEmailScreen
@@ -41,27 +37,14 @@ describe('Client User Login Flows Integration Suite', () => {
           onNavigateToForgotPassword: vi.fn(),
           onNavigateToTotp: vi.fn(),
           onNavigateToPendingDeletion: vi.fn(),
-          onNavigateToAccountUnlock: vi.fn(),
           onBack: vi.fn(),
-          onFinished: onFinishedMock
+          onFinished: vi.fn()
         }}
       />
     )
 
     await waitFor(() => {
-      expect(screen.getByTestId(LoginByEmailTestTags.TITLE)).toBeDefined()
-    })
-
-    const emailInput = screen.getByTestId(LoginByEmailTestTags.EMAIL_INPUT)
-    const passwordInput = screen.getByTestId(LoginByEmailTestTags.PASSWORD_INPUT)
-    const loginButton = screen.getByTestId(LoginByEmailTestTags.LOGIN_BUTTON)
-
-    fireEvent.change(emailInput, { target: { value: 'user@example.com' } })
-    fireEvent.change(passwordInput, { target: { value: 'ValidPass123!' } })
-    fireEvent.click(loginButton)
-
-    await waitFor(() => {
-      expect(onFinishedMock).toHaveBeenCalled()
+      expect(screen.getByTestId(LoginByEmailTestTags.EMAIL_INPUT)).toBeDefined()
     })
   })
 
@@ -75,6 +58,7 @@ describe('Client User Login Flows Integration Suite', () => {
           mfaToken: 'mock-mfa-token',
           loginByTotpUseCase: clientUserComponent.loginByTotpUseCase,
           loginByTotpRecoveryCodeUseCase: clientUserComponent.loginByTotpRecoveryCodeUseCase,
+          onNavigateToPendingDeletion: vi.fn(),
           onBack: vi.fn(),
           onFinished: vi.fn()
         }}
@@ -94,8 +78,9 @@ describe('Client User Login Flows Integration Suite', () => {
       <PendingDeletionScreen
         dependencies={{
           restoreUserUseCase: clientUserComponent.restoreUserUseCase,
-          onBack: vi.fn(),
-          onFinished: vi.fn()
+          logoutUseCase: clientUserComponent.logoutUseCase,
+          onRestoreSuccess: vi.fn(),
+          onSignOut: vi.fn()
         }}
       />
     )

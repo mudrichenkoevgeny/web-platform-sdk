@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { UserRootContainer } from '@/ui/screens/user/root/UserRootContainer'
 
 const meta: Meta<typeof UserRootContainer> = {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { CoreButton } from '@/ui/components/button/button/CoreButton'
 
 const meta: Meta<typeof CoreButton> = {

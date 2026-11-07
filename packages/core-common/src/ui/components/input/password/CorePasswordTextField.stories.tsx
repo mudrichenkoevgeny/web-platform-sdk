@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { CorePasswordTextField } from '@/ui/components/input/password/CorePasswordTextField'
 
 const meta: Meta<typeof CorePasswordTextField> = {

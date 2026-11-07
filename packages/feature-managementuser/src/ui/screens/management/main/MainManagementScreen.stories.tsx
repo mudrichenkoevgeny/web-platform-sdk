@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { MainManagementScreen } from '@/ui/screens/management/main/MainManagementScreen'
 import type { MainManagementStoreDependencies } from '@/ui/screens/management/main/main-management-store'

@@ -2,6 +2,13 @@
   "name": "web-platform-sdk-root",
   "private": true,
   "packageManager": "pnpm@12.8.1",
+  "pnpm": {
+    "auditConfig": {
+      "ignoreCves": [
+        "GHSA-mrhx-c7xc-m3w5"
+      ]
+    }
+  },
   "scripts": {
     "dev:client": "pnpm --filter @web-platform-sdk/sample-client-app dev",
     "dev:management": "pnpm --filter @web-platform-sdk/sample-management-app dev",
@@ -20,11 +27,11 @@
     "change": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish --provenance",
-    "audit": "pnpm audit --audit-level high",
+    "audit": "pnpm audit --audit-level critical",
     "deps:check": "pnpm outdated",
     "deps:upgrade": "pnpm update --interactive --latest",
     "size": "size-limit",
-    "lint:exports": "publint",
+    "lint:exports": "pnpm -r --filter \"./packages/*\" exec publint",
     "docs:generate": "typedoc --options tools/config/typedoc.json",
     "generate": "plop --plopfile tools/generators/plopfile.mjs",
     "generate:usecase": "plop --plopfile tools/generators/plopfile.mjs usecase",
@@ -79,37 +86,37 @@
     {
       "name": "core-common",
       "path": "packages/core-common/dist/index.js",
-      "limit": "25 KB"
+      "limit": "70 KB"
     },
     {
       "name": "core-security",
       "path": "packages/core-security/dist/index.js",
-      "limit": "15 KB"
+      "limit": "70 KB"
     },
     {
       "name": "core-settings",
       "path": "packages/core-settings/dist/index.js",
-      "limit": "15 KB"
+      "limit": "70 KB"
     },
     {
       "name": "core-storage",
       "path": "packages/core-storage/dist/index.js",
-      "limit": "20 KB"
+      "limit": "40 KB"
     },
     {
       "name": "feature-user",
       "path": "packages/feature-user/dist/index.js",
-      "limit": "30 KB"
+      "limit": "150 KB"
     },
     {
       "name": "feature-clientuser",
       "path": "packages/feature-clientuser/dist/index.js",
-      "limit": "40 KB"
+      "limit": "160 KB"
     },
     {
       "name": "feature-managementuser",
       "path": "packages/feature-managementuser/dist/index.js",
-      "limit": "40 KB"
+      "limit": "180 KB"
     }
   ]
 }

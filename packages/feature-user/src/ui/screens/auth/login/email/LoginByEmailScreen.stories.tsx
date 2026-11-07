@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { LoginByEmailScreen } from '@/ui/screens/auth/login/email/LoginByEmailScreen'
 import { loginByEmailDependenciesMock } from '@/mock/ui/screen/auth/login/email/login-by-email-component-mock'

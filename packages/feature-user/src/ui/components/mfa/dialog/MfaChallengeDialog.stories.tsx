@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { MfaChallengeDialog } from '@/ui/components/mfa/dialog/MfaChallengeDialog'
 import type { MfaChallengeRequest } from '@/network/httpclient/mfa/mfa-challenge-request'

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, afterEach } from 'vitest'
 import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
-import { createTestSessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import { createTestSessionToken, toAccessTokenOrThrow } from '@mudrichenkoevgeny/shared-foundation'
 import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { EncryptedAuthStorage } from '../storage/auth/encrypted-auth-storage'
 import { AuthHttpClientConfigPlugin } from '../network/httpclient/auth-http-client-config-plugin'
@@ -29,11 +29,13 @@ describe('Authentication Lifecycle Integration (Tokens + Storage + HttpClient + 
     const authStorage = new EncryptedAuthStorage(commonComponent.encryptedSettings)
 
     await authStorage.updateTokens(createTestSessionToken({
-      accessToken: 'invalid-token',
+      accessToken: toAccessTokenOrThrow('invalid-token'),
       expiresAt: Date.now() + 3600000
     }))
 
-    const onSessionClearedMock = vi.fn()
+    const onSessionClearedMock = vi.fn(async () => {
+      await authStorage.clearTokens()
+    })
 
     const authPlugin = new AuthHttpClientConfigPlugin({
       baseUrl: 'http://localhost:8080',
@@ -47,12 +49,17 @@ describe('Authentication Lifecycle Integration (Tokens + Storage + HttpClient + 
       httpClientConfigPlugins: [authPlugin]
     })
 
+    let caughtError: unknown = null
     try {
-      await customCommonComponent.httpClient.request('/protected-resource', { method: 'GET' })
-    } catch {
-      // Expected HTTP 401 response
+      await customCommonComponent.httpClient.request('/protected-resource')
+    } catch (err) {
+      caughtError = err
     }
 
-    expect(onSessionClearedMock).toHaveBeenCalled()
+    expect(caughtError).not.toBeNull()
+    expect(onSessionClearedMock).toHaveBeenCalledTimes(1)
+
+    const savedToken = await authStorage.getAccessTokenModel()
+    expect(savedToken).toBeNull()
   })
 })

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ListingEmptyState } from '@/ui/components/listing/empty-state/ListingEmptyState'
 
 const meta: Meta<typeof ListingEmptyState> = {

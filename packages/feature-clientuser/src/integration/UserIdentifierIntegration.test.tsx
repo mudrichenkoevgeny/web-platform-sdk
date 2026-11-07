@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
-import React from 'react'
+
 import { render, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import {
   createTestPagedResultPayload,
-  createTestUserIdentifierSummaryPayload,
   createTestUserIdentifierPrivatePayload,
   toUserIdentifierIdOrThrow
 } from '@mudrichenkoevgeny/shared-foundation'
@@ -20,20 +19,20 @@ import {
 } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
 import { clientUserComponentMock } from '../mock/di/client-user-component-mock'
 
-const IDENTIFIER_ID = '00000000-0000-4000-8000-000000000010'
+const IDENTIFIER_ID = '123e4567-e89b-12d3-a456-426614174000'
 
 const server = setupServer(
-  http.get('https://api.example.com/user/identifiers', () => {
-    return HttpResponse.json(createTestPagedResultPayload({ items: [createTestUserIdentifierSummaryPayload({ id: toUserIdentifierIdOrThrow(IDENTIFIER_ID) })] }))
-  }),
-  http.get(`https://api.example.com/user/identifiers/:id`, () => {
+  http.get(`https://api.example.com/user/identifiers/${IDENTIFIER_ID}`, () => {
     return HttpResponse.json(createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(IDENTIFIER_ID) }))
   }),
-  http.delete(`https://api.example.com/user/identifiers/:id`, () => {
-    return HttpResponse.json({ status: 'DELETED' })
+  http.get('https://api.example.com/user/identifiers*', () => {
+    return HttpResponse.json(createTestPagedResultPayload({ items: [createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(IDENTIFIER_ID) })] }))
   }),
-  http.get('https://api.example.com/settings/auth', () => {
-    return HttpResponse.json({ primary: ['EMAIL'], secondary: ['GOOGLE'] })
+  http.get(`https://api.example.com/open/v1/identifiers/${IDENTIFIER_ID}`, () => {
+    return HttpResponse.json(createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(IDENTIFIER_ID) }))
+  }),
+  http.get('https://api.example.com/open/v1/identifiers*', () => {
+    return HttpResponse.json(createTestPagedResultPayload({ items: [createTestUserIdentifierPrivatePayload({ id: toUserIdentifierIdOrThrow(IDENTIFIER_ID) })] }))
   })
 )
 
@@ -47,14 +46,16 @@ describe('Client User Identifier Management Integration Suite', () => {
     const clientUserComponent = clientUserComponentMock({ commonComponent })
 
     const dataSource = createSelfIdentifierListDataSource({
-      getIdentifiersUseCase: clientUserComponent.getUserIdentifiersUseCase,
-      getAvailableUserAuthProvidersUseCase: clientUserComponent.getAvailableUserAuthProvidersUseCase
+      getIdentifiersUseCase: clientUserComponent.getUserIdentifiersUseCase
     })
 
     render(
       <IdentifierListScreen
         dependencies={{
           dataSource,
+          addUserIdentifierEmailUseCase: clientUserComponent.addUserIdentifierEmailUseCase,
+          addUserIdentifierPhoneUseCase: clientUserComponent.addUserIdentifierPhoneUseCase,
+          addUserIdentifierGoogleUseCase: clientUserComponent.addUserIdentifierGoogleUseCase,
           onNavigateToIdentifierDetail: vi.fn(),
           onBack: vi.fn()
         }}
@@ -66,13 +67,13 @@ describe('Client User Identifier Management Integration Suite', () => {
     })
   })
 
-  it('Flow 2: Identifier Detail - View identifier detail screen', async () => {
+  it('Flow 2: Identifier Detail - View identifier information and handle actions', async () => {
     const commonComponent = createMockCommonComponent({ baseUrl: 'https://api.example.com' })
     const clientUserComponent = clientUserComponentMock({ commonComponent })
 
     const dataSource = createSelfIdentifierDetailDataSource({
       getIdentifierUseCase: clientUserComponent.getUserIdentifierUseCase,
-      deleteUserIdentifierUseCase: clientUserComponent.deleteUserIdentifierUseCase,
+      deleteIdentifierUseCase: clientUserComponent.deleteUserIdentifierUseCase,
       deletePasswordUseCase: clientUserComponent.deletePasswordUseCase
     })
 
@@ -81,8 +82,7 @@ describe('Client User Identifier Management Integration Suite', () => {
         dependencies={{
           identifierId: toUserIdentifierIdOrThrow(IDENTIFIER_ID),
           dataSource,
-          onBack: vi.fn(),
-          onFinished: vi.fn()
+          onBack: vi.fn()
         }}
       />
     )

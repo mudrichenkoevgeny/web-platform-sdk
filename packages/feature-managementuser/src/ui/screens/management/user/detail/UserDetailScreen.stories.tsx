@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UserDetailScreen } from '@/ui/screens/management/user/detail/UserDetailScreen'
 import { userDetailDependenciesMock } from '@/mock/ui/screen/management/user/detail/user-detail-component-mock'

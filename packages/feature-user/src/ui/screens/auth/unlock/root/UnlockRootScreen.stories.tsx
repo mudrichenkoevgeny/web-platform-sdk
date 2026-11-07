@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react'
 import { appResultSuccess, ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
 import { UnlockRootScreen } from '@/ui/screens/auth/unlock/root/UnlockRootScreen'
 import type { UnlockRootStoreDependencies } from '@/ui/screens/auth/unlock/root/unlock-root-store'
