@@ -325,9 +325,6 @@ importers:
       msw:
         specifier: ^2.7.0
         version: 2.15.0(@types/node@26.6.5)(typescript@7.0.2)
-      playwright:
-        specifier: latest
-        version: 1.65.0
       plop:
         specifier: ^4.0.1
         version: 4.0.5(@types/node@26.6.5)
@@ -341,17 +338,17 @@ importers:
         specifier: ^8.6.15
         version: 8.6.19(prettier@3.9.10)(supports-color@4.5.0)
       typedoc:
-        specifier: ^0.27.6
+        specifier: ^0.27.9
         version: 0.27.9(typescript@7.0.2)
-      typedoc-plugin-markdown:
-        specifier: ^4.4.1
-        version: 4.14.1(typedoc@0.27.9(typescript@7.0.2))
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.71.2(eslint@10.12.0(jiti@1.21.7)(supports-color@4.5.0))(supports-color@4.5.0)
+      typescript-v5:
+        specifier: npm:typescript@5.8.3
+        version: typescript@5.8.3
       vite:
         specifier: 'catalog:'
         version: 8.3.4(@types/node@26.6.5)(esbuild@0.25.12)(jiti@1.21.7)(yaml@2.9.1)
@@ -4859,12 +4856,6 @@ packages:
     resolution: {integrity: sha512-NoSdpq/WEiAg5sjmBkmV/hfxv6HJH4NqPNrqjtSO5CwRmpsDfaf4begxW34KdJykH/l1yHtwBWQkCRdoXO8mPA==}
     engines: {node: '>=20'}
 
-  typedoc-plugin-markdown@4.14.1:
-    resolution: {integrity: sha512-24XX0oqyBsjBIBNoSH4wbgQkouci/CmgmO1ZBSaVkrcflqXFL2PQ5zFOpkz+Ewow5xQ3q2You+wrcmilNepRKg==}
-    engines: {node: '>= 18'}
-    peerDependencies:
-      typedoc: 0.28.x
-
   typedoc@0.27.9:
     resolution: {integrity: sha512-/z585740YHURLl9DN2jCWe6OW7zKYm6VoQ93H0sxZ1cwHQEQrUn5BJrEnkWhfzUdyO+BLGjnKUZ9iz9hKloFDw==}
     engines: {node: '>= 18'}
@@ -9368,10 +9359,6 @@ snapshots:
   type-fest@5.10.0:
     dependencies:
       tagged-tag: 1.0.0
-
-  typedoc-plugin-markdown@4.14.1(typedoc@0.27.9(typescript@7.0.2)):
-    dependencies:
-      typedoc: 0.27.9(typescript@7.0.2)
 
   typedoc@0.27.9(typescript@7.0.2):
     dependencies:

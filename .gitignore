@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 out/
+docs/api/
+**/temp/
 *.tsbuildinfo
 *.gen.ts
 
@@ -13,6 +15,8 @@ out/
 coverage/
 .vitest/
 *.lcov
+test-results/
+playwright-report/
 
 # Environment and secrets
 .env

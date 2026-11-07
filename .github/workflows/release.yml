@@ -34,7 +34,7 @@ jobs:
       - name: Attest Build Provenance (SLSA Level 3/4)
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'packages/*/dist/**'
+          subject-path: 'packages/*/dist/index.js'
 
       - name: Create Release PR or Publish to npm with SLSA Provenance
         id: changesets
@@ -72,4 +72,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/api
+          publish_dir: ./dist/docs

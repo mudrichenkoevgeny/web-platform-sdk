@@ -2,13 +2,6 @@
   "name": "web-platform-sdk-root",
   "private": true,
   "packageManager": "pnpm@12.8.1",
-  "pnpm": {
-    "auditConfig": {
-      "ignoreCves": [
-        "GHSA-mrhx-c7xc-m3w5"
-      ]
-    }
-  },
   "scripts": {
     "dev:client": "pnpm --filter @web-platform-sdk/sample-client-app dev",
     "dev:management": "pnpm --filter @web-platform-sdk/sample-management-app dev",
@@ -19,8 +12,8 @@
     "test": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest run --passWithNoTests",
     "test:watch": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest",
     "test:e2e": "playwright test",
-    "api:extract": "pnpm -r --filter \"./packages/*\" exec api-extractor run --config ../../tools/config/api-extractor.template.json --local",
-    "api:extract-ci": "pnpm -r --filter \"./packages/*\" exec api-extractor run --config ../../tools/config/api-extractor.template.json",
+    "api:extract": "pnpm -r --filter \"./packages/*\" exec api-extractor run --local",
+    "api:extract-ci": "pnpm -r --filter \"./packages/*\" exec api-extractor run",
     "version:patch": "pnpm -r --filter \"./packages/*\" exec npm version patch --no-git-tag-version",
     "version:minor": "pnpm -r --filter \"./packages/*\" exec npm version minor --no-git-tag-version",
     "version:set": "pnpm -r --filter \"./packages/*\" exec npm version --no-git-tag-version",
@@ -32,7 +25,7 @@
     "deps:upgrade": "pnpm update --interactive --latest",
     "size": "size-limit",
     "lint:exports": "pnpm -r --filter \"./packages/*\" exec publint",
-    "docs:generate": "typedoc --options tools/config/typedoc.json",
+    "docs:generate": "node tools/scripts/generate-docs.mjs",
     "generate": "plop --plopfile tools/generators/plopfile.mjs",
     "generate:usecase": "plop --plopfile tools/generators/plopfile.mjs usecase",
     "generate:component": "plop --plopfile tools/generators/plopfile.mjs component",
@@ -45,6 +38,8 @@
     "@chromatic-com/storybook": "latest",
     "@eslint/compat": "^1.2.7",
     "@microsoft/api-extractor": "^7.52.0",
+    "@playwright/test": "^1.50.0",
+    "@size-limit/file": "^11.1.6",
     "@storybook/addon-a11y": "^8.6.15",
     "@storybook/addon-docs": "^8.6.15",
     "@storybook/addon-mcp": "^10.6.6",
@@ -63,17 +58,14 @@
     "eslint-plugin-storybook": "^0.11.3",
     "eslint-plugin-tsdoc": "^0.4.0",
     "msw": "^2.7.0",
-    "playwright": "latest",
-    "@playwright/test": "^1.50.0",
-    "@size-limit/file": "^11.1.6",
     "plop": "^4.0.1",
     "publint": "^0.3.9",
     "size-limit": "^11.1.6",
     "storybook": "^8.6.15",
-    "typedoc": "^0.27.6",
-    "typedoc-plugin-markdown": "^4.4.1",
+    "typedoc": "^0.27.9",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
+    "typescript-v5": "npm:typescript@5.8.3",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vitest": "catalog:",

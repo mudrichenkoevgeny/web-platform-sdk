@@ -37,6 +37,9 @@ jobs:
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
+      - name: Build Packages
+        run: pnpm build
+
       - name: Run ESLint & Custom AST Rules
         run: pnpm lint
 
@@ -85,7 +88,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Run Dependency Vulnerability Audit
-        run: pnpm audit --prod --audit-level critical || true
+        run: pnpm audit --prod --audit-level critical
 
       - name: Dependency Review (PRs)
         if: github.event_name == 'pull_request'
@@ -107,6 +110,9 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           install-playwright: 'true'
+
+      - name: Build Packages
+        run: pnpm build
 
       - name: Run Tests with Coverage
         run: pnpm test --coverage
@@ -138,6 +144,9 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           install-playwright: 'true'
+
+      - name: Build Packages
+        run: pnpm build
 
       - name: Run E2E Tests for Host Apps
         run: pnpm test:e2e

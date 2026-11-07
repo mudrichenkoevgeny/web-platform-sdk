@@ -49,6 +49,7 @@ export default tseslint.config({
     '**/*.config.js',
     'tools/**',
     'e2e/**',
+    'docs/**',
     'samples/sandbox/**'
   ]
 }, ...tseslint.configs.recommended, {
