@@ -180,53 +180,75 @@ To test a locally generated `.tgz` archive of `@mudrichenkoevgeny/shared-foundat
 
 ---
 
-## 7. Package Publishing to npm
+## 7. Package Publishing & Changeset Workflow
 
-The SDK packages under `packages/*` are published to npm under the `@mudrichenkoevgeny` organization scope (`@mudrichenkoevgeny/web-platform-sdk-*`).
+All SDK packages under `packages/*` are published to npm under the `@mudrichenkoevgeny` scope (`@mudrichenkoevgeny/web-platform-sdk-*`).
 
-### Version Management Across Workspace Packages
+Package versioning and release management are automated using **Changesets** (`@changesets/cli` and `changesets/action@v1`).
 
-To bump package versions across all `packages/*` synchronously without editing individual `package.json` files manually:
+---
 
-- **Bump Patch Version (e.g. 0.0.1 -> 0.0.2):**
+### Step 1: Creating a Changeset during Development
+
+Whenever you introduce a bugfix, new feature, or breaking change in any package under `packages/*`:
+
+1. **Complete your code changes and tests.**
+2. **Generate a Changeset entry (ONCE per PR/Feature):**
+   From the repository root, run:
+   ```bash
+   pnpm change
+   ```
+3. **Follow the interactive CLI prompts:**
+   - Select the packages affected by your changes (e.g. `@mudrichenkoevgeny/web-platform-sdk-core-common`).
+   - Select the semver bump type (`patch`, `minor`, or `major`).
+   - Enter a concise summary of the changes for the package's `CHANGELOG.md`.
+4. **Commit the generated Markdown file:**
+   Changesets creates a unique Markdown file under `.changeset/` (e.g. `.changeset/dry-dogs-dance.md`). Commit and push this file with your feature branch:
+   ```bash
+   git add .changeset
+   git commit -m "chore: add changeset for my feature"
+   ```
+
+> **Note:** You do **NOT** need to run `pnpm change` on every commit. Run it once per feature or pull request before merging into `main`. Changesets are not required for changes restricted to `samples/*`, documentation, or CI workflow configuration.
+
+---
+
+### Step 2: Automated Release PR & Publishing via CI
+
+When your pull request containing a `.changeset/` entry is merged into `main`:
+
+1. **Automated "Version Packages" PR:**
+   The GitHub Actions workflow (`.github/workflows/release.yml`) executes `@changesets/action`. It detects new changeset entries and automatically opens or updates a Pull Request titled **"Version Packages"**.
+2. **Automatic Version Bumping & Changelogs:**
+   The "Version Packages" PR automatically:
+   - Bumps package versions in `package.json` across dependent workspace packages.
+   - Appends entries to each affected package's `CHANGELOG.md`.
+   - Removes the consumed `.changeset/*.md` files.
+3. **Publishing to npm:**
+   When a maintainer merges the **"Version Packages"** PR into `main`, GitHub Actions automatically:
+   - Builds all packages (`pnpm build`).
+   - Publishes updated packages to the npm registry with SLSA Level 3/4 provenance attestation.
+   - Creates corresponding Git tags (`@mudrichenkoevgeny/web-platform-sdk-core-common@x.y.z`) in the repository.
+
+---
+
+### Emergency / Manual Version Bumping (Fallback)
+
+If manual version synchronization is required across all `packages/*` without creating a changeset entry:
+
+- **Bump Patch Version (0.0.1 -> 0.0.2):**
   ```bash
   pnpm version:patch
   ```
-- **Bump Minor Version (e.g. 0.0.1 -> 0.1.0):**
+- **Bump Minor Version (0.0.1 -> 0.1.0):**
   ```bash
   pnpm version:minor
   ```
-- **Set Explicit Version (e.g. 0.0.5):**
+- **Set Explicit Version (e.g. 0.1.5):**
   ```bash
-  pnpm version:set 0.0.5
+  pnpm version:set 0.1.5
   ```
-
-### Publishing Workflow
-
-1. **Authenticate with npm:**
-   ```bash
-   npm login
-   ```
-
-2. **Verify Type Checking & Linting & Tests:**
-   ```bash
-   pnpm typecheck
-   pnpm lint
-   pnpm test
-   ```
-
-3. **Bump Version Across Packages:**
-   ```bash
-   pnpm version:patch
-   ```
-
-4. **Build Distributable Artifacts:**
-   Generates ESM bundles, TypeScript typings (`.d.ts`), and CSS stylesheets (`tokens.css`):
-   ```bash
-   pnpm build
-   ```
-
-5. **Publish All Workspace Packages:**
-   ```bash
-   pnpm -r --filter "./packages/*" publish --access public
-   ```
+- **Consume Local Changesets Manually:**
+  ```bash
+  pnpm version-packages
+  ```
