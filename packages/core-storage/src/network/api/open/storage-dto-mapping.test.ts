@@ -12,9 +12,9 @@ describe('Storage DTO Schema & Mapping', () => {
       file_name: 'document.pdf',
       file_size_bytes: 4096,
       mime_type: 'application/pdf',
-      category: 'DOCUMENT',
-      visibility: 'PRIVATE',
-      status: 'READY',
+      category: 'document',
+      visibility: 'private',
+      status: 'ready',
       file_urls: { original_url: 'https://cdn.example.com/document.pdf' },
       created_at: 1700000000000,
       updated_at: 1700000010000
@@ -30,9 +30,9 @@ describe('Storage DTO Schema & Mapping', () => {
       expect(domainModel.fileName).toBe('document.pdf')
       expect(domainModel.fileSizeBytes).toBe(4096)
       expect(domainModel.mimeType).toBe('application/pdf')
-      expect(domainModel.category).toBe('DOCUMENT')
-      expect(domainModel.visibility).toBe('PRIVATE')
-      expect(domainModel.status).toBe('READY')
+      expect(domainModel.category).toBe('document')
+      expect(domainModel.visibility).toBe('private')
+      expect(domainModel.status).toBe('ready')
       expect(domainModel.fileUrls?.originalUrl).toBe('https://cdn.example.com/document.pdf')
       expect(domainModel.createdAt).toBe(1700000000000)
       expect(domainModel.updatedAt).toBe(1700000010000)
