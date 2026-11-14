@@ -21,6 +21,7 @@ Managed as a monorepo via `pnpm` workspaces:
 | **`feature-user`** | Headless identity and auth domain foundation: Zod schemas, auth token storage (`AuthStorage`), session auto-refresh, TOTP 2FA, session management, multi-identifier linking, and shared React UI screens/components. | [README](packages/feature-user/README.md) |
 | **`feature-clientuser`** | Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, and ready-to-use React login screens. | [README](packages/feature-clientuser/README.md) |
 | **`feature-managementuser`** | Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, and audit inspection UI. | [README](packages/feature-managementuser/README.md) |
+| **`tools`** | Official Web Tooling & Code Quality Kit: agent rules syncer, ESLint flat config preset with AST rules, Dependency Cruiser rules, and CLI generators. | [README](packages/tools/README.md) |
 | **`sample-client-app`** | Reference host application for consumer web frontends demonstrating manual DI wiring (`ClientAppComponent`) and end-user flows. | [README](samples/client-app/README.md) |
 | **`sample-management-app`** | Reference host application for back-office admin panels demonstrating manual DI wiring (`ManagementAppComponent`) and administrative governance. | [README](samples/management-app/README.md) |
 

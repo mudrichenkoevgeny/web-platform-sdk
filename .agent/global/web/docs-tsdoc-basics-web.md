@@ -4,14 +4,14 @@ globs: "**/*.ts, **/*.tsx"
 alwaysApply: true
 ---
 
-# TSDoc Style Guide — Basics
+# TSDoc Style Guide — Basics (Web)
 
 ## 1. Language Standard
 - **English Only:** All TSDoc, README files, and API documentation must be written strictly in English. Never write documentation in other languages.
 
 ## 2. TSDoc Links & Resolution
 - **Simple Links Only:** Use simple names that resolve via imported symbols: `{@link Foo}` or `{@link SomeType.member}`.
-- **No FQN in Links:** Fully qualified names or file paths in links (e.g., `{@link packages/core-common/src/Foo}`) are strictly forbidden.
+- **No FQN in Links:** Fully qualified names or file paths in links (e.g., `{@link package-name/src/Foo}`) are strictly forbidden.
 - **Import Requirement:** Every type referenced in a link must be imported in the current file to ensure IDEs and doc generators can resolve the reference.
 - **Unreachable Targets:** If a type cannot be imported, use plain text without inline link tags.
 - **No Deferred Prose:** Do not redirect the reader with phrases like "Same as {@link Other.CONST}". Every contract detail must be self-contained and fully described.

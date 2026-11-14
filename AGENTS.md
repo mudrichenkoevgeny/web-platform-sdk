@@ -23,7 +23,7 @@ This document is the entry point for architectural and coding standards. These r
 - **Side-Effects Isolation:** Never trigger API calls or data fetching directly inside store factory functions. Always initiate data loading from inside a `useEffect` within a React component or Controller.
 - **Routing & URL as Single Source of Truth:** Host applications (`samples/*`) own the routing implementation (TanStack Router with File-based routing) and Router DI Context. The SDK exports pure React components, Zod parameter schemas (`*ParamsSchema`) from `@mudrichenkoevgeny/shared-foundation`, and DI interfaces. TanStack Router routes validate search parameters via `validateSearch: (raw) => *ParamsSchema.parse(raw)`. Query parameters are formatted via `appendQueryParamsToPath(path, params)`. Smart back navigation uses `PARENT_ROUTE` constants from route navigation objects.
 - **Mandatory Complete Implementation:** All created or modified files must contain complete, production-ready code. Placeholder code, dummy components, and default generator stubs are strictly prohibited unless the developer explicitly asks for a stub.
-- **Mandatory Test IDs:** Always map KMP `TestTags` directly to TypeScript `TestTags` objects (e.g. `export const MyTestTags = { ... }`) and apply them to DOM elements using `data-testid`.
+- **Mandatory Test IDs:** Always map UI test tags directly to TypeScript `TestTags` objects (e.g. `export const MyTestTags = { ... }`) and apply them to DOM elements using `data-testid`.
 - **Strict Enum State Types:** Never use generic `string` types in `ScreenState` for fields representing fixed value sets (statuses, roles, lockout types, etc.). Always use imported TypeScript enums (`UserRole`, `UserAccountStatus`, `AccountLockoutType`).
 - **Accessibility (a11y):** Always use `useId()` to generate unique IDs for form fields and link labels via `htmlFor`.
 - **Manual Test Execution:** AI agents must not run tests or suggest running them. Execution is always triggered explicitly by the developer.
@@ -44,13 +44,26 @@ This document is the entry point for architectural and coding standards. These r
 - **`feature-clientuser`:** Identity solution for standard users. Multi-method auth (Email, Phone, Google), state-machine navigation flows, and React components (shadcn/ui + Tailwind).
 - **`feature-managementuser`:** Administrative identity solution. Management auth, session control, resource oversight, and administrative UI components.
 
-## Detailed Standards ([.agent/](.agent/))
-- **[project-overview.md](.agent/project-overview.md)** — Project identity, Web targets, module boundaries, and pnpm workspace layout.
-- **[architecture-patterns.md](.agent/architecture-patterns.md)** — Zustand component tree rules, WebSocket message handler registration, and Error Parser chaining.
-- **[docs-tsdoc-basics.md](.agent/docs-tsdoc-basics.md)** — Language standards (English) and TSDoc Definition of Done.
-- **[docs-tsdoc-type-requirements.md](.agent/docs-tsdoc-type-requirements.md)** — Specific TSDoc patterns for DTOs, State Types, and implementations.
-- **[localization.md](.agent/localization.md)** — Typed dictionary layout and naming conventions for UI strings.
-- **[ts-coding-style.md](.agent/ts-coding-style.md)** — Naming conventions, Switch/Record rules, brace requirements, FQN/Comments ban, Trailing Commas ban, and `as any` ban.
-- **[ui-react-components.md](.agent/ui-react-components.md)** — Rules for React Context usage, state hoisting in Zustand, UI stories, tests, and localization constraints.
-- **[testing-conventions.md](.agent/testing-conventions.md)** — Vitest test conventions, manual execution policy, Mocking rules, and UI snapshots.
-- **[ai-collaboration-workflow.md](.agent/ai-collaboration-workflow.md)** — AI constraints, pnpm dependency management, and SDK vs Sample boundaries.
+### Tooling Package (`packages/tools`)
+- **`tools`:** Official Web Tooling & Code Quality Kit (`@mudrichenkoevgeny/web-platform-sdk-tools`). Agent rules syncer, ESLint flat config preset with custom AST rules, Dependency Cruiser rules, and CLI generators.
+
+## Detailed Standards (`.agent/`)
+
+### Global Shared Standards (`.agent/global/`)
+- **Common (`.agent/global/common/`):**
+  - **[ai-collaboration-basics.md](.agent/global/common/ai-collaboration-basics.md)** — Universal AI interaction constraints, operational rules (Git ban, test execution ban), dependency rules, and architectural layering (cascaded from `shared-foundation`).
+- **Web (`.agent/global/web/`):**
+  - **[ts-coding-style-web.md](.agent/global/web/ts-coding-style-web.md)** — Web TypeScript coding style, syntax constraints, type safety, branded types, and enums.
+  - **[ui-react-components-web.md](.agent/global/web/ui-react-components-web.md)** — Web React UI standards, state hoisting, Storybook previews, a11y, and routing integration.
+  - **[testing-conventions-web.md](.agent/global/web/testing-conventions-web.md)** — Vitest test conventions, DOM testing, mocking standards, and mandatory test IDs.
+  - **[localization-web.md](.agent/global/web/localization-web.md)** — Typed dictionary layout, UI usage enforcement, and semantic accuracy.
+  - **[docs-tsdoc-basics-web.md](.agent/global/web/docs-tsdoc-basics-web.md)** — Language standards, link resolution, and TSDoc Definition of Done.
+  - **[docs-tsdoc-type-requirements-web.md](.agent/global/web/docs-tsdoc-type-requirements-web.md)** — Specific TSDoc requirements by component type.
+
+### Local Standards (`.agent/local/`)
+- **[project-overview.md](.agent/local/project-overview.md)** — Identity, module boundaries, and consumer SDK relations.
+- **[architecture-patterns.md](.agent/local/architecture-patterns.md)** — Entity projections, serialization, WebSocket contracts, navigation structures, UI values/configs, presigned uploads, and API error DTO structures.
+- **[ui-react-components.md](.agent/local/ui-react-components.md)** — Project-specific React UI rules, Design Tokens location, font assets, and SDK provider setup.
+
+
+

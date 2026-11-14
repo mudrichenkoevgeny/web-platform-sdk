@@ -6,6 +6,8 @@
     "dev:client": "pnpm --filter @web-platform-sdk/sample-client-app dev",
     "dev:management": "pnpm --filter @web-platform-sdk/sample-management-app dev",
     "build": "pnpm -r --filter \"./packages/*\" run build",
+    "postinstall": "node tools/scripts/sync-foundation-rules.mjs",
+    "sync-foundation-rules": "node tools/scripts/sync-foundation-rules.mjs",
     "lint": "eslint . --max-warnings 0",
     "lint:deps": "depcruise --config tools/config/dependency-cruiser.js packages samples",
     "typecheck": "pnpm -r run typecheck",

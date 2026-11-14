@@ -4,7 +4,7 @@ globs: "**/*.ts, **/*.tsx"
 alwaysApply: true
 ---
 
-# Documentation Requirements by Type
+# Documentation Requirements by Type (Web)
 
 ## 1. Component & Wiring Classes
 - Document required constructor injections.
@@ -12,7 +12,7 @@ alwaysApply: true
 
 ## 2. React Components
 - Document expected props.
-- Document expected Context dependencies (e.g., "Throws if used outside `<SdkProvider>`").
+- Document expected Context dependencies (e.g., "Throws if used outside `<AppProvider>`").
 
 ## 3. Zustand Stores (State Machines)
 - Document state transitions (e.g., `Initial` -> `Loading` -> `Success`).

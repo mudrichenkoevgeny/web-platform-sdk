@@ -8,7 +8,7 @@ alwaysApply: true
 
 ## 1. Modular Hierarchy & Component Model (React + Zustand)
 - **UI Layer (React):** Stateless functional components that consume state via custom hooks (`useSdkStore()`).
-- **Component Layer (Zustand):** Replaces Decompose. State machines that own the business logic and flow transitions (e.g., `createLoginStore()`).
+- **Component Layer (Zustand):** Reactive state machines that own business logic and flow transitions (e.g., `createLoginStore()`).
 - **Use Case / Service Layer:** Pure TypeScript classes or functions for atomic business operations.
 - **Repository Layer:** Orchestrates data flow between Fetch APIs and `EncryptedSettings`.
 

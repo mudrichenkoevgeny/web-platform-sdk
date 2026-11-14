@@ -1,0 +1,14 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
+import { {{pascalCase name}}, {{pascalCase name}}TestTags } from './{{pascalCase name}}'
+
+describe('{{pascalCase name}} Component', () => {
+  it('renders correctly with given title', () => {
+    render(<{{pascalCase name}} title="Custom Component Title" />)
+
+    const titleElement = screen.getByTestId({{pascalCase name}}TestTags.title)
+    expect(titleElement).toBeInTheDocument()
+    expect(titleElement).toHaveTextContent('Custom Component Title')
+  })
+})

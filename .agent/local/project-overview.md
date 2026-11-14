@@ -18,6 +18,7 @@ alwaysApply: true
 - **`packages/feature-user`:** Identity domain, auth session storage.
 - **`packages/feature-clientuser`:** React UI for consumer auth, Tailwind styles, state machines.
 - **`packages/feature-managementuser`:** React UI for admins.
+- **`packages/tools`:** Web Tooling & Code Quality Kit (`@mudrichenkoevgeny/web-platform-sdk-tools`). Agent rules syncer, ESLint flat config preset with AST rules, Dependency Cruiser rules, and CLI generators.
 
 ## Boundaries
 - `core-common` is the leaf; it must never depend on `feature-*`.

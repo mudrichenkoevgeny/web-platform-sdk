@@ -1,0 +1,57 @@
+import React, { useId } from 'react'
+
+/**
+ * TestTags mapping for DOM accessibility and automated testing.
+ */
+export const {{pascalCase name}}TestTags = {
+  container: '{{kebabCase name}}-container',
+  title: '{{kebabCase name}}-title'
+} as const
+
+/**
+ * Props interface for {@link {{pascalCase name}}}.
+ */
+export interface {{pascalCase name}}Props {
+  /** Optional header title label. */
+  title?: string
+  /** Optional click callback for container interactivity. */
+  onClick?: () => void
+}
+
+/**
+ * Pure UI component for {{pascalCase name}}.
+ *
+ * @param props Component configuration props
+ */
+export const {{pascalCase name}}: React.FC<{{pascalCase name}}Props> = ({
+  title = 'Default Title',
+  onClick
+}) => {
+  const componentId = useId()
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault()
+      onClick()
+    }
+  }
+
+  return (
+    <div
+      id={componentId}
+      data-testid={ {{pascalCase name}}TestTags.container }
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? handleKeyDown : undefined}
+      className="p-4 border rounded-md shadow-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+    >
+      <h2
+        data-testid={ {{pascalCase name}}TestTags.title }
+        className="text-lg font-semibold"
+      >
+        {title}
+      </h2>
+    </div>
+  )
+}
