@@ -1,79 +1,66 @@
-# Sample Client App (`@web-platform-sdk/sample-client-app`)
+# Web Platform SDK Tools (`@mudrichenkoevgeny/web-platform-sdk-tools`)
 
-Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`) with **TanStack Router** file-based routing.
+The official **Web Tooling & Code Quality Kit** for Web Platform SDK applications and packages.
 
-## How to Build & Run
+Provides automated agent rules synchronization, shared ESLint rules with custom architectural AST checks, Dependency Cruiser module boundary rules, and interactive Plop code generators.
 
-### 1. Prerequisites (Build Core SDK Packages)
-Before starting the sample application for the first time or after modifying SDK packages (`packages/*`), build all workspace packages from the project root:
+---
+
+## Features
+
+- **Automated Agent Rules Sync:** Automatically delivers `.agent/global/` (`common/` + `web/`) rules on `postinstall` or via CLI (`npx sync-agent-rules`).
+- **Shared ESLint Preset & Custom AST Rules:** Enforces strict TypeScript, React, a11y, and TSDoc standards plus custom AST rules (`no-direct-branded-cast`, `no-throw-in-repo-usecase`, `no-empty-di-array`).
+- **Dependency Cruiser Rules:** Enforces clean architectural module boundaries (`core-common` isolation, feature non-cross dependencies).
+- **Interactive Plop Generators:** Scaffolds Clean Architecture UseCases and React UI components with tests and Storybook previews via CLI.
+
+---
+
+## Installation
+
+Add as a development dependency in your web project:
 
 ```bash
-pnpm build
+pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
 ```
 
-### 2. Development Server
-To run the local development server with Hot Module Replacement (HMR):
+---
 
-- **From repository root:**
-  ```bash
-  pnpm dev:client
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  cd samples/client-app
-  pnpm dev
-  ```
+## Usage Guide
 
-* **URL:** `http://localhost:3002`
+### 1. ESLint Configuration
 
-### 3. Production Build
-Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
+Import the flat ESLint configuration in your project's `eslint.config.js`:
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app build
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm build
-  ```
+```javascript
+import webSdkEslintConfig from '@mudrichenkoevgeny/web-platform-sdk-tools/eslint'
 
-### 4. Local Preview
-Launches a local static server to test and inspect the built production bundle (`dist/`):
+export default [
+  ...webSdkEslintConfig
+]
+```
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app preview
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm preview
-  ```
+### 2. Dependency Cruiser Configuration
 
-### 5. Type Checking
-Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
+Import the Dependency Cruiser configuration in your project's `.dependency-cruiser.js`:
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app typecheck
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm typecheck
-  ```
+```javascript
+import { webSdkDepcruiseConfig } from '@mudrichenkoevgeny/web-platform-sdk-tools/depcruise'
 
-## Architecture & What It Provides
+export default webSdkDepcruiseConfig
+```
 
-- **Root Wiring (`ClientAppComponent`):** Central DI container aggregating:
-  - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
-  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user details).
-- **Initialization (`SyncDataUseCase`):**
-  - Attaches `authHttpClientConfigPlugin` to the HTTP client.
-  - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
-  - Installs WebSocket event handlers.
-  - Refreshes user configuration upon startup.
-- **UI Architecture (`RootContent` & TanStack Router):**
-  - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/user`, `/user/sessions/$sessionId`, `/user/identifiers/$identifierId`, `/user/totp/*`, `/auth/*`).
-  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
-  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.
+### 3. CLI Commands
+
+```bash
+# Synchronize global agent rules into project .agent/global/
+npx web-sdk-tools sync
+
+# Interactively generate UseCases or React UI components
+npx web-sdk-tools generate
+
+# Verify package exports via publint
+npx web-sdk-tools check-exports
+
+# Verify public API signature snapshots via API Extractor
+npx web-sdk-tools api-extract
+```

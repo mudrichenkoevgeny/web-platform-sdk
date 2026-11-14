@@ -35,7 +35,8 @@ web-platform-sdk/
 │   ├── core-storage/           # @mudrichenkoevgeny/web-platform-sdk-core-storage
 │   ├── feature-user/           # @mudrichenkoevgeny/web-platform-sdk-feature-user
 │   ├── feature-clientuser/     # @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
-│   └── feature-managementuser/ # @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+│   ├── feature-managementuser/ # @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+│   └── tools/                  # @mudrichenkoevgeny/web-platform-sdk-tools
 └── samples/
     ├── client-app/             # Consumer reference app (@web-platform-sdk/sample-client-app)
     └── management-app/         # Admin reference app (@web-platform-sdk/sample-management-app)
@@ -100,6 +101,41 @@ Runs ESLint rules with zero warning tolerance across all TypeScript and React fi
 ```bash
 # Run linter project-wide
 pnpm lint
+```
+
+### Module Boundaries (`dependency-cruiser`)
+Runs Dependency Cruiser to enforce architectural boundaries between core and feature modules:
+
+```bash
+# Verify workspace module boundaries
+pnpm lint:deps
+```
+
+### API Contract Snapshots (`api-extractor`)
+Generates and verifies public API signature snapshots to prevent breaking contract changes:
+
+```bash
+# Update local API snapshots
+pnpm api:extract
+
+# Verify API contract snapshots in CI mode
+pnpm api:extract-ci
+```
+
+### Package Exports Verification (`publint`)
+Verifies package.json export configurations and type declarations across all workspace packages:
+
+```bash
+# Run publint across workspace packages
+pnpm lint:exports
+```
+
+### Bundle Size Budget Verification (`size-limit`)
+Monitors brotli/gzip bundle sizes for all published workspace packages:
+
+```bash
+# Verify bundle size budgets
+pnpm size
 ```
 
 ---

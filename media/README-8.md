@@ -1,6 +1,6 @@
-# Sample Management App (`@web-platform-sdk/sample-management-app`)
+# Sample Client App (`@web-platform-sdk/sample-client-app`)
 
-Administrative host application demonstrating how to wire **`web-platform-sdk`** modules for internal management staff (`ManagementAppComponent`) with **TanStack Router** file-based routing.
+Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`) with **TanStack Router** file-based routing.
 
 ## How to Build & Run
 
@@ -16,24 +16,24 @@ To run the local development server with Hot Module Replacement (HMR):
 
 - **From repository root:**
   ```bash
-  pnpm dev:management
+  pnpm dev:client
   ```
-- **From inside `samples/management-app`:**
+- **From inside `samples/client-app`:**
   ```bash
-  cd samples/management-app
+  cd samples/client-app
   pnpm dev
   ```
 
-* **URL:** `http://localhost:3001`
+* **URL:** `http://localhost:3002`
 
 ### 3. Production Build
 Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
 
 - **From repository root:**
   ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app build
+  pnpm --filter @web-platform-sdk/sample-client-app build
   ```
-- **From inside `samples/management-app`:**
+- **From inside `samples/client-app`:**
   ```bash
   pnpm build
   ```
@@ -43,9 +43,9 @@ Launches a local static server to test and inspect the built production bundle (
 
 - **From repository root:**
   ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app preview
+  pnpm --filter @web-platform-sdk/sample-client-app preview
   ```
-- **From inside `samples/management-app`:**
+- **From inside `samples/client-app`:**
   ```bash
   pnpm preview
   ```
@@ -55,25 +55,25 @@ Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
 
 - **From repository root:**
   ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app typecheck
+  pnpm --filter @web-platform-sdk/sample-client-app typecheck
   ```
-- **From inside `samples/management-app`:**
+- **From inside `samples/client-app`:**
   ```bash
   pnpm typecheck
   ```
 
 ## Architecture & What It Provides
 
-- **Root Wiring (`ManagementAppComponent`):** Central DI container aggregating:
+- **Root Wiring (`ClientAppComponent`):** Central DI container aggregating:
   - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
-  - **Feature Domain:** `ManagementUserComponent` (administrative user management, session oversight, audit logging).
-- **Initialization (`SyncManagementDataUseCase`):**
+  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user details).
+- **Initialization (`SyncDataUseCase`):**
   - Attaches `authHttpClientConfigPlugin` to the HTTP client.
-  - Registers administrative error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
-  - Installs management WebSocket event handlers.
-  - Refreshes management user configuration upon startup.
+  - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
+  - Installs WebSocket event handlers.
+  - Refreshes user configuration upon startup.
 - **UI Architecture (`RootContent` & TanStack Router):**
   - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/audit/events`, `/users`, `/sessions`, `/identifiers`, `/settings/*`, `/user`, `/auth/*`).
-  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects UseCases directly into route handlers.
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/user`, `/user/sessions/$sessionId`, `/user/identifiers/$identifierId`, `/user/totp/*`, `/auth/*`).
+  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
   - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.
