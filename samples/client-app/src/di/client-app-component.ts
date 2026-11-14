@@ -164,6 +164,18 @@ export class ClientAppComponent {
     this.clientAppUseCaseModule = new ClientAppUseCaseModule(
       this.clientUserComponent.refreshUserConfigurationUseCase
     )
+
+    // =========================================================================
+    // BUSINESS CONTRACTS & DI EXTENSION SLOT (@{{projectName}}/shared)
+    // =========================================================================
+    // Import custom business contracts, repositories, and use cases here:
+    // import { CustomBusinessComponent } from '@{{projectName}}/shared'
+    //
+    // Instantiate custom business components sharing the SDK's HttpClient:
+    // this.customBusinessComponent = new CustomBusinessComponent({
+    //   httpClient: this.commonComponent.httpClient
+    // })
+    // =========================================================================
   }
 
   /**

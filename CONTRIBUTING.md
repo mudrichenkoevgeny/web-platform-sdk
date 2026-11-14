@@ -84,6 +84,17 @@ Demonstrates back-office admin panel flows (Staff Auth, Audit Logs, User Managem
 
 ## 4. Code Quality, Type Checking & Linting
 
+### Code Quality, Scaffolding & Code Generation (`web-sdk-tools`)
+The tooling package (`@mudrichenkoevgeny/web-platform-sdk-tools`) provides CLI commands for project scaffolding and code generation:
+
+```bash
+# Scaffold a new application workspace (type: workspace, client, or admin)
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
+
+# Interactively scaffold UseCases or React UI components
+pnpm generate
+```
+
 ### Type Checking (`tsc`)
 Runs strict TypeScript compilation checks (`tsc --noEmit`) across all workspace packages and apps:
 

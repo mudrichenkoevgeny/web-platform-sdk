@@ -10,6 +10,7 @@ export const webSdkEslintConfig: TSESLint.FlatConfig.ConfigArray = [
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
+      '**/templates/**',
       '**/.storybook/**',
       '**/storybook-static/**',
       '**/coverage/**',

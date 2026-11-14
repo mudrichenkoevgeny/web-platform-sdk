@@ -45,7 +45,7 @@ This document is the entry point for architectural and coding standards. These r
 - **`feature-managementuser`:** Administrative identity solution. Management auth, session control, resource oversight, and administrative UI components.
 
 ### Tooling Package (`packages/tools`)
-- **`tools`:** Official Web Tooling & Code Quality Kit (`@mudrichenkoevgeny/web-platform-sdk-tools`). Agent rules syncer, ESLint flat config preset with custom AST rules, Dependency Cruiser rules, and CLI generators.
+- **`tools`:** Official Web Tooling & Code Quality Kit (`@mudrichenkoevgeny/web-platform-sdk-tools`). Project skeleton generator (`init`), agent rules syncer (`sync`), ESLint flat config preset with custom AST rules, Dependency Cruiser rules, and CLI generators (`generate`).
 
 ## Detailed Standards (`.agent/`)
 
