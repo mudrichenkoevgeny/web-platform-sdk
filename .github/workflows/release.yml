@@ -1,4 +1,4 @@
-name: Automated Release & Semantic Versioning
+name: Release & Publish
 
 on:
   push:
@@ -8,55 +8,42 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release & Publish Packages (@mudrichenkoevgeny/web-platform-sdk-*)
+  publish-npm:
+    name: Publish Packages to npm (@mudrichenkoevgeny/web-platform-sdk-*)
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
-      pull-requests: write
       attestations: write
-
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env
 
+      - name: Update npm to latest (for OIDC Trusted Publishing)
+        run: npm install -g npm@latest
+
       - name: Build Packages
         run: pnpm build
 
-      - name: Attest Build Provenance (SLSA Level 3/4)
+      - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'packages/*/dist/index.js'
+          subject-path: 'packages/*/dist/*.{js,mjs,cjs}'
 
-      - name: Create Release PR or Publish to npm with SLSA Provenance
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          publish: pnpm release
-          version: pnpm version-packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: 'true'
+      - name: Publish Packages to npmjs.com
+        run: pnpm -r publish --access public --provenance --no-git-checks
 
   publish-docs:
     name: Publish TypeDoc API Reference to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Environment & Dependencies
         uses: ./.github/actions/setup-env

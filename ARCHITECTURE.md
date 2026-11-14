@@ -43,6 +43,7 @@ flowchart TD
         CoreSettings["core-settings\nGlobal App Settings, Settings Repository"]
         CoreStorage["core-storage\nFile Storage, Direct S3 Uploader,\nStorage Repository, Storage Screens"]
         CoreCommon["core-common\nFetch Client, WebWebSocketService, WebCryptoSettings,\nAppErrorParser, Pagination, React Components"]
+        Tools["tools\nAgent Rules Syncer, ESLint Preset,\nDepcruise Rules, CLI Generators"]
     end
 
     %% External Systems
@@ -101,11 +102,12 @@ graph TD
     FeatureMgmtUser["packages/feature-managementuser"]
     FeatureUser["packages/feature-user"]
 
-    %% Core Modules
+    %% Core Modules & Tooling
     CoreSecurity["packages/core-security"]
     CoreSettings["packages/core-settings"]
     CoreStorage["packages/core-storage"]
     CoreCommon["packages/core-common"]
+    Tools["packages/tools"]
 
     %% Dependencies
     SampleClient --> FeatureClientUser

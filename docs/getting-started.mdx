@@ -15,6 +15,12 @@ pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common \
   @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
 ```
 
+Add the development tooling package for automatic agent rules synchronization, ESLint presets, and code generators:
+
+```bash
+pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
+```
+
 ## Initializing the SDK Provider
 
 Initialize `CommonComponent` in your application composition root and wrap your React component tree with `SdkProvider`:
@@ -22,12 +28,12 @@ Initialize `CommonComponent` in your application composition root and wrap your 
 ```tsx
 import React from 'react'
 import { CommonComponent, SdkProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
 
 export const App: React.FC<{ commonComponent: CommonComponent }> = ({ commonComponent }) => {
   return (
     <SdkProvider component={commonComponent}>
-      <LoginByPhoneScreen dependencies={dependencies} />
+      <LoginByEmailScreen dependencies={dependencies} />
     </SdkProvider>
   )
 }

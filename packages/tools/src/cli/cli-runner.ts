@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename)
 /**
  * Finds the package root directory for @mudrichenkoevgeny/web-platform-sdk-tools.
  *
- * @param startDir Starting directory for root resolution
+ * @param startDir - Starting directory for root resolution
  * @returns Resolved package root directory absolute path
  */
 function findPackageDir(startDir: string): string {
@@ -37,8 +37,8 @@ function findPackageDir(startDir: string): string {
 /**
  * Resolves binary executable path for a given node module.
  *
- * @param packageName Module name to resolve
- * @param relativeBinPath Relative path to executable JS script inside package
+ * @param packageName - Module name to resolve
+ * @param relativeBinPath - Relative path to executable JS script inside package
  * @returns Absolute file path to executable binary
  */
 function resolveModuleBin(packageName: string, relativeBinPath: string): string {
@@ -74,7 +74,7 @@ type CommandHandler = (args: string[]) => Promise<void> | void
 /**
  * Runs the Web Platform SDK Tools CLI.
  *
- * @param args CLI arguments array (default: process.argv.slice(2))
+ * @param args - CLI arguments array (default: process.argv.slice(2))
  */
 export async function runCli(args: string[] = process.argv.slice(2)): Promise<void> {
   const rawCommand = args[0] as CliCommand | undefined
@@ -84,6 +84,17 @@ export async function runCli(args: string[] = process.argv.slice(2)): Promise<vo
 
   const packageDir = findPackageDir(__dirname)
   const targetCwd = process.cwd()
+
+  const toolsPackageJsonPath = path.join(packageDir, 'package.json')
+  if (!fs.existsSync(toolsPackageJsonPath)) {
+    throw new Error(`Failed to locate package.json for @mudrichenkoevgeny/web-platform-sdk-tools at ${toolsPackageJsonPath}`)
+  }
+
+  const pkgJson = JSON.parse(fs.readFileSync(toolsPackageJsonPath, 'utf-8'))
+  if (!pkgJson.version) {
+    throw new Error(`Package version is missing in ${toolsPackageJsonPath}`)
+  }
+  const toolsVersion = pkgJson.version as string
 
   const commandHandlers: Record<CliCommand, CommandHandler> = {
     sync: () => {
@@ -149,7 +160,7 @@ export async function runCli(args: string[] = process.argv.slice(2)): Promise<vo
     },
     help: () => {
       console.log(`
-Web Platform SDK Tools CLI v0.1.0
+Web Platform SDK Tools CLI v${toolsVersion}
 
 Available Commands:
   web-sdk-tools sync            Synchronize global agent rules into project .agent/global/

@@ -37,3 +37,6 @@ alwaysApply: true
   - `toEntityIdOrThrow(value: string): EntityId`
   - `toEntityIdOrNull(value: string | null | undefined): EntityId | null`
 - **Strict Ban:** Never cast strings directly via `as EntityId` inside feature logic. Always call `toEntityIdOrThrow(value)` or `toEntityIdOrNull(value)`.
+
+## 7. AI Tooling & Search Constraints
+- **Fast Search Scoping (`grep` / `code_search`):** When performing text or symbol searches using `grep` or `code_search`, ALWAYS specify file exclusions or path filters (e.g. `exclude = "**/node_modules/**"`, `exclude = "**/build/**"`, `exclude = "**/dist/**"`) to strictly bypass generated build outputs, `node_modules/`, `dist/`, and `build/` directories. Searching through raw `node_modules/` or build artifacts is strictly prohibited as it degrades search performance from milliseconds to tens of seconds.

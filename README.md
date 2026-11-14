@@ -41,6 +41,11 @@ pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-
 pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-core-storage @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
 ```
 
+### For Development Tooling & Code Quality Kit
+```bash
+pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
+```
+
 To include design tokens and component styling, import the stylesheet into your application root:
 
 ```typescript
@@ -83,10 +88,28 @@ Runs ESLint across all workspace packages and sample applications:
 pnpm lint
 ```
 
+### Module Boundaries Check
+Runs Dependency Cruiser to verify architectural boundaries between core and feature modules:
+```bash
+pnpm lint:deps
+```
+
 ### Type Checking
 Runs TypeScript type checking (`tsc --noEmit`) across all workspace packages and apps:
 ```bash
 pnpm typecheck
+```
+
+### API Contract Verification
+Runs API Extractor to generate and verify public API signature snapshots:
+```bash
+pnpm api:extract-ci
+```
+
+### Bundle Size Budget Verification
+Monitors brotli/gzip bundle sizes for all published workspace packages:
+```bash
+pnpm size
 ```
 
 ---
