@@ -96,7 +96,11 @@ export class SandboxAppComponent {
       return
     }
 
-    await this.commonComponent.init()
+    await this.commonComponent.init([
+      new SecurityErrorParser(),
+      new StorageErrorParser(),
+      new UserErrorParser()
+    ])
     await this.clientUserComponent.init()
     this.isInitialized = true
   }

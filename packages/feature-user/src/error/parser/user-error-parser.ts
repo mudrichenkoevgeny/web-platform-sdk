@@ -108,7 +108,6 @@ export class UserErrorParser implements AppErrorParser {
 
       case UserErrorCodes.USER_IDENTIFIER_LIMIT_REACHED:
         return strings.resolveUserIdentifierLimitReachedMessage(
-          commonStrings,
           getAppErrorArgAsString(args, UserErrorArgs.MAX_NUMBER_OF_IDENTIFIERS),
           getAppErrorArgAsString(args, UserErrorArgs.USER_AUTH_PROVIDER)
         )

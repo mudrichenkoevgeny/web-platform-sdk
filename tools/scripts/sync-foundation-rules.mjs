@@ -17,13 +17,22 @@ function findWorkspaceRoot(startDir) {
 const currentFileDir = fileURLToPath(new URL('.', import.meta.url))
 const rootDir = findWorkspaceRoot(currentFileDir)
 
-let sourceDir = path.join(rootDir, 'node_modules/@mudrichenkoevgeny/shared-foundation/.agent/global/common')
+let foundationPkgDir
+try {
+  const resolvedEntry = import.meta.resolve('@mudrichenkoevgeny/shared-foundation')
+  foundationPkgDir = path.dirname(fileURLToPath(resolvedEntry))
+} catch (_err) {
+  foundationPkgDir = path.join(rootDir, 'node_modules/@mudrichenkoevgeny/shared-foundation')
+}
+
+let sourceDir = path.join(foundationPkgDir, '.agent/global/common')
 if (!fs.existsSync(sourceDir)) {
-  sourceDir = path.join(rootDir, 'node_modules/@mudrichenkoevgeny/shared-foundation/.agent/common')
+  sourceDir = path.join(foundationPkgDir, '.agent/common')
 }
 
 syncAgentRules({
   sourceAgentDir: sourceDir,
   relativeTargetSubdir: '.agent/global/common',
-  packageName: 'Shared Foundation'
+  packageName: 'Shared Foundation',
+  targetRootDir: rootDir
 })

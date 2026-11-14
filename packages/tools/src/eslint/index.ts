@@ -31,10 +31,10 @@ export const webSdkEslintConfig: TSESLint.FlatConfig.ConfigArray = [
       'sdk-arch/no-direct-branded-cast': 'error',
       'sdk-arch/no-throw-in-repo-usecase': 'error',
       'sdk-arch/no-empty-di-array': 'error',
-      'no-inline-comments': 'error',
-      'comma-dangle': ['error', 'never']
+      'no-inline-comments': 'error'
     }
   }
 ]
 
 export { sdkArchPlugin }
+export default webSdkEslintConfig

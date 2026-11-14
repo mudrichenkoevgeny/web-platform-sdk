@@ -20,6 +20,7 @@ const globalSourceDir = path.join(rootDir, '.agent/global')
 const packageTargetDir = path.join(rootDir, 'packages/tools/.agent/global')
 
 if (fs.existsSync(globalSourceDir)) {
+  fs.rmSync(packageTargetDir, { recursive: true, force: true })
   fs.mkdirSync(packageTargetDir, { recursive: true })
   fs.cpSync(globalSourceDir, packageTargetDir, { recursive: true, force: true })
   console.log('[sync-agent-rules] Synced .agent/global -> packages/tools/.agent/global')

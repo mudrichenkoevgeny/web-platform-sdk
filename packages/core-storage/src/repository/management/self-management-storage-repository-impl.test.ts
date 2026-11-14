@@ -136,7 +136,7 @@ describe('SelfManagementStorageRepositoryImpl', () => {
       file_size_bytes: 2048,
       mime_type: 'image/jpeg',
       visibility: 'PUBLIC',
-      status: 'READY',
+      status: 'ready',
       file_urls: { original_url: 'https://cdn.example.com/file-ws-1' },
       created_at: 1000,
       updated_at: 2000

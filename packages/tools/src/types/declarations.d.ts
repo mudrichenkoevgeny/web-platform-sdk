@@ -3,6 +3,7 @@ declare module '@mudrichenkoevgeny/shared-foundation/scripts/agent-rules-syncer.
     sourceAgentDir: string
     relativeTargetSubdir: string
     packageName: string
+    targetRootDir?: string
   }
   export function syncAgentRules(options: SyncAgentRulesOptions): void
 }

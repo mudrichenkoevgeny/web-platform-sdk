@@ -25,12 +25,13 @@ A documentation task for a module or feature is considered complete ONLY if:
 1. **Public Surface:** Every exported `interface`, `type`, `class`, and `function` has a top-level TSDoc summary.
 2. **Members:** Every public method, property, and getter/setter has its own TSDoc.
 3. **Contracts:** TSDoc must include:
-    - Summary of the operation/purpose.
-    - `@param` for all parameters.
-    - `@returns` for non-void return types.
-    - `@throws` for expected domain or infrastructure errors/exceptions.
-4. **Side Effects:** For void/Promise<void> functions, the summary must clearly state the outcome (e.g., "Persists the session token and notifies the active storage listeners").
+   - Summary of the operation/purpose.
+   - `@param` for all parameters.
+   - `@returns` for non-void return types (for functions returning `AppResult<T, AppError>`, describe both the success payload and potential `AppError` failure variants in `@returns`).
+   - `@throws` ONLY for boundary utilities or parsers (e.g., `toEntityIdOrThrow`, React context hooks outside providers) that intentionally throw exceptions.
+4. **Side Effects:** For `void` / `Promise<void>` functions, the summary must clearly state the outcome (e.g., "Persists the session token and notifies the active storage listeners").
 
 ## 5. Inline Comments vs. TSDoc
-- **No Inline Implementation Comments:** Strictly forbidden to write narrative inline comments (`//` or `/* ... */`) inside code bodies. Logic must be self-documenting through expressive naming and clean structure.
+- **No Agent-Generated Inline Comments or TODOs:** AI agents must NOT write narrative inline comments (`//` or `/* ... */`) or generate new `TODO` / `FIXME` markers inside code bodies unless explicitly requested by the developer. Logic must be self-documenting through expressive naming and clean structure.
+- **Preserve Existing Developer TODOs:** Never delete or strip pre-existing `// TODO:` or `// FIXME:` comments left by the developer unless the current task explicitly resolves that specific TODO item.
 - **MANDATORY TSDoc Preservation:** TSDoc blocks (`/** ... */`) are structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing TSDoc documentation during refactorings, updates, or code edits. All public and exported API elements must strictly retain, maintain, and update their TSDoc documentation.

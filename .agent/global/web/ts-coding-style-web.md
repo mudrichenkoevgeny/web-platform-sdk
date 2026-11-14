@@ -7,11 +7,11 @@ alwaysApply: true
 # TypeScript Coding Style (Web)
 
 ## 1. Core Syntax Constraints
-- **No Implementation Comments (Preserve TSDoc/JSDoc):** Do not write inline implementation comments (`//` or `/* ... */`) inside code bodies; logic must be self-documenting. **CRITICAL:** TSDoc / JSDoc documentation (`/** ... */`) on classes, interfaces, types, exported functions, properties, and parameters is structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing API documentation / docstrings during code edits, refactorings, or updates!
+- **No Agent-Generated Implementation Comments (Preserve TSDoc & Developer TODOs):** Do not write inline implementation comments (`//` or `/* ... */`) or generate new `TODO`/`FIXME` markers inside code bodies; logic must be self-documenting. Never delete pre-existing developer `// TODO:` or `// FIXME:` comments unless the task explicitly resolves them. **CRITICAL:** TSDoc / JSDoc documentation (`/** ... */`) on classes, interfaces, types, exported functions, properties, and parameters is structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing API documentation / docstrings during code edits, refactorings, or updates!
 - **Strict Ban (Trailing Commas):** Do not write trailing commas in arguments, parameters, objects, or arrays.
 - **Strict Ban (as any & Double Casting):** Do not write `as any`, `as unknown as Record<...>`, or double casting to bypass TypeScript. Always use strict type narrowing, Type Guards (`in`, `typeof`, `instanceof`), or explicit interface inheritance. Type safety must be strictly preserved across all modules.
 - **No Implicit Any:** Code must strictly pass TS `strict` mode.
-- **Strict Ban (FQN in code):** Do not write fully qualified names (FQN) or deep relative paths (`../../`). Always use absolute path aliases (e.g. `@/domain/EntityName`).
+- **Strict Ban (FQN in code):** Do not write inline `import('...')` type qualifiers or deep relative paths (`../../`) across module boundaries. Always use package/workspace imports or configured path aliases (e.g., `@/domain/EntityName`).
 - **Type-only Imports:** Use `import type` when an imported entity is used exclusively as a type (in generics, annotations, etc.) and does not participate in runtime logic.
 
 ## 2. Type Safety & Enums in State
@@ -33,7 +33,7 @@ alwaysApply: true
 
 ## 6. Domain Value Classes (Branded Types)
 - **ID Branding:** Replace Kotlin inline classes with TS branded types. Define them using intersection types (e.g., `export type EntityId = string & { readonly __brand: 'EntityId' }`).
-- **Parsing Extensions:** Provide utility functions instead of raw casting:
+- **Parsing Functions:** Provide and use standalone parser functions instead of raw casting:
   - `toEntityIdOrThrow(value: string): EntityId`
   - `toEntityIdOrNull(value: string | null | undefined): EntityId | null`
-- **Strict Ban:** Never cast strings directly via `as EntityId` inside feature logic. Always use the parsers.
+- **Strict Ban:** Never cast strings directly via `as EntityId` inside feature logic. Always call `toEntityIdOrThrow(value)` or `toEntityIdOrNull(value)`.

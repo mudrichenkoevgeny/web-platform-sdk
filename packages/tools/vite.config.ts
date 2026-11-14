@@ -25,6 +25,7 @@ function copyAgentRulesPlugin() {
       const targetAgentGlobal = path.join(currentFileDir, '.agent/global')
 
       if (fs.existsSync(rootAgentGlobal)) {
+        fs.rmSync(targetAgentGlobal, { recursive: true, force: true })
         fs.mkdirSync(targetAgentGlobal, { recursive: true })
         fs.cpSync(rootAgentGlobal, targetAgentGlobal, { recursive: true, force: true })
       }
@@ -37,7 +38,7 @@ export default defineConfig(({ command, mode }) => {
   const plugins = [copyAgentRulesPlugin()]
 
   if (!isTest && command === 'build') {
-    plugins.push(dts({ rollupTypes: true }))
+    plugins.push(dts({ rollupTypes: false }))
   }
 
   return {
@@ -64,7 +65,16 @@ export default defineConfig(({ command, mode }) => {
         formats: ['es']
       },
       rollupOptions: {
-        external: ['node:fs', 'node:path', 'node:url']
+        external: [
+          /^node:/,
+          '@mudrichenkoevgeny/shared-foundation',
+          /^@mudrichenkoevgeny\/shared-foundation\//,
+          '@typescript-eslint/utils',
+          'typescript-eslint',
+          'eslint',
+          'plop',
+          /^publint(\/.*)?$/
+        ]
       }
     }
   }

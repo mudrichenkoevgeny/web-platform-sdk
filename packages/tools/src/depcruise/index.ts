@@ -32,3 +32,5 @@ export const webSdkDepcruiseConfig = {
     tsPreCompilationDeps: true
   }
 }
+
+export default webSdkDepcruiseConfig
