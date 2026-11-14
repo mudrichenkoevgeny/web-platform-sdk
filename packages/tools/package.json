@@ -1,6 +1,6 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk-tools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official Web Tooling & Code Quality Kit for Web Platform SDK applications and packages.",
   "license": "Apache-2.0",
   "type": "module",
