@@ -317,8 +317,8 @@ export async function runCli(args: string[] = process.argv.slice(2)): Promise<vo
         console.log('[web-sdk-tools] Synchronizing agent rules...')
         try {
           syncAgentRules({
-            sourceAgentDir: path.join(packageDir, '.agent/global'),
-            relativeTargetSubdir: '.agent/global',
+            sourceAgentDir: path.join(packageDir, '.agent/global/web'),
+            relativeTargetSubdir: '.agent/global/web',
             packageName: 'Web Platform SDK Tools',
             targetRootDir: targetDir
           })
@@ -335,16 +335,16 @@ Project "${scaffoldName}" successfully scaffolded at ${targetDir}!
     },
     sync: () => {
       syncAgentRules({
-        sourceAgentDir: path.join(packageDir, '.agent/global'),
-        relativeTargetSubdir: '.agent/global',
+        sourceAgentDir: path.join(packageDir, '.agent/global/web'),
+        relativeTargetSubdir: '.agent/global/web',
         packageName: 'Web Platform SDK Tools',
         targetRootDir: targetCwd
       })
     },
     'sync-agent-rules': () => {
       syncAgentRules({
-        sourceAgentDir: path.join(packageDir, '.agent/global'),
-        relativeTargetSubdir: '.agent/global',
+        sourceAgentDir: path.join(packageDir, '.agent/global/web'),
+        relativeTargetSubdir: '.agent/global/web',
         packageName: 'Web Platform SDK Tools',
         targetRootDir: targetCwd
       })

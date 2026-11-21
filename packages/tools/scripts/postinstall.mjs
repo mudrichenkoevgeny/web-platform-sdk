@@ -33,7 +33,7 @@ if (!fs.existsSync(targetPkgJsonPath)) {
 }
 
 syncAgentRules({
-  sourceAgentDir: path.join(__dirname, '../.agent/global'),
-  relativeTargetSubdir: '.agent/global',
+  sourceAgentDir: path.join(__dirname, '../.agent/global/web'),
+  relativeTargetSubdir: '.agent/global/web',
   packageName: 'Web Platform SDK Tools'
 })

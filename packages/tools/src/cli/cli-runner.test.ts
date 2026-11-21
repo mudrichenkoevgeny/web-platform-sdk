@@ -46,6 +46,7 @@ describe('CLI Runner init command', () => {
 
     expect(fs.existsSync(path.join(targetProjectDir, 'package.json'))).toBe(true)
     expect(fs.existsSync(path.join(targetProjectDir, 'pnpm-workspace.yaml'))).toBe(true)
+    expect(fs.existsSync(path.join(targetProjectDir, '.agent/global/web/ts-coding-style-web.md'))).toBe(true)
     expect(fs.existsSync(path.join(targetProjectDir, 'apps/client/package.json'))).toBe(true)
     expect(fs.existsSync(path.join(targetProjectDir, 'apps/admin/package.json'))).toBe(true)
 

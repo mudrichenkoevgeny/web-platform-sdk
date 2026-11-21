@@ -32,13 +32,13 @@ function copyAgentRulesPlugin() {
     buildStart() {
       const currentFileDir = fileURLToPath(new URL('.', import.meta.url))
       const rootDir = findWorkspaceRoot(currentFileDir)
-      const rootAgentGlobal = path.join(rootDir, '.agent/global')
-      const targetAgentGlobal = path.join(currentFileDir, '.agent/global')
+      const rootAgentWeb = path.join(rootDir, '.agent/global/web')
+      const targetAgentWeb = path.join(currentFileDir, '.agent/global/web')
 
-      if (fs.existsSync(rootAgentGlobal)) {
-        fs.rmSync(targetAgentGlobal, { recursive: true, force: true })
-        fs.mkdirSync(targetAgentGlobal, { recursive: true })
-        fs.cpSync(rootAgentGlobal, targetAgentGlobal, { recursive: true, force: true })
+      if (fs.existsSync(rootAgentWeb)) {
+        fs.rmSync(targetAgentWeb, { recursive: true, force: true })
+        fs.mkdirSync(targetAgentWeb, { recursive: true })
+        fs.cpSync(rootAgentWeb, targetAgentWeb, { recursive: true, force: true })
       }
     }
   }
@@ -232,33 +232,82 @@ function copyTemplatesPlugin() {
       )
 
       const rootPnpmWorkspacePath = path.join(rootDir, 'pnpm-workspace.yaml')
-      let pnpmWorkspaceContent = "packages:\n  - 'apps/*'\n"
+      let catalogLines: string[] = []
+
       if (fs.existsSync(rootPnpmWorkspacePath)) {
         const rootPnpmWorkspace = fs.readFileSync(rootPnpmWorkspacePath, 'utf-8')
-        const packagesRegex = /packages:\s*\n(\s*-[^\n]*\n)*/
-        pnpmWorkspaceContent = rootPnpmWorkspace.replace(
-          packagesRegex,
-          "packages:\n  - 'apps/*'\n\n"
-        )
-      }
-      if (!pnpmWorkspaceContent.includes('onlyBuiltDependencies:')) {
-        pnpmWorkspaceContent += "\nonlyBuiltDependencies:\n  - '@mudrichenkoevgeny/shared-foundation'\n  - '@mudrichenkoevgeny/web-platform-sdk-tools'\n  - 'esbuild'\n  - 'msw'\n"
-      } else {
-        const requiredBuiltDeps = [
-          '@mudrichenkoevgeny/shared-foundation',
-          '@mudrichenkoevgeny/web-platform-sdk-tools',
-          'esbuild',
-          'msw'
-        ]
-        for (const dep of requiredBuiltDeps) {
-          if (!pnpmWorkspaceContent.includes(dep)) {
-            pnpmWorkspaceContent = pnpmWorkspaceContent.replace(
-              /onlyBuiltDependencies:\s*\n/,
-              `onlyBuiltDependencies:\n  - '${dep}'\n`
-            )
+        const lines = rootPnpmWorkspace.split(/\r?\n/)
+        let inCatalog = false
+
+        for (const line of lines) {
+          if (/^catalog:/i.test(line.trim())) {
+            inCatalog = true
+            catalogLines.push('catalog:')
+            continue
+          }
+          if (inCatalog) {
+            if (/^[a-zA-Z0-9_-]+:/.test(line)) {
+              inCatalog = false
+              continue
+            }
+            const trimmed = line.trim()
+            if (trimmed.startsWith('#') || trimmed.includes('file:') || trimmed.includes('link:')) {
+              continue
+            }
+            if (trimmed.length > 0) {
+              catalogLines.push(line)
+            }
           }
         }
       }
+
+      if (catalogLines.length === 0) {
+        catalogLines = [
+          'catalog:',
+          "  '@mudrichenkoevgeny/shared-foundation': '^0.1.16'",
+          "  '@tanstack/react-router': '^1.111.0'",
+          "  '@tanstack/router-cli': '^1.111.0'",
+          "  '@tanstack/router-plugin': '^1.111.0'",
+          "  '@testing-library/react': '^16.0.0'",
+          "  '@testing-library/user-event': '^14.5.0'",
+          "  '@types/node': '^26.6.5'",
+          "  '@types/react': '^19.0.0'",
+          "  '@types/react-dom': '^19.0.0'",
+          "  'autoprefixer': '^10.4.20'",
+          "  'clsx': '^2.1.1'",
+          "  'eslint': '^10.12.0'",
+          "  'jsdom': '^26.0.0'",
+          "  'postcss': '^8.4.49'",
+          "  'react': '^19.0.0'",
+          "  'react-dom': '^19.0.0'",
+          "  'tailwind-merge': '^3.7.0'",
+          "  'tailwindcss': '^3.4.17'",
+          "  'typescript': '^7.0.2'",
+          "  'typescript-eslint': '^8.71.2'",
+          "  'vite': '^8.3.4'",
+          "  'vite-plugin-dts': '^5.1.2'",
+          "  'vitest': '^5.0.4'",
+          "  'zod': '^3.23.8'",
+          "  'zustand': '^5.0.0'",
+          '  "@vitest/browser-playwright": "^5.0.4"',
+          '  "@vitest/coverage-v8": "^5.0.4"'
+        ]
+      }
+
+      const pnpmWorkspaceContent = [
+        'packages:',
+        "  - 'apps/*'",
+        '',
+        ...catalogLines,
+        '',
+        'onlyBuiltDependencies:',
+        "  - '@mudrichenkoevgeny/shared-foundation'",
+        "  - '@mudrichenkoevgeny/web-platform-sdk-tools'",
+        "  - 'esbuild'",
+        "  - 'msw'",
+        ''
+      ].join('\n')
+
       fs.writeFileSync(path.join(templateWorkspaceDir, 'pnpm-workspace.yaml'), pnpmWorkspaceContent, 'utf-8')
 
       const rootNpmrcPath = path.join(rootDir, '.npmrc')
@@ -338,6 +387,13 @@ To introduce custom domain use cases, repositories, or contracts:
 3. Wire custom components inside the DI extension slot in \`src/di/client-app-component.ts\` / \`src/di/management-app-component.ts\`.
 `
       fs.writeFileSync(path.join(templateWorkspaceDir, 'README.md'), readmeContent, 'utf-8')
+
+      const rootAgentWebPath = path.join(rootDir, '.agent/global/web')
+      const templateAgentWebPath = path.join(templateWorkspaceDir, '.agent/global/web')
+      if (fs.existsSync(rootAgentWebPath)) {
+        fs.mkdirSync(templateAgentWebPath, { recursive: true })
+        fs.cpSync(rootAgentWebPath, templateAgentWebPath, { recursive: true })
+      }
     }
   }
 }
