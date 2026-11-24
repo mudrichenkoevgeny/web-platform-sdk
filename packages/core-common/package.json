@@ -1,6 +1,6 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk-core-common",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "type": "module",
   "files": [
     "dist",
@@ -18,7 +18,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./tokens.css": "./src/theme/tokens/tokens.css",
+    "./tokens.css": "./src/theme/index.css",
     "./theme.css": "./src/theme/index.css"
   },
   "scripts": {

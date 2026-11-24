@@ -1,30 +1,21 @@
-# Development and Publishing
+# Contributing to Web Platform SDK
 
-This document provides setup, development, testing, linting, and package publishing guidelines for contributors to **Web Platform SDK** (`web-platform-sdk`).
-
----
-
-## 1. Prerequisites & Environment Setup
-
-### Node.js & pnpm
-This repository uses **pnpm** (v12.8+) as its package manager and workspace orchestrator.
-
-1. **Enable pnpm via Corepack:**
-   ```bash
-   corepack enable
-   corepack prepare pnpm@12.8.1 --activate
-   ```
-2. **Install Workspace Dependencies:**
-   From the repository root:
-   ```bash
-   pnpm install
-   ```
+This guide covers environment setup, workspace structure, quality gates, coding standards, and release workflows for `web-platform-sdk`.
 
 ---
 
-## 2. Workspace Structure & Build Workflow
+## 1. Prerequisites & Setup
 
-The repository is structured as a **pnpm monorepo workspace**:
+This repository uses **pnpm** managed via Corepack (the exact version is pinned in `package.json` under `packageManager`).
+
+```bash
+corepack enable
+pnpm install
+```
+
+`pnpm install` automatically runs `sync-foundation-rules` (`postinstall`).
+
+## 2. Workspace Structure
 
 ```text
 web-platform-sdk/
@@ -38,264 +29,174 @@ web-platform-sdk/
 │   ├── feature-managementuser/ # @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
 │   └── tools/                  # @mudrichenkoevgeny/web-platform-sdk-tools
 └── samples/
-    ├── client-app/             # Consumer reference app (@web-platform-sdk/sample-client-app)
-    └── management-app/         # Admin reference app (@web-platform-sdk/sample-management-app)
+    ├── client-app/             # @web-platform-sdk/sample-client-app
+    ├── management-app/         # @web-platform-sdk/sample-management-app
+    └── sandbox/                # @web-platform-sdk/sandbox
 ```
 
-### Building Workspace Packages
+---
 
-Before running sample applications or executing tests across dependent modules, build all SDK packages from the project root:
+## 3. Build & Local Development
+
+Build all packages under `packages/*` before running sample apps or dependent tests:
 
 ```bash
-# Build all SDK packages in packages/*
 pnpm build
 ```
 
-To build a single specific package:
+Build a single package:
+
 ```bash
 pnpm --filter @mudrichenkoevgeny/web-platform-sdk-core-security run build
 ```
 
----
+Run local development servers:
 
-## 3. Local Development with Sample Apps
+| Command | Target |
+| :--- | :--- |
+| `pnpm dev:client` | Consumer sample app (`samples/client-app`) |
+| `pnpm dev:management` | Management sample app (`samples/management-app`) |
+| `pnpm sandbox:dev` | Sandbox app (`samples/sandbox`) |
+| `pnpm storybook` | Storybook UI catalog (`http://localhost:6006`) |
 
-The repository includes two sample web applications for testing SDK integrations locally:
+### Scaffolding & Code Generation
 
-### 1. Consumer Sample App (`sample-client-app`)
-Demonstrates consumer auth flows (Login, Registration, OTP, User management):
-
-- **From root:**
-  ```bash
-  pnpm dev:client
-  ```
-- **Local URL:** `http://localhost:3002`
-
-### 2. Management Sample App (`sample-management-app`)
-Demonstrates back-office admin panel flows (Staff Auth, Audit Logs, User Management, Remote Settings Overrides):
-
-- **From root:**
-  ```bash
-  pnpm dev:management
-  ```
-- **Local URL:** `http://localhost:3001`
-
----
-
-## 4. Code Quality, Type Checking & Linting
-
-### Code Quality, Scaffolding & Code Generation (`web-sdk-tools`)
-The tooling package (`@mudrichenkoevgeny/web-platform-sdk-tools`) provides CLI commands for project scaffolding and code generation:
-
+Interactive generator for UseCases or React components:
 ```bash
-# Scaffold a new application workspace (type: workspace, client, or admin)
-pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
-
-# Interactively scaffold UseCases or React UI components
 pnpm generate
 ```
 
-### Type Checking (`tsc`)
-Runs strict TypeScript compilation checks (`tsc --noEmit`) across all workspace packages and apps:
-
+Generate a UseCase:
 ```bash
-# Run type check across the entire workspace
-pnpm typecheck
-
-# Run type check for a specific package
-pnpm --filter @mudrichenkoevgeny/web-platform-sdk-core-common run typecheck
+pnpm generate:usecase
 ```
 
-### Code Linting (`eslint`)
-Runs ESLint rules with zero warning tolerance across all TypeScript and React files:
-
+Generate a React UI component:
 ```bash
-# Run linter project-wide
-pnpm lint
+pnpm generate:component
 ```
 
-### Module Boundaries (`dependency-cruiser`)
-Runs Dependency Cruiser to enforce architectural boundaries between core and feature modules:
-
+Scaffold a new project workspace:
 ```bash
-# Verify workspace module boundaries
-pnpm lint:deps
-```
-
-### API Contract Snapshots (`api-extractor`)
-Generates and verifies public API signature snapshots to prevent breaking contract changes:
-
-```bash
-# Update local API snapshots
-pnpm api:extract
-
-# Verify API contract snapshots in CI mode
-pnpm api:extract-ci
-```
-
-### Package Exports Verification (`publint`)
-Verifies package.json export configurations and type declarations across all workspace packages:
-
-```bash
-# Run publint across workspace packages
-pnpm lint:exports
-```
-
-### Bundle Size Budget Verification (`size-limit`)
-Monitors brotli/gzip bundle sizes for all published workspace packages:
-
-```bash
-# Verify bundle size budgets
-pnpm size
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
 ```
 
 ---
 
-## 5. Unit & UI Testing (Vitest & React Testing Library)
+## 4. Verification & Quality Gates
 
-Testing is driven by **Vitest** with **jsdom** and **React Testing Library**.
+All pull requests targeting `main` or `develop` must pass the CI gates defined in `.github/workflows/ci.yml`:
 
-### 1. Project-Wide Test Execution
-To run all tests across all workspace packages in headless mode:
+| Command | Purpose |
+| :--- | :--- |
+| `pnpm version:verify` | Verifies synchronized `"version"` across `packages/*` |
+| `pnpm lint` | Runs `version:verify` and ESLint (`--max-warnings 0`) |
+| `pnpm typecheck` | Runs strict TypeScript checks across all workspaces |
+| `pnpm lint:deps` | Enforces module boundaries via Dependency Cruiser |
+| `pnpm api:extract` | Updates local API Extractor contract snapshots |
+| `pnpm api:extract-ci` | Verifies API contract snapshots without modifying files |
+| `pnpm lint:exports` | Validates package exports and type declarations via `publint` |
+| `pnpm size` | Verifies bundle size budgets via `size-limit` |
+| `pnpm audit` | Checks dependencies for critical security vulnerabilities |
+| `pnpm test` | Runs Vitest across `packages/*` and `samples/*` |
+| `pnpm test:watch` | Runs Vitest in interactive watch mode |
+| `pnpm test:e2e` | Runs Playwright end-to-end tests |
 
-```bash
-pnpm test
-```
-
-### 2. Interactive Watch Mode
-To run Vitest in interactive watch mode during active development:
-
-```bash
-pnpm test:watch
-```
-
-### 3. Testing a Specific Package or File
-To execute tests for a single workspace package:
-
+Run tests for a single package:
 ```bash
 pnpm --filter @mudrichenkoevgeny/web-platform-sdk-feature-user exec vitest run
 ```
 
-To run a specific test file:
+Run tests for a specific test file:
 ```bash
 pnpm vitest run packages/core-security/src/usecase/security-use-cases.test.ts
 ```
 
 ---
 
-## 6. Dependency Management & Catalog
+## 5. Coding Standards
 
-Dependencies across the workspace are centralized in `pnpm-workspace.yaml` under the `catalog:` block to maintain consistent versions:
+Follow the rules enforced in `AGENTS.md`:
 
-```yaml
-catalog:
-  '@mudrichenkoevgeny/shared-foundation': '^x.y.z'
-  'react': '^x.y.z'
-  'react-dom': '^x.y.z'
-  'typescript': '^x.y.z'
-  'vitest': '^x.y.z'
-```
+- **No trailing commas** in arguments, parameters, objects, or arrays.
+- **No inline implementation comments** (`//` or `/* ... */`) or new `TODO`/`FIXME` markers in function bodies.
+- **Preserve TSDoc/JSDoc** (`/** ... */`) on public APIs.
+- **Strict type safety:** no `as any`, no double casting (`as unknown as ...`), and no untyped string states for enums; use type guards (`in`, `typeof`, `instanceof`) and explicit TypeScript enums.
+- **Clean imports:** no inline `import('...')` FQNs or deep relative paths (`../../`) across package boundaries.
+- **Error handling:** do not `throw new Error()` in domain/SDK logic; return discriminated-union POJO errors wrapped in `appResultFailure()`.
 
-### Adding a Dependency to a Package
-To add a dependency to a specific workspace package:
+---
+
+## 6. Dependency Management
+
+Shared dependency versions are centralized in `pnpm-workspace.yaml` under `catalog:`. Reference catalog dependencies in `package.json` using `"catalog:"`.
+
+Add a dependency to a specific package:
 
 ```bash
 pnpm add <package-name> --filter @mudrichenkoevgeny/web-platform-sdk-core-security
 ```
 
-If the dependency is in the catalog, reference it in `package.json` as `"catalog:"`:
-```json
-{
-  "dependencies": {
-    "react": "catalog:"
-  }
-}
-```
+Test a local `.tgz` build of `@mudrichenkoevgeny/shared-foundation`:
 
-### Testing Local `.tgz` Builds (`shared-foundation`)
-To test a locally generated `.tgz` archive of `@mudrichenkoevgeny/shared-foundation`:
-
-1. Update `pnpm-workspace.yaml`:
+1. Point the catalog entry in `pnpm-workspace.yaml` to the archive:
    ```yaml
    catalog:
-     '@mudrichenkoevgeny/shared-foundation': 'file:/path/to/mudrichenkoevgeny-shared-foundation-<version>.tgz'
+     '@mudrichenkoevgeny/shared-foundation': 'file:/path/to/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-<version>.tgz'
    ```
-2. Install workspace dependencies:
+2. Reinstall dependencies:
    ```bash
    pnpm install
    ```
 
 ---
 
-## 7. Package Publishing & Changeset Workflow
+## 7. Versioning & Releases
 
-All SDK packages under `packages/*` are published to npm under the `@mudrichenkoevgeny` scope (`@mudrichenkoevgeny/web-platform-sdk-*`).
+Active development targets `main` and `develop`.
 
-Package versioning and release management are automated using **Changesets** (`@changesets/cli` and `changesets/action@v1`).
+### Changesets (Pull Requests)
+Pull requests are validated in CI via `pnpm changeset status`. For changes affecting `packages/*`, add a changeset once per PR:
 
----
+```bash
+pnpm change
+```
 
-### Step 1: Creating a Changeset during Development
+### Synchronizing Package Versions
+All packages under `packages/*` share a single synchronized version checked by `pnpm version:verify`. Choose **one** of the following commands depending on the desired bump:
 
-Whenever you introduce a bugfix, new feature, or breaking change in any package under `packages/*`:
+Bump patch version:
+```bash
+pnpm version:patch
+```
 
-1. **Complete your code changes and tests.**
-2. **Generate a Changeset entry (ONCE per PR/Feature):**
-   From the repository root, run:
+Bump minor version:
+```bash
+pnpm version:minor
+```
+
+Set explicit version:
+```bash
+pnpm version:set 0.2.0
+```
+
+Apply Changeset updates:
+```bash
+pnpm version-packages
+```
+
+### Local NPM Packages (`pnpm pack`)
+To test local `.tgz` builds of the SDK packages in a consumer repository:
+
+1. Build and pack all workspace packages into `./dist-tarballs`:
    ```bash
-   pnpm change
+   pnpm build
+   pnpm -r --filter "./packages/*" pack --pack-destination ./dist-tarballs
    ```
-3. **Follow the interactive CLI prompts:**
-   - Select the packages affected by your changes (e.g. `@mudrichenkoevgeny/web-platform-sdk-core-common`).
-   - Select the semver bump type (`patch`, `minor`, or `major`).
-   - Enter a concise summary of the changes for the package's `CHANGELOG.md`.
-4. **Commit the generated Markdown file:**
-   Changesets creates a unique Markdown file under `.changeset/` (e.g. `.changeset/dry-dogs-dance.md`). Commit and push this file with your feature branch:
-   ```bash
-   git add .changeset
-   git commit -m "chore: add changeset for my feature"
-   ```
+2. Point the consumer `pnpm-workspace.yaml` catalog entries to the generated `.tgz` files and run `pnpm install`.
 
-> **Note:** You do **NOT** need to run `pnpm change` on every commit. Run it once per feature or pull request before merging into `main`. Changesets are not required for changes restricted to `samples/*`, documentation, or CI workflow configuration.
+### Publishing via CI
+Official releases are triggered by pushing a `v*` Git tag. The `.github/workflows/release.yml` workflow automatically:
 
----
-
-### Step 2: Automated Release PR & Publishing via CI
-
-When your pull request containing a `.changeset/` entry is merged into `main`:
-
-1. **Automated "Version Packages" PR:**
-   The GitHub Actions workflow (`.github/workflows/release.yml`) executes `@changesets/action`. It detects new changeset entries and automatically opens or updates a Pull Request titled **"Version Packages"**.
-2. **Automatic Version Bumping & Changelogs:**
-   The "Version Packages" PR automatically:
-   - Bumps package versions in `package.json` across dependent workspace packages.
-   - Appends entries to each affected package's `CHANGELOG.md`.
-   - Removes the consumed `.changeset/*.md` files.
-3. **Publishing to npm:**
-   When a maintainer merges the **"Version Packages"** PR into `main`, GitHub Actions automatically:
-   - Builds all packages (`pnpm build`).
-   - Publishes updated packages to the npm registry with SLSA Level 3/4 provenance attestation.
-   - Creates corresponding Git tags (`@mudrichenkoevgeny/web-platform-sdk-core-common@x.y.z`) in the repository.
-
----
-
-### Emergency / Manual Version Bumping (Fallback)
-
-If manual version synchronization is required across all `packages/*` without creating a changeset entry:
-
-- **Bump Patch Version (0.0.1 -> 0.0.2):**
-  ```bash
-  pnpm version:patch
-  ```
-- **Bump Minor Version (0.0.1 -> 0.1.0):**
-  ```bash
-  pnpm version:minor
-  ```
-- **Set Explicit Version (e.g. 0.1.5):**
-  ```bash
-  pnpm version:set 0.1.5
-  ```
-- **Consume Local Changesets Manually:**
-  ```bash
-  pnpm version-packages
-  ```
+1. Builds all packages (`pnpm build`), attests build provenance via GitHub OIDC, and publishes `packages/*` to npmjs.com (`pnpm -r publish --access public --provenance`).
+2. Generates API reference documentation (`pnpm docs:generate`) and deploys `./dist/docs` to GitHub Pages.

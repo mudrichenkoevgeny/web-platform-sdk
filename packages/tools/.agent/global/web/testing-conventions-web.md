@@ -8,9 +8,9 @@ alwaysApply: true
 
 ## 1. Operational Policy (Targeted Execution)
 - **No Full-Workspace Auto-Runs or Watch Mode:** Never run full-workspace test suites across all packages (`pnpm test` at root) or interactive watch mode (`vitest --watch`) unless explicitly requested.
-- **Mandatory Targeted Verification:** Whenever writing new tests, fixing a bug, or modifying production/UI logic, the AI agent MUST execute the specific affected test file in single-run mode (e.g., `pnpm --filter <package> test -- <path/to/File.test.ts>` or `npx vitest run <path/to/File.test.ts>`) to verify that the code compiles and all assertions pass.
-- **Runnable Code:** AI must provide complete test files without `TODO` markers.
-- **Mandatory Bug Fix Test Coverage:** When fixing a bug or regression, AI must write automated test coverage (unit or UI test) and execute it via a targeted Vitest run to verify the fix and prevent future regressions.
+- **Mandatory Targeted Verification:** Whenever writing new tests, fixing a bug, or modifying production/UI logic, the agent MUST execute the specific affected test file in single-run mode (e.g., `pnpm --filter <package> test -- <path/to/File.test.ts>` or `npx vitest run <path/to/File.test.ts>`) to verify that the code compiles and all assertions pass.
+- **Runnable Code:** Agents must provide complete test files without `TODO` markers.
+- **Mandatory Bug Fix Test Coverage:** When fixing a bug or regression, agents must write automated test coverage (unit or UI test) and execute it via a targeted Vitest run to verify the fix and prevent future regressions.
 
 ## 2. Tooling
 - **Unit & Logic:** `vitest` (always invoked with `run` flag for non-interactive execution).

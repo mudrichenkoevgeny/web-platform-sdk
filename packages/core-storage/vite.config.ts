@@ -1,42 +1,50 @@
-/// <reference types="vitest" />
 import { defineConfig } from 'vite'
+import svgr from 'vite-plugin-svgr'
 import dts from 'vite-plugin-dts'
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
-  plugins: [
-    dts({
-      insertTypesEntry: true,
-      include: ['src/**/*.ts', 'src/**/*.tsx']
+export default defineConfig(({ command, mode }) => {
+  const isTest = mode === 'test' || process.env.NODE_ENV === 'test'
+  const plugins = [
+    svgr({
+      svgrOptions: {
+        icon: true
+      }
     })
-  ],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src')
-    }
-  },
-  build: {
-    lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'WebPlatformSdkCoreStorage',
-      formats: ['es'],
-      fileName: 'index'
+  ]
+
+  if (!isTest && command === 'build') {
+    plugins.push(dts({ rollupTypes: true }))
+  }
+
+  return {
+    plugins,
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      }
     },
-    rollupOptions: {
-      external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        '@mudrichenkoevgeny/shared-foundation',
-        '@mudrichenkoevgeny/web-platform-sdk-core-common'
-      ],
-      output: {
-        globals: {}
+    test: {
+      name: 'core-storage',
+      globals: true,
+      environment: 'jsdom',
+      include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+      server: {
+        deps: {
+          inline: ['@mudrichenkoevgeny/shared-foundation']
+        }
+      }
+    },
+    build: {
+      lib: {
+        entry: './src/index.ts',
+        name: 'WebPlatformSdkCoreStorage',
+        fileName: 'index',
+        formats: ['es']
+      },
+      rollupOptions: {
+        external: ['react', 'react-dom', 'react/jsx-runtime']
       }
     }
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom'
   }
 })

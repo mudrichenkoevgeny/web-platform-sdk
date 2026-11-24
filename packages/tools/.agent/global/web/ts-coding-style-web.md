@@ -7,7 +7,7 @@ alwaysApply: true
 # TypeScript Coding Style (Web)
 
 ## 1. Core Syntax Constraints
-- **No Agent-Generated Implementation Comments (Preserve TSDoc & Developer TODOs):** Do not write inline implementation comments (`//` or `/* ... */`) or generate new `TODO`/`FIXME` markers inside code bodies; logic must be self-documenting. Never delete pre-existing developer `// TODO:` or `// FIXME:` comments unless the task explicitly resolves them. **CRITICAL:** TSDoc / JSDoc documentation (`/** ... */`) on classes, interfaces, types, exported functions, properties, and parameters is structured API documentation, NOT code comments. AI agents must **NEVER** delete, strip, wipe, or omit existing API documentation / docstrings during code edits, refactorings, or updates!
+- **No Agent-Generated Implementation Comments (Preserve TSDoc & Developer TODOs):** Do not write inline implementation comments (`//` or `/* ... */`) or generate new `TODO`/`FIXME` markers inside code bodies; logic must be self-documenting. Never delete pre-existing developer `// TODO:` or `// FIXME:` comments unless the task explicitly resolves them. **CRITICAL:** TSDoc / JSDoc documentation (`/** ... */`) on classes, interfaces, types, exported functions, properties, and parameters is structured API documentation, NOT code comments. Agents must **NEVER** delete, strip, wipe, or omit existing API documentation / docstrings during code edits, refactorings, or updates!
 - **Strict Ban (Trailing Commas):** Do not write trailing commas in arguments, parameters, objects, or arrays.
 - **Strict Ban (as any & Double Casting):** Do not write `as any`, `as unknown as Record<...>`, or double casting to bypass TypeScript. Always use strict type narrowing, Type Guards (`in`, `typeof`, `instanceof`), or explicit interface inheritance. Type safety must be strictly preserved across all modules.
 - **No Implicit Any:** Code must strictly pass TS `strict` mode.
@@ -38,5 +38,5 @@ alwaysApply: true
   - `toEntityIdOrNull(value: string | null | undefined): EntityId | null`
 - **Strict Ban:** Never cast strings directly via `as EntityId` inside feature logic. Always call `toEntityIdOrThrow(value)` or `toEntityIdOrNull(value)`.
 
-## 7. AI Tooling & Search Constraints
+## 7. Agent Tooling & Search Constraints
 - **Fast Search Scoping (`grep` / `code_search`):** When performing text or symbol searches using `grep` or `code_search`, ALWAYS specify file exclusions or path filters (e.g. `exclude = "**/node_modules/**"`, `exclude = "**/build/**"`, `exclude = "**/dist/**"`) to strictly bypass generated build outputs, `node_modules/`, `dist/`, and `build/` directories. Searching through raw `node_modules/` or build artifacts is strictly prohibited as it degrades search performance from milliseconds to tens of seconds.

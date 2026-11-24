@@ -1,7 +1,7 @@
-import authLogoApple from '@/assets/icons/auth_logo_apple.svg?react'
-import authLogoEmail from '@/assets/icons/auth_logo_email.svg?react'
-import authLogoGoogle from '@/assets/icons/auth_logo_google.svg?react'
-import authLogoPhone from '@/assets/icons/auth_logo_phone.svg?react'
+import authLogoApple from '@mudrichenkoevgeny/shared-foundation/icons/feature-user/auth_logo_apple.svg?react'
+import authLogoEmail from '@mudrichenkoevgeny/shared-foundation/icons/feature-user/auth_logo_email.svg?react'
+import authLogoGoogle from '@mudrichenkoevgeny/shared-foundation/icons/feature-user/auth_logo_google.svg?react'
+import authLogoPhone from '@mudrichenkoevgeny/shared-foundation/icons/feature-user/auth_logo_phone.svg?react'
 
 /** SVG icon components record for feature-user. */
 export const icons = {

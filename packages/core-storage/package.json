@@ -1,6 +1,6 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk-core-storage",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "type": "module",
   "files": [
     "dist"
@@ -47,6 +47,7 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
+    "vite-plugin-svgr": "^5.2.0",
     "vitest": "catalog:"
   }
 }

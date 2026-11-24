@@ -1,1 +1,4 @@
-export { GeneratedDesignTokens } from './tokens.js'
+export {
+  PlatformDesignTokens,
+  PlatformDesignTokens as GeneratedDesignTokens
+} from '@mudrichenkoevgeny/shared-foundation/tokens'

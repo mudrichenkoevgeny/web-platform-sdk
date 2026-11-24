@@ -30,19 +30,23 @@ pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
 
 ### 1. Project Skeleton Scaffolding
 
-Scaffold a complete production-ready application workspace without pre-installing dependencies:
-
+Scaffold full monorepo with both Client and Admin apps:
 ```bash
-# Scaffold full monorepo with both Client and Admin apps
 pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
+```
 
-# Scaffold monorepo linking local unpublished SDK packages (for testing pre-releases)
+Scaffold monorepo linking local unpublished SDK packages (for testing pre-releases):
+```bash
 pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app --link-local
+```
 
-# Scaffold monorepo with Client app only
+Scaffold monorepo with Client app only:
+```bash
 pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init client my-app
+```
 
-# Scaffold monorepo with Admin app only
+Scaffold monorepo with Admin app only:
+```bash
 pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init admin my-app
 ```
 
@@ -70,19 +74,27 @@ export default webSdkDepcruiseConfig
 
 ### 4. CLI Commands
 
+Scaffold new project workspace, client, or admin app:
 ```bash
-# Scaffold new project workspace, client, or admin app
-pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init <type> <name> [--skip-install] [--link-local]
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
+```
 
-# Synchronize global agent rules into project .agent/global/
+Synchronize global agent rules into project `.agent/global/`:
+```bash
 npx web-sdk-tools sync
+```
 
-# Interactively generate UseCases or React UI components
+Interactively generate UseCases or React UI components:
+```bash
 npx web-sdk-tools generate
+```
 
-# Verify package exports via publint
+Verify package exports via publint:
+```bash
 npx web-sdk-tools check-exports
+```
 
-# Verify public API signature snapshots via API Extractor
+Verify public API signature snapshots via API Extractor:
+```bash
 npx web-sdk-tools api-extract
 ```

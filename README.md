@@ -116,9 +116,9 @@ pnpm size
 
 ## Documentation & Architecture
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** — Architectural diagrams in Mermaid covering module dependencies, composition roots, error parsing pipelines, and WebSocket synchronization.
+- **[ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)** — Architectural diagrams in Mermaid covering module dependencies, composition roots, error parsing pipelines, and WebSocket synchronization.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — Development setup, local testing workflows, isolated Vitest runner strategy, and npm publishing guidelines.
-- **[AGENTS.md](AGENTS.md)** — Project coding standards, TypeScript strictness rules, design token boundaries, and AI assistant guidelines.
+- **[AGENTS.md](AGENTS.md)** — Project coding standards, TypeScript strictness rules, design token boundaries, and agent guidelines.
 
 ---
 
@@ -135,17 +135,11 @@ Check out related platform projects in the ecosystem:
 
 ## Design Tokens & Theme Integration
 
-Visual design decisions across the SDK are driven by design tokens and font assets:
+Visual design decisions across the SDK are driven by design tokens and font assets exported directly by `@mudrichenkoevgeny/shared-foundation`:
 
-1. **Source of Truth**: The single source of truth (SSOT) for all design tokens and font assets is the [platform-design-system](https://github.com/mudrichenkoevgeny/platform-design-system) repository.
-2. **Target Paths for Generated Tokens**:
-   - `packages/core-common/src/theme/tokens/tokens.css`
-   - `packages/core-common/src/theme/tokens/tokens.ts`
-3. **Target Path for Font Assets**:
-   - `packages/core-common/src/assets/fonts/` (copied from `assets/fonts/woff2/*.woff2` in `platform-design-system`).
-4. **Update Rule**: Token files are generated automatically in the design system platform (`generated/web/tokens.css` and `tokens.ts`) and manually copied alongside font files to the SDK target paths above. Direct manual edits to `tokens.css` and `tokens.ts` are strictly forbidden.
-5. **Theme Integration**: `ThemeProvider` and `useTheme()` manage theme modes (`light`, `dark`, `system`), controlling the `.dark` DOM class, CSS variables (`var(--color-primary)`, `--spacing-md`, `--radius-sm`), and Tailwind CSS utility presets (`sdkTailwindPreset`).
-6. **Font Resources**: `@font-face` declarations in `tokens.css` automatically load custom WOFF2 fonts (`PT Sans`) from `packages/core-common/src/assets/fonts/`.
+1. **Tokens & Fonts Source**: All design tokens, CSS variables, and font assets are published and exported directly by `@mudrichenkoevgeny/shared-foundation` (`@mudrichenkoevgeny/shared-foundation/tokens.css`, `@mudrichenkoevgeny/shared-foundation/tokens`, `@mudrichenkoevgeny/shared-foundation/fonts/*`).
+2. **Theme Integration**: `ThemeProvider` and `useTheme()` manage theme modes (`light`, `dark`, `system`), controlling the `.dark` DOM class, CSS variables (`var(--color-primary)`, `--spacing-md`, `--radius-sm`), and Tailwind CSS utility presets (`sdkTailwindPreset`).
+3. **Font Resources**: `@font-face` declarations in `tokens.css` automatically load custom WOFF2 fonts (`PT Sans`) directly from `@mudrichenkoevgeny/shared-foundation/fonts/`.
 
 ---
 

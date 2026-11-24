@@ -1,6 +1,19 @@
+# Dependencies & build outputs
 **/node_modules/
 **/dist/
 **/build/
 **/.turbo/
 **/coverage/
+**/storybook-static/
+
+# Lockfiles
 pnpm-lock.yaml
+
+# Local configuration & secrets
+.env
+.env.*
+!.env.example
+
+# Code review artifacts
+.code-review/payload.md
+.code-review/state.json

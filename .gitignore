@@ -4,6 +4,7 @@ node_modules/
 
 # Build outputs and generated files
 dist/
+dist-tarballs/
 build/
 out/
 docs/api/
@@ -61,5 +62,10 @@ Thumbs.db
 .turbo/
 .tanstack/
 
+# Code review artifacts
+.code-review/state.json
+.code-review/payload.md
+
+# Storybook
 *storybook.log
-storybook-static
+storybook-static/

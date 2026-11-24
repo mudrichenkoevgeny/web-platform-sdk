@@ -35,7 +35,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 - **`PlatformRepository`:** Immutable access to platform information and device metrics.
 
 ### 6. UI Components & Design System
-- **Theme & Tokens:** `ThemeProvider` and `useTheme()` for Light/Dark/System mode switching, integrated with `tokens.css` / `tokens.ts` and `tailwind-preset.ts`.
+- **Theme & Tokens:** `ThemeProvider` and `useTheme()` for Light/Dark/System mode switching, integrated with `@mudrichenkoevgeny/shared-foundation` design tokens and `tailwind-preset.ts`.
 - **Icon Infrastructure:** `CoreIcon` rendering SVGR React components (`*.svg?react`) with `currentColor` styling and raster fallback.
 - **Buttons & Inputs:** `CoreButton` (with loading spinner), `CoreOutlinedTextField`, `CoreCodeTextField`, `CoreEmailTextField`, `CorePasswordTextField` (with visibility toggle).
 - **Layout & Feedback:** `CoreScrollableScreenContent`, `FullscreenError`, `FullscreenLoading` (with delay timer), `FullscreenOverlayLoading` (with backdrop blur).
@@ -61,7 +61,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 | `src/error/` | `AppError` models, `CommonErrorParser`, `AppErrorParserBuilder`, and `AppErrorLogger`. |
 | `src/storage/` | `EncryptedSettings` interface, `WebCryptoSettings` (AES-GCM), and `CommonStorage`. |
 | `src/platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
-| `src/theme/` | `ThemeProvider`, design tokens (`tokens.css`, `tokens.ts`), and Tailwind preset. |
+| `src/theme/` | `ThemeProvider`, re-exported design tokens (`PlatformDesignTokens`), and Tailwind preset. |
 | `src/ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
 | `src/listing/` | `PaginationState`, `ListingDefaultValues`, `PagingFooter`, and `useInfiniteScroll`. |
 | `src/locales/` | Typed localization dictionaries (`CoreCommonStrings` with `enStrings` and `ruStrings`). |
