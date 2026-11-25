@@ -1,110 +1,100 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-security
+# Web Platform SDK Tools (`@mudrichenkoevgeny/web-platform-sdk-tools`)
 
-Security policy and password validation module for the Web Platform SDK: client-side **password policy evaluation**, **open security settings persistence & caching**, **WebSocket real-time policy sync**, domain **error parsing**, and manual DI wiring via **`SecurityComponent`**.
+The official **Web Tooling & Code Quality Kit** for Web Platform SDK applications and packages.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
-
----
-
-## What It Provides
-
-### 1. Wiring & DI
-- **`SecurityComponent`:** Root entry point assembling storage, API clients, repository, and use cases. Exposes `openSecuritySettingsRepository` and `validatePasswordUseCase`.
-
-### 2. Password Policy Evaluation & Validation
-- **`PasswordPolicyValidator`:** Pure rule engine evaluating passwords against configured security policies (min/max length, uppercase, lowercase, numeric digits, special characters, forbidden patterns).
-- **`ValidatePasswordUseCase`:** Domain use case performing client-side password validation against active `OpenSecuritySettings`.
-
-### 3. Persistence & Repository
-- **`OpenSecuritySettings`:** Domain model holding client-visible security requirements (password complexity rules, session timeout thresholds, MFA requirements).
-- **`OpenSecuritySettingsStorage` / `EncryptedOpenSecuritySettingsStorage`:** WebCrypto AES-GCM encrypted persistence layer caching security policies in browser storage (`localStorage` / `sessionStorage`).
-- **`OpenSecuritySettingsRepository` / `OpenSecuritySettingsRepositoryImpl`:** Repository orchestrating remote fetching, encrypted storage fallback, and reactive updates.
-
-### 4. Networking & Real-Time Sync
-- **`OpenSecuritySettingsApi` / `FetchOpenSecuritySettingsApi`:** REST API contract and Fetch implementation for retrieving security settings.
-- **`SecurityWebSocketMessageHandler`:** Listens for `SecurityWebSocketEventTypes` frames over WebSocket connections to update security configuration live when server policies change.
-
-### 5. Domain Errors & Error Parsing
-- **`SecurityError`:** Domain error model representing security violation failures (e.g., password policy violations, MFA requirements).
-- **`ClientSecurityErrorCodes`:** Strongly typed error codes for security domain issues.
-- **`SecurityErrorParser`:** Specialized error parser integrated into the SDK's Chain of Responsibility error parser pipeline.
-
-### 6. Mocks Infrastructure
-- **`SecurityComponentMock`:** Fully configured mock component for UI previews and unit testing, providing mocked storage, repositories, and APIs (`OpenSecuritySettingsMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`).
+Provides automated project skeleton scaffolding (`init`), agent rules synchronization (`sync`), shared ESLint rules with custom architectural AST checks, Dependency Cruiser module boundary rules, and interactive Plop code generators (`generate`).
 
 ---
 
-## Package Map
+## Features
 
-| Directory | Role |
-| :--- | :--- |
-| `src/di/` | `SecurityComponent` manual dependency injection assembly point. |
-| `src/domain/` | `OpenSecuritySettings` domain model and `PasswordPolicyValidator`. |
-| `src/storage/` | `OpenSecuritySettingsStorage` interface and `EncryptedOpenSecuritySettingsStorage` (AES-GCM). |
-| `src/network/` | `OpenSecuritySettingsApi`, `FetchOpenSecuritySettingsApi`, and `SecurityWebSocketMessageHandler`. |
-| `src/repository/` | `OpenSecuritySettingsRepository` interface and `OpenSecuritySettingsRepositoryImpl`. |
-| `src/usecase/` | `ValidatePasswordUseCase` and `RefreshOpenSecuritySettingsUseCase`. |
-| `src/error/` | `SecurityError`, `ClientSecurityErrorCodes`, and `SecurityErrorParser`. |
-| `src/locales/` | Typed localization string dictionaries for security domain errors. |
-| `src/mock/` | Test doubles (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`). |
+- **Project Skeleton Scaffolding:** Rapidly scaffolds new Web and Admin applications (`workspace`, `client`, or `admin`) via `pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init <type> <name>`.
+- **Automated Agent Rules Sync:** Automatically delivers `.agent/global/` (`common/` + `web/`) rules on `postinstall` or via CLI (`web-sdk-tools sync`).
+- **Shared ESLint Preset & Custom AST Rules:** Enforces strict TypeScript, React, a11y, and TSDoc standards plus custom AST rules (`no-direct-branded-cast`, `no-throw-in-repo-usecase`, `no-empty-di-array`).
+- **Dependency Cruiser Rules:** Enforces clean architectural module boundaries (`core-common` isolation, feature non-cross dependencies).
+- **Interactive Plop Generators:** Scaffolds Clean Architecture UseCases and React UI components with tests and Storybook previews via CLI (`web-sdk-tools generate`).
 
 ---
 
-## Usage
+## Installation
 
-### 1. Installation
+Add as a development dependency in your web project:
+
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-security
-```
-
-### 2. Initializing SecurityComponent & Registration
-
-Construct `SecurityComponent` by providing core infrastructure dependencies from `CommonComponent`, and register the error parser and WebSocket handler:
-
-```typescript
-import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-
-const securityComponent = new SecurityComponent({
-  webSocketService: commonComponent.webSocketService,
-  httpClient: commonComponent.httpClient,
-  encryptedSettings: commonComponent.encryptedSettings
-})
-
-// Register error parser during CommonComponent init
-commonComponent.init({
-  appErrorParserSpecificParsers: [SecurityErrorParser]
-})
-
-// Register WebSocket message handler
-commonComponent.webSocketService.updateWebSocketMessageHandlers([
-  securityComponent.securityWebSocketMessageHandler
-])
-```
-
-### 3. Validating a Password
-
-```typescript
-import { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-
-const validatePassword = new ValidatePasswordUseCase(securityComponent.openSecuritySettingsRepository)
-
-const result = await validatePassword.execute({ password: 'MySecretPassword123!' })
-
-if (result.isSuccess) {
-  console.log('Password meets all policy requirements!')
-} else {
-  console.error('Password validation failed:', result.error)
-}
+pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
 ```
 
 ---
 
-## Source Code & Repository
+## Usage Guide
 
-The source code for this library is maintained in the main GitHub repository:
-**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
+### 1. Project Skeleton Scaffolding
 
-## License
+Scaffold full monorepo with both Client and Admin apps:
+```bash
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
+```
 
-Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.
+Scaffold monorepo linking local unpublished SDK packages (for testing pre-releases):
+```bash
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app --link-local
+```
+
+Scaffold monorepo with Client app only:
+```bash
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init client my-app
+```
+
+Scaffold monorepo with Admin app only:
+```bash
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init admin my-app
+```
+
+### 2. ESLint Configuration
+
+Import the flat ESLint configuration in your project's `eslint.config.js`:
+
+```javascript
+import webSdkEslintConfig from '@mudrichenkoevgeny/web-platform-sdk-tools/eslint'
+
+export default [
+  ...webSdkEslintConfig
+]
+```
+
+### 3. Dependency Cruiser Configuration
+
+Import the Dependency Cruiser configuration in your project's `.dependency-cruiser.js`:
+
+```javascript
+import { webSdkDepcruiseConfig } from '@mudrichenkoevgeny/web-platform-sdk-tools/depcruise'
+
+export default webSdkDepcruiseConfig
+```
+
+### 4. CLI Commands
+
+Scaffold new project workspace, client, or admin app:
+```bash
+pnpm dlx @mudrichenkoevgeny/web-platform-sdk-tools init workspace my-app
+```
+
+Synchronize global agent rules into project `.agent/global/`:
+```bash
+npx web-sdk-tools sync
+```
+
+Interactively generate UseCases or React UI components:
+```bash
+npx web-sdk-tools generate
+```
+
+Verify package exports via publint:
+```bash
+npx web-sdk-tools check-exports
+```
+
+Verify public API signature snapshots via API Extractor:
+```bash
+npx web-sdk-tools api-extract
+```

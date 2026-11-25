@@ -1,100 +1,79 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-settings
+# Sample Client App (`@web-platform-sdk/sample-client-app`)
 
-Global application configuration module for the Web Platform SDK: public **global settings management**, **WebCrypto encrypted caching**, **WebSocket real-time settings synchronization**, domain **use cases**, and manual DI wiring via **`SettingsComponent`**.
+Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`) with **TanStack Router** file-based routing.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
+## How to Build & Run
 
----
+### 1. Prerequisites (Build Core SDK Packages)
+Before starting the sample application for the first time or after modifying SDK packages (`packages/*`), build all workspace packages from the project root:
 
-## What It Provides
-
-### 1. Wiring & DI
-- **`SettingsComponent`:** Root entry point assembling storage, API clients, repository, and settings use cases. Exposes `openGlobalSettingsRepository`, `getOpenGlobalSettingsUseCase`, and `refreshOpenGlobalSettingsUseCase`.
-
-### 2. Open Global Settings Model
-- **`OpenGlobalSettings`:** Domain model representing public application properties, feature toggles, maintenance mode statuses, and dynamic platform parameters.
-
-### 3. Persistence & Repository
-- **`OpenGlobalSettingsStorage` / `EncryptedOpenGlobalSettingsStorage`:** WebCrypto AES-GCM encrypted caching layer for global settings in browser storage (`localStorage` / `sessionStorage`).
-- **`OpenGlobalSettingsRepository` / `OpenGlobalSettingsRepositoryImpl`:** Central repository coordinating network requests, encrypted local storage fallback, and reactive updates.
-
-### 4. Networking & Real-Time Sync
-- **`OpenGlobalSettingsApi` / `FetchOpenGlobalSettingsApi`:** Fetch HTTP client contract and implementation fetching public global settings from server REST endpoints.
-- **`SettingsWebSocketMessageHandler`:** Handles `SettingsWebSocketEventTypes` frames over WebSocket connections for live settings updates without page reloads.
-
-### 5. Domain Use Cases
-- **`GetOpenGlobalSettingsUseCase`:** Retrieves cached or fetched global application settings.
-- **`RefreshOpenGlobalSettingsUseCase`:** Forces a network refresh of global settings and updates the local encrypted cache.
-
-### 6. Mocks Infrastructure
-- **`SettingsComponentMock`:** Complete mock implementations (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`, `OpenGlobalSettingsMock`) for unit testing and Storybook previews.
-
----
-
-## Package Map
-
-| Directory | Role |
-| :--- | :--- |
-| `src/di/` | `SettingsComponent` manual dependency injection assembly point. |
-| `src/domain/` | `OpenGlobalSettings` domain model and properties. |
-| `src/storage/` | `OpenGlobalSettingsStorage` interface and `EncryptedOpenGlobalSettingsStorage` (AES-GCM). |
-| `src/network/` | `OpenGlobalSettingsApi`, `FetchOpenGlobalSettingsApi`, and `SettingsWebSocketMessageHandler`. |
-| `src/repository/` | `OpenGlobalSettingsRepository` interface and `OpenGlobalSettingsRepositoryImpl`. |
-| `src/usecase/` | `GetOpenGlobalSettingsUseCase` and `RefreshOpenGlobalSettingsUseCase`. |
-| `src/mock/` | Test doubles (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`). |
-
----
-
-## Usage
-
-### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-settings
+pnpm build
 ```
 
-### 2. Initializing SettingsComponent & Registration
+### 2. Development Server
+To run the local development server with Hot Module Replacement (HMR):
 
-Construct `SettingsComponent` by passing core infrastructure dependencies from `CommonComponent`, and register the WebSocket handler:
+- **From repository root:**
+  ```bash
+  pnpm dev:client
+  ```
+- **From inside `samples/client-app`:**
+  ```bash
+  cd samples/client-app
+  pnpm dev
+  ```
 
-```typescript
-import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+* **URL:** `http://localhost:3002`
 
-const settingsComponent = new SettingsComponent({
-  webSocketService: commonComponent.webSocketService,
-  httpClient: commonComponent.httpClient,
-  encryptedSettings: commonComponent.encryptedSettings
-})
+### 3. Production Build
+Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
 
-// Register WebSocket message handler
-commonComponent.webSocketService.updateWebSocketMessageHandlers([
-  settingsComponent.settingsWebSocketMessageHandler
-])
-```
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-client-app build
+  ```
+- **From inside `samples/client-app`:**
+  ```bash
+  pnpm build
+  ```
 
-### 3. Fetching Global Settings
+### 4. Local Preview
+Launches a local static server to test and inspect the built production bundle (`dist/`):
 
-```typescript
-import { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-client-app preview
+  ```
+- **From inside `samples/client-app`:**
+  ```bash
+  pnpm preview
+  ```
 
-const getGlobalSettings = new GetOpenGlobalSettingsUseCase(settingsComponent.openGlobalSettingsRepository)
+### 5. Type Checking
+Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
 
-const result = await getGlobalSettings.execute()
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-client-app typecheck
+  ```
+- **From inside `samples/client-app`:**
+  ```bash
+  pnpm typecheck
+  ```
 
-if (result.isSuccess) {
-  console.log('Global Settings:', result.value)
-} else {
-  console.error('Failed to load global settings:', result.error)
-}
-```
+## Architecture & What It Provides
 
----
-
-## Source Code & Repository
-
-The source code for this library is maintained in the main GitHub repository:
-**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
-
-## License
-
-Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.
+- **Root Wiring (`ClientAppComponent`):** Central DI container aggregating:
+  - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
+  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user details).
+- **Initialization (`SyncDataUseCase`):**
+  - Attaches `authHttpClientConfigPlugin` to the HTTP client.
+  - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
+  - Installs WebSocket event handlers.
+  - Refreshes user configuration upon startup.
+- **UI Architecture (`RootContent` & TanStack Router):**
+  - Displays `InitialLoader` during initialization.
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/user`, `/user/sessions/$sessionId`, `/user/identifiers/$identifierId`, `/user/totp/*`, `/auth/*`).
+  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
+  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

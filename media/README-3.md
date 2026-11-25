@@ -1,89 +1,79 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-storage
+# Sample Management App (`@web-platform-sdk/sample-management-app`)
 
-File storage management module for the Web Platform SDK: **file operations**, **direct S3 XMLHttpRequest uploader**, **presigned upload URL handling**, **storage settings management**, **WebSocket real-time synchronization**, domain **use cases**, and **Zustand React UI components and screens**.
+Administrative host application demonstrating how to wire **`web-platform-sdk`** modules for internal management staff (`ManagementAppComponent`) with **TanStack Router** file-based routing.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
+## How to Build & Run
 
----
+### 1. Prerequisites (Build Core SDK Packages)
+Before starting the sample application for the first time or after modifying SDK packages (`packages/*`), build all workspace packages from the project root:
 
-## What It Provides
-
-### 1. Wiring & DI
-- **`StorageComponent`:** Root entry point assembling storage settings, API clients, repositories, and use cases. Exposes `storageSettingsRepository`, `getOpenStorageSettingsUseCase`, `refreshOpenStorageSettingsUseCase`, and `storageWebSocketMessageHandler`.
-
-### 2. Direct S3 Upload & Storage API
-- **`uploadFileDirectly` / `DirectFileUploaderImpl`:** Pure XMLHttpRequest uploader conducting direct binary S3 uploads with real-time percentage progress callbacks.
-- **`StorageApi`:** Generic REST API client contract returning mapped domain models (`StorageFilePrivate`, `StorageFileSummary`, `PresignedUrl`).
-
-### 3. Storage Settings & Persistence
-- **`OpenStorageSettingsStorage` / `EncryptedOpenStorageSettingsStorage`:** WebCrypto AES-GCM encrypted caching layer for storage limits, allowed MIME types, and presigned TTL properties.
-- **`OpenStorageSettingsRepository` / `OpenStorageSettingsRepositoryImpl`:** Central repository coordinating storage settings REST requests, local cache fallback, and WebSocket updates.
-
-### 4. Domain Use Cases
-- **`GetFilesUseCase`:** Retrieves paginated file list domain summaries.
-- **`GetFileDetailUseCase`:** Retrieves detailed private file domain models.
-- **`UploadFileUseCase`:** Executes the complete direct S3 presigned upload flow.
-- **`DeleteFileUseCase`:** Deletes a specific storage file.
-- **`DeleteFilesBatchUseCase`:** Deletes multiple storage files in a single batch operation.
-- **`GetOpenStorageSettingsUseCase` / `RefreshOpenStorageSettingsUseCase`:** Manages open storage configuration settings.
-
-### 5. React UI Components & Screens
-- **`StorageFileListScreen`:** Unified file list view with infinite pagination, sorting, filters, batch selection, and deletion dialogs.
-- **`StorageFileDetailScreen`:** Detailed file view displaying preview media, metadata, copy link action, and deletion dialogs.
-- **`StorageFileUploadScreen` / `StorageFileUploadArea`:** Drag-and-drop upload queue with category/visibility selectors and progress bars.
-- **`StorageFileItem`:** Reusable file summary card component.
-- **`getStorageCategoryIcon` / `getStorageStatusIcon`:** Utility icon mappers.
-
----
-
-## Package Map
-
-| Directory | Role |
-| :--- | :--- |
-| `src/di/` | `StorageComponent` manual dependency injection assembly point. |
-| `src/error/` | Storage-specific `AppError` subclasses and `StorageErrorParser`. |
-| `src/network/` | `StorageApi`, `FetchOpenStorageSettingsApi`, and `StorageWebSocketMessageHandler`. |
-| `src/uploader/` | `uploadFileDirectly` XMLHttpRequest S3 uploader. |
-| `src/storage/` | `OpenStorageSettingsStorage` interface and `EncryptedOpenStorageSettingsStorage` (AES-GCM). |
-| `src/repository/` | `StorageRepository` and `OpenStorageSettingsRepository` contracts. |
-| `src/usecase/` | `GetFilesUseCase`, `GetFileDetailUseCase`, `UploadFileUseCase`, `DeleteFileUseCase`, `DeleteFilesBatchUseCase`, and settings use cases. |
-| `src/ui/` | React screens (`StorageFileListScreen`, `StorageFileDetailScreen`, `StorageFileUploadScreen`), components, Zustand stores, and icon utilities. |
-| `src/mock/` | Test doubles and mock dependency factories (`StorageComponentMock`, `storageFileDetailDependenciesMock`, etc.). |
-
----
-
-## Usage
-
-### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-storage
+pnpm build
 ```
 
-### 2. Initializing StorageComponent & Registration
+### 2. Development Server
+To run the local development server with Hot Module Replacement (HMR):
 
-```typescript
-import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+- **From repository root:**
+  ```bash
+  pnpm dev:management
+  ```
+- **From inside `samples/management-app`:**
+  ```bash
+  cd samples/management-app
+  pnpm dev
+  ```
 
-const storageComponent = new StorageComponent({
-  webSocketService: commonComponent.webSocketService,
-  httpClient: commonComponent.httpClient,
-  encryptedSettings: commonComponent.encryptedSettings
-})
+* **URL:** `http://localhost:3001`
 
-// Register WebSocket message handler
-commonComponent.webSocketService.updateWebSocketMessageHandlers([
-  storageComponent.storageWebSocketMessageHandler
-])
-```
+### 3. Production Build
+Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
 
----
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-management-app build
+  ```
+- **From inside `samples/management-app`:**
+  ```bash
+  pnpm build
+  ```
 
-## Source Code & Repository
+### 4. Local Preview
+Launches a local static server to test and inspect the built production bundle (`dist/`):
 
-The source code for this library is maintained in the main GitHub repository:
-**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-management-app preview
+  ```
+- **From inside `samples/management-app`:**
+  ```bash
+  pnpm preview
+  ```
 
-## License
+### 5. Type Checking
+Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
 
-Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.
+- **From repository root:**
+  ```bash
+  pnpm --filter @web-platform-sdk/sample-management-app typecheck
+  ```
+- **From inside `samples/management-app`:**
+  ```bash
+  pnpm typecheck
+  ```
+
+## Architecture & What It Provides
+
+- **Root Wiring (`ManagementAppComponent`):** Central DI container aggregating:
+  - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
+  - **Feature Domain:** `ManagementUserComponent` (administrative user management, session oversight, audit logging).
+- **Initialization (`SyncManagementDataUseCase`):**
+  - Attaches `authHttpClientConfigPlugin` to the HTTP client.
+  - Registers administrative error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
+  - Installs management WebSocket event handlers.
+  - Refreshes management user configuration upon startup.
+- **UI Architecture (`RootContent` & TanStack Router):**
+  - Displays `InitialLoader` during initialization.
+  - File-based routing in `src/routes/` manages RESTful URL routes (`/audit/events`, `/users`, `/sessions`, `/identifiers`, `/settings/*`, `/user`, `/auth/*`).
+  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects UseCases directly into route handlers.
+  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.

@@ -1,79 +1,120 @@
-# Sample Client App (`@web-platform-sdk/sample-client-app`)
+# @mudrichenkoevgeny/web-platform-sdk/feature/user
 
-Reference host application demonstrating how to wire **`web-platform-sdk`** modules for end-user web applications using a manual DI pattern (`ClientAppComponent`) with **TanStack Router** file-based routing.
+Base identity and authentication domain module for the Web Platform SDK: core **authentication state machine**, **WebCrypto token storage**, **MFA / TOTP 2FA workflows**, **session oversight**, **multi-identifier linking**, **MFA step-up HTTP interceptors**, responsive **React UI screens & components**, and **Zod search parameter schemas for TanStack Router**.
 
-## How to Build & Run
+This package depends on `@mudrichenkoevgeny/web-platform-sdk/core/common`, `@mudrichenkoevgeny/web-platform-sdk/core/security`, and `@mudrichenkoevgeny/web-platform-sdk/core/settings`. It serves as the shared domain foundation for both `@mudrichenkoevgeny/web-platform-sdk/feature/client-user` and `@mudrichenkoevgeny/web-platform-sdk/feature/management-user`.
 
-### 1. Prerequisites (Build Core SDK Packages)
-Before starting the sample application for the first time or after modifying SDK packages (`packages/*`), build all workspace packages from the project root:
+---
 
+## What It Provides
+
+### 1. Multi-Method Authentication Workflows
+- **Email Authentication:** `LoginByEmailUseCase`, `RegistrationByEmailUseCase`, `ResetEmailPasswordUseCase`.
+- **Phone OTP:** `LoginByPhoneUseCase`, `SendLoginConfirmationToPhoneUseCase`, SMS confirmation flows.
+- **Social OAuth:** `LoginByGoogleUseCase`, `GoogleAuthService` integration (Web and fallback handlers).
+- **Two-Factor Authentication (TOTP):** `LoginByTotpUseCase`, `LoginByTotpRecoveryCodeUseCase`.
+- **Account Lockout Recovery:** `UnlockByEmailUseCase`, `UnlockByPhoneUseCase`, `UnlockByGoogleUseCase`, OTP unlock verification.
+
+### 2. Encrypted Token Storage & Auto-Refresh
+- **`AuthStorage` / `EncryptedAuthStorage`:** WebCrypto AES-GCM encrypted persistence for JWT access and refresh tokens.
+- **`UserStorage` / `EncryptedUserStorage`:** Encrypted local cache for current user session state and user details.
+- **`AuthHttpClientConfigPlugin`:** Native HTTP interceptor injecting Authorization Bearer headers and handling automatic token refresh cycles on `401 Unauthorized`.
+
+### 3. MFA Step-Up & Challenge Handling
+- **`MfaStepUpHttpClientConfigPlugin`:** Intercepts HTTP `428 Precondition Required` step-up requirements.
+- **`MfaChallengeHandler` / `DefaultMfaChallengeHandler`:** Opens step-up challenge modals to verify user identity before retrying privileged actions.
+
+### 4. TOTP 2FA & Security Governance
+- **TOTP Lifecycle:** `SetupTotpUseCase`, `EnableTotpUseCase`, `DisableTotpUseCase`.
+- **Recovery Codes:** `GetRecoveryCodesUseCase`, `RegenerateRecoveryCodesUseCase`.
+- **QRCode Support:** QR code rendering for TOTP secret provisioning via `qrcode.react`.
+
+### 5. Session Control & Identifiers
+- **Session Operations:** `GetSessionsUseCase`, `DeleteSessionUseCase`, `DeleteAllOtherSessionsUseCase`, `LogoutUseCase`.
+- **Identifier Management:** `AddUserIdentifierEmailUseCase`, `AddUserIdentifierPhoneUseCase`, `AddUserIdentifierGoogleUseCase`, `DeleteUserIdentifierUseCase`.
+- **Account Lifecycles:** `ScheduleUserDeletionUseCase`, `RestoreUserUseCase`.
+
+### 6. React UI Components, Screens & Router Search Schemas
+- **Reusable Components:** `AuthProviderButton`, `AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `MfaChallengeDialog`, `LegalFooter`.
+- **Authentication Screens & Schemas:**
+  - `LoginWelcomeScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (`loginByTotpSearchSchema`), `PendingDeletionScreen`, `ResetEmailPasswordScreen`.
+  - `UnlockMethodSelectionScreen`, `UnlockTargetInputScreen` (`unlockTargetSearchSchema`), `UnlockOtpScreen` (`unlockOtpSearchSchema`, `accountUnlockSearchSchema`), `UnlockSuccessScreen`.
+- **User & Account Management Screens:**
+  - `MainUserScreen` (user overview & navigation hub).
+  - `TotpMainScreen`, `TotpRecoveryCodesScreen` (2FA configuration).
+  - `SelfSessionListScreen`, `SessionDetailScreen` (active sessions).
+  - `SelfIdentifierListScreen`, `IdentifierDetailScreen` (linked identity methods).
+
+### 7. Real-Time Sync & Error Handling
+- **`UserWebSocketMessageHandler`:** Listens for real-time WebSocket session termination and user change broadcasts.
+- **`UserError` / `UserErrorParser`:** Specialized error modeling and parsing for user domain errors (`ClientUserErrorCodes`).
+
+---
+
+## Package Map
+
+| Directory | Role |
+| :--- | :--- |
+| `di/` | `UserStorageModule` for initializing storage components. |
+| `auth/` | `UserAuthServices`, `GoogleAuthService`, `WebGoogleAuthService`, and disabled fallbacks. |
+| `storage/` | `AuthStorage` (tokens), `UserStorage` (user details), and WebCrypto AES-GCM implementations. |
+| `network/` | REST APIs (`SessionApi`, `UserSecurityApi`), `AuthHttpClientConfigPlugin`, `MfaStepUpHttpClientConfigPlugin`, and `UserWebSocketMessageHandler`. |
+| `repository/` | Repositories for Auth, Session, User, Identifier, and Confirmation key throttlers. |
+| `usecase/` | Atomic use cases grouped into `auth/`, `session/`, `user/`, and `identifier/`. |
+| `error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
+| `validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
+| `ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
+| `ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and User screens. |
+| `locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
+| `mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
+
+---
+
+## Usage
+
+### 1. Installation
 ```bash
-pnpm build
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
-### 2. Development Server
-To run the local development server with Hot Module Replacement (HMR):
+### 2. System Registration
 
-- **From repository root:**
-  ```bash
-  pnpm dev:client
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  cd samples/client-app
-  pnpm dev
-  ```
+Register `UserErrorParser`, `AuthHttpClientConfigPlugin`, and `UserWebSocketMessageHandler` during host startup:
 
-* **URL:** `http://localhost:3002`
+```typescript
+import { UserErrorParser, UserWebSocketMessageHandler } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
-### 3. Production Build
-Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
+// 1. Attach Auth HTTP Interceptor
+commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app build
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm build
-  ```
+// 2. Register Error Parser
+commonComponent.init({
+  appErrorParserSpecificParsers: [UserErrorParser]
+})
 
-### 4. Local Preview
-Launches a local static server to test and inspect the built production bundle (`dist/`):
+// 3. Register WebSocket Message Handler
+commonComponent.webSocketService.updateWebSocketMessageHandlers([
+  clientUserComponent.userWebSocketMessageHandler
+])
+```
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app preview
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm preview
-  ```
+### 3. Rendering User Main Screen
 
-### 5. Type Checking
-Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
+```tsx
+import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-client-app typecheck
-  ```
-- **From inside `samples/client-app`:**
-  ```bash
-  pnpm typecheck
-  ```
+export function UserMainPage() {
+  return <MainUserScreen dependencies={dependencies} />
+}
+```
 
-## Architecture & What It Provides
+---
 
-- **Root Wiring (`ClientAppComponent`):** Central DI container aggregating:
-  - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
-  - **Feature Domain:** `ClientUserComponent` (authentication, session storage, user details).
-- **Initialization (`SyncDataUseCase`):**
-  - Attaches `authHttpClientConfigPlugin` to the HTTP client.
-  - Registers error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
-  - Installs WebSocket event handlers.
-  - Refreshes user configuration upon startup.
-- **UI Architecture (`RootContent` & TanStack Router):**
-  - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/`, `/user`, `/user/sessions/$sessionId`, `/user/identifiers/$identifierId`, `/user/totp/*`, `/auth/*`).
-  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects `appComponent` directly into route handlers.
-  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.
+## Source Code & Repository
+
+The source code for this library is maintained in the main GitHub repository:
+**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
+
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.

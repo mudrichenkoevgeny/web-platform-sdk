@@ -1,53 +1,52 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-user
+# @mudrichenkoevgeny/web-platform-sdk/core/common
 
-Base identity and authentication domain module for the Web Platform SDK: core **authentication state machine**, **WebCrypto token storage**, **MFA / TOTP 2FA workflows**, **session oversight**, **multi-identifier linking**, **MFA step-up HTTP interceptors**, responsive **React UI screens & components**, and **Zod search parameter schemas for TanStack Router**.
+Base foundation for all Web Platform SDK modules: shared **Fetch HTTP client** bootstrap, **WebSocket** infrastructure with lifecycle management, **WebCrypto encrypted settings** storage abstraction, **browser & platform** metadata providers, **Chain of Responsibility error modeling and parsing**, localized string dictionaries, and a complete suite of **React** UI components with Tailwind CSS styling, design tokens, and Storybook support.
 
-This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mudrichenkoevgeny/web-platform-sdk-core-security`, and `@mudrichenkoevgeny/web-platform-sdk-core-settings`. It serves as the shared domain foundation for both `@mudrichenkoevgeny/web-platform-sdk-feature-clientuser` and `@mudrichenkoevgeny/web-platform-sdk-feature-managementuser`.
+This module serves as the foundational core for the Web Platform SDK and has zero dependencies on other `core/*` or `feature/*` modules in the repository.
 
 ---
 
 ## What It Provides
 
-### 1. Multi-Method Authentication Workflows
-- **Email Authentication:** `LoginByEmailUseCase`, `RegistrationByEmailUseCase`, `ResetEmailPasswordUseCase`.
-- **Phone OTP:** `LoginByPhoneUseCase`, `SendLoginConfirmationToPhoneUseCase`, SMS confirmation flows.
-- **Social OAuth:** `LoginByGoogleUseCase`, `GoogleAuthService` integration (Web and fallback handlers).
-- **Two-Factor Authentication (TOTP):** `LoginByTotpUseCase`, `LoginByTotpRecoveryCodeUseCase`.
-- **Account Lockout Recovery:** `UnlockByEmailUseCase`, `UnlockByPhoneUseCase`, `UnlockByGoogleUseCase`, OTP unlock verification.
+### 1. Wiring & React Context (DI)
+- **`CommonComponent`:** Root assembly point for core infrastructure. Manages the lifecycle of networking, storage, platform abstractions, and error parsing.
+- **`EncryptedSettingsComponent`:** Decouples core logic from browser storage using native WebCrypto API (AES-GCM encryption with `WebCryptoSettings`).
+- **`SdkProvider`:** React Context provider exposing `CommonComponent` and `AppErrorParser` to the UI tree via `useSdkStore()`, `useCommonComponent()`, and `useAppErrorParser()`.
 
-### 2. Encrypted Token Storage & Auto-Refresh
-- **`AuthStorage` / `EncryptedAuthStorage`:** WebCrypto AES-GCM encrypted persistence for JWT access and refresh tokens.
-- **`UserStorage` / `EncryptedUserStorage`:** Encrypted local cache for current user session state and user details.
-- **`AuthHttpClientConfigPlugin`:** Native HTTP interceptor injecting Authorization Bearer headers and handling automatic token refresh cycles on `401 Unauthorized`.
+### 2. Networking (Fetch & WebSockets)
+- **`HttpClient`:** Pre-configured HTTP client wrapping native `fetch`, supporting `HttpClientConfigPlugin` interceptors, `AccessTokenProvider` auth injection, and `callResult` helper for converting network responses to `AppResult`.
+- **`WebWebSocketService`:** Manages WebSocket connection lifecycles, automatic reconnection backoff, ping/pong heartbeats, and token refresh updates.
+- **`CommonWebSocketMessageHandler`:** Processes framework-level WebSocket frame types (e.g., ping/pong, connection initialization).
 
-### 3. MFA Step-Up & Challenge Handling
-- **`MfaStepUpHttpClientConfigPlugin`:** Intercepts HTTP `428 Precondition Required` step-up requirements.
-- **`MfaChallengeHandler` / `DefaultMfaChallengeHandler`:** Opens step-up challenge modals to verify user identity before retrying privileged actions.
+### 3. Error Handling & Result Pattern
+- **Result Pattern:** `AppResult<T, E>` discriminated union (`Success` or `Failure`) for type-safe operation returns without throwing runtime errors.
+- **Error Model:** `AppError` interface, `CommonError` class, `ServerError`, `ApiException`, and `ErrorId` (UUID wrapper).
+- **Chain of Responsibility Parsing:** `AppErrorParser` base, `CommonErrorParser` fallback, and `AppErrorParserBuilder` for chaining domain-specific parsers (`SecurityErrorParser`, `UserErrorParser`).
+- **Logging:** `AppErrorLogger` wrapping browser console methods for structured diagnostic logging.
 
-### 4. TOTP 2FA & Security Governance
-- **TOTP Lifecycle:** `SetupTotpUseCase`, `EnableTotpUseCase`, `DisableTotpUseCase`.
-- **Recovery Codes:** `GetRecoveryCodesUseCase`, `RegenerateRecoveryCodesUseCase`.
-- **QRCode Support:** QR code rendering for TOTP secret provisioning via `qrcode.react`.
+### 4. Encrypted WebCrypto Storage
+- **`EncryptedSettings`:** Interface for key-value persistence.
+- **`WebCryptoSettings`:** AES-GCM encrypted wrapper over browser `localStorage` or `sessionStorage`.
+- **`CommonStorage` / `EncryptedCommonStorage`:** Typed storage wrappers for device ID, language preferences, and common SDK keys.
 
-### 5. Session Control & Identifiers
-- **Session Operations:** `GetSessionsUseCase`, `DeleteSessionUseCase`, `DeleteAllOtherSessionsUseCase`, `LogoutUseCase`.
-- **Identifier Management:** `AddUserIdentifierEmailUseCase`, `AddUserIdentifierPhoneUseCase`, `AddUserIdentifierGoogleUseCase`, `DeleteUserIdentifierUseCase`.
-- **Account Lifecycles:** `ScheduleUserDeletionUseCase`, `RestoreUserUseCase`.
+### 5. Platform & Device Metadata
+- **`ClientDeviceInfoProvider`:** Collects browser metadata (User Agent, screen dimensions, OS/Browser versions) into `ClientDeviceInfo`.
+- **`ExternalLauncher`:** Safe abstraction for opening URLs and `mailto:` links via `window.open`.
+- **`PlatformRepository`:** Immutable access to platform information and device metrics.
 
-### 6. React UI Components, Screens & Router Search Schemas
-- **Reusable Components:** `AuthProviderButton`, `AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `MfaChallengeDialog`, `LegalFooter`.
-- **Authentication Screens & Schemas:**
-  - `LoginWelcomeScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (`loginByTotpSearchSchema`), `PendingDeletionScreen`, `ResetEmailPasswordScreen`.
-  - `UnlockMethodSelectionScreen`, `UnlockTargetInputScreen` (`unlockTargetSearchSchema`), `UnlockOtpScreen` (`unlockOtpSearchSchema`, `accountUnlockSearchSchema`), `UnlockSuccessScreen`.
-- **User & Account Management Screens:**
-  - `MainUserScreen` (user overview & navigation hub).
-  - `TotpMainScreen`, `TotpRecoveryCodesScreen` (2FA configuration).
-  - `SelfSessionListScreen`, `SessionDetailScreen` (active sessions).
-  - `SelfIdentifierListScreen`, `IdentifierDetailScreen` (linked identity methods).
+### 6. UI Components & Design System
+- **Theme & Tokens:** `ThemeProvider` and `useTheme()` for Light/Dark/System mode switching, integrated with `@mudrichenkoevgeny/shared-foundation` design tokens and `tailwind-preset.ts`.
+- **Icon Infrastructure:** `CoreIcon` rendering SVGR React components (`*.svg?react`) with `currentColor` styling and raster fallback.
+- **Buttons & Inputs:** `CoreButton` (with loading spinner), `CoreOutlinedTextField`, `CoreCodeTextField`, `CoreEmailTextField`, `CorePasswordTextField` (with visibility toggle).
+- **Layout & Feedback:** `CoreScrollableScreenContent`, `FullscreenError`, `FullscreenLoading` (with delay timer), `FullscreenOverlayLoading` (with backdrop blur).
 
-### 7. Real-Time Sync & Error Handling
-- **`UserWebSocketMessageHandler`:** Listens for real-time WebSocket session termination and user change broadcasts.
-- **`UserError` / `UserErrorParser`:** Specialized error modeling and parsing for user domain errors (`ClientUserErrorCodes`).
+### 7. Listing, Filtering & Pagination
+- **Listing Infrastructure:** `PaginationState` and `ListingDefaultValues` providing a standardized way to handle paginated data from `PagedResult`.
+- **UI & Infinite Scroll:** `ListingEmptyState`, `ListingHeaderBar`, `PagingFooter`, `ListingChoiceDropdown`, `useInfiniteScroll` hook utilizing browser `IntersectionObserver`.
+
+### 8. Testing & Mocks Infrastructure
+- **Test Harness:** `ComponentTestHarness` for Vitest and React Testing Library unit testing; Storybook decorators in `storybookDecorators.tsx`.
+- **Mocks:** In-memory doubles (`AppErrorParserMock`, `EncryptedSettingsMock`, `AccessTokenProviderMock`, `WebSocketServiceMock`).
 
 ---
 
@@ -55,18 +54,20 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `UserStorageModule` for initializing storage components. |
-| `src/auth/` | `UserAuthServices`, `GoogleAuthService`, `WebGoogleAuthService`, and disabled fallbacks. |
-| `src/storage/` | `AuthStorage` (tokens), `UserStorage` (user details), and WebCrypto AES-GCM implementations. |
-| `src/network/` | REST APIs (`SessionApi`, `UserSecurityApi`), `AuthHttpClientConfigPlugin`, `MfaStepUpHttpClientConfigPlugin`, and `UserWebSocketMessageHandler`. |
-| `src/repository/` | Repositories for Auth, Session, User, Identifier, and Confirmation key throttlers. |
-| `src/usecase/` | Atomic use cases grouped into `auth/`, `session/`, `user/`, and `identifier/`. |
-| `src/error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
-| `src/validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
-| `src/ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
-| `src/ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and User screens. |
-| `src/locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
-| `src/mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
+| `di/` | `CommonComponent` and `EncryptedSettingsComponent` assembly points. |
+| `context/` | `SdkProvider` React context and hooks (`useSdkStore`, `useCommonComponent`). |
+| `network/` | Native `fetch` HTTP client, `HttpClientConfigPlugin`, `WebWebSocketService`, and message handlers. |
+| `result/` | Discriminated union `AppResult` (`Success` / `Failure`) and functional monadic helpers. |
+| `error/` | `AppError` models, `CommonErrorParser`, `AppErrorParserBuilder`, and `AppErrorLogger`. |
+| `storage/` | `EncryptedSettings` interface, `WebCryptoSettings` (AES-GCM), and `CommonStorage`. |
+| `platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
+| `theme/` | `ThemeProvider`, re-exported design tokens (`PlatformDesignTokens`), and Tailwind preset. |
+| `ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
+| `listing/` | `PaginationState`, `ListingDefaultValues`, `PagingFooter`, and `useInfiniteScroll`. |
+| `locales/` | Typed localization dictionaries (`CoreCommonStrings` with `enStrings` and `ruStrings`). |
+| `time/` | Date/time formatters (`DateTimeFormatter`) and resend countdown timers (`ResendCountdown`). |
+| `testing/` | `ComponentTestHarness` and Storybook decorators. |
+| `mock/` | Test doubles (`EncryptedSettingsMock`, `WebSocketServiceMock`, `AccessTokenProviderMock`). |
 
 ---
 
@@ -74,37 +75,81 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-user
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
-### 2. System Registration
-
-Register `UserErrorParser`, `AuthHttpClientConfigPlugin`, and `UserWebSocketMessageHandler` during host startup:
+### 2. Initializing CommonComponent & SdkProvider
 
 ```typescript
-import { UserErrorParser, UserWebSocketMessageHandler } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import React from 'react'
+import {
+  EncryptedSettingsComponent,
+  CommonComponent,
+  SdkProvider,
+  ThemeProvider
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
-// 1. Attach Auth HTTP Interceptor
-commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
+const encryptedSettingsComponent = new EncryptedSettingsComponent()
 
-// 2. Register Error Parser
-commonComponent.init({
-  appErrorParserSpecificParsers: [UserErrorParser]
+const commonComponent = new CommonComponent({
+  encryptedSettings: encryptedSettingsComponent.encryptedSettings,
+  clientDeviceInfoProvider: clientDeviceInfoProvider,
+  baseUrl: 'https://api.example.com',
+  accessTokenProvider: authStorage
 })
 
-// 3. Register WebSocket Message Handler
-commonComponent.webSocketService.updateWebSocketMessageHandlers([
-  clientUserComponent.userWebSocketMessageHandler
-])
+export const App = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ThemeProvider>
+      <SdkProvider component={commonComponent}>
+        {children}
+      </SdkProvider>
+    </ThemeProvider>
+  )
+}
 ```
 
-### 3. Rendering User Main Screen
+### 3. Handling Results & Functional Folding
+
+```typescript
+import { AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+
+const result: AppResult<UserData, AppError> = await repository.getUser()
+
+if (result.isSuccess) {
+  console.log('User loaded:', result.value)
+} else {
+  console.error('Failed to load user:', result.error)
+}
+```
+
+### 4. Rendering UI Components
 
 ```tsx
-import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import React from 'react'
+import {
+  CoreButton,
+  CoreOutlinedTextField,
+  CorePasswordTextField
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
-export function UserMainPage() {
-  return <MainUserScreen dependencies={dependencies} />
+export const LoginForm = () => {
+  const [password, setPassword] = React.useState('')
+  const [isVisible, setIsVisible] = React.useState(false)
+
+  return (
+    <form className="flex flex-col gap-4">
+      <CoreOutlinedTextField label="Email" placeholder="user@example.com" />
+      <CorePasswordTextField
+        label="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        isPasswordVisible={isVisible}
+        onTogglePasswordVisibility={() => setIsVisible(!isVisible)}
+      />
+      <CoreButton label="Sign In" type="submit" />
+    </form>
+  )
 }
 ```
 

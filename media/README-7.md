@@ -1,66 +1,89 @@
-# Web Platform SDK Tools (`@mudrichenkoevgeny/web-platform-sdk-tools`)
+# @mudrichenkoevgeny/web-platform-sdk/core/storage
 
-The official **Web Tooling & Code Quality Kit** for Web Platform SDK applications and packages.
+File storage management module for the Web Platform SDK: **file operations**, **direct S3 XMLHttpRequest uploader**, **presigned upload URL handling**, **storage settings management**, **WebSocket real-time synchronization**, domain **use cases**, and **Zustand React UI components and screens**.
 
-Provides automated agent rules synchronization, shared ESLint rules with custom architectural AST checks, Dependency Cruiser module boundary rules, and interactive Plop code generators.
-
----
-
-## Features
-
-- **Automated Agent Rules Sync:** Automatically delivers `.agent/global/` (`common/` + `web/`) rules on `postinstall` or via CLI (`npx sync-agent-rules`).
-- **Shared ESLint Preset & Custom AST Rules:** Enforces strict TypeScript, React, a11y, and TSDoc standards plus custom AST rules (`no-direct-branded-cast`, `no-throw-in-repo-usecase`, `no-empty-di-array`).
-- **Dependency Cruiser Rules:** Enforces clean architectural module boundaries (`core-common` isolation, feature non-cross dependencies).
-- **Interactive Plop Generators:** Scaffolds Clean Architecture UseCases and React UI components with tests and Storybook previews via CLI.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
-## Installation
+## What It Provides
 
-Add as a development dependency in your web project:
+### 1. Wiring & DI
+- **`StorageComponent`:** Root entry point assembling storage settings, API clients, repositories, and use cases. Exposes `storageSettingsRepository`, `getOpenStorageSettingsUseCase`, `refreshOpenStorageSettingsUseCase`, and `storageWebSocketMessageHandler`.
 
+### 2. Direct S3 Upload & Storage API
+- **`uploadFileDirectly` / `DirectFileUploaderImpl`:** Pure XMLHttpRequest uploader conducting direct binary S3 uploads with real-time percentage progress callbacks.
+- **`StorageApi`:** Generic REST API client contract returning mapped domain models (`StorageFilePrivate`, `StorageFileSummary`, `PresignedUrl`).
+
+### 3. Storage Settings & Persistence
+- **`OpenStorageSettingsStorage` / `EncryptedOpenStorageSettingsStorage`:** WebCrypto AES-GCM encrypted caching layer for storage limits, allowed MIME types, and presigned TTL properties.
+- **`OpenStorageSettingsRepository` / `OpenStorageSettingsRepositoryImpl`:** Central repository coordinating storage settings REST requests, local cache fallback, and WebSocket updates.
+
+### 4. Domain Use Cases
+- **`GetFilesUseCase`:** Retrieves paginated file list domain summaries.
+- **`GetFileDetailUseCase`:** Retrieves detailed private file domain models.
+- **`UploadFileUseCase`:** Executes the complete direct S3 presigned upload flow.
+- **`DeleteFileUseCase`:** Deletes a specific storage file.
+- **`DeleteFilesBatchUseCase`:** Deletes multiple storage files in a single batch operation.
+- **`GetOpenStorageSettingsUseCase` / `RefreshOpenStorageSettingsUseCase`:** Manages open storage configuration settings.
+
+### 5. React UI Components & Screens
+- **`StorageFileListScreen`:** Unified file list view with infinite pagination, sorting, filters, batch selection, and deletion dialogs.
+- **`StorageFileDetailScreen`:** Detailed file view displaying preview media, metadata, copy link action, and deletion dialogs.
+- **`StorageFileUploadScreen` / `StorageFileUploadArea`:** Drag-and-drop upload queue with category/visibility selectors and progress bars.
+- **`StorageFileItem`:** Reusable file summary card component.
+- **`getStorageCategoryIcon` / `getStorageStatusIcon`:** Utility icon mappers.
+
+---
+
+## Package Map
+
+| Directory | Role |
+| :--- | :--- |
+| `di/` | `StorageComponent` manual dependency injection assembly point. |
+| `error/` | Storage-specific `AppError` subclasses and `StorageErrorParser`. |
+| `network/` | `StorageApi`, `FetchOpenStorageSettingsApi`, and `StorageWebSocketMessageHandler`. |
+| `uploader/` | `uploadFileDirectly` XMLHttpRequest S3 uploader. |
+| `storage/` | `OpenStorageSettingsStorage` interface and `EncryptedOpenStorageSettingsStorage` (AES-GCM). |
+| `repository/` | `StorageRepository` and `OpenStorageSettingsRepository` contracts. |
+| `usecase/` | `GetFilesUseCase`, `GetFileDetailUseCase`, `UploadFileUseCase`, `DeleteFileUseCase`, `DeleteFilesBatchUseCase`, and settings use cases. |
+| `ui/` | React screens (`StorageFileListScreen`, `StorageFileDetailScreen`, `StorageFileUploadScreen`), components, Zustand stores, and icon utilities. |
+| `mock/` | Test doubles and mock dependency factories (`StorageComponentMock`, `storageFileDetailDependenciesMock`, etc.). |
+
+---
+
+## Usage
+
+### 1. Installation
 ```bash
-pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
+pnpm add @mudrichenkoevgeny/web-platform-sdk
+```
+
+### 2. Initializing StorageComponent & Registration
+
+```typescript
+import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+
+const storageComponent = new StorageComponent({
+  webSocketService: commonComponent.webSocketService,
+  httpClient: commonComponent.httpClient,
+  encryptedSettings: commonComponent.encryptedSettings
+})
+
+// Register WebSocket message handler
+commonComponent.webSocketService.updateWebSocketMessageHandlers([
+  storageComponent.storageWebSocketMessageHandler
+])
 ```
 
 ---
 
-## Usage Guide
+## Source Code & Repository
 
-### 1. ESLint Configuration
+The source code for this library is maintained in the main GitHub repository:
+**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
 
-Import the flat ESLint configuration in your project's `eslint.config.js`:
+## License
 
-```javascript
-import webSdkEslintConfig from '@mudrichenkoevgeny/web-platform-sdk-tools/eslint'
-
-export default [
-  ...webSdkEslintConfig
-]
-```
-
-### 2. Dependency Cruiser Configuration
-
-Import the Dependency Cruiser configuration in your project's `.dependency-cruiser.js`:
-
-```javascript
-import { webSdkDepcruiseConfig } from '@mudrichenkoevgeny/web-platform-sdk-tools/depcruise'
-
-export default webSdkDepcruiseConfig
-```
-
-### 3. CLI Commands
-
-```bash
-# Synchronize global agent rules into project .agent/global/
-npx web-sdk-tools sync
-
-# Interactively generate UseCases or React UI components
-npx web-sdk-tools generate
-
-# Verify package exports via publint
-npx web-sdk-tools check-exports
-
-# Verify public API signature snapshots via API Extractor
-npx web-sdk-tools api-extract
-```
+Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.

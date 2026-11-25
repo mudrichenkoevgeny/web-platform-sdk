@@ -1,79 +1,94 @@
-# Sample Management App (`@web-platform-sdk/sample-management-app`)
+# @mudrichenkoevgeny/web-platform-sdk/feature/client-user
 
-Administrative host application demonstrating how to wire **`web-platform-sdk`** modules for internal management staff (`ManagementAppComponent`) with **TanStack Router** file-based routing.
+End-user (client) identity and authentication solution for the Web Platform SDK: consumer-facing **Fetch HTTP API integrations**, **open auth & user repositories**, **configuration synchronization use cases**, **`ClientUserComponent` DI wiring**, and complete **React login & registration screens**.
 
-## How to Build & Run
+This package builds on `@mudrichenkoevgeny/web-platform-sdk/feature/user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows and TanStack Router parameter schemas.
 
-### 1. Prerequisites (Build Core SDK Packages)
-Before starting the sample application for the first time or after modifying SDK packages (`packages/*`), build all workspace packages from the project root:
+---
 
+## What It Provides
+
+### 1. Wiring & DI
+- **`ClientUserComponent`:** Central manual DI container coordinating consumer repositories, REST API clients, storage adapters, `AuthHttpClientConfigPlugin`, and use cases.
+
+### 2. Consumer-Facing Network APIs
+- **Authentication & Security APIs:** `OpenLoginApi`, `FetchOpenRefreshTokenApi`, `RegistrationApi`, `FetchResetPasswordApi`, `OpenAuthSettingsApi`, `OpenUnlockApi`.
+- **User & Session APIs:** `OpenIdentifiersApi`, `FetchOpenSessionApi`, `FetchOpenUserSecurityApi`, `OpenUserApi`.
+
+### 3. Client User Repositories
+- Implementations wrapping consumer API endpoints:
+  - `OpenLoginRepositoryImpl`, `OpenRefreshTokenRepositoryImpl`, `OpenRegistrationRepositoryImpl`, `OpenResetPasswordRepositoryImpl`, `OpenAuthSettingsRepositoryImpl`, `OpenUnlockRepositoryImpl`.
+  - `OpenIdentifierRepositoryImpl`, `OpenSessionRepositoryImpl`, `OpenUserSecurityRepositoryImpl`, `OpenUserRepositoryImpl`.
+
+### 4. Configuration Synchronization Use Cases
+- **`RefreshClientUserConfigurationUseCase`:** Orchestrates initialization sync of client user state, active auth providers, and open security policies on startup.
+- **`RefreshOpenAuthSettingsUseCase`:** Synchronizes consumer authentication settings and available login providers.
+
+### 5. Client React Login & Registration UI & Search Schemas
+- **Consumer Login Screens:** `LoginByPhoneScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (with `loginByTotpSearchSchema` for TanStack Router).
+- **Registration & Recovery:** `RegistrationByEmailScreen`, `ResetEmailPasswordScreen`, `UnlockTargetInputScreen` (with `unlockTargetSearchSchema`), `UnlockOtpScreen` (with `unlockOtpSearchSchema`).
+- **Orchestration Container:** `ClientLoginRootScreen` / `ClientLoginRootStore` for modal/step-based login overlays.
+
+### 6. Testing & Mocks Infrastructure
+- **`ClientUserComponentMock`:** Complete mock implementations (mock repositories, API clients, and DI container doubles) for isolated testing and Storybook previewing.
+
+---
+
+## Package Map
+
+| Directory | Role |
+| :--- | :--- |
+| `di/` | `ClientUserComponent` manual dependency injection assembly point. |
+| `domain/` | Consumer domain models and `OpenUserConfiguration`. |
+| `network/` | Consumer REST API clients (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchOpenSessionApi`, etc.). |
+| `repository/` | Open repository implementations (`OpenLoginRepositoryImpl`, `OpenUserRepositoryImpl`, etc.). |
+| `usecase/` | `RefreshClientUserConfigurationUseCase` and `RefreshOpenAuthSettingsUseCase`. |
+| `ui/screens/` | React screens (`LoginByPhoneScreen`, `RegistrationByEmailScreen`, etc.) and Zustand stores. |
+| `mock/` | Test doubles (`ClientUserComponentMock`, mock repositories, mock API clients). |
+
+---
+
+## Usage
+
+### 1. Installation
 ```bash
-pnpm build
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
-### 2. Development Server
-To run the local development server with Hot Module Replacement (HMR):
+### 2. Initializing ClientUserComponent & System Wiring
 
-- **From repository root:**
-  ```bash
-  pnpm dev:management
-  ```
-- **From inside `samples/management-app`:**
-  ```bash
-  cd samples/management-app
-  pnpm dev
-  ```
+```typescript
+import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
-* **URL:** `http://localhost:3001`
+const clientUserComponent = new ClientUserComponent({
+  commonComponent: commonComponent,
+  settingsComponent: settingsComponent,
+  securityComponent: securityComponent,
+  authStorage: encryptedAuthStorage,
+  authServices: webAuthServices
+})
 
-### 3. Production Build
-Compiles, minifies, and optimizes the app into a static production bundle in the `dist/` folder:
+// Attach Auth Interceptor
+commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
+```
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app build
-  ```
-- **From inside `samples/management-app`:**
-  ```bash
-  pnpm build
-  ```
+### 3. Rendering Consumer Login Screen in Host Application
 
-### 4. Local Preview
-Launches a local static server to test and inspect the built production bundle (`dist/`):
+```tsx
+import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app preview
-  ```
-- **From inside `samples/management-app`:**
-  ```bash
-  pnpm preview
-  ```
+export function ConsumerPhoneLoginPage() {
+  return <LoginByPhoneScreen dependencies={dependencies} />
+}
+```
 
-### 5. Type Checking
-Runs TypeScript compiler checks (`tsc --noEmit`) across the application code:
+---
 
-- **From repository root:**
-  ```bash
-  pnpm --filter @web-platform-sdk/sample-management-app typecheck
-  ```
-- **From inside `samples/management-app`:**
-  ```bash
-  pnpm typecheck
-  ```
+## Source Code & Repository
 
-## Architecture & What It Provides
+The source code for this library is maintained in the main GitHub repository:
+**[GitHub Repository: mudrichenkoevgeny/web-platform-sdk](https://github.com/mudrichenkoevgeny/web-platform-sdk)**
 
-- **Root Wiring (`ManagementAppComponent`):** Central DI container aggregating:
-  - **Core:** `CommonComponent`, `CoreSecurityComponent`, `CoreSettingsComponent`.
-  - **Feature Domain:** `ManagementUserComponent` (administrative user management, session oversight, audit logging).
-- **Initialization (`SyncManagementDataUseCase`):**
-  - Attaches `authHttpClientConfigPlugin` to the HTTP client.
-  - Registers administrative error parsers (`UserErrorParser`, `SecurityErrorParser`, `CommonErrorParser`).
-  - Installs management WebSocket event handlers.
-  - Refreshes management user configuration upon startup.
-- **UI Architecture (`RootContent` & TanStack Router):**
-  - Displays `InitialLoader` during initialization.
-  - File-based routing in `src/routes/` manages RESTful URL routes (`/audit/events`, `/users`, `/sessions`, `/identifiers`, `/settings/*`, `/user`, `/auth/*`).
-  - Router DI Context (`createRootRouteWithContext<RouterDIContext>()`) injects UseCases directly into route handlers.
-  - Wraps UI in `SdkProvider`, `ThemeProvider`, and `RouterProvider`.
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](https://github.com/mudrichenkoevgeny/web-platform-sdk/blob/main/LICENSE) for details.

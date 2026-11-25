@@ -1,47 +1,33 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+# @mudrichenkoevgeny/web-platform-sdk/core/settings
 
-Administrative identity, staff authentication, resource oversight, and system governance solution for the Web Platform SDK: staff **Fetch HTTP API integrations**, **administrative repositories**, **audit logging inspection**, **remote settings override use cases**, **`ManagementUserComponent` DI wiring**, and complete **React Admin Panel screens**.
+Global application configuration module for the Web Platform SDK: public **global settings management**, **WebCrypto encrypted caching**, **WebSocket real-time settings synchronization**, domain **use cases**, and manual DI wiring via **`SettingsComponent`**.
 
-This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide administrative (back-office / internal staff) applications with full governance over users, sessions, security policies, global application settings, and audit logs.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
 ## What It Provides
 
 ### 1. Wiring & DI
-- **`ManagementUserComponent`:** Main manual DI container coordinating staff authentication, system settings repositories, audit inspection, user governance, and administrative use cases.
+- **`SettingsComponent`:** Root entry point assembling storage, API clients, repository, and settings use cases. Exposes `openGlobalSettingsRepository`, `getOpenGlobalSettingsUseCase`, and `refreshOpenGlobalSettingsUseCase`.
 
-### 2. Administrative Network APIs
-- **Staff Authentication:** `SelfManagementLoginApi`, `FetchSelfManagementRefreshTokenApi`, `FetchSelfManagementResetPasswordApi`, `ManagementAuthSettingsApi`, `SelfManagementUnlockApi`.
-- **System Settings Overrides:** `ManagementGlobalSettingsApi`, `ManagementSecuritySettingsApi`, `ManagementAuthSettingsApi`.
-- **User & Resource Governance:** `ManagementUserApi`, `SelfManagementUserApi`, `ManagementSessionApi`, `SelfManagementSessionApi`, `ManagementIdentifierApi`, `ManagementUserSecurityApi`.
-- **Audit Inspection:** `ManagementAuditApi` / `FetchManagementAuditApi`.
+### 2. Open Global Settings Model
+- **`OpenGlobalSettings`:** Domain model representing public application properties, feature toggles, maintenance mode statuses, and dynamic platform parameters.
 
-### 3. Administrative Repositories
-- Implementations wrapping management REST API endpoints:
-  - `SelfManagementLoginRepositoryImpl`, `SelfManagementRefreshTokenRepositoryImpl`, `ManagementAuthSettingsRepositoryImpl`, `SelfManagementUnlockRepositoryImpl`.
-  - `ManagementAuditRepositoryImpl`, `ManagementGlobalSettingsRepositoryImpl`, `ManagementSecuritySettingsRepositoryImpl`.
-  - `ManagementUserRepositoryImpl`, `ManagementSessionRepositoryImpl`, `ManagementIdentifierRepositoryImpl`, `ManagementUserSecurityRepositoryImpl`.
+### 3. Persistence & Repository
+- **`OpenGlobalSettingsStorage` / `EncryptedOpenGlobalSettingsStorage`:** WebCrypto AES-GCM encrypted caching layer for global settings in browser storage (`localStorage` / `sessionStorage`).
+- **`OpenGlobalSettingsRepository` / `OpenGlobalSettingsRepositoryImpl`:** Central repository coordinating network requests, encrypted local storage fallback, and reactive updates.
 
-### 4. Administrative Domain Use Cases
-- **Audit Logs:** `GetAuditEventsUseCase`, `GetAuditEventUseCase` (supports pagination and filtering).
-- **System Settings Control:** `SaveRemoteGlobalSettingsUseCase`, `ResetRemoteGlobalSettingsUseCase`, `SaveRemoteSecuritySettingsUseCase`, `ResetRemoteSecuritySettingsUseCase`, `SaveRemoteAuthSettingsUseCase`, `ResetRemoteAuthSettingsUseCase`.
-- **User Management:** `GetUsersUseCase`, `GetUserUseCase`, `CreateUserUseCase`, `UpdateUserUseCase`, `DeleteUserUseCase`.
-- **Session Oversight:** `ManagementGetSessionsUseCase`, `ManagementDeleteSessionUseCase`, `ManagementDeleteAllUserSessionsUseCase`.
-- **Identifier Control:** `ManagementGetIdentifiersUseCase`, `ManagementDeleteIdentifierUseCase`, `ManagementDeleteIdentifierPasswordUseCase`.
-- **Security Enforcement:** `ManagementDisableTotpUseCase`.
+### 4. Networking & Real-Time Sync
+- **`OpenGlobalSettingsApi` / `FetchOpenGlobalSettingsApi`:** Fetch HTTP client contract and implementation fetching public global settings from server REST endpoints.
+- **`SettingsWebSocketMessageHandler`:** Handles `SettingsWebSocketEventTypes` frames over WebSocket connections for live settings updates without page reloads.
 
-### 5. Management React Admin Panel UI & Routing Schemas
-- **Staff Authentication:** `ManagementLoginRootScreen` / `ManagementLoginRootStore`.
-- **Admin Shell & Screens:** `MainManagementScreen`, `MainManagementStore`.
-- **System Settings Editors:** `EditAuthSettingsScreen`, `EditGlobalSettingsScreen`, `EditSecuritySettingsScreen`.
-- **Audit Trail Inspection:** `AuditEventListScreen` (with `auditEventListSearchSchema` Zod validation for TanStack Router), `AuditEventDetailScreen`, `AuditItem`.
-- **User Governance:** `GlobalUserListScreen`, `UserDetailScreen`, `CreateUserScreen`, `UserItem`.
-- **Session & Identifier Oversight:** `GlobalSessionListScreen`, `UserSessionListScreen`, `GlobalIdentifierListScreen`, `UserIdentifierListScreen`.
+### 5. Domain Use Cases
+- **`GetOpenGlobalSettingsUseCase`:** Retrieves cached or fetched global application settings.
+- **`RefreshOpenGlobalSettingsUseCase`:** Forces a network refresh of global settings and updates the local encrypted cache.
 
-### 6. Localization & Mocks Infrastructure
-- **Typed Dictionaries:** `ManagementUserStrings` with English (`enStrings`) and Russian (`ruStrings`) translations for administrative actions.
-- **Testing Mocks:** Complete mock suite (`ManagementUserComponentMock`, mock repositories, API clients) for unit testing and Storybook previewing.
+### 6. Mocks Infrastructure
+- **`SettingsComponentMock`:** Complete mock implementations (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`, `OpenGlobalSettingsMock`) for unit testing and Storybook previews.
 
 ---
 
@@ -49,15 +35,13 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `ManagementUserComponent` manual dependency injection assembly point. |
-| `src/storage/` | Encrypted management settings storage (`ManagementAuthSettingsStorage`, `ManagementGlobalSettingsStorage`, etc.). |
-| `src/network/` | Staff REST API clients (`FetchManagementUserApi`, `FetchManagementAuditApi`, `FetchManagementGlobalSettingsApi`, etc.). |
-| `src/repository/` | Administrative repositories (`ManagementUserRepositoryImpl`, `ManagementAuditRepositoryImpl`, etc.). |
-| `src/usecase/` | Administrative use cases grouped into `audit/`, `user/`, `session/`, `security/`, `global-settings/`, and `auth/`. |
-| `src/ui/components/` | Administrative UI components (`AuditItem`, `UserItem`). |
-| `src/ui/screens/` | React screens (`MainManagementScreen`, `GlobalUserListScreen`, `AuditEventListScreen`, `EditGlobalSettingsScreen`, etc.). |
-| `src/locales/` | Typed localization dictionaries (`ManagementUserStrings` with `enStrings` and `ruStrings`). |
-| `src/mock/` | Test doubles (`ManagementUserComponentMock`, mock repositories, API clients). |
+| `di/` | `SettingsComponent` manual dependency injection assembly point. |
+| `domain/` | `OpenGlobalSettings` domain model and properties. |
+| `storage/` | `OpenGlobalSettingsStorage` interface and `EncryptedOpenGlobalSettingsStorage` (AES-GCM). |
+| `network/` | `OpenGlobalSettingsApi`, `FetchOpenGlobalSettingsApi`, and `SettingsWebSocketMessageHandler`. |
+| `repository/` | `OpenGlobalSettingsRepository` interface and `OpenGlobalSettingsRepositoryImpl`. |
+| `usecase/` | `GetOpenGlobalSettingsUseCase` and `RefreshOpenGlobalSettingsUseCase`. |
+| `mock/` | Test doubles (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`). |
 
 ---
 
@@ -65,33 +49,42 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
-### 2. Initializing ManagementUserComponent & System Wiring
+### 2. Initializing SettingsComponent & Registration
+
+Construct `SettingsComponent` by passing core infrastructure dependencies from `CommonComponent`, and register the WebSocket handler:
 
 ```typescript
-import { ManagementUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
-const managementUserComponent = new ManagementUserComponent({
-  commonComponent: commonComponent,
-  settingsComponent: settingsComponent,
-  securityComponent: securityComponent,
-  authStorage: encryptedAuthStorage,
-  authServices: webAuthServices
+const settingsComponent = new SettingsComponent({
+  webSocketService: commonComponent.webSocketService,
+  httpClient: commonComponent.httpClient,
+  encryptedSettings: commonComponent.encryptedSettings
 })
 
-// Attach Auth Interceptor
-commonComponent.httpClientConfigPlugins.push(managementUserComponent.authHttpClientConfigPlugin)
+// Register WebSocket message handler
+commonComponent.webSocketService.updateWebSocketMessageHandlers([
+  settingsComponent.settingsWebSocketMessageHandler
+])
 ```
 
-### 3. Rendering Admin Panel Screen in Host Application
+### 3. Fetching Global Settings
 
-```tsx
-import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+```typescript
+import { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
 
-export function AdminPanel() {
-  return <MainManagementScreen dependencies={dependencies} />
+const getGlobalSettings = new GetOpenGlobalSettingsUseCase(settingsComponent.openGlobalSettingsRepository)
+
+const result = await getGlobalSettings.execute()
+
+if (result.isSuccess) {
+  console.log('Global Settings:', result.value)
+} else {
+  console.error('Failed to load global settings:', result.error)
 }
 ```
 

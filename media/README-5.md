@@ -1,36 +1,36 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+# @mudrichenkoevgeny/web-platform-sdk/core/security
 
-End-user (client) identity and authentication solution for the Web Platform SDK: consumer-facing **Fetch HTTP API integrations**, **open auth & user repositories**, **configuration synchronization use cases**, **`ClientUserComponent` DI wiring**, and complete **React login & registration screens**.
+Security policy and password validation module for the Web Platform SDK: client-side **password policy evaluation**, **open security settings persistence & caching**, **WebSocket real-time policy sync**, domain **error parsing**, and manual DI wiring via **`SecurityComponent`**.
 
-This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows and TanStack Router parameter schemas.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
 ## What It Provides
 
 ### 1. Wiring & DI
-- **`ClientUserComponent`:** Central manual DI container coordinating consumer repositories, REST API clients, storage adapters, `AuthHttpClientConfigPlugin`, and use cases.
+- **`SecurityComponent`:** Root entry point assembling storage, API clients, repository, and use cases. Exposes `openSecuritySettingsRepository` and `validatePasswordUseCase`.
 
-### 2. Consumer-Facing Network APIs
-- **Authentication & Security APIs:** `OpenLoginApi`, `FetchOpenRefreshTokenApi`, `RegistrationApi`, `FetchResetPasswordApi`, `OpenAuthSettingsApi`, `OpenUnlockApi`.
-- **User & Session APIs:** `OpenIdentifiersApi`, `FetchOpenSessionApi`, `FetchOpenUserSecurityApi`, `OpenUserApi`.
+### 2. Password Policy Evaluation & Validation
+- **`PasswordPolicyValidator`:** Pure rule engine evaluating passwords against configured security policies (min/max length, uppercase, lowercase, numeric digits, special characters, forbidden patterns).
+- **`ValidatePasswordUseCase`:** Domain use case performing client-side password validation against active `OpenSecuritySettings`.
 
-### 3. Client User Repositories
-- Implementations wrapping consumer API endpoints:
-  - `OpenLoginRepositoryImpl`, `OpenRefreshTokenRepositoryImpl`, `OpenRegistrationRepositoryImpl`, `OpenResetPasswordRepositoryImpl`, `OpenAuthSettingsRepositoryImpl`, `OpenUnlockRepositoryImpl`.
-  - `OpenIdentifierRepositoryImpl`, `OpenSessionRepositoryImpl`, `OpenUserSecurityRepositoryImpl`, `OpenUserRepositoryImpl`.
+### 3. Persistence & Repository
+- **`OpenSecuritySettings`:** Domain model holding client-visible security requirements (password complexity rules, session timeout thresholds, MFA requirements).
+- **`OpenSecuritySettingsStorage` / `EncryptedOpenSecuritySettingsStorage`:** WebCrypto AES-GCM encrypted persistence layer caching security policies in browser storage (`localStorage` / `sessionStorage`).
+- **`OpenSecuritySettingsRepository` / `OpenSecuritySettingsRepositoryImpl`:** Repository orchestrating remote fetching, encrypted storage fallback, and reactive updates.
 
-### 4. Configuration Synchronization Use Cases
-- **`RefreshClientUserConfigurationUseCase`:** Orchestrates initialization sync of client user state, active auth providers, and open security policies on startup.
-- **`RefreshOpenAuthSettingsUseCase`:** Synchronizes consumer authentication settings and available login providers.
+### 4. Networking & Real-Time Sync
+- **`OpenSecuritySettingsApi` / `FetchOpenSecuritySettingsApi`:** REST API contract and Fetch implementation for retrieving security settings.
+- **`SecurityWebSocketMessageHandler`:** Listens for `SecurityWebSocketEventTypes` frames over WebSocket connections to update security configuration live when server policies change.
 
-### 5. Client React Login & Registration UI & Search Schemas
-- **Consumer Login Screens:** `LoginByPhoneScreen`, `LoginByEmailScreen`, `LoginByTotpScreen` (with `loginByTotpSearchSchema` for TanStack Router).
-- **Registration & Recovery:** `RegistrationByEmailScreen`, `ResetEmailPasswordScreen`, `UnlockTargetInputScreen` (with `unlockTargetSearchSchema`), `UnlockOtpScreen` (with `unlockOtpSearchSchema`).
-- **Orchestration Container:** `ClientLoginRootScreen` / `ClientLoginRootStore` for modal/step-based login overlays.
+### 5. Domain Errors & Error Parsing
+- **`SecurityError`:** Domain error model representing security violation failures (e.g., password policy violations, MFA requirements).
+- **`ClientSecurityErrorCodes`:** Strongly typed error codes for security domain issues.
+- **`SecurityErrorParser`:** Specialized error parser integrated into the SDK's Chain of Responsibility error parser pipeline.
 
-### 6. Testing & Mocks Infrastructure
-- **`ClientUserComponentMock`:** Complete mock implementations (mock repositories, API clients, and DI container doubles) for isolated testing and Storybook previewing.
+### 6. Mocks Infrastructure
+- **`SecurityComponentMock`:** Fully configured mock component for UI previews and unit testing, providing mocked storage, repositories, and APIs (`OpenSecuritySettingsMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`).
 
 ---
 
@@ -38,13 +38,15 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `ClientUserComponent` manual dependency injection assembly point. |
-| `src/domain/` | Consumer domain models and `OpenUserConfiguration`. |
-| `src/network/` | Consumer REST API clients (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchOpenSessionApi`, etc.). |
-| `src/repository/` | Open repository implementations (`OpenLoginRepositoryImpl`, `OpenUserRepositoryImpl`, etc.). |
-| `src/usecase/` | `RefreshClientUserConfigurationUseCase` and `RefreshOpenAuthSettingsUseCase`. |
-| `src/ui/screens/` | React screens (`LoginByPhoneScreen`, `RegistrationByEmailScreen`, etc.) and Zustand stores. |
-| `src/mock/` | Test doubles (`ClientUserComponentMock`, mock repositories, mock API clients). |
+| `di/` | `SecurityComponent` manual dependency injection assembly point. |
+| `domain/` | `OpenSecuritySettings` domain model and `PasswordPolicyValidator`. |
+| `storage/` | `OpenSecuritySettingsStorage` interface and `EncryptedOpenSecuritySettingsStorage` (AES-GCM). |
+| `network/` | `OpenSecuritySettingsApi`, `FetchOpenSecuritySettingsApi`, and `SecurityWebSocketMessageHandler`. |
+| `repository/` | `OpenSecuritySettingsRepository` interface and `OpenSecuritySettingsRepositoryImpl`. |
+| `usecase/` | `ValidatePasswordUseCase` and `RefreshOpenSecuritySettingsUseCase`. |
+| `error/` | `SecurityError`, `ClientSecurityErrorCodes`, and `SecurityErrorParser`. |
+| `locales/` | Typed localization string dictionaries for security domain errors. |
+| `mock/` | Test doubles (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`). |
 
 ---
 
@@ -52,33 +54,47 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
-### 2. Initializing ClientUserComponent & System Wiring
+### 2. Initializing SecurityComponent & Registration
+
+Construct `SecurityComponent` by providing core infrastructure dependencies from `CommonComponent`, and register the error parser and WebSocket handler:
 
 ```typescript
-import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
-const clientUserComponent = new ClientUserComponent({
-  commonComponent: commonComponent,
-  settingsComponent: settingsComponent,
-  securityComponent: securityComponent,
-  authStorage: encryptedAuthStorage,
-  authServices: webAuthServices
+const securityComponent = new SecurityComponent({
+  webSocketService: commonComponent.webSocketService,
+  httpClient: commonComponent.httpClient,
+  encryptedSettings: commonComponent.encryptedSettings
 })
 
-// Attach Auth Interceptor
-commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
+// Register error parser during CommonComponent init
+commonComponent.init({
+  appErrorParserSpecificParsers: [SecurityErrorParser]
+})
+
+// Register WebSocket message handler
+commonComponent.webSocketService.updateWebSocketMessageHandlers([
+  securityComponent.securityWebSocketMessageHandler
+])
 ```
 
-### 3. Rendering Consumer Login Screen in Host Application
+### 3. Validating a Password
 
-```tsx
-import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+```typescript
+import { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
 
-export function ConsumerPhoneLoginPage() {
-  return <LoginByPhoneScreen dependencies={dependencies} />
+const validatePassword = new ValidatePasswordUseCase(securityComponent.openSecuritySettingsRepository)
+
+const result = await validatePassword.execute({ password: 'MySecretPassword123!' })
+
+if (result.isSuccess) {
+  console.log('Password meets all policy requirements!')
+} else {
+  console.error('Password validation failed:', result.error)
 }
 ```
 
