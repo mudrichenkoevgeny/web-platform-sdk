@@ -9,7 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   publish-npm:
-    name: Publish Packages to npm (@mudrichenkoevgeny/web-platform-sdk-*)
+    name: Publish Packages to npm (@mudrichenkoevgeny/web-platform-sdk & tools)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,7 +31,7 @@ jobs:
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'packages/*/dist/*.js'
+          subject-path: 'packages/*/dist/**/*.js'
 
       - name: Publish Packages to npmjs.com
         run: pnpm -r publish --access public --provenance --no-git-checks
@@ -59,3 +59,21 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/docs
+
+  create-github-release:
+    name: Create GitHub Release
+    needs: [ publish-npm, publish-docs ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Release with Auto-Generated Notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            gh release create "${{ github.ref_name }}" --generate-notes
+          fi

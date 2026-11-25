@@ -165,8 +165,8 @@ settings:
 catalogs:
   default:
     '@mudrichenkoevgeny/shared-foundation':
-      specifier: file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
-      version: file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+      specifier: ^0.1.25
+      version: 0.1.25
     '@tanstack/react-router':
       specifier: ^1.111.0
       version: 1.170.44
@@ -260,7 +260,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
     devDependencies:
       '@changesets/cli':
         specifier: ^2.27.12
@@ -384,7 +384,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -451,7 +451,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
       '@typescript-eslint/utils':
         specifier: ^8.26.0
         version: 8.71.2(eslint@10.12.0(jiti@1.21.7)(supports-color@7.2.0))(supports-color@7.2.0)
@@ -488,7 +488,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
       '@mudrichenkoevgeny/web-platform-sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -552,7 +552,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
       '@mudrichenkoevgeny/web-platform-sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -616,7 +616,7 @@ importers:
     dependencies:
       '@mudrichenkoevgeny/shared-foundation':
         specifier: 'catalog:'
-        version: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz
+        version: 0.1.25
       '@mudrichenkoevgeny/web-platform-sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -1181,9 +1181,8 @@ packages:
     resolution: {integrity: sha512-VVPPgHyQ6ShqnrmDWuxjmUIsO9gWyOZFmuOfLd9LfBGQJwZfy0gvv9pbHSJuoFNIYC7ZDX9aoFwowjcdSC4E8w==}
     engines: {node: '>=18'}
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz':
-    resolution: {integrity: sha512-6TmIeUMS8I71Dl8nBRL2Lv4XbLDnlCBLMTXRYTqPnTqMF6Ak0tQP1ea/o3VyvB4wKDkIpUSik96tTR/Gt0l02A==, tarball: file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz}
-    version: 0.1.25
+  '@mudrichenkoevgeny/shared-foundation@0.1.25':
+    resolution: {integrity: sha512-+nn8IsmJV4TOsHXd+tZJOq7h6UYUqg3CValsYVSresSP17ImTaJpRfcLrnSMW2ivVuDVGch+ruciK4giG9gMdA==}
 
   '@napi-rs/wasm-runtime@1.2.7':
     resolution: {integrity: sha512-zJccwplOAbgfZju95IUHazLnx9RAPtPN2YGJXI6UbrgeaR9QfPjGrQL6ERkSAtnVCA4Q+83ApGyaX5zdpCaKkQ==}
@@ -5471,7 +5470,7 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz':
+  '@mudrichenkoevgeny/shared-foundation@0.1.25':
     dependencies:
       zod: 3.25.76
 

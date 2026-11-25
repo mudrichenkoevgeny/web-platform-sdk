@@ -1,6 +1,6 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Official Web Platform SDK consolidating identity, security, settings, storage, and user management features.",
   "license": "Apache-2.0",
   "type": "module",
@@ -55,9 +55,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mudrichenkoevgeny/web-platform-sdk.git"
+    "url": "git+https://github.com/mudrichenkoevgeny/web-platform-sdk.git",
+    "directory": "packages/sdk"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
