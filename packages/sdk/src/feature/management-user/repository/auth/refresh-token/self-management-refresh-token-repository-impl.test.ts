@@ -1,0 +1,29 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { appResultSuccess, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { TEST_REFRESH_TOKEN, createTestSessionTokenPayload, toSessionToken } from '@mudrichenkoevgeny/shared-foundation'
+import { SelfManagementRefreshTokenRepositoryImpl } from '@/feature/management-user/repository/auth/refresh-token/self-management-refresh-token-repository-impl'
+import { RefreshTokenApiMock } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
+
+describe('SelfManagementRefreshTokenRepositoryImpl', () => {
+  let mockApi: RefreshTokenApiMock
+  let repository: SelfManagementRefreshTokenRepositoryImpl
+
+  const mockSessionTokenPayload = createTestSessionTokenPayload()
+
+  beforeEach(() => {
+    mockApi = new RefreshTokenApiMock()
+    mockApi.refreshTokenResult = appResultSuccess(mockSessionTokenPayload)
+    vi.spyOn(mockApi, 'refreshToken')
+
+    repository = new SelfManagementRefreshTokenRepositoryImpl(mockApi)
+  })
+
+  it('delegates refreshToken and maps response to SessionToken', async () => {
+    const refreshTokenResult = await repository.refreshToken(TEST_REFRESH_TOKEN)
+    expect(mockApi.refreshToken).toHaveBeenCalledWith({ refresh_token: TEST_REFRESH_TOKEN })
+    expect(isSuccess(refreshTokenResult)).toBe(true)
+    if (isSuccess(refreshTokenResult)) {
+      expect(refreshTokenResult.data).toEqual(toSessionToken(mockSessionTokenPayload))
+    }
+  })
+})

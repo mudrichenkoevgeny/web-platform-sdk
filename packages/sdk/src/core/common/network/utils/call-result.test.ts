@@ -1,0 +1,85 @@
+import { describe, it, expect } from 'vitest'
+import { createTestApiErrorResponse } from '@mudrichenkoevgeny/shared-foundation'
+import { callResult, isApiException } from '@/core/common/network/utils/call-result'
+import { ApiException } from '@/core/common/error/model/api-exception'
+import { ServerError } from '@/core/common/error/model/server-error'
+import { CommonErrorNoInternetConnection, CommonErrorNetwork, CommonErrorContractViolation, CommonErrorInternal } from '@/core/common/error/model/common-error'
+import { isSuccess, isFailure } from '@/core/common/result/app-result'
+
+describe('callResult', () => {
+  it('returns AppResultSuccess on successful call', async () => {
+    const result = await callResult(async () => ({ id: 1 }))
+
+    expect(isSuccess(result)).toBe(true)
+    if (isSuccess(result)) {
+      expect(result.data).toEqual({ id: 1 })
+    }
+  })
+
+  it('maps ApiException to ServerError in AppResultFailure', async () => {
+    const apiErrorResponse = createTestApiErrorResponse({
+      code: 'UNAUTHORIZED',
+      message: 'Not authorized',
+      args: {}
+    })
+    const result = await callResult(async () => {
+      throw new ApiException(apiErrorResponse)
+    }, true)
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(ServerError)
+      if (result.error instanceof ServerError) {
+        expect(result.error.code).toBe('UNAUTHORIZED')
+      }
+      expect(result.error.isRetryable).toBe(true)
+    }
+  })
+
+  it('correctly identifies ApiException objects via isApiException', () => {
+    const apiErrorResponse = createTestApiErrorResponse()
+    const apiException = new ApiException(apiErrorResponse)
+    expect(isApiException(apiException)).toBe(true)
+    expect(isApiException({ apiErrorResponse })).toBe(true)
+    expect(isApiException(new Error('Generic'))).toBe(false)
+  })
+
+  it('maps TypeError / Failed to fetch to NoInternetConnection or Network', async () => {
+    const networkError = new TypeError('Failed to fetch')
+    const result = await callResult(async () => {
+      throw networkError
+    }, true)
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(
+        result.error instanceof CommonErrorNoInternetConnection ||
+        result.error instanceof CommonErrorNetwork
+      ).toBe(true)
+    }
+  })
+
+  it('maps SyntaxError to ContractViolation', async () => {
+    const jsonError = new SyntaxError('Unexpected token in JSON')
+    const result = await callResult(async () => {
+      throw jsonError
+    })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(CommonErrorContractViolation)
+    }
+  })
+
+  it('maps unknown Error to Internal error', async () => {
+    const unknownError = new Error('Random failure')
+    const result = await callResult(async () => {
+      throw unknownError
+    })
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error).toBeInstanceOf(CommonErrorInternal)
+    }
+  })
+})

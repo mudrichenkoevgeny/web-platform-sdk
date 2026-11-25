@@ -1,4 +1,4 @@
-import { sdkTailwindPreset } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { sdkTailwindPreset } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 /** @type {import('tailwindcss').Config} */
 export default {

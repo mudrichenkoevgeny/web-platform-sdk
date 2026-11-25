@@ -14,8 +14,8 @@
     "test": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest run --passWithNoTests",
     "test:watch": "pnpm -r --filter \"./packages/*\" --filter \"./samples/*\" exec vitest",
     "test:e2e": "playwright test",
-    "api:extract": "pnpm -r --filter \"./packages/*\" exec api-extractor run --local",
-    "api:extract-ci": "pnpm -r --filter \"./packages/*\" exec api-extractor run",
+    "api:extract": "node tools/scripts/run-api-extractor.mjs --local",
+    "api:extract-ci": "node tools/scripts/run-api-extractor.mjs",
     "version:verify": "node tools/scripts/verify-package-versions.mjs",
     "version:patch": "node tools/scripts/bump-version.mjs patch",
     "version:minor": "node tools/scripts/bump-version.mjs minor",
@@ -80,37 +80,37 @@
   "size-limit": [
     {
       "name": "core-common",
-      "path": "packages/core-common/dist/index.js",
+      "path": "packages/sdk/dist/core/common/index.js",
       "limit": "70 KB"
     },
     {
       "name": "core-security",
-      "path": "packages/core-security/dist/index.js",
+      "path": "packages/sdk/dist/core/security/index.js",
       "limit": "70 KB"
     },
     {
       "name": "core-settings",
-      "path": "packages/core-settings/dist/index.js",
+      "path": "packages/sdk/dist/core/settings/index.js",
       "limit": "70 KB"
     },
     {
       "name": "core-storage",
-      "path": "packages/core-storage/dist/index.js",
+      "path": "packages/sdk/dist/core/storage/index.js",
       "limit": "40 KB"
     },
     {
       "name": "feature-user",
-      "path": "packages/feature-user/dist/index.js",
+      "path": "packages/sdk/dist/feature/user/index.js",
       "limit": "150 KB"
     },
     {
-      "name": "feature-clientuser",
-      "path": "packages/feature-clientuser/dist/index.js",
+      "name": "feature-client-user",
+      "path": "packages/sdk/dist/feature/client-user/index.js",
       "limit": "160 KB"
     },
     {
-      "name": "feature-managementuser",
-      "path": "packages/feature-managementuser/dist/index.js",
+      "name": "feature-management-user",
+      "path": "packages/sdk/dist/feature/management-user/index.js",
       "limit": "180 KB"
     }
   ]

@@ -32,6 +32,12 @@
       },
       "ae-unresolved-link": {
         "logLevel": "none"
+      },
+      "ae-forgotten-export": {
+        "logLevel": "none"
+      },
+      "ae-undocumented": {
+        "logLevel": "none"
       }
     },
     "tsdocMessageReporting": {

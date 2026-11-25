@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@mudrichenkoevgeny/web-platform-sdk/core/common": ["./src/core/common/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/core/security": ["./src/core/security/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/core/settings": ["./src/core/settings/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/core/storage": ["./src/core/storage/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/feature/user": ["./src/feature/user/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/feature/client-user": ["./src/feature/client-user/index.ts"],
+      "@mudrichenkoevgeny/web-platform-sdk/feature/management-user": ["./src/feature/management-user/index.ts"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

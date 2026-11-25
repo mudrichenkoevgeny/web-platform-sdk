@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SessionListScreen, createManagementSessionListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SessionListScreen, createManagementSessionListDataSource } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { ManagementMainNavigation, managementGlobalSessionListParamsSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for global user session list screen. */

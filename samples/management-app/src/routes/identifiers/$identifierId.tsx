@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { IdentifierDetailScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { AppType, ManagementUsersNavigation, managementGlobalIdentifierListParamsSchema, toUserIdentifierIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { appResultFailure, cleanSearchParams, CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for global user identifier detail screen. */

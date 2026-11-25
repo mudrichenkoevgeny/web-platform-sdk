@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from '@tanstack/react-router'
 import { ClientUserNavigation, userStrings } from '@mudrichenkoevgeny/shared-foundation'
-import { cn, CoreIcon, icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { cn, CoreIcon, icons } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import {
   MfaChallengeDialog,
   type MfaChallengeRequest
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useClientAppComponent } from '@/di/client-app-context'
 import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'
 

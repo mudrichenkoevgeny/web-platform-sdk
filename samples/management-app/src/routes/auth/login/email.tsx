@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { AppType, ManagementAuthNavigation, ManagementMainNavigation, type AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for login by email screen. */

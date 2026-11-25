@@ -5,11 +5,11 @@ import {
   ClientUserNavigation,
   OpenStorageNavigation
 } from '@mudrichenkoevgeny/shared-foundation'
-import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { clientUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { clientUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import { ClientAppComponent } from '@/di/client-app-component'
 import { routeTree } from '../routeTree.gen'
 import type { RouterDIContext } from './__root'

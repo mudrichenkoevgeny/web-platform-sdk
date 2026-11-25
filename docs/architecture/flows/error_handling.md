@@ -99,7 +99,7 @@ flowchart TD
 Within React UI components, error messages are resolved dynamically using the `useAppErrorParser()` hook provided by `SdkProvider`:
 
 ```tsx
-import { useAppErrorParser, FullscreenError } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { useAppErrorParser, FullscreenError } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 export const MyComponent = ({ error }) => {
   const parser = useAppErrorParser()

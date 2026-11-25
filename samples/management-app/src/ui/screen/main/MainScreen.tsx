@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from '@tanstack/react-router'
 import { ManagementAuthNavigation, ManagementMainNavigation, ManagementSelfUserNavigation, type UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
-import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { cn, CoreIcon } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import {
   MfaChallengeDialog,
   type MfaChallengeRequest
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useManagementAppComponent } from '@/di/management-app-context'
 import { getDestinations, type MainTabKey } from '@/ui/screen/main/main-screen-destination'
 import { useEnsureHistoryStack } from '@/ui/navigation/use-ensure-history-stack'

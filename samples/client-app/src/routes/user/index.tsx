@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { AppType, ClientAuthNavigation, ClientUserNavigation, OpenStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
 
 /** Route configuration for self user main screen. */

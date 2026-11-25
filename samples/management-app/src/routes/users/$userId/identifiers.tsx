@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { IdentifierListScreen, createManagementIdentifierListDataSource } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { IdentifierListScreen, createManagementIdentifierListDataSource } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { managementUserIdentifierListParamsSchema, toUserIdOrThrow } from '@mudrichenkoevgeny/shared-foundation'
-import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for user-specific identifier list screen. */

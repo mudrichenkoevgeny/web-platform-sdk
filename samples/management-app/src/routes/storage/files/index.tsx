@@ -4,9 +4,9 @@ import {
   storageFileListSearchSchema,
   createSelfStorageFileListDataSource,
   createManagementStorageFileListDataSource
-} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
 import { ManagementMainNavigation, ManagementSelfStorageNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for storage file list screen. */

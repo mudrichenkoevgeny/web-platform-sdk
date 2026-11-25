@@ -5,15 +5,15 @@ module.exports = {
       name: 'no-feature-cross-dependencies',
       severity: 'error',
       comment: 'Feature modules must not depend on other feature modules. Use composition in the host app or core modules.',
-      from: { path: '^packages/feature-([^/]+)/src/' },
-      to: { path: '^packages/feature-([^/]+)/src/', pathNot: '^packages/feature-$1/' }
+      from: { path: '^packages/sdk/src/feature/([^/]+)/' },
+      to: { path: '^packages/sdk/src/feature/([^/]+)/', pathNot: '^packages/sdk/src/feature/$1/' }
     },
     {
       name: 'core-common-is-sacred',
       severity: 'error',
       comment: 'core-common must not depend on any higher-level layers (features, samples, other cores).',
-      from: { path: '^packages/core-common/src/' },
-      to: { path: '^(packages/feature-|packages/core-(?!common)|samples/)' }
+      from: { path: '^packages/sdk/src/core/common/' },
+      to: { path: '^(packages/sdk/src/feature/|packages/sdk/src/core/(?!common/)|samples/)' }
     },
     {
       name: 'ban-axios-and-react-query',

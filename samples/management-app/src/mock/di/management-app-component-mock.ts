@@ -12,11 +12,11 @@ import {
   UserAuditMetadataKey,
   UserAuditResourceType
 } from '@mudrichenkoevgeny/shared-foundation'
-import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { managementUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { managementUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { ManagementAppComponent } from '@/di/management-app-component'
 
 /**

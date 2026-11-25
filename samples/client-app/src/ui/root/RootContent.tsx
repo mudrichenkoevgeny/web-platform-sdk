@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { RouterProvider } from '@tanstack/react-router'
-import { SdkProvider, ThemeProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { SdkProvider, ThemeProvider } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import type { ClientAppComponent } from '@/di/client-app-component'
 import { ClientAppComponentProvider } from '@/di/client-app-context'
 import { InitialLoader } from '@/ui/screen/loader/InitialLoader'

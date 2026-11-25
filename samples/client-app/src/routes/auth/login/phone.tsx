@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientAuthNavigation, ClientUserNavigation, type AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/auth/login/phone')({

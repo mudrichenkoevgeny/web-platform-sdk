@@ -2,7 +2,7 @@ import type {
   RefreshManagementAuthSettingsUseCase,
   RefreshManagementGlobalSettingsUseCase,
   RefreshManagementSecuritySettingsUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { SyncManagementDataUseCase } from '@/usecase/sync-management-data-use-case'
 
 /**

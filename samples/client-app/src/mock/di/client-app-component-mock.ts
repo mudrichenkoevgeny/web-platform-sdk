@@ -1,8 +1,8 @@
-import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { clientUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { createMockCommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { createMockSecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { createMockSettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { createMockStorageComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { clientUserComponentMock } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import { ClientAppComponent } from '@/di/client-app-component'
 
 /**

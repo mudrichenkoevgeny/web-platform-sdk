@@ -5,7 +5,7 @@ import {
   SelfUpdateUserUseCase,
   ValidateNicknameUseCase,
   ValidateDisplayNameUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 

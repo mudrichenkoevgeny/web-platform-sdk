@@ -20,13 +20,10 @@ pnpm install
 ```text
 web-platform-sdk/
 ├── packages/
-│   ├── core-common/            # @mudrichenkoevgeny/web-platform-sdk-core-common
-│   ├── core-security/          # @mudrichenkoevgeny/web-platform-sdk-core-security
-│   ├── core-settings/          # @mudrichenkoevgeny/web-platform-sdk-core-settings
-│   ├── core-storage/           # @mudrichenkoevgeny/web-platform-sdk-core-storage
-│   ├── feature-user/           # @mudrichenkoevgeny/web-platform-sdk-feature-user
-│   ├── feature-clientuser/     # @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
-│   ├── feature-managementuser/ # @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+│   ├── sdk/                    # @mudrichenkoevgeny/web-platform-sdk
+│   │   └── src/
+│   │       ├── core/           # core/common, core/security, core/settings, core/storage
+│   │       └── feature/        # feature/user, feature/client-user, feature/management-user
 │   └── tools/                  # @mudrichenkoevgeny/web-platform-sdk-tools
 └── samples/
     ├── client-app/             # @web-platform-sdk/sample-client-app
@@ -47,7 +44,7 @@ pnpm build
 Build a single package:
 
 ```bash
-pnpm --filter @mudrichenkoevgeny/web-platform-sdk-core-security run build
+pnpm --filter @mudrichenkoevgeny/web-platform-sdk run build
 ```
 
 Run local development servers:
@@ -104,12 +101,12 @@ All pull requests targeting `main` or `develop` must pass the CI gates defined i
 
 Run tests for a single package:
 ```bash
-pnpm --filter @mudrichenkoevgeny/web-platform-sdk-feature-user exec vitest run
+pnpm --filter @mudrichenkoevgeny/web-platform-sdk exec vitest run
 ```
 
 Run tests for a specific test file:
 ```bash
-pnpm vitest run packages/core-security/src/usecase/security-use-cases.test.ts
+pnpm vitest run packages/sdk/src/core/security/usecase/validate-password-use-case.test.ts
 ```
 
 ---
@@ -134,7 +131,7 @@ Shared dependency versions are centralized in `pnpm-workspace.yaml` under `catal
 Add a dependency to a specific package:
 
 ```bash
-pnpm add <package-name> --filter @mudrichenkoevgeny/web-platform-sdk-core-security
+pnpm add <package-name> --filter @mudrichenkoevgeny/web-platform-sdk
 ```
 
 Test a local `.tgz` build of `@mudrichenkoevgeny/shared-foundation`:

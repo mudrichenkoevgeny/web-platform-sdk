@@ -1,4 +1,4 @@
-@import '@mudrichenkoevgeny/web-platform-sdk-core-common/theme.css';
+@import '@mudrichenkoevgeny/web-platform-sdk/theme.css';
 
 @tailwind base;
 @tailwind components;

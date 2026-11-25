@@ -1,0 +1,33 @@
+import type { Meta, StoryObj } from '@storybook/react'
+import { ComponentTestHarness } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { MainManagementScreen } from '@/feature/management-user/ui/screens/management/main/MainManagementScreen'
+import type { MainManagementStoreDependencies } from '@/feature/management-user/ui/screens/management/main/main-management-store'
+
+const createMockDeps = (): MainManagementStoreDependencies => ({
+  onSettingsClick: () => {},
+  onGlobalUserListClick: () => {},
+  onAuditEventListClick: () => {},
+  onGlobalSessionListClick: () => {},
+  onGlobalIdentifierListClick: () => {},
+  onStorageFileListClick: () => {}
+})
+
+const meta: Meta<typeof MainManagementScreen> = {
+  title: 'Feature/ManagementUser/MainManagementScreen',
+  component: MainManagementScreen,
+  decorators: [
+    (Story) => (
+      <ComponentTestHarness>
+        <Story />
+      </ComponentTestHarness>
+    )
+  ],
+  args: {
+    dependencies: createMockDeps()
+  }
+}
+
+export default meta
+type Story = StoryObj<typeof MainManagementScreen>
+
+export const Default: Story = {}

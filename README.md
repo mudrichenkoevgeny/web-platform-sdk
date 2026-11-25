@@ -2,7 +2,7 @@
 
 A modular **TypeScript / React** client SDK for Web applications. It provides a unified, production-grade foundation for building modern web frontends with shared networking, WebCrypto-encrypted storage, security policies, identity management, and administrative governance.
 
-[![npm](https://img.shields.io/npm/v/@mudrichenkoevgeny/web-platform-sdk-core-common)](https://www.npmjs.com/package/@mudrichenkoevgeny/web-platform-sdk-core-common)
+[![npm](https://img.shields.io/npm/v/@mudrichenkoevgeny/web-platform-sdk)](https://www.npmjs.com/package/@mudrichenkoevgeny/web-platform-sdk)
 
 By pairing **React** UI components (Tailwind CSS + design tokens) with **Zustand** state machines, the SDK allows host applications to integrate complex authentication flows, user settings, user management, and administrative control panels with minimal boilerplate.
 
@@ -14,16 +14,22 @@ Managed as a monorepo via `pnpm` workspaces:
 
 | Module / Package | Description | Readme |
 | :--- | :--- | :--- |
-| **`core-common`** | Foundation for all SDK packages: native Fetch HTTP client, WebSocket lifecycle management, WebCrypto encrypted storage, Chain of Responsibility error parser, React UI primitives, and design tokens. | [README](packages/core-common/README.md) |
-| **`core-security`** | Password policy validator, open security settings API, WebCrypto security settings cache, real-time WebSocket policy synchronization, and security error parser. | [README](packages/core-security/README.md) |
-| **`core-settings`** | Global application configuration management, Fetch API client, encrypted storage caching, real-time WebSocket settings sync, and Zustand reactive settings store. | [README](packages/core-settings/README.md) |
-| **`core-storage`** | File storage management solution: Fetch API client for storage and presigned S3 uploads, Direct S3 XMLHttpRequest uploader, storage error parser, and Zustand reactive UI components/screens. | [README](packages/core-storage/README.md) |
-| **`feature-user`** | Headless identity and auth domain foundation: Zod schemas, auth token storage (`AuthStorage`), session auto-refresh, TOTP 2FA, session management, multi-identifier linking, and shared React UI screens/components. | [README](packages/feature-user/README.md) |
-| **`feature-clientuser`** | Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, and ready-to-use React login screens. | [README](packages/feature-clientuser/README.md) |
-| **`feature-managementuser`** | Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, and audit inspection UI. | [README](packages/feature-managementuser/README.md) |
-| **`tools`** | Official Web Tooling & Code Quality Kit: agent rules syncer, ESLint flat config preset with AST rules, Dependency Cruiser rules, and CLI generators. | [README](packages/tools/README.md) |
+| **`sdk`** (`@mudrichenkoevgeny/web-platform-sdk`) | Official Web Platform SDK consolidating core infrastructure (`core/common`, `core/security`, `core/settings`, `core/storage`) and feature modules (`feature/user`, `feature/client-user`, `feature/management-user`). | [README](packages/sdk/README.md) |
+| **`tools`** (`@mudrichenkoevgeny/web-platform-sdk-tools`) | Official Web Tooling & Code Quality Kit: agent rules syncer, ESLint flat config preset with AST rules, Dependency Cruiser rules, and CLI generators. | [README](packages/tools/README.md) |
 | **`sample-client-app`** | Reference host application for consumer web frontends demonstrating manual DI wiring (`ClientAppComponent`) and end-user flows. | [README](samples/client-app/README.md) |
 | **`sample-management-app`** | Reference host application for back-office admin panels demonstrating manual DI wiring (`ManagementAppComponent`) and administrative governance. | [README](samples/management-app/README.md) |
+
+### SDK Subpath Entry Points
+
+The `@mudrichenkoevgeny/web-platform-sdk` package exports the following subpath entry points:
+
+- **`@mudrichenkoevgeny/web-platform-sdk/core/common`**: Native Fetch HTTP client, WebSocket lifecycle, WebCrypto encrypted storage, Chain of Responsibility error parser, React UI primitives, and design tokens.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/security`**: Password policy validator, open security settings API, WebCrypto security settings cache, real-time WebSocket policy synchronization.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/settings`**: Global application configuration management, Fetch API client, encrypted storage caching, real-time WebSocket settings sync, Zustand settings store.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/storage`**: File storage management solution, presigned S3 upload API client, Direct S3 XMLHttpRequest uploader, storage error parser, Zustand reactive UI components.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/user`**: Headless identity & auth domain foundation: Zod schemas, auth token storage, session auto-refresh, TOTP 2FA, session management, multi-identifier linking.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/client-user`**: Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, ready-to-use React login screens.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/management-user`**: Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, audit inspection UI.
 
 ---
 
@@ -31,14 +37,9 @@ Managed as a monorepo via `pnpm` workspaces:
 
 Packages in this repository are published to npm under the `@mudrichenkoevgeny` scope and installed via `pnpm`:
 
-### For Client (Consumer) Web Applications
+### Runtime SDK Package
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-core-storage @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
-```
-
-### For Management / Admin Web Applications
-```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common @mudrichenkoevgeny/web-platform-sdk-core-settings @mudrichenkoevgeny/web-platform-sdk-core-security @mudrichenkoevgeny/web-platform-sdk-core-storage @mudrichenkoevgeny/web-platform-sdk-feature-user @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### For Development Tooling & Code Quality Kit
@@ -49,7 +50,7 @@ pnpm add -D @mudrichenkoevgeny/web-platform-sdk-tools
 To include design tokens and component styling, import the stylesheet into your application root:
 
 ```typescript
-import '@mudrichenkoevgeny/web-platform-sdk-core-common/tokens.css'
+import '@mudrichenkoevgeny/web-platform-sdk/tokens.css'
 ```
 
 ---
@@ -150,7 +151,7 @@ Visual design decisions across the SDK are driven by design tokens and font asse
 Construct `EncryptedSettingsComponent` and root `CommonComponent`:
 
 ```typescript
-import { EncryptedSettingsComponent, CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { EncryptedSettingsComponent, CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const encryptedSettingsComponent = new EncryptedSettingsComponent()
 
@@ -167,8 +168,8 @@ const commonComponent = new CommonComponent({
 Construct domain security and settings components sharing the core `HttpClient` and `WebSocketService`:
 
 ```typescript
-import { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { SecurityComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
 
 const securityComponent = new SecurityComponent({
   webSocketService: commonComponent.webSocketService,
@@ -188,7 +189,7 @@ const settingsComponent = new SettingsComponent({
 Construct `ClientUserComponent` with its core collaborators and authentication adapters:
 
 ```typescript
-import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
 const clientUserComponent = new ClientUserComponent({
   commonComponent: commonComponent,
@@ -204,8 +205,8 @@ const clientUserComponent = new ClientUserComponent({
 Register auth HTTP interceptors, error parsers, and WebSocket message handlers during app setup:
 
 ```typescript
-import { SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { UserErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { UserErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
 function init() {
   commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
@@ -231,8 +232,8 @@ function init() {
 Inject the SDK dependency graph into your React component tree using `SdkProvider` and render root screens:
 
 ```tsx
-import { SdkProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { ClientLoginRootScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { SdkProvider } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { ClientLoginRootScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
 export function App({ clientAppComponent }: { clientAppComponent: ClientAppComponent }) {
   const isInitialized = clientAppComponent.useIsInitialized()

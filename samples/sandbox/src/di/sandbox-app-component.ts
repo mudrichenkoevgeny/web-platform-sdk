@@ -1,13 +1,13 @@
 import {
   CommonComponent,
   EncryptedSettingsComponent
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { StorageComponent, StorageErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
-import type { AuthStorage } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { EncryptedSettings } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { StorageComponent, StorageErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
+import type { AuthStorage } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import {
   AuthHttpClientConfigPlugin,
   DefaultMfaChallengeHandler,
@@ -15,7 +15,7 @@ import {
   EncryptedAuthStorage,
   MfaStepUpHttpClientConfigPlugin,
   UserErrorParser
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { OpenRefreshTokenRoutes, OpenSessionRoutes, WebSocketContract } from '@mudrichenkoevgeny/shared-foundation'
 
 export interface SandboxAppComponentConfig {

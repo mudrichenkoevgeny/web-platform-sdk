@@ -1,0 +1,67 @@
+import { describe, it, expect } from 'vitest'
+import { AuditEventFilterValues, managementAuditEventListParamsSchema, SortOrder } from '@mudrichenkoevgeny/shared-foundation'
+import type { ListingFilterState, ListingSortState } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { searchParamsToListingStates, listingStatesToSearchParams } from './auditEventListSearchConverters'
+
+describe('auditEventListSearchConverters', () => {
+  it('converts ManagementAuditEventListParams to ListingOptionsState', () => {
+    const params = managementAuditEventListParamsSchema.parse({
+      pageNumber: 1,
+      pageSize: 20,
+      sortBy: 'created_at',
+      sortOrder: SortOrder.DESC,
+      actorIds: ['user-123'],
+      actorTypes: [],
+      actorUserRoles: [],
+      actions: [],
+      resources: [],
+      resourceIds: [],
+      statuses: []
+    })
+
+    const result = searchParamsToListingStates(params)
+
+    expect(result.sortState).toEqual({
+      optionId: 'created_at',
+      isAscending: false
+    })
+
+    const actorIdFilter = result.filterStates[AuditEventFilterValues.ACTOR_ID]
+    expect(actorIdFilter).toEqual({
+      type: 'text',
+      value: 'user-123'
+    })
+  })
+
+  it('converts ListingOptionsState to ManagementAuditEventListParams', () => {
+    const sortState: ListingSortState = {
+      optionId: 'created_at',
+      isAscending: true
+    }
+
+    const filterStates: Record<string, ListingFilterState> = {
+      [AuditEventFilterValues.ACTOR_ID]: {
+        type: 'text',
+        value: 'user-456'
+      },
+      [AuditEventFilterValues.STATUS]: {
+        type: 'choice',
+        selectedIds: new Set(['success'])
+      }
+    }
+
+    const result = listingStatesToSearchParams(sortState, filterStates)
+
+    expect(result.sort_by).toBe('created_at')
+    expect(result.sort_order).toBe(SortOrder.ASC)
+    expect(result.actor_id).toEqual(['user-456'])
+    expect(result.status).toEqual(['success'])
+  })
+
+  it('handles empty inputs gracefully', () => {
+    expect(searchParamsToListingStates()).toEqual({
+      sortState: null,
+      filterStates: {}
+    })
+  })
+})

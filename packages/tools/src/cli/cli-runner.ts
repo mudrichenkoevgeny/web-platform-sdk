@@ -26,7 +26,6 @@ function findPackageDir(startDir: string): string {
           return currentDir
         }
       } catch {
-        /* Intentionally ignore JSON parse errors during parent traversal */
       }
     }
     currentDir = path.dirname(currentDir)
@@ -58,7 +57,6 @@ function resolveModuleBin(packageName: string, relativeBinPath: string): string 
         currentDir = path.dirname(currentDir)
       }
     } catch {
-      /* Fallback to package name */
     }
     return packageName
   }
@@ -145,13 +143,12 @@ function injectLocalWorkspaceOverrides(packageDir: string, targetDir: string): v
       if (fs.existsSync(pkgJsonPath)) {
         try {
           const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8')) as { name?: string }
-          if (pkg.name && pkg.name.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+          if (pkg.name && pkg.name.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
             const absPkgDir = path.join(sdkPackagesDir, entry.name)
             const relPath = path.relative(targetDir, absPkgDir).replace(/\\/g, '/')
             overridesMap[pkg.name] = `link:${relPath}`
           }
         } catch {
-          /* Ignore JSON parse errors */
         }
       }
     }

@@ -1,0 +1,32 @@
+import { appResultFailure } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { LoginByExternalAuthProviderRequest } from '@mudrichenkoevgeny/shared-foundation'
+import type { GoogleAuthService } from '@/feature/user/auth/google/google-auth-service'
+import { UserError } from '@/feature/user/error/model/user-error'
+
+/**
+ * No-op Google integration that always fails with {@link UserError.externalAuthFailed}.
+ */
+export class DisabledGoogleAuthService implements GoogleAuthService {
+  private error(): AppResult<LoginByExternalAuthProviderRequest, AppError> {
+    return appResultFailure(
+      UserError.externalAuthFailed(new Error('Google Auth is not supported'))
+    )
+  }
+
+  /**
+   * Runs sign-in, returning an error result.
+   */
+  public async signIn(): Promise<AppResult<LoginByExternalAuthProviderRequest, AppError>> {
+    return this.error()
+  }
+
+  /**
+   * Runs sign-out, returning an error result.
+   */
+  public async signOut(): Promise<AppResult<void, AppError>> {
+    return appResultFailure(
+      UserError.externalAuthFailed(new Error('Google Auth is not supported'))
+    )
+  }
+}

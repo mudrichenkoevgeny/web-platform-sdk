@@ -1,0 +1,49 @@
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { GoogleAuthService } from '@/feature/user/auth/google/google-auth-service'
+import type { LoginRepository } from '@/feature/user/repository/auth/login/login-repository'
+import type { AuthStorage } from '@/feature/user/storage/auth/auth-storage'
+import type { UserStorage } from '@/feature/user/storage/user/user-storage'
+import type { AuthData } from '@mudrichenkoevgeny/shared-foundation'
+
+/**
+ * Google Sign-In flow: obtains a provider token, exchanges it for session material via LoginRepository,
+ * then persists tokens and user snapshot on success.
+ */
+export class LoginByGoogleUseCase {
+  /**
+   * Constructs a new {@link LoginByGoogleUseCase}.
+   *
+   * @param authService - Platform Google auth helper that returns a credential request for the backend
+   * @param loginRepository - Remote login API for external providers
+   * @param authStorage - Encrypted token storage updated after a successful login
+   * @param userStorage - User snapshot storage updated after a successful login
+   */
+  public constructor(
+    private readonly authService: GoogleAuthService,
+    private readonly loginRepository: LoginRepository,
+    private readonly authStorage: AuthStorage,
+    private readonly userStorage: UserStorage
+  ) {}
+
+  /**
+   * Executes Google sign-in flow.
+   *
+   * @returns AuthData on success or AppError
+   */
+  public async execute(): Promise<AppResult<AuthData, AppError>> {
+    const signInResult = await this.authService.signIn()
+    if (!isSuccess(signInResult)) {
+      return signInResult
+    }
+
+    const loginResult = await this.loginRepository.loginByExternalAuthProvider(signInResult.data)
+
+    if (isSuccess(loginResult)) {
+      await this.authStorage.updateTokens(loginResult.data.sessionToken)
+      await this.userStorage.updateCurrentUser(loginResult.data.userPrivate)
+    }
+
+    return loginResult
+  }
+}

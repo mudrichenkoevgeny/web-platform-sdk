@@ -1,0 +1,37 @@
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { UserAuthProvider } from '@mudrichenkoevgeny/shared-foundation'
+import type { GoogleAuthService } from '@/feature/user/auth/google/google-auth-service'
+import type { IdentifierRepository } from '@/feature/user/repository/identifier/identifier-repository'
+import type { UserIdentifierPrivate } from '@mudrichenkoevgeny/shared-foundation'
+
+/** Google Sign-In flow for associating a Google identity record with current account. */
+export class AddUserIdentifierGoogleUseCase {
+  /**
+   * Constructs a new {@link AddUserIdentifierGoogleUseCase}.
+   *
+   * @param authService - Google Auth service
+   * @param identifierRepository - Identifier repository
+   */
+  public constructor(
+    private readonly authService: GoogleAuthService,
+    private readonly identifierRepository: IdentifierRepository
+  ) {}
+
+  /**
+   * Invokes Google sign-in and links provider token with account.
+   *
+   * @returns UserIdentifierPrivate or AppError
+   */
+  public async execute(): Promise<AppResult<UserIdentifierPrivate, AppError>> {
+    const signInResult = await this.authService.signIn()
+    if (!isSuccess(signInResult)) {
+      return signInResult
+    }
+
+    return this.identifierRepository.addUserIdentifierExternalAuthProvider(
+      UserAuthProvider.GOOGLE,
+      signInResult.data.external_provider_token
+    )
+  }
+}

@@ -1,10 +1,10 @@
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import type {
   RefreshManagementAuthSettingsUseCase,
   RefreshManagementGlobalSettingsUseCase,
   RefreshManagementSecuritySettingsUseCase
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 
 /**
  * Runs global, security, and auth settings refresh use cases concurrently for management app and logs failures without throwing.

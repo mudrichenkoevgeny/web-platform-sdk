@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientAuthNavigation, ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { ResetEmailPasswordScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { ResetEmailPasswordScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/auth/reset-password/')({

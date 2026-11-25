@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GlobalUserListScreen, globalUserListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { GlobalUserListScreen, globalUserListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for global user list screen. */

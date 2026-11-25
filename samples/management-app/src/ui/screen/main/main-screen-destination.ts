@@ -1,6 +1,6 @@
 import React from 'react'
 import { userStrings } from '@mudrichenkoevgeny/shared-foundation'
-import { icons } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { icons } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 /** Available main navigation tab keys. */
 export type MainTabKey = 'management' | 'user'

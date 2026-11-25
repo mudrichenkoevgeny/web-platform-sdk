@@ -1,0 +1,66 @@
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type {
+  DeletedSessions,
+  PagedResult,
+  UserSessionId,
+  UserSessionPrivatePayload,
+  UserSessionSummaryPayload,
+  VerifyTotpPayload
+} from '@mudrichenkoevgeny/shared-foundation'
+import type { SessionApi } from '@/feature/user/network/api/session/session-api'
+
+/**
+ * Mock implementation of {@link SessionApi}.
+ */
+export class SessionApiMock implements SessionApi {
+  public getSessionsResult: AppResult<PagedResult<UserSessionSummaryPayload>, AppError> = appResultSuccess({
+    items: [],
+    totalCount: 0,
+    pageNumber: 1,
+    pageSize: 20,
+    totalPages: 0
+  })
+  public getSessionResult: AppResult<UserSessionPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public logoutResult: AppResult<void, AppError> = appResultSuccess(undefined)
+  public deleteSessionResult: AppResult<void, AppError> = appResultSuccess(undefined)
+  public deleteAllOtherSessionsResult: AppResult<DeletedSessions, AppError> = appResultSuccess({ deletedSessionIds: [] })
+  public reauthenticateSessionResult: AppResult<void, AppError> = appResultSuccess(undefined)
+
+  public lastRequestedSessionId: UserSessionId | null = null
+  public lastDeletedSessionId: UserSessionId | null = null
+  public lastReauthenticateRequest: VerifyTotpPayload | null = null
+
+  /** Mocks sessions list. */
+  public async getSessions(): Promise<AppResult<PagedResult<UserSessionSummaryPayload>, AppError>> {
+    return this.getSessionsResult
+  }
+
+  /** Mocks single session retrieval. */
+  public async getSession(userSessionId: UserSessionId): Promise<AppResult<UserSessionPrivatePayload, AppError>> {
+    this.lastRequestedSessionId = userSessionId
+    return this.getSessionResult
+  }
+
+  /** Mocks logout. */
+  public async logout(): Promise<AppResult<void, AppError>> {
+    return this.logoutResult
+  }
+
+  /** Mocks single session deletion. */
+  public async deleteSession(userSessionId: UserSessionId): Promise<AppResult<void, AppError>> {
+    this.lastDeletedSessionId = userSessionId
+    return this.deleteSessionResult
+  }
+
+  /** Mocks all other sessions deletion. */
+  public async deleteAllOtherSessions(): Promise<AppResult<DeletedSessions, AppError>> {
+    return this.deleteAllOtherSessionsResult
+  }
+
+  /** Mocks session re-authentication. */
+  public async reauthenticateSession(mfaToken: string, code: string): Promise<AppResult<void, AppError>> {
+    this.lastReauthenticateRequest = { mfa_token: mfaToken, totp_code: code }
+    return this.reauthenticateSessionResult
+  }
+}

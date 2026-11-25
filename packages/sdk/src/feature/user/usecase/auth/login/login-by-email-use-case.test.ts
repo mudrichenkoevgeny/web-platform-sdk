@@ -1,0 +1,52 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { TEST_EMAIL, createTestAuthData } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, appResultSuccess, CommonError, isFailure, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { LoginByEmailUseCase } from '@/feature/user/usecase/auth/login/login-by-email-use-case'
+import { LoginRepositoryMock } from '@/feature/user/mock/repository/auth/login/login-repository-mock'
+import { AuthStorageMock } from '@/feature/user/mock/storage/auth/auth-storage-mock'
+import { UserStorageMock } from '@/feature/user/mock/storage/user/user-storage-mock'
+
+describe('LoginByEmailUseCase', () => {
+  let mockLoginRepository: LoginRepositoryMock
+  let mockAuthStorage: AuthStorageMock
+  let mockUserStorage: UserStorageMock
+  let useCase: LoginByEmailUseCase
+
+  const mockAuthData = createTestAuthData()
+
+  beforeEach(() => {
+    mockLoginRepository = new LoginRepositoryMock()
+    mockLoginRepository.authDataResultProvider = async () => appResultSuccess(mockAuthData)
+    mockAuthStorage = new AuthStorageMock()
+    mockUserStorage = new UserStorageMock()
+
+    useCase = new LoginByEmailUseCase(mockLoginRepository, mockAuthStorage, mockUserStorage)
+  })
+
+  it('updates authStorage and userStorage on successful login', async () => {
+    const result = await useCase.execute(TEST_EMAIL, 'password123')
+
+    expect(isSuccess(result)).toBe(true)
+    if (isSuccess(result)) {
+      expect(result.data).toEqual(mockAuthData)
+    }
+    expect(mockLoginRepository.lastEmail).toBe(TEST_EMAIL)
+    expect(mockLoginRepository.lastPassword).toBe('password123')
+  })
+
+  it('does not update storage when repository login fails', async () => {
+    const expectedError = CommonError.unknown()
+    mockLoginRepository.authDataResultProvider = async () => appResultFailure(expectedError)
+    const updateTokensSpy = vi.spyOn(mockAuthStorage, 'updateTokens')
+    const updateUserSpy = vi.spyOn(mockUserStorage, 'updateCurrentUser')
+
+    const result = await useCase.execute(TEST_EMAIL, 'wrong-password')
+
+    expect(isFailure(result)).toBe(true)
+    if (isFailure(result)) {
+      expect(result.error.code).toEqual(expectedError.code)
+    }
+    expect(updateTokensSpy).not.toHaveBeenCalled()
+    expect(updateUserSpy).not.toHaveBeenCalled()
+  })
+})

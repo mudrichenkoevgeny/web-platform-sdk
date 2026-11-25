@@ -1,0 +1,20 @@
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from "@mudrichenkoevgeny/web-platform-sdk/core/common";
+import type { UserIdentifierId } from '@mudrichenkoevgeny/shared-foundation'
+import { DeleteUserIdentifierUseCase } from '@/feature/user/usecase/identifier/delete-user-identifier-use-case'
+import { IdentifierRepositoryMock } from '@/feature/user/mock/repository/identifier/identifier-repository-mock'
+/** Mock implementation of {@link DeleteUserIdentifierUseCase}. */
+export class DeleteUserIdentifierUseCaseMock extends DeleteUserIdentifierUseCase {
+  public executeCalls = 0
+  public resultProvider: (id: UserIdentifierId) => Promise<AppResult<void, AppError>> =
+    async () => appResultSuccess(undefined)
+
+  public constructor() {
+    super(new IdentifierRepositoryMock())
+  }
+
+  public override async execute(id: UserIdentifierId): Promise<AppResult<void, AppError>> {
+    this.executeCalls++
+    return this.resultProvider(id)
+  }
+}

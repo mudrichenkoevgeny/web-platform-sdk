@@ -1,0 +1,31 @@
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+import type { UpdateUserParams } from '@/feature/user/usecase/user/self-update-user-use-case'
+
+/**
+ * Access to the signed-in user snapshot and user management operations.
+ */
+export interface UserRepository {
+  /**
+   * Observes changes to current cached user snapshot.
+   *
+   * @param listener - Callback function triggered on user change
+   * @returns Unsubscribe cleanup function
+   */
+  observeCurrentUser(listener: (user: UserPrivate | null) => void): () => void
+
+  /** Forces a network reload of current user details and updates local storage on success. */
+  refreshCurrentUser(): Promise<AppResult<UserPrivate, AppError>>
+
+  /** Partially updates account details and profile fields of the currently authenticated user. */
+  selfUpdateUser(params: UpdateUserParams): Promise<AppResult<UserPrivate, AppError>>
+
+  /** Schedules current account for permanent deletion and updates local state. */
+  scheduleUserDeletion(): Promise<AppResult<UserPrivate, AppError>>
+
+  /** Cancels a pending account deletion request and updates local state. */
+  restoreUser(): Promise<AppResult<UserPrivate, AppError>>
+
+  /** Clears local user storage and authentication tokens. */
+  clearSession(): Promise<void>
+}

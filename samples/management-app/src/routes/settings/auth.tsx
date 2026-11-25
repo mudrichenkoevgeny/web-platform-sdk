@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { EditAuthSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { EditAuthSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { ManagementAuthSettingsNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 

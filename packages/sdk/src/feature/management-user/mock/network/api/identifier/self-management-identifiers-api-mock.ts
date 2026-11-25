@@ -1,0 +1,43 @@
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type {
+  EmailPasswordChangeRequest,
+  PagedResult,
+  SelfIdentifierListParams,
+  UserIdentifierId,
+  UserIdentifierPrivatePayload,
+  UserIdentifierSummaryPayload
+} from '@mudrichenkoevgeny/shared-foundation'
+import type { SelfManagementIdentifiersApi } from '@/feature/management-user/network/api/identifier/self-management-identifiers-api'
+
+/** Mock implementation of {@link SelfManagementIdentifiersApi}. */
+export class SelfManagementIdentifiersApiMock implements SelfManagementIdentifiersApi {
+  public getUserIdentifierResult: AppResult<UserIdentifierPrivatePayload, AppError> = appResultFailure(CommonError.unknown())
+  public getUserIdentifiersResult: AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError> = appResultSuccess({
+    items: [],
+    totalCount: 0,
+    pageNumber: 1,
+    pageSize: 20,
+    totalPages: 0
+  })
+  public emailChangePasswordResult: AppResult<void, AppError> = appResultFailure(CommonError.unknown())
+
+  public async getUserIdentifier(
+    _userIdentifierId: UserIdentifierId
+  ): Promise<AppResult<UserIdentifierPrivatePayload, AppError>> {
+    return this.getUserIdentifierResult
+  }
+
+  public async getUserIdentifiers(
+    _params?: SelfIdentifierListParams | null
+  ): Promise<AppResult<PagedResult<UserIdentifierSummaryPayload>, AppError>> {
+    return this.getUserIdentifiersResult
+  }
+
+  public async emailChangePassword(
+    _userIdentifierId: UserIdentifierId,
+    _request: EmailPasswordChangeRequest
+  ): Promise<AppResult<void, AppError>> {
+    return this.emailChangePasswordResult
+  }
+}

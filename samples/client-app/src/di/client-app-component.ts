@@ -6,21 +6,21 @@ import {
 import {
   CommonComponent,
   EncryptedSettingsComponent
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import type {
   EncryptedSettings
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import {
   SecurityComponent,
   SecurityErrorParser
-} from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { StorageComponent, StorageErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { StorageComponent, StorageErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import type {
   AuthStorage,
   UserAuthServices
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import {
   AuthHttpClientConfigPlugin,
   DefaultMfaChallengeHandler,
@@ -29,7 +29,7 @@ import {
   MfaStepUpHttpClientConfigPlugin,
   UserErrorParser,
   WebGoogleAuthService
-} from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+} from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { ClientAppUseCaseModule } from '@/di/client-app-use-case-module'
 import type { SyncDataUseCase } from '@/usecase/sync-data-use-case'
 

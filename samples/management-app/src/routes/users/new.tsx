@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CreateUserScreen, globalUserListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { CreateUserScreen, globalUserListSearchSchema } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { ManagementUsersNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { cleanSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for create new user account screen. */

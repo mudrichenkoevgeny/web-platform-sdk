@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ManagementAuthNavigation, ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { PendingDeletionScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { PendingDeletionScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for pending account deletion recovery screen. */

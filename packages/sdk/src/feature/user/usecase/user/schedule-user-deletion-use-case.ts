@@ -1,0 +1,22 @@
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { UserRepository } from '@/feature/user/repository/user/user-repository'
+import type { UserPrivate } from '@mudrichenkoevgeny/shared-foundation'
+
+/** Schedules current user account for permanent deletion. */
+export class ScheduleUserDeletionUseCase {
+  /**
+   * Constructs a new {@link ScheduleUserDeletionUseCase}.
+   *
+   * @param userRepository - User repository
+   */
+  public constructor(private readonly userRepository: UserRepository) {}
+
+  /**
+   * Schedules account deletion.
+   *
+   * @returns UserPrivate or AppError
+   */
+  public async execute(): Promise<AppResult<UserPrivate, AppError>> {
+    return this.userRepository.scheduleUserDeletion()
+  }
+}

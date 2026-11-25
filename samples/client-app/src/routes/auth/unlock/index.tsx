@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientAuthNavigation, accountLockoutTypeSchema } from '@mudrichenkoevgeny/shared-foundation'
-import { UnlockRootScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UnlockRootScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 import { z } from 'zod'
 

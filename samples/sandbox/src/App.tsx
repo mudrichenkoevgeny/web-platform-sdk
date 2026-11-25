@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
-import { SdkProvider } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
-import type { LoginByEmailStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { SdkProvider } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { LoginByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
+import type { LoginByEmailStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import type { SandboxAppComponent } from './di/sandbox-app-component'
 
 export interface AppProps {

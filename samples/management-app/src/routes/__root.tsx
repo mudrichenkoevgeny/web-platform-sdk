@@ -1,6 +1,6 @@
 import { createRootRouteWithContext } from '@tanstack/react-router'
 import type { ManagementAppComponent } from '@/di/management-app-component'
-import type { ManagementRootStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import type { ManagementRootStoreDependencies } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import { MainScreen } from '@/ui/screen/main/MainScreen'
 
 export interface RouterDIContext {

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { EditStorageSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+import { EditStorageSettingsScreen } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
 import { ManagementMainNavigation } from '@mudrichenkoevgeny/shared-foundation'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 

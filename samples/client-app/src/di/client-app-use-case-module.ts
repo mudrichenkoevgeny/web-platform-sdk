@@ -1,4 +1,4 @@
-import type { RefreshClientUserConfigurationUseCase } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import type { RefreshClientUserConfigurationUseCase } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import { SyncDataUseCase } from '@/usecase/sync-data-use-case'
 
 /**

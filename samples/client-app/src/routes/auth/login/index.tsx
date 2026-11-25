@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientAuthNavigation, ClientUserNavigation, type AccountLockoutType } from '@mudrichenkoevgeny/shared-foundation'
-import { LoginWelcomeScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { LoginWelcomeScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
 export const Route = createFileRoute('/auth/login/')({
   beforeLoad: () => {

@@ -1,0 +1,75 @@
+import { appResultSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { ManagementAuthSettings } from '@mudrichenkoevgeny/shared-foundation'
+import type { ManagementAuthSettingsRepository } from '@/feature/management-user/repository/auth/settings/management-auth-settings-repository'
+
+/** Mock implementation of {@link ManagementAuthSettingsRepository}. */
+export class ManagementAuthSettingsRepositoryMock implements ManagementAuthSettingsRepository {
+  private authSettings: ManagementAuthSettings | null = null
+  private readonly listeners = new Set<(settings: ManagementAuthSettings | null) => void>()
+
+  public resultProvider: () => Promise<AppResult<ManagementAuthSettings, AppError>> = async () => {
+    if (this.authSettings) {
+      return appResultSuccess(this.authSettings)
+    }
+    return appResultSuccess({} as ManagementAuthSettings)
+  }
+
+  public saveResultProvider: (authSettings: ManagementAuthSettings) => Promise<AppResult<ManagementAuthSettings, AppError>> = async (authSettings) =>
+    appResultSuccess(authSettings)
+
+  public resetResultProvider: () => Promise<AppResult<ManagementAuthSettings, AppError>> = async () =>
+    this.resultProvider()
+
+  public async getManagementAuthSettings(): Promise<AppResult<ManagementAuthSettings, AppError>> {
+    return this.resultProvider()
+  }
+
+  public async refreshManagementAuthSettings(): Promise<AppResult<ManagementAuthSettings, AppError>> {
+    return this.resultProvider()
+  }
+
+  public async resetRemoteManagementAuthSettings(): Promise<AppResult<ManagementAuthSettings, AppError>> {
+    const result = await this.resetResultProvider()
+    if (result.success) {
+      this.authSettings = result.data
+      this.notifyListeners()
+    }
+    return result
+  }
+
+  public async saveRemoteManagementAuthSettings(
+    authSettings: ManagementAuthSettings
+  ): Promise<AppResult<ManagementAuthSettings, AppError>> {
+    const result = await this.saveResultProvider(authSettings)
+    if (result.success) {
+      this.authSettings = result.data
+      this.notifyListeners()
+    }
+    return result
+  }
+
+  public async updateManagementAuthSettings(authSettings: ManagementAuthSettings): Promise<void> {
+    this.authSettings = authSettings
+    this.notifyListeners()
+  }
+
+  public observeManagementAuthSettings(listener: (settings: ManagementAuthSettings | null) => void): () => void {
+    this.listeners.add(listener)
+    listener(this.authSettings)
+    return () => {
+      this.listeners.delete(listener)
+    }
+  }
+
+  public emit(authSettings: ManagementAuthSettings): void {
+    this.authSettings = authSettings
+    this.notifyListeners()
+  }
+
+  private notifyListeners(): void {
+    for (const listener of this.listeners) {
+      listener(this.authSettings)
+    }
+  }
+}

@@ -1,0 +1,26 @@
+import React, { forwardRef } from 'react'
+import { commonStrings } from '@mudrichenkoevgeny/shared-foundation'
+import { cn } from '@/core/common/utils/cn'
+import { CoreIcon } from '@/core/common/ui/components/icon/icon/CoreIcon'
+import { icons } from '@/core/common/assets/icons'
+
+export interface ListingEmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
+  text?: string
+}
+
+export const ListingEmptyState = forwardRef<HTMLDivElement, ListingEmptyStateProps>(
+  ({ text = commonStrings.ui.emptyList, className, ...rest }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn('w-full flex flex-col items-center justify-center p-8 gap-3 text-center', className)}
+        {...rest}
+      >
+        <CoreIcon src={icons.warning} size={48} className="text-muted-foreground" />
+        <p className="text-sm font-medium text-muted-foreground">{text}</p>
+      </div>
+    )
+  }
+)
+
+ListingEmptyState.displayName = 'ListingEmptyState'

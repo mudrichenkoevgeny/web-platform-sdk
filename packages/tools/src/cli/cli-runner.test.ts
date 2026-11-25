@@ -66,7 +66,7 @@ describe('CLI Runner init command', () => {
 
     const clientPkg = JSON.parse(fs.readFileSync(path.join(targetProjectDir, 'apps/client/package.json'), 'utf-8'))
     expect(clientPkg.name).toBe('@my-app/client')
-    expect(clientPkg.dependencies['@mudrichenkoevgeny/web-platform-sdk-core-common']).toBe(`^${expectedVersion}`)
+    expect(clientPkg.dependencies['@mudrichenkoevgeny/web-platform-sdk']).toBe(`^${expectedVersion}`)
 
     const adminPkg = JSON.parse(fs.readFileSync(path.join(targetProjectDir, 'apps/admin/package.json'), 'utf-8'))
     expect(adminPkg.name).toBe('@my-app/admin')
@@ -79,7 +79,6 @@ describe('CLI Runner init command', () => {
     expect(adminDi).toContain('export class MyAppManagementAppComponent')
     expect(adminDi).not.toContain('MyAppMyApp')
 
-    // Verify zero uninterpolated {{...}} placeholders in any generated text file
     const verifyNoPlaceholders = (dir: string) => {
       const entries = fs.readdirSync(dir, { withFileTypes: true })
       for (const entry of entries) {
@@ -110,7 +109,7 @@ describe('CLI Runner init command', () => {
     const pnpmWorkspace = fs.readFileSync(path.join(targetProjectDir, 'pnpm-workspace.yaml'), 'utf-8')
     expect(pnpmWorkspace).toContain('overrides:')
     const overridesSection = pnpmWorkspace.substring(pnpmWorkspace.indexOf('overrides:'))
-    expect(overridesSection).toContain("'@mudrichenkoevgeny/web-platform-sdk-core-common': 'link:")
+    expect(overridesSection).toContain("'@mudrichenkoevgeny/web-platform-sdk': 'link:")
     expect(overridesSection).toContain("'@mudrichenkoevgeny/web-platform-sdk-tools': 'link:")
     expect(overridesSection).not.toContain('\\')
   })

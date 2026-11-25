@@ -1,0 +1,39 @@
+import type { OpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import { appResultFailure, appResultSuccess, CommonError } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppResult, AppError } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import { createTestOpenGlobalSettingsPayload } from '@mudrichenkoevgeny/shared-foundation'
+import type { OpenGlobalSettingsApi } from '@/core/settings/network/api/global-settings/open-global-settings-api'
+
+/**
+ * Mock implementation of {@link OpenGlobalSettingsApi}.
+ */
+export class OpenGlobalSettingsApiMock implements OpenGlobalSettingsApi {
+  public getOpenGlobalSettingsCallCount = 0
+
+  /**
+   * Constructs a new {@link OpenGlobalSettingsApiMock}.
+   *
+   * @param mockPayload - Initial mock payload to return
+   * @param shouldFail - Whether requests should return an error
+   */
+  public constructor(
+    private readonly mockPayload?: OpenGlobalSettingsPayload,
+    private readonly shouldFail: boolean = false
+  ) {}
+
+  /**
+   * Simulates fetching open global settings.
+   *
+   * @returns Configured mock result or error
+   */
+  public async getOpenGlobalSettings(): Promise<AppResult<OpenGlobalSettingsPayload, AppError>> {
+    this.getOpenGlobalSettingsCallCount++
+
+    if (this.shouldFail) {
+      return appResultFailure(CommonError.unknown())
+    }
+
+    const payload = this.mockPayload ?? createTestOpenGlobalSettingsPayload()
+    return appResultSuccess(payload)
+  }
+}

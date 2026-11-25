@@ -5,9 +5,9 @@ import {
   DEFAULT_STORAGE_FILE_LIST_STATUSES,
   createSelfStorageFileListDataSource,
   createManagementStorageFileListDataSource
-} from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
 import { ManagementSelfStorageNavigation, ManagementSelfUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { parseSearchParams } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 /** Route configuration for staff member self-service storage file list screen. */

@@ -68,7 +68,6 @@ function copyTemplatesPlugin() {
       if (!toolsPkg.version) {
         throw new Error(`Package version is missing in ${toolsPkgPath}`)
       }
-      const sdkVersion = toolsPkg.version as string
 
       const rootPkgPath = path.join(rootDir, 'package.json')
       if (!fs.existsSync(rootPkgPath)) {
@@ -122,7 +121,7 @@ function copyTemplatesPlugin() {
               if (tsconfigObj.compilerOptions?.paths) {
                 const paths = tsconfigObj.compilerOptions.paths
                 for (const key of Object.keys(paths)) {
-                  if (key.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+                  if (key.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
                     delete paths[key]
                   }
                 }
@@ -156,14 +155,14 @@ function copyTemplatesPlugin() {
             const updated = { ...pkg, name: '@{{projectName}}/client' }
             if (updated.dependencies) {
               for (const dep of Object.keys(updated.dependencies)) {
-                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
                   updated.dependencies[dep] = '^{{sdkVersion}}'
                 }
               }
             }
             if (updated.devDependencies) {
               for (const dep of Object.keys(updated.devDependencies)) {
-                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
                   updated.devDependencies[dep] = '^{{sdkVersion}}'
                 }
               }
@@ -184,14 +183,14 @@ function copyTemplatesPlugin() {
             const updated = { ...pkg, name: '@{{projectName}}/admin' }
             if (updated.dependencies) {
               for (const dep of Object.keys(updated.dependencies)) {
-                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
                   updated.dependencies[dep] = '^{{sdkVersion}}'
                 }
               }
             }
             if (updated.devDependencies) {
               for (const dep of Object.keys(updated.devDependencies)) {
-                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk-')) {
+                if (dep.startsWith('@mudrichenkoevgeny/web-platform-sdk')) {
                   updated.devDependencies[dep] = '^{{sdkVersion}}'
                 }
               }

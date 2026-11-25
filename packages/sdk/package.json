@@ -1,0 +1,89 @@
+{
+  "name": "@mudrichenkoevgeny/web-platform-sdk",
+  "version": "0.1.6",
+  "description": "Official Web Platform SDK consolidating identity, security, settings, storage, and user management features.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "src/core/common/theme"
+  ],
+  "exports": {
+    "./core/common": {
+      "types": "./dist/core/common/index.d.ts",
+      "import": "./dist/core/common/index.js",
+      "default": "./dist/core/common/index.js"
+    },
+    "./core/security": {
+      "types": "./dist/core/security/index.d.ts",
+      "import": "./dist/core/security/index.js",
+      "default": "./dist/core/security/index.js"
+    },
+    "./core/settings": {
+      "types": "./dist/core/settings/index.d.ts",
+      "import": "./dist/core/settings/index.js",
+      "default": "./dist/core/settings/index.js"
+    },
+    "./core/storage": {
+      "types": "./dist/core/storage/index.d.ts",
+      "import": "./dist/core/storage/index.js",
+      "default": "./dist/core/storage/index.js"
+    },
+    "./feature/user": {
+      "types": "./dist/feature/user/index.d.ts",
+      "import": "./dist/feature/user/index.js",
+      "default": "./dist/feature/user/index.js"
+    },
+    "./feature/client-user": {
+      "types": "./dist/feature/client-user/index.d.ts",
+      "import": "./dist/feature/client-user/index.js",
+      "default": "./dist/feature/client-user/index.js"
+    },
+    "./feature/management-user": {
+      "types": "./dist/feature/management-user/index.d.ts",
+      "import": "./dist/feature/management-user/index.js",
+      "default": "./dist/feature/management-user/index.js"
+    },
+    "./tokens.css": "./src/core/common/theme/index.css",
+    "./theme.css": "./src/core/common/theme/index.css"
+  },
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mudrichenkoevgeny/web-platform-sdk.git"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@mudrichenkoevgeny/shared-foundation": "catalog:",
+    "clsx": "catalog:",
+    "qrcode.react": "^4.2.0",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@storybook/react": "^10.6.1",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript/typescript6": "^6.0.2",
+    "jsdom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vite-plugin-svgr": "^5.2.0",
+    "vitest": "catalog:"
+  }
+}

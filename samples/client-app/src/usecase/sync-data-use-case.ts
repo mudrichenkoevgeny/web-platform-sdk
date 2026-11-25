@@ -1,5 +1,5 @@
-import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
-import type { RefreshClientUserConfigurationUseCase } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { RefreshClientUserConfigurationUseCase } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
 /**
  * Runs user configuration refresh use case and logs failures without throwing.

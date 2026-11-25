@@ -1,0 +1,635 @@
+import React, { createContext, useContext, useState } from 'react'
+import { createStore, useStore } from 'zustand'
+import {
+  AccountLockoutType,
+  StorageCategory,
+  StorageFileVisibility,
+  UserStorageTargetScopes,
+  toUserIdOrNull,
+  toFileIdOrNull,
+  UserAccountStatus,
+  type UserStorageConfiguration
+} from '@mudrichenkoevgeny/shared-foundation'
+import type { UserPrivate, UserId } from '@mudrichenkoevgeny/shared-foundation'
+import { CommonError, isSuccess } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { AppError, AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
+import type { DeleteUserUseCase } from '@/feature/management-user/usecase/user/delete-user-use-case'
+import type { GetUserUseCase } from '@/feature/management-user/usecase/user/get-user-use-case'
+import type { UpdateUserUseCase } from '@/feature/management-user/usecase/user/update-user-use-case'
+import type { ManagementDisableTotpUseCase } from '@/feature/management-user/usecase/user/security/management-disable-totp-use-case'
+
+/** Selected file payload containing file details and local preview URI for avatar upload. */
+export interface SelectedFilePayload {
+  /** The native File object to upload. */
+  file: File
+  /** Name of the selected file. */
+  fileName: string
+  /** Size of the selected file in bytes. */
+  fileSizeBytes: number
+  /** MIME type of the selected file. */
+  mimeType: string
+  /** Local object URL for rendering a preview before upload. */
+  localUri: string
+}
+
+const parseIntegerOrDefault = (value: string, defaultValue: number): number => {
+  const parsed = parseInt(value, 10)
+  return isNaN(parsed) ? defaultValue : parsed
+}
+
+const parseNullableInteger = (value: string): number | null => {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+  const parsed = parseInt(trimmed, 10)
+  return isNaN(parsed) ? null : parsed
+}
+
+/** Status values for {@link UserDetailScreenState}. */
+export enum UserDetailStatus {
+  /** Loading phase while initial user details are fetched. */
+  LOADING = 'loading',
+  /** Error phase when loading user details fails. */
+  ERROR = 'error',
+  /** Content phase displaying user profile and management controls. */
+  CONTENT = 'content'
+}
+
+/** Discriminated union representing active screen state for user detail screen. */
+export type UserDetailScreenState =
+  | {
+      /** Loading state while user details are being loaded initially. */
+      status: UserDetailStatus.LOADING
+    }
+  | {
+      /** Error state when loading user details failed. */
+      status: UserDetailStatus.ERROR
+      /** Error instance describing the failure. */
+      error: AppError
+    }
+  | {
+      /** Content state containing user detail data and editable inputs. */
+      status: UserDetailStatus.CONTENT
+      /** Private user domain model. */
+      user: UserPrivate
+      /** Whether target user is the currently logged in user. */
+      isSelfUser: boolean
+      /** Input string value for authority level field. */
+      authorityLevelInput: string
+      /** Selected account status input value. */
+      accountStatusInput: UserAccountStatus
+      /** Selected account lockout type input value. */
+      lockoutTypeInput: AccountLockoutType
+      /** Input string value for temporary lockout until timestamp. */
+      temporaryLockoutUntilInput: string
+      /** Input string value for nickname field. */
+      nicknameInput: string
+      /** Input string value for display name field. */
+      displayNameInput: string
+      /** Input string value for birthdate epoch millis. */
+      birthdateInput: string
+      /** Avatar file ID string. */
+      avatarFileIdInput: string
+      /** Avatar URL string. */
+      avatarUrl: string | null
+      /** Selected local avatar file payload. */
+      selectedAvatarPayload: SelectedFilePayload | null
+      /** Input string value for storage quota bytes field. */
+      storageQuotaBytesInput: string
+      /** Input string value for max upload size bytes field. */
+      storageMaxUploadSizeBytesInput: string
+      /** Input string value for max pending uploads field. */
+      storageMaxPendingUploadsInput: string
+      /** Whether an update action is currently saving. */
+      isSaving: boolean
+      /** Update error instance if saving failed. */
+      saveError: AppError | null
+      /** Whether user deletion is currently in progress. */
+      isDeleting: boolean
+      /** Deletion error instance if delete operation failed. */
+      deleteError: AppError | null
+      /** Whether TOTP disabling is currently in progress. */
+      isDisablingTotp: boolean
+      /** TOTP disabling error instance if operation failed. */
+      disableTotpError: AppError | null
+      /** Whether user delete confirmation modal dialog is visible. */
+      isDeleteConfirmationVisible: boolean
+    }
+
+/** External dependencies required by {@link createUserDetailStore}. */
+export interface UserDetailStoreDependencies {
+  /** Target user ID. */
+  userId: UserId
+  /** Optional currently authenticated user ID. */
+  currentUserId?: UserId | null
+  /** Use case for loading user details. */
+  getUserUseCase: Pick<GetUserUseCase, 'execute'>
+  /** Use case for updating user settings. */
+  updateUserUseCase: Pick<UpdateUserUseCase, 'execute'>
+  /** Use case for deleting user account. */
+  deleteUserUseCase: Pick<DeleteUserUseCase, 'execute'>
+  /** Use case for disabling TOTP MFA. */
+  managementDisableTotpUseCase: Pick<ManagementDisableTotpUseCase, 'execute'>
+  /** Optional use case for uploading avatar file with typed domain parameters. */
+  uploadFileUseCase?: {
+    execute(params: {
+      file: File
+      category: StorageCategory
+      visibility: StorageFileVisibility
+      targetScope: UserStorageTargetScopes
+      onProgress?: (percent: number) => void
+    }): Promise<AppResult<{ id: string; fileUrls?: { originalUrl: string } | null }, AppError>>
+  }
+  /** Navigation callback to open user sessions list. */
+  onNavigateToSessions: (userId: UserId) => void
+  /** Navigation callback to open user identifiers list. */
+  onNavigateToIdentifiers: (userId: UserId) => void
+  /** Navigation callback to open user storage files list. */
+  onNavigateToStorageFiles?: (userId: UserId) => void
+  /** Navigation callback to open user audit events list. */
+  onNavigateToAuditEvents: (userId: UserId) => void
+  /** Navigation callback to return to previous screen. */
+  onBack: () => void
+}
+
+/** Reactive store state and action interface for user detail screen. */
+export interface UserDetailStoreState {
+  /** Current screen UI state. */
+  screenState: UserDetailScreenState
+  /** Initializes screen state by loading user details. */
+  initScreen: () => Promise<void>
+  /** Handles authority level input value change. */
+  onAuthorityLevelChanged: (value: string) => void
+  /** Handles nickname input value change. */
+  onNicknameChanged: (value: string) => void
+  /** Handles display name input value change. */
+  onDisplayNameChanged: (value: string) => void
+  /** Handles birthdate input value change. */
+  onBirthdateChanged: (value: string) => void
+  /** Handles avatar file selection. */
+  onAvatarFileSelected: (payload: SelectedFilePayload) => void
+  /** Handles avatar removal click. */
+  onRemoveAvatarClick: () => void
+  /** Handles account status select option change. */
+  onAccountStatusChanged: (value: UserAccountStatus) => void
+  /** Handles lockout type select option change. */
+  onLockoutTypeChanged: (value: AccountLockoutType) => void
+  /** Handles temporary lockout until input value change. */
+  onTemporaryLockoutUntilChanged: (value: string) => void
+  /** Handles storage quota bytes input change. */
+  onStorageQuotaBytesChanged: (value: string) => void
+  /** Handles max upload size bytes input change. */
+  onStorageMaxUploadSizeBytesChanged: (value: string) => void
+  /** Handles max pending uploads input change. */
+  onStorageMaxPendingUploadsChanged: (value: string) => void
+  /** Submits updated user settings. */
+  onUpdateClick: () => Promise<void>
+  /** Opens delete confirmation modal dialog. */
+  onDeleteClick: () => void
+  /** Confirms and submits user account deletion. */
+  onConfirmDeleteClick: () => Promise<void>
+  /** Dismisses delete confirmation modal dialog. */
+  onDismissDeleteDialog: () => void
+  /** Submits request to disable TOTP MFA for target user. */
+  onDisableTotpClick: () => Promise<void>
+  /** Opens user sessions screen. */
+  onSessionsClick: () => void
+  /** Opens user identifiers screen. */
+  onIdentifiersClick: () => void
+  /** Opens user storage files screen. */
+  onStorageFilesClick: () => void
+  /** Opens user audit events screen. */
+  onAuditEventsClick: () => void
+  /** Retries loading user details after failure. */
+  onRetry: () => Promise<void>
+  /** Handles back navigation button click. */
+  onBackClick: () => void
+}
+
+/** Type alias for Zustand store instance returned by {@link createUserDetailStore}. */
+export type UserDetailStore = ReturnType<typeof createUserDetailStore>
+
+/**
+ * Checks whether the current screen state has unsaved user detail changes.
+ *
+ * @param state - Current content screen state
+ * @returns True if input values differ from original user data
+ */
+export const hasUserDetailChanges = (state: Extract<UserDetailScreenState, { status: UserDetailStatus.CONTENT }>): boolean => {
+  const initialAuthLevel = state.user.authorityLevel.toString()
+  const currentAuthLevel = state.authorityLevelInput.trim() || '0'
+  const initialTempLockout = state.user.temporaryLockoutUntil ? String(state.user.temporaryLockoutUntil) : ''
+  const initialLockoutType = state.user.lockoutType ?? AccountLockoutType.NONE
+
+  const initialQuota = state.user.storageConfiguration?.quotaBytes != null ? String(state.user.storageConfiguration.quotaBytes) : ''
+  const initialMaxUpload = state.user.storageConfiguration?.maxUploadSizeBytes != null ? String(state.user.storageConfiguration.maxUploadSizeBytes) : ''
+  const initialMaxPending = state.user.storageConfiguration?.maxPendingUploads != null ? String(state.user.storageConfiguration.maxPendingUploads) : ''
+
+  const initialNickname = state.user.nickname ?? ''
+  const initialDisplayName = state.user.displayName ?? ''
+  const initialBirthdate = state.user.birthdate != null ? String(state.user.birthdate) : ''
+  const initialAvatarFileId = state.user.avatarFileId != null ? String(state.user.avatarFileId) : ''
+
+  return (
+    currentAuthLevel !== initialAuthLevel ||
+    state.accountStatusInput !== state.user.accountStatus ||
+    state.lockoutTypeInput !== initialLockoutType ||
+    state.temporaryLockoutUntilInput.trim() !== initialTempLockout ||
+    state.storageQuotaBytesInput.trim() !== initialQuota ||
+    state.storageMaxUploadSizeBytesInput.trim() !== initialMaxUpload ||
+    state.storageMaxPendingUploadsInput.trim() !== initialMaxPending ||
+    state.nicknameInput.trim() !== initialNickname ||
+    state.displayNameInput.trim() !== initialDisplayName ||
+    state.birthdateInput.trim() !== initialBirthdate ||
+    state.avatarFileIdInput !== initialAvatarFileId ||
+    state.selectedAvatarPayload !== null
+  )
+}
+
+/**
+ * Factory function creating a Zustand store instance for user detail screen.
+ *
+ * @param deps - Injected store dependencies
+ * @param initialState - Optional initial screen state override
+ * @returns Initialized store instance
+ */
+export const createUserDetailStore = (
+  deps: UserDetailStoreDependencies,
+  initialState?: UserDetailScreenState
+) => {
+  let isFetching = false
+
+  return createStore<UserDetailStoreState>()((set, get) => ({
+    screenState: initialState ?? { status: UserDetailStatus.LOADING },
+
+    initScreen: async () => {
+      const current = get().screenState
+      if (isFetching || current.status === UserDetailStatus.CONTENT) {
+        return
+      }
+      isFetching = true
+
+      try {
+        const validUserId = toUserIdOrNull(deps.userId)
+        if (!validUserId) {
+          set({
+            screenState: {
+              status: UserDetailStatus.ERROR,
+              error: CommonError.unknown()
+            }
+          })
+          return
+        }
+
+        set({ screenState: { status: UserDetailStatus.LOADING } })
+        const userResult = await deps.getUserUseCase.execute(validUserId)
+
+        if (isSuccess(userResult)) {
+          const user = userResult.data
+          const isSelfUser = deps.currentUserId != null && user.id === deps.currentUserId
+          const avatarUrl = user.avatarUrls?.originalUrl ?? null
+          set({
+            screenState: {
+              status: UserDetailStatus.CONTENT,
+              user,
+              isSelfUser,
+              nicknameInput: user.nickname ?? '',
+              displayNameInput: user.displayName ?? '',
+              birthdateInput: user.birthdate != null ? String(user.birthdate) : '',
+              avatarFileIdInput: user.avatarFileId != null ? String(user.avatarFileId) : '',
+              avatarUrl,
+              selectedAvatarPayload: null,
+              authorityLevelInput: String(user.authorityLevel),
+              accountStatusInput: user.accountStatus,
+              lockoutTypeInput: user.lockoutType ?? AccountLockoutType.NONE,
+              temporaryLockoutUntilInput: user.temporaryLockoutUntil ? String(user.temporaryLockoutUntil) : '',
+              storageQuotaBytesInput: user.storageConfiguration?.quotaBytes != null ? String(user.storageConfiguration.quotaBytes) : '',
+              storageMaxUploadSizeBytesInput: user.storageConfiguration?.maxUploadSizeBytes != null ? String(user.storageConfiguration.maxUploadSizeBytes) : '',
+              storageMaxPendingUploadsInput: user.storageConfiguration?.maxPendingUploads != null ? String(user.storageConfiguration.maxPendingUploads) : '',
+              isSaving: false,
+              saveError: null,
+              isDeleting: false,
+              deleteError: null,
+              isDisablingTotp: false,
+              disableTotpError: null,
+              isDeleteConfirmationVisible: false
+            }
+          })
+        } else {
+          set({
+            screenState: {
+              status: UserDetailStatus.ERROR,
+              error: userResult.error
+            }
+          })
+        }
+      } finally {
+        isFetching = false
+      }
+    },
+
+    onAuthorityLevelChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status !== UserDetailStatus.CONTENT) {
+        return
+      }
+
+      if (value === '') {
+        set({ screenState: { ...current, authorityLevelInput: value, saveError: null } })
+        return
+      }
+
+      const num = parseIntegerOrDefault(value, -1)
+      if (num >= 0 && num <= 100) {
+        set({ screenState: { ...current, authorityLevelInput: value, saveError: null } })
+      }
+    },
+
+    onNicknameChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, nicknameInput: value, saveError: null } })
+      }
+    },
+
+    onDisplayNameChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, displayNameInput: value, saveError: null } })
+      }
+    },
+
+    onBirthdateChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, birthdateInput: value, saveError: null } })
+      }
+    },
+
+    onAvatarFileSelected: (payload: SelectedFilePayload) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            selectedAvatarPayload: payload,
+            avatarUrl: payload.localUri,
+            saveError: null
+          }
+        })
+      }
+    },
+
+    onRemoveAvatarClick: () => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({
+          screenState: {
+            ...current,
+            avatarFileIdInput: '',
+            avatarUrl: null,
+            selectedAvatarPayload: null,
+            saveError: null
+          }
+        })
+      }
+    },
+
+    onAccountStatusChanged: (value: UserAccountStatus) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, accountStatusInput: value, saveError: null } })
+      }
+    },
+
+    onLockoutTypeChanged: (value: AccountLockoutType) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, lockoutTypeInput: value, saveError: null } })
+      }
+    },
+
+    onTemporaryLockoutUntilChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, temporaryLockoutUntilInput: value, saveError: null } })
+      }
+    },
+
+    onStorageQuotaBytesChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageQuotaBytesInput: value, saveError: null } })
+      }
+    },
+
+    onStorageMaxUploadSizeBytesChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageMaxUploadSizeBytesInput: value, saveError: null } })
+      }
+    },
+
+    onStorageMaxPendingUploadsChanged: (value: string) => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, storageMaxPendingUploadsInput: value, saveError: null } })
+      }
+    },
+
+    onUpdateClick: async () => {
+      const current = get().screenState
+      if (current.status !== UserDetailStatus.CONTENT || current.isSaving) {
+        return
+      }
+
+      set({ screenState: { ...current, isSaving: true, saveError: null } })
+
+      let uploadedAvatarFileId = current.user.avatarFileId ?? null
+      const avatarPayload = current.selectedAvatarPayload
+
+      if (avatarPayload != null && deps.uploadFileUseCase != null) {
+        const uploadResult = await deps.uploadFileUseCase.execute({
+          file: avatarPayload.file,
+          category: StorageCategory.IMAGE,
+          visibility: StorageFileVisibility.PUBLIC,
+          targetScope: UserStorageTargetScopes.AVATAR
+        })
+
+        if (isSuccess(uploadResult)) {
+          uploadedAvatarFileId = toFileIdOrNull(uploadResult.data.id)
+        } else {
+          const latest = get().screenState
+          if (latest.status === UserDetailStatus.CONTENT) {
+            set({ screenState: { ...latest, isSaving: false, saveError: uploadResult.error } })
+          }
+          return
+        }
+      }
+
+      const authLevel = parseIntegerOrDefault(current.authorityLevelInput, 0)
+      const tempLockout = current.temporaryLockoutUntilInput.trim().length > 0
+        ? parseIntegerOrDefault(current.temporaryLockoutUntilInput, 0)
+        : null
+
+      const quota = parseNullableInteger(current.storageQuotaBytesInput)
+      const maxUpload = parseNullableInteger(current.storageMaxUploadSizeBytesInput)
+      const maxPending = parseNullableInteger(current.storageMaxPendingUploadsInput)
+
+      const hasStorageConfig = quota !== null || maxUpload !== null || maxPending !== null
+      const storageConfiguration: UserStorageConfiguration | null = hasStorageConfig
+        ? {
+            quotaBytes: quota,
+            maxUploadSizeBytes: maxUpload,
+            maxPendingUploads: maxPending
+          }
+        : null
+
+      const birthdateNum = current.birthdateInput.trim()
+        ? parseInt(current.birthdateInput.trim(), 10)
+        : null
+
+      const updateUserResult = await deps.updateUserUseCase.execute(deps.userId, {
+        accountStatus: current.accountStatusInput,
+        authorityLevel: authLevel,
+        permissionCodes: null,
+        lockoutType: current.lockoutTypeInput,
+        temporaryLockoutUntil: tempLockout,
+        storageConfiguration,
+        nickname: current.nicknameInput.trim() || null,
+        displayName: current.displayNameInput.trim() || null,
+        avatarFileId: toFileIdOrNull(uploadedAvatarFileId),
+        birthdate: birthdateNum
+      })
+
+      if (isSuccess(updateUserResult)) {
+        await get().initScreen()
+      } else {
+        const updated = get().screenState
+        if (updated.status === UserDetailStatus.CONTENT) {
+          set({ screenState: { ...updated, isSaving: false, saveError: updateUserResult.error } })
+        }
+      }
+    },
+
+    onDeleteClick: () => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, isDeleteConfirmationVisible: true, deleteError: null } })
+      }
+    },
+
+    onConfirmDeleteClick: async () => {
+      const current = get().screenState
+      if (current.status !== UserDetailStatus.CONTENT) {
+        return
+      }
+
+      set({ screenState: { ...current, isDeleteConfirmationVisible: false, isDeleting: true, deleteError: null } })
+
+      const deleteUserResult = await deps.deleteUserUseCase.execute(deps.userId)
+      if (isSuccess(deleteUserResult)) {
+        deps.onBack()
+      } else {
+        const updated = get().screenState
+        if (updated.status === UserDetailStatus.CONTENT) {
+          set({ screenState: { ...updated, isDeleting: false, deleteError: deleteUserResult.error } })
+        }
+      }
+    },
+
+    onDismissDeleteDialog: () => {
+      const current = get().screenState
+      if (current.status === UserDetailStatus.CONTENT) {
+        set({ screenState: { ...current, isDeleteConfirmationVisible: false } })
+      }
+    },
+
+    onDisableTotpClick: async () => {
+      const current = get().screenState
+      if (current.status !== UserDetailStatus.CONTENT || current.isDisablingTotp) {
+        return
+      }
+
+      set({ screenState: { ...current, isDisablingTotp: true, disableTotpError: null } })
+
+      const disableTotpResult = await deps.managementDisableTotpUseCase.execute(deps.userId)
+      if (isSuccess(disableTotpResult)) {
+        await get().initScreen()
+      } else {
+        const updated = get().screenState
+        if (updated.status === UserDetailStatus.CONTENT) {
+          set({ screenState: { ...updated, isDisablingTotp: false, disableTotpError: disableTotpResult.error } })
+        }
+      }
+    },
+
+    onSessionsClick: () => {
+      deps.onNavigateToSessions(deps.userId)
+    },
+
+    onIdentifiersClick: () => {
+      deps.onNavigateToIdentifiers(deps.userId)
+    },
+
+    onStorageFilesClick: () => {
+      deps.onNavigateToStorageFiles?.(deps.userId)
+    },
+
+    onAuditEventsClick: () => {
+      deps.onNavigateToAuditEvents(deps.userId)
+    },
+
+    onRetry: async () => {
+      await get().initScreen()
+    },
+
+    onBackClick: () => {
+      deps.onBack()
+    }
+  }))
+}
+
+const UserDetailContext = createContext<UserDetailStore | null>(null)
+
+/** Props for {@link UserDetailProvider}. */
+export interface UserDetailProviderProps {
+  /** Injected dependencies. */
+  dependencies: UserDetailStoreDependencies
+  /** Optional initial state override. */
+  initialState?: UserDetailScreenState
+  /** React child nodes. */
+  children: React.ReactNode
+}
+
+/** Context provider wrapping React components with user detail store state. */
+export const UserDetailProvider: React.FC<UserDetailProviderProps> = ({
+  dependencies,
+  initialState,
+  children
+}) => {
+  const [store] = useState(() => createUserDetailStore(dependencies, initialState))
+
+  return (
+    <UserDetailContext.Provider value={store}>
+      {children}
+    </UserDetailContext.Provider>
+  )
+}
+
+/**
+ * Custom React hook for selecting reactive state from {@link UserDetailStore}.
+ *
+ * @param selector - Selector function transforming store state
+ * @returns Selected slice of store state
+ */
+export const useUserDetailStore = <T,>(
+  selector: (state: UserDetailStoreState) => T
+): T => {
+  const store = useContext(UserDetailContext)
+  if (!store) {
+    throw new Error('useUserDetailStore must be used within UserDetailProvider')
+  }
+  return useStore(store, selector)
+}

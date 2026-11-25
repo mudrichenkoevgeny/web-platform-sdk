@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { ClientAuthNavigation, ClientUserNavigation } from '@mudrichenkoevgeny/shared-foundation'
-import { RegistrationByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { RegistrationByEmailScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 import { useNavigateUp } from '@/ui/navigation/use-navigate-up'
 
 export const Route = createFileRoute('/auth/registration/')({

@@ -12,12 +12,7 @@
   },
   "dependencies": {
     "@mudrichenkoevgeny/shared-foundation": "catalog:",
-    "@mudrichenkoevgeny/web-platform-sdk-core-common": "workspace:*",
-    "@mudrichenkoevgeny/web-platform-sdk-core-security": "workspace:*",
-    "@mudrichenkoevgeny/web-platform-sdk-core-settings": "workspace:*",
-    "@mudrichenkoevgeny/web-platform-sdk-core-storage": "workspace:*",
-    "@mudrichenkoevgeny/web-platform-sdk-feature-clientuser": "workspace:*",
-    "@mudrichenkoevgeny/web-platform-sdk-feature-user": "workspace:*",
+    "@mudrichenkoevgeny/web-platform-sdk": "workspace:*",
     "@tanstack/react-router": "catalog:",
     "clsx": "catalog:",
     "react": "catalog:",

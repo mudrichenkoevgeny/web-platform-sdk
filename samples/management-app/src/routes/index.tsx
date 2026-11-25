@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 import {
   ManagementAuditNavigation,
   ManagementUsersNavigation,
