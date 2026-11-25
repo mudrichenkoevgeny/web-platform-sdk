@@ -10,7 +10,7 @@ export default function (plop) {
       {
         type: 'input',
         name: 'package',
-        message: 'Target package or directory (e.g. core-common or src):',
+        message: 'Target package or directory (e.g. core/common or src):',
         default: 'src'
       },
       {
@@ -39,7 +39,7 @@ export default function (plop) {
       {
         type: 'input',
         name: 'package',
-        message: 'Target package or directory (e.g. feature-clientuser or src):',
+        message: 'Target package or directory (e.g. feature/client-user or src):',
         default: 'src'
       },
       {

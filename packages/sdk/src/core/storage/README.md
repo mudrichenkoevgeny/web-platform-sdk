@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-storage
+# @mudrichenkoevgeny/web-platform-sdk/core/storage
 
 File storage management module for the Web Platform SDK: **file operations**, **direct S3 XMLHttpRequest uploader**, **presigned upload URL handling**, **storage settings management**, **WebSocket real-time synchronization**, domain **use cases**, and **Zustand React UI components and screens**.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
@@ -40,15 +40,15 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `StorageComponent` manual dependency injection assembly point. |
-| `src/error/` | Storage-specific `AppError` subclasses and `StorageErrorParser`. |
-| `src/network/` | `StorageApi`, `FetchOpenStorageSettingsApi`, and `StorageWebSocketMessageHandler`. |
-| `src/uploader/` | `uploadFileDirectly` XMLHttpRequest S3 uploader. |
-| `src/storage/` | `OpenStorageSettingsStorage` interface and `EncryptedOpenStorageSettingsStorage` (AES-GCM). |
-| `src/repository/` | `StorageRepository` and `OpenStorageSettingsRepository` contracts. |
-| `src/usecase/` | `GetFilesUseCase`, `GetFileDetailUseCase`, `UploadFileUseCase`, `DeleteFileUseCase`, `DeleteFilesBatchUseCase`, and settings use cases. |
-| `src/ui/` | React screens (`StorageFileListScreen`, `StorageFileDetailScreen`, `StorageFileUploadScreen`), components, Zustand stores, and icon utilities. |
-| `src/mock/` | Test doubles and mock dependency factories (`StorageComponentMock`, `storageFileDetailDependenciesMock`, etc.). |
+| `di/` | `StorageComponent` manual dependency injection assembly point. |
+| `error/` | Storage-specific `AppError` subclasses and `StorageErrorParser`. |
+| `network/` | `StorageApi`, `FetchOpenStorageSettingsApi`, and `StorageWebSocketMessageHandler`. |
+| `uploader/` | `uploadFileDirectly` XMLHttpRequest S3 uploader. |
+| `storage/` | `OpenStorageSettingsStorage` interface and `EncryptedOpenStorageSettingsStorage` (AES-GCM). |
+| `repository/` | `StorageRepository` and `OpenStorageSettingsRepository` contracts. |
+| `usecase/` | `GetFilesUseCase`, `GetFileDetailUseCase`, `UploadFileUseCase`, `DeleteFileUseCase`, `DeleteFilesBatchUseCase`, and settings use cases. |
+| `ui/` | React screens (`StorageFileListScreen`, `StorageFileDetailScreen`, `StorageFileUploadScreen`), components, Zustand stores, and icon utilities. |
+| `mock/` | Test doubles and mock dependency factories (`StorageComponentMock`, `storageFileDetailDependenciesMock`, etc.). |
 
 ---
 
@@ -56,14 +56,14 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-storage
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing StorageComponent & Registration
 
 ```typescript
-import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-storage'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { StorageComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/storage'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const storageComponent = new StorageComponent({
   webSocketService: commonComponent.webSocketService,

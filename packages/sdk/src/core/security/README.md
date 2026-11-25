@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-security
+# @mudrichenkoevgeny/web-platform-sdk/core/security
 
 Security policy and password validation module for the Web Platform SDK: client-side **password policy evaluation**, **open security settings persistence & caching**, **WebSocket real-time policy sync**, domain **error parsing**, and manual DI wiring via **`SecurityComponent`**.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
@@ -38,15 +38,15 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `SecurityComponent` manual dependency injection assembly point. |
-| `src/domain/` | `OpenSecuritySettings` domain model and `PasswordPolicyValidator`. |
-| `src/storage/` | `OpenSecuritySettingsStorage` interface and `EncryptedOpenSecuritySettingsStorage` (AES-GCM). |
-| `src/network/` | `OpenSecuritySettingsApi`, `FetchOpenSecuritySettingsApi`, and `SecurityWebSocketMessageHandler`. |
-| `src/repository/` | `OpenSecuritySettingsRepository` interface and `OpenSecuritySettingsRepositoryImpl`. |
-| `src/usecase/` | `ValidatePasswordUseCase` and `RefreshOpenSecuritySettingsUseCase`. |
-| `src/error/` | `SecurityError`, `ClientSecurityErrorCodes`, and `SecurityErrorParser`. |
-| `src/locales/` | Typed localization string dictionaries for security domain errors. |
-| `src/mock/` | Test doubles (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`). |
+| `di/` | `SecurityComponent` manual dependency injection assembly point. |
+| `domain/` | `OpenSecuritySettings` domain model and `PasswordPolicyValidator`. |
+| `storage/` | `OpenSecuritySettingsStorage` interface and `EncryptedOpenSecuritySettingsStorage` (AES-GCM). |
+| `network/` | `OpenSecuritySettingsApi`, `FetchOpenSecuritySettingsApi`, and `SecurityWebSocketMessageHandler`. |
+| `repository/` | `OpenSecuritySettingsRepository` interface and `OpenSecuritySettingsRepositoryImpl`. |
+| `usecase/` | `ValidatePasswordUseCase` and `RefreshOpenSecuritySettingsUseCase`. |
+| `error/` | `SecurityError`, `ClientSecurityErrorCodes`, and `SecurityErrorParser`. |
+| `locales/` | Typed localization string dictionaries for security domain errors. |
+| `mock/` | Test doubles (`SecurityComponentMock`, `OpenSecuritySettingsRepositoryMock`, `OpenSecuritySettingsApiMock`). |
 
 ---
 
@@ -54,7 +54,7 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-security
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing SecurityComponent & Registration
@@ -62,8 +62,8 @@ pnpm add @mudrichenkoevgeny/web-platform-sdk-core-security
 Construct `SecurityComponent` by providing core infrastructure dependencies from `CommonComponent`, and register the error parser and WebSocket handler:
 
 ```typescript
-import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { SecurityComponent, SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const securityComponent = new SecurityComponent({
   webSocketService: commonComponent.webSocketService,
@@ -85,7 +85,7 @@ commonComponent.webSocketService.updateWebSocketMessageHandlers([
 ### 3. Validating a Password
 
 ```typescript
-import { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-security'
+import { ValidatePasswordUseCase } from '@mudrichenkoevgeny/web-platform-sdk/core/security'
 
 const validatePassword = new ValidatePasswordUseCase(securityComponent.openSecuritySettingsRepository)
 

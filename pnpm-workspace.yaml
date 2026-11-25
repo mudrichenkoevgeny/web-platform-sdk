@@ -11,11 +11,11 @@ allowBuilds:
   uglifyjs-webpack-plugin: true
   canvas: true
   '@mudrichenkoevgeny/shared-foundation': true
-  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.24.tgz': true
+  '@mudrichenkoevgeny/shared-foundation@file:../shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz': true
 
 catalog:
-  '@mudrichenkoevgeny/shared-foundation': 'file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.24.tgz'
-  #'@mudrichenkoevgeny/shared-foundation': '^0.1.24'
+  '@mudrichenkoevgeny/shared-foundation': 'file:C:/Users/Loop/AndroidStudioProjects/shared-foundation/build/npm-package/mudrichenkoevgeny-shared-foundation-0.1.25.tgz'
+  #'@mudrichenkoevgeny/shared-foundation': '^0.1.25'
   '@tanstack/react-router': '^1.111.0'
   '@tanstack/router-cli': '^1.111.0'
   '@tanstack/router-plugin': '^1.111.0'
@@ -38,6 +38,7 @@ catalog:
   'vite': ^8.3.4
   "@vitejs/plugin-react": "^6.3.0"
   'vite-plugin-dts': ^5.1.2
+  'vite-plugin-svgr': '^5.2.0'
   'vitest': ^5.0.4
   'zod': '^3.23.8'
   'zustand': '^5.0.0'
@@ -45,4 +46,4 @@ catalog:
   "@vitest/coverage-v8": ^5.0.4
 
 minimumReleaseAgeExclude:
-  - '@mudrichenkoevgeny/shared-foundation@0.1.24'
+  - '@mudrichenkoevgeny/shared-foundation@0.1.25'

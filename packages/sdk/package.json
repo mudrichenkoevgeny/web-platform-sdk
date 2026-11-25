@@ -1,6 +1,6 @@
 {
   "name": "@mudrichenkoevgeny/web-platform-sdk",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Official Web Platform SDK consolidating identity, security, settings, storage, and user management features.",
   "license": "Apache-2.0",
   "type": "module",
@@ -72,7 +72,7 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
-    "@storybook/react": "^10.6.1",
+    "@storybook/react": "^10.6.8",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/node": "catalog:",
@@ -83,7 +83,7 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
-    "vite-plugin-svgr": "^5.2.0",
+    "vite-plugin-svgr": "catalog:",
     "vitest": "catalog:"
   }
 }

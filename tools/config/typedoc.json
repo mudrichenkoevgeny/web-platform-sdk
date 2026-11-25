@@ -1,14 +1,15 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
-    "../../packages/core-common/src/index.ts",
-    "../../packages/core-security/src/index.ts",
-    "../../packages/core-settings/src/index.ts",
-    "../../packages/core-storage/src/index.ts",
-    "../../packages/feature-user/src/index.ts",
-    "../../packages/feature-clientuser/src/index.ts",
-    "../../packages/feature-managementuser/src/index.ts"
+    "../../packages/sdk/src/core/common/index.ts",
+    "../../packages/sdk/src/core/security/index.ts",
+    "../../packages/sdk/src/core/settings/index.ts",
+    "../../packages/sdk/src/core/storage/index.ts",
+    "../../packages/sdk/src/feature/user/index.ts",
+    "../../packages/sdk/src/feature/client-user/index.ts",
+    "../../packages/sdk/src/feature/management-user/index.ts"
   ],
+  "tsconfig": "../../packages/sdk/tsconfig.json",
   "out": "../../dist/docs",
   "readme": "../../README.md",
   "name": "Web Platform SDK API Reference",

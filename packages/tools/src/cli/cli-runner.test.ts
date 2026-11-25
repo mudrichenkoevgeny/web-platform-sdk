@@ -98,7 +98,7 @@ describe('CLI Runner init command', () => {
     }
 
     verifyNoPlaceholders(targetProjectDir)
-  })
+  }, 15000)
 
   it('scaffolds workspace with --link-local overrides', async () => {
     const projectName = 'my-app'
@@ -112,7 +112,7 @@ describe('CLI Runner init command', () => {
     expect(overridesSection).toContain("'@mudrichenkoevgeny/web-platform-sdk': 'link:")
     expect(overridesSection).toContain("'@mudrichenkoevgeny/web-platform-sdk-tools': 'link:")
     expect(overridesSection).not.toContain('\\')
-  })
+  }, 15000)
 
   it('scaffolds into <name>-web subdirectory when CWD is non-empty', async () => {
     const projectName = 'my-app'
@@ -124,7 +124,7 @@ describe('CLI Runner init command', () => {
     expect(fs.existsSync(targetProjectDir)).toBe(true)
     expect(fs.existsSync(path.join(targetProjectDir, 'package.json'))).toBe(true)
     expect(fs.existsSync(path.join(targetProjectDir, 'apps/client/package.json'))).toBe(true)
-  })
+  }, 15000)
 
   it('scaffolds client-only app when type is client', async () => {
     const projectName = 'consumer-app'

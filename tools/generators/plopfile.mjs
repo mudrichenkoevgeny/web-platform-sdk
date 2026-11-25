@@ -4,16 +4,16 @@ export default function (plop) {
     prompts: [
       {
         type: 'list',
-        name: 'package',
-        message: 'Select target package:',
+        name: 'module',
+        message: 'Select target internal SDK module:',
         choices: [
-          'core-common',
-          'core-security',
-          'core-settings',
-          'core-storage',
-          'feature-user',
-          'feature-clientuser',
-          'feature-managementuser'
+          'core/common',
+          'core/security',
+          'core/settings',
+          'core/storage',
+          'feature/user',
+          'feature/client-user',
+          'feature/management-user'
         ]
       },
       {
@@ -25,13 +25,13 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: 'packages/{{package}}/src/domain/usecase/{{kebabCase name}}-use-case.ts',
-        templateFile: 'tools/generators/templates/usecase.ts.hbs'
+        path: 'packages/sdk/src/{{module}}/usecase/{{kebabCase name}}-use-case.ts',
+        templateFile: 'tools/generators/generators/templates/usecase.ts.hbs'
       },
       {
         type: 'add',
-        path: 'packages/{{package}}/src/domain/usecase/{{kebabCase name}}-use-case.test.ts',
-        templateFile: 'tools/generators/templates/usecase.test.ts.hbs'
+        path: 'packages/sdk/src/{{module}}/usecase/{{kebabCase name}}-use-case.test.ts',
+        templateFile: 'tools/generators/generators/templates/usecase.test.ts.hbs'
       }
     ]
   })
@@ -41,17 +41,23 @@ export default function (plop) {
     prompts: [
       {
         type: 'list',
-        name: 'package',
-        message: 'Select target package:',
+        name: 'module',
+        message: 'Select target internal SDK module:',
         choices: [
-          'core-common',
-          'core-security',
-          'core-settings',
-          'core-storage',
-          'feature-user',
-          'feature-clientuser',
-          'feature-managementuser'
+          'core/common',
+          'core/security',
+          'core/settings',
+          'core/storage',
+          'feature/user',
+          'feature/client-user',
+          'feature/management-user'
         ]
+      },
+      {
+        type: 'input',
+        name: 'category',
+        message: 'Component category subfolder (e.g. button, input, card):',
+        default: 'common'
       },
       {
         type: 'input',
@@ -62,18 +68,18 @@ export default function (plop) {
     actions: [
       {
         type: 'add',
-        path: 'packages/{{package}}/src/presentation/components/{{pascalCase name}}/{{pascalCase name}}.tsx',
-        templateFile: 'tools/generators/templates/component.tsx.hbs'
+        path: 'packages/sdk/src/{{module}}/ui/components/{{kebabCase category}}/{{kebabCase name}}/{{pascalCase name}}.tsx',
+        templateFile: 'tools/generators/generators/templates/component.tsx.hbs'
       },
       {
         type: 'add',
-        path: 'packages/{{package}}/src/presentation/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx',
-        templateFile: 'tools/generators/templates/component.test.tsx.hbs'
+        path: 'packages/sdk/src/{{module}}/ui/components/{{kebabCase category}}/{{kebabCase name}}/{{pascalCase name}}.test.tsx',
+        templateFile: 'tools/generators/generators/templates/component.test.tsx.hbs'
       },
       {
         type: 'add',
-        path: 'packages/{{package}}/src/presentation/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx',
-        templateFile: 'tools/generators/templates/component.stories.tsx.hbs'
+        path: 'packages/sdk/src/{{module}}/ui/components/{{kebabCase category}}/{{kebabCase name}}/{{pascalCase name}}.stories.tsx',
+        templateFile: 'tools/generators/generators/templates/component.stories.tsx.hbs'
       }
     ]
   })

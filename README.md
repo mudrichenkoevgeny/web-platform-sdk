@@ -22,14 +22,13 @@ Managed as a monorepo via `pnpm` workspaces:
 ### SDK Subpath Entry Points
 
 The `@mudrichenkoevgeny/web-platform-sdk` package exports the following subpath entry points:
-
-- **`@mudrichenkoevgeny/web-platform-sdk/core/common`**: Native Fetch HTTP client, WebSocket lifecycle, WebCrypto encrypted storage, Chain of Responsibility error parser, React UI primitives, and design tokens.
-- **`@mudrichenkoevgeny/web-platform-sdk/core/security`**: Password policy validator, open security settings API, WebCrypto security settings cache, real-time WebSocket policy synchronization.
-- **`@mudrichenkoevgeny/web-platform-sdk/core/settings`**: Global application configuration management, Fetch API client, encrypted storage caching, real-time WebSocket settings sync, Zustand settings store.
-- **`@mudrichenkoevgeny/web-platform-sdk/core/storage`**: File storage management solution, presigned S3 upload API client, Direct S3 XMLHttpRequest uploader, storage error parser, Zustand reactive UI components.
-- **`@mudrichenkoevgeny/web-platform-sdk/feature/user`**: Headless identity & auth domain foundation: Zod schemas, auth token storage, session auto-refresh, TOTP 2FA, session management, multi-identifier linking.
-- **`@mudrichenkoevgeny/web-platform-sdk/feature/client-user`**: Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, ready-to-use React login screens.
-- **`@mudrichenkoevgeny/web-platform-sdk/feature/management-user`**: Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, audit inspection UI.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/common`** ([README](packages/sdk/src/core/common/README.md)): Native Fetch HTTP client, WebSocket lifecycle, WebCrypto encrypted storage, Chain of Responsibility error parser, React UI primitives, and design tokens.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/security`** ([README](packages/sdk/src/core/security/README.md)): Password policy validator, open security settings API, WebCrypto security settings cache, real-time WebSocket policy synchronization.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/settings`** ([README](packages/sdk/src/core/settings/README.md)): Global application configuration management, Fetch API client, encrypted storage caching, real-time WebSocket settings sync, Zustand settings store.
+- **`@mudrichenkoevgeny/web-platform-sdk/core/storage`** ([README](packages/sdk/src/core/storage/README.md)): File storage management solution, presigned S3 upload API client, Direct S3 XMLHttpRequest uploader, storage error parser, Zustand reactive UI components.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/user`** ([README](packages/sdk/src/feature/user/README.md)): Headless identity & auth domain foundation: Zod schemas, auth token storage, session auto-refresh, TOTP 2FA, session management, multi-identifier linking.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/client-user`** ([README](packages/sdk/src/feature/client-user/README.md)): Consumer web identity solution: multi-method auth (Email, Phone OTP, Google Sign-In), registration, password reset, account unlock, ready-to-use React login screens.
+- **`@mudrichenkoevgeny/web-platform-sdk/feature/management-user`** ([README](packages/sdk/src/feature/management-user/README.md)): Administrative identity and back-office solution: staff authentication, resource oversight, administrative user management, session control, system settings overrides, audit inspection UI.
 
 ---
 
@@ -209,8 +208,10 @@ import { SecurityErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/core/se
 import { UserErrorParser } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
 function init() {
+  // 1. Attach Auth HTTP Interceptor
   commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
 
+  // 2. Register Error Parsers
   commonComponent.init({
     appErrorParserSpecificParsers: [
       SecurityErrorParser,
@@ -218,6 +219,7 @@ function init() {
     ]
   })
 
+  // 3. Register WebSocket Message Handlers
   commonComponent.webSocketService.updateWebSocketMessageHandlers([
     commonComponent.commonWebSocketMessageHandler,
     settingsComponent.settingsWebSocketMessageHandler,

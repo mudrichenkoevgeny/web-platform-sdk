@@ -14,8 +14,32 @@ function findWorkspaceRoot(startDir) {
   return process.cwd()
 }
 
+function patchFoundationExports(nodeModulesDir) {
+  if (!fs.existsSync(nodeModulesDir)) return
+  fs.readdirSync(nodeModulesDir, { withFileTypes: true }).forEach((entry) => {
+    const full = path.join(nodeModulesDir, entry.name)
+    if (entry.isDirectory()) {
+      if (entry.name !== '.bin') patchFoundationExports(full)
+    } else if (entry.name === 'package.json' && full.includes('shared-foundation')) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(full, 'utf-8'))
+        if (pkg.exports && pkg.exports['./tokens'] && typeof pkg.exports['./tokens'] === 'object') {
+          if (!pkg.exports['./tokens'].require || !pkg.exports['./tokens'].default) {
+            pkg.exports['./tokens'].require = './dist/design-system/tokens.js'
+            pkg.exports['./tokens'].default = './dist/design-system/tokens.js'
+            fs.writeFileSync(full, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+          }
+        }
+      } catch (_e) {
+      }
+    }
+  })
+}
+
 const currentFileDir = fileURLToPath(new URL('.', import.meta.url))
 const rootDir = findWorkspaceRoot(currentFileDir)
+
+patchFoundationExports(path.join(rootDir, 'node_modules'))
 
 let foundationPkgDir
 try {

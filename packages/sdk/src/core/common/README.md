@@ -1,4 +1,4 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-common
+# @mudrichenkoevgeny/web-platform-sdk/core/common
 
 Base foundation for all Web Platform SDK modules: shared **Fetch HTTP client** bootstrap, **WebSocket** infrastructure with lifecycle management, **WebCrypto encrypted settings** storage abstraction, **browser & platform** metadata providers, **Chain of Responsibility error modeling and parsing**, localized string dictionaries, and a complete suite of **React** UI components with Tailwind CSS styling, design tokens, and Storybook support.
 
@@ -54,20 +54,20 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `CommonComponent` and `EncryptedSettingsComponent` assembly points. |
-| `src/context/` | `SdkProvider` React context and hooks (`useSdkStore`, `useCommonComponent`). |
-| `src/network/` | Native `fetch` HTTP client, `HttpClientConfigPlugin`, `WebWebSocketService`, and message handlers. |
-| `src/result/` | Discriminated union `AppResult` (`Success` / `Failure`) and functional monadic helpers. |
-| `src/error/` | `AppError` models, `CommonErrorParser`, `AppErrorParserBuilder`, and `AppErrorLogger`. |
-| `src/storage/` | `EncryptedSettings` interface, `WebCryptoSettings` (AES-GCM), and `CommonStorage`. |
-| `src/platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
-| `src/theme/` | `ThemeProvider`, re-exported design tokens (`PlatformDesignTokens`), and Tailwind preset. |
-| `src/ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
-| `src/listing/` | `PaginationState`, `ListingDefaultValues`, `PagingFooter`, and `useInfiniteScroll`. |
-| `src/locales/` | Typed localization dictionaries (`CoreCommonStrings` with `enStrings` and `ruStrings`). |
-| `src/time/` | Date/time formatters (`DateTimeFormatter`) and resend countdown timers (`ResendCountdown`). |
-| `src/testing/` | `ComponentTestHarness` and Storybook decorators. |
-| `src/mock/` | Test doubles (`EncryptedSettingsMock`, `WebSocketServiceMock`, `AccessTokenProviderMock`). |
+| `di/` | `CommonComponent` and `EncryptedSettingsComponent` assembly points. |
+| `context/` | `SdkProvider` React context and hooks (`useSdkStore`, `useCommonComponent`). |
+| `network/` | Native `fetch` HTTP client, `HttpClientConfigPlugin`, `WebWebSocketService`, and message handlers. |
+| `result/` | Discriminated union `AppResult` (`Success` / `Failure`) and functional monadic helpers. |
+| `error/` | `AppError` models, `CommonErrorParser`, `AppErrorParserBuilder`, and `AppErrorLogger`. |
+| `storage/` | `EncryptedSettings` interface, `WebCryptoSettings` (AES-GCM), and `CommonStorage`. |
+| `platform/` | `ClientDeviceInfoProvider`, `ExternalLauncher`, and `PlatformRepository`. |
+| `theme/` | `ThemeProvider`, re-exported design tokens (`PlatformDesignTokens`), and Tailwind preset. |
+| `ui/` | Core React UI components (`CoreButton`, `CoreOutlinedTextField`, `FullscreenLoading`, etc.). |
+| `listing/` | `PaginationState`, `ListingDefaultValues`, `PagingFooter`, and `useInfiniteScroll`. |
+| `locales/` | Typed localization dictionaries (`CoreCommonStrings` with `enStrings` and `ruStrings`). |
+| `time/` | Date/time formatters (`DateTimeFormatter`) and resend countdown timers (`ResendCountdown`). |
+| `testing/` | `ComponentTestHarness` and Storybook decorators. |
+| `mock/` | Test doubles (`EncryptedSettingsMock`, `WebSocketServiceMock`, `AccessTokenProviderMock`). |
 
 ---
 
@@ -75,7 +75,7 @@ This module serves as the foundational core for the Web Platform SDK and has zer
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-common
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing CommonComponent & SdkProvider
@@ -87,7 +87,7 @@ import {
   CommonComponent,
   SdkProvider,
   ThemeProvider
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const encryptedSettingsComponent = new EncryptedSettingsComponent()
 
@@ -112,7 +112,7 @@ export const App = ({ children }: { children: React.ReactNode }) => {
 ### 3. Handling Results & Functional Folding
 
 ```typescript
-import { AppResult } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { AppResult } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const result: AppResult<UserData, AppError> = await repository.getUser()
 
@@ -130,9 +130,8 @@ import React from 'react'
 import {
   CoreButton,
   CoreOutlinedTextField,
-  CorePasswordTextField,
-  enStrings
-} from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+  CorePasswordTextField
+} from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 export const LoginForm = () => {
   const [password, setPassword] = React.useState('')

@@ -20,6 +20,7 @@ export default defineConfig(({ command, mode }) => {
   const isTest = mode === 'test' || process.env.NODE_ENV === 'test'
   const plugins = [
     svgr({
+      include: '**/*.svg?react',
       svgrOptions: {
         icon: true
       }
@@ -70,7 +71,12 @@ export default defineConfig(({ command, mode }) => {
         formats: ['es']
       },
       rollupOptions: {
-        external: (id) => EXTERNAL_DEPS.some((pkg) => id === pkg || id.startsWith(`${pkg}/`))
+        external: (id) => {
+          if (id.includes('.svg')) {
+            return false
+          }
+          return EXTERNAL_DEPS.some((pkg) => id === pkg || id.startsWith(`${pkg}/`))
+        }
       }
     }
   }

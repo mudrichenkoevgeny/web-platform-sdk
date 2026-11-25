@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+# @mudrichenkoevgeny/web-platform-sdk/feature/management-user
 
 Administrative identity, staff authentication, resource oversight, and system governance solution for the Web Platform SDK: staff **Fetch HTTP API integrations**, **administrative repositories**, **audit logging inspection**, **remote settings override use cases**, **`ManagementUserComponent` DI wiring**, and complete **React Admin Panel screens**.
 
-This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide administrative (back-office / internal staff) applications with full governance over users, sessions, security policies, global application settings, and audit logs.
+This package builds on `@mudrichenkoevgeny/web-platform-sdk/feature/user` to provide administrative (back-office / internal staff) applications with full governance over users, sessions, security policies, global application settings, and audit logs.
 
 ---
 
@@ -49,15 +49,15 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `ManagementUserComponent` manual dependency injection assembly point. |
-| `src/storage/` | Encrypted management settings storage (`ManagementAuthSettingsStorage`, `ManagementGlobalSettingsStorage`, etc.). |
-| `src/network/` | Staff REST API clients (`FetchManagementUserApi`, `FetchManagementAuditApi`, `FetchManagementGlobalSettingsApi`, etc.). |
-| `src/repository/` | Administrative repositories (`ManagementUserRepositoryImpl`, `ManagementAuditRepositoryImpl`, etc.). |
-| `src/usecase/` | Administrative use cases grouped into `audit/`, `user/`, `session/`, `security/`, `global-settings/`, and `auth/`. |
-| `src/ui/components/` | Administrative UI components (`AuditItem`, `UserItem`). |
-| `src/ui/screens/` | React screens (`MainManagementScreen`, `GlobalUserListScreen`, `AuditEventListScreen`, `EditGlobalSettingsScreen`, etc.). |
-| `src/locales/` | Typed localization dictionaries (`ManagementUserStrings` with `enStrings` and `ruStrings`). |
-| `src/mock/` | Test doubles (`ManagementUserComponentMock`, mock repositories, API clients). |
+| `di/` | `ManagementUserComponent` manual dependency injection assembly point. |
+| `storage/` | Encrypted management settings storage (`ManagementAuthSettingsStorage`, `ManagementGlobalSettingsStorage`, etc.). |
+| `network/` | Staff REST API clients (`FetchManagementUserApi`, `FetchManagementAuditApi`, `FetchManagementGlobalSettingsApi`, etc.). |
+| `repository/` | Administrative repositories (`ManagementUserRepositoryImpl`, `ManagementAuditRepositoryImpl`, etc.). |
+| `usecase/` | Administrative use cases grouped into `audit/`, `user/`, `session/`, `security/`, `global-settings/`, and `auth/`. |
+| `ui/components/` | Administrative UI components (`AuditItem`, `UserItem`). |
+| `ui/screens/` | React screens (`MainManagementScreen`, `GlobalUserListScreen`, `AuditEventListScreen`, `EditGlobalSettingsScreen`, etc.). |
+| `locales/` | Typed localization dictionaries (`ManagementUserStrings` with `enStrings` and `ruStrings`). |
+| `mock/` | Test doubles (`ManagementUserComponentMock`, mock repositories, API clients). |
 
 ---
 
@@ -65,13 +65,13 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-managementuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing ManagementUserComponent & System Wiring
 
 ```typescript
-import { ManagementUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { ManagementUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 
 const managementUserComponent = new ManagementUserComponent({
   commonComponent: commonComponent,
@@ -88,7 +88,7 @@ commonComponent.httpClientConfigPlugins.push(managementUserComponent.authHttpCli
 ### 3. Rendering Admin Panel Screen in Host Application
 
 ```tsx
-import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-managementuser'
+import { MainManagementScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/management-user'
 
 export function AdminPanel() {
   return <MainManagementScreen dependencies={dependencies} />

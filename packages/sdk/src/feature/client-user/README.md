@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+# @mudrichenkoevgeny/web-platform-sdk/feature/client-user
 
 End-user (client) identity and authentication solution for the Web Platform SDK: consumer-facing **Fetch HTTP API integrations**, **open auth & user repositories**, **configuration synchronization use cases**, **`ClientUserComponent` DI wiring**, and complete **React login & registration screens**.
 
-This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows and TanStack Router parameter schemas.
+This package builds on `@mudrichenkoevgeny/web-platform-sdk/feature/user` to provide end-user (B2C / consumer) web applications with ready-to-use authentication flows and TanStack Router parameter schemas.
 
 ---
 
@@ -38,13 +38,13 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `ClientUserComponent` manual dependency injection assembly point. |
-| `src/domain/` | Consumer domain models and `OpenUserConfiguration`. |
-| `src/network/` | Consumer REST API clients (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchOpenSessionApi`, etc.). |
-| `src/repository/` | Open repository implementations (`OpenLoginRepositoryImpl`, `OpenUserRepositoryImpl`, etc.). |
-| `src/usecase/` | `RefreshClientUserConfigurationUseCase` and `RefreshOpenAuthSettingsUseCase`. |
-| `src/ui/screens/` | React screens (`LoginByPhoneScreen`, `RegistrationByEmailScreen`, etc.) and Zustand stores. |
-| `src/mock/` | Test doubles (`ClientUserComponentMock`, mock repositories, mock API clients). |
+| `di/` | `ClientUserComponent` manual dependency injection assembly point. |
+| `domain/` | Consumer domain models and `OpenUserConfiguration`. |
+| `network/` | Consumer REST API clients (`FetchOpenLoginApi`, `FetchRegistrationApi`, `FetchOpenSessionApi`, etc.). |
+| `repository/` | Open repository implementations (`OpenLoginRepositoryImpl`, `OpenUserRepositoryImpl`, etc.). |
+| `usecase/` | `RefreshClientUserConfigurationUseCase` and `RefreshOpenAuthSettingsUseCase`. |
+| `ui/screens/` | React screens (`LoginByPhoneScreen`, `RegistrationByEmailScreen`, etc.) and Zustand stores. |
+| `mock/` | Test doubles (`ClientUserComponentMock`, mock repositories, mock API clients). |
 
 ---
 
@@ -52,13 +52,13 @@ This package builds on `@mudrichenkoevgeny/web-platform-sdk-feature-user` to pro
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-clientuser
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing ClientUserComponent & System Wiring
 
 ```typescript
-import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { ClientUserComponent } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
 const clientUserComponent = new ClientUserComponent({
   commonComponent: commonComponent,
@@ -75,7 +75,7 @@ commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientC
 ### 3. Rendering Consumer Login Screen in Host Application
 
 ```tsx
-import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-clientuser'
+import { LoginByPhoneScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/client-user'
 
 export function ConsumerPhoneLoginPage() {
   return <LoginByPhoneScreen dependencies={dependencies} />

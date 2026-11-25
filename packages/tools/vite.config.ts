@@ -150,7 +150,16 @@ function copyTemplatesPlugin() {
         copyDir(
           sampleClientDir,
           templateClientDir,
-          (_filePath, content) => content.replace(/ClientAppComponent/g, '{{PascalProjectName}}ClientAppComponent'),
+          (filePath, content) => {
+            let updated = content.replace(/ClientAppComponent/g, '{{PascalProjectName}}ClientAppComponent')
+            if (filePath.endsWith('tailwind.config.js')) {
+              updated = updated.replace(
+                '../../packages/sdk/dist/**/*.{js,mjs,cjs}',
+                './node_modules/@mudrichenkoevgeny/web-platform-sdk/dist/**/*.{js,mjs,cjs}'
+              )
+            }
+            return updated
+          },
           (pkg) => {
             const updated = { ...pkg, name: '@{{projectName}}/client' }
             if (updated.dependencies) {
@@ -178,7 +187,16 @@ function copyTemplatesPlugin() {
         copyDir(
           sampleAdminDir,
           templateAdminDir,
-          (_filePath, content) => content.replace(/ManagementAppComponent/g, '{{PascalProjectName}}ManagementAppComponent'),
+          (filePath, content) => {
+            let updated = content.replace(/ManagementAppComponent/g, '{{PascalProjectName}}ManagementAppComponent')
+            if (filePath.endsWith('tailwind.config.js')) {
+              updated = updated.replace(
+                '../../packages/sdk/dist/**/*.{js,mjs,cjs}',
+                './node_modules/@mudrichenkoevgeny/web-platform-sdk/dist/**/*.{js,mjs,cjs}'
+              )
+            }
+            return updated
+          },
           (pkg) => {
             const updated = { ...pkg, name: '@{{projectName}}/admin' }
             if (updated.dependencies) {

@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-core-settings
+# @mudrichenkoevgeny/web-platform-sdk/core/settings
 
 Global application configuration module for the Web Platform SDK: public **global settings management**, **WebCrypto encrypted caching**, **WebSocket real-time settings synchronization**, domain **use cases**, and manual DI wiring via **`SettingsComponent`**.
 
-This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common` and `@mudrichenkoevgeny/shared-foundation`.
+This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk/core/common` and `@mudrichenkoevgeny/shared-foundation`.
 
 ---
 
@@ -35,13 +35,13 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `SettingsComponent` manual dependency injection assembly point. |
-| `src/domain/` | `OpenGlobalSettings` domain model and properties. |
-| `src/storage/` | `OpenGlobalSettingsStorage` interface and `EncryptedOpenGlobalSettingsStorage` (AES-GCM). |
-| `src/network/` | `OpenGlobalSettingsApi`, `FetchOpenGlobalSettingsApi`, and `SettingsWebSocketMessageHandler`. |
-| `src/repository/` | `OpenGlobalSettingsRepository` interface and `OpenGlobalSettingsRepositoryImpl`. |
-| `src/usecase/` | `GetOpenGlobalSettingsUseCase` and `RefreshOpenGlobalSettingsUseCase`. |
-| `src/mock/` | Test doubles (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`). |
+| `di/` | `SettingsComponent` manual dependency injection assembly point. |
+| `domain/` | `OpenGlobalSettings` domain model and properties. |
+| `storage/` | `OpenGlobalSettingsStorage` interface and `EncryptedOpenGlobalSettingsStorage` (AES-GCM). |
+| `network/` | `OpenGlobalSettingsApi`, `FetchOpenGlobalSettingsApi`, and `SettingsWebSocketMessageHandler`. |
+| `repository/` | `OpenGlobalSettingsRepository` interface and `OpenGlobalSettingsRepositoryImpl`. |
+| `usecase/` | `GetOpenGlobalSettingsUseCase` and `RefreshOpenGlobalSettingsUseCase`. |
+| `mock/` | Test doubles (`SettingsComponentMock`, `OpenGlobalSettingsRepositoryMock`, `OpenGlobalSettingsApiMock`). |
 
 ---
 
@@ -49,7 +49,7 @@ This module depends strictly on `@mudrichenkoevgeny/web-platform-sdk-core-common
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-core-settings
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. Initializing SettingsComponent & Registration
@@ -57,8 +57,8 @@ pnpm add @mudrichenkoevgeny/web-platform-sdk-core-settings
 Construct `SettingsComponent` by passing core infrastructure dependencies from `CommonComponent`, and register the WebSocket handler:
 
 ```typescript
-import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
-import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk-core-common'
+import { SettingsComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
+import { CommonComponent } from '@mudrichenkoevgeny/web-platform-sdk/core/common'
 
 const settingsComponent = new SettingsComponent({
   webSocketService: commonComponent.webSocketService,
@@ -75,7 +75,7 @@ commonComponent.webSocketService.updateWebSocketMessageHandlers([
 ### 3. Fetching Global Settings
 
 ```typescript
-import { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk-core-settings'
+import { GetOpenGlobalSettingsUseCase } from '@mudrichenkoevgeny/web-platform-sdk/core/settings'
 
 const getGlobalSettings = new GetOpenGlobalSettingsUseCase(settingsComponent.openGlobalSettingsRepository)
 

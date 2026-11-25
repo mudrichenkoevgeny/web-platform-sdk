@@ -1,8 +1,8 @@
-# @mudrichenkoevgeny/web-platform-sdk-feature-user
+# @mudrichenkoevgeny/web-platform-sdk/feature/user
 
 Base identity and authentication domain module for the Web Platform SDK: core **authentication state machine**, **WebCrypto token storage**, **MFA / TOTP 2FA workflows**, **session oversight**, **multi-identifier linking**, **MFA step-up HTTP interceptors**, responsive **React UI screens & components**, and **Zod search parameter schemas for TanStack Router**.
 
-This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mudrichenkoevgeny/web-platform-sdk-core-security`, and `@mudrichenkoevgeny/web-platform-sdk-core-settings`. It serves as the shared domain foundation for both `@mudrichenkoevgeny/web-platform-sdk-feature-clientuser` and `@mudrichenkoevgeny/web-platform-sdk-feature-managementuser`.
+This package depends on `@mudrichenkoevgeny/web-platform-sdk/core/common`, `@mudrichenkoevgeny/web-platform-sdk/core/security`, and `@mudrichenkoevgeny/web-platform-sdk/core/settings`. It serves as the shared domain foundation for both `@mudrichenkoevgeny/web-platform-sdk/feature/client-user` and `@mudrichenkoevgeny/web-platform-sdk/feature/management-user`.
 
 ---
 
@@ -55,18 +55,18 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 
 | Directory | Role |
 | :--- | :--- |
-| `src/di/` | `UserStorageModule` for initializing storage components. |
-| `src/auth/` | `UserAuthServices`, `GoogleAuthService`, `WebGoogleAuthService`, and disabled fallbacks. |
-| `src/storage/` | `AuthStorage` (tokens), `UserStorage` (user details), and WebCrypto AES-GCM implementations. |
-| `src/network/` | REST APIs (`SessionApi`, `UserSecurityApi`), `AuthHttpClientConfigPlugin`, `MfaStepUpHttpClientConfigPlugin`, and `UserWebSocketMessageHandler`. |
-| `src/repository/` | Repositories for Auth, Session, User, Identifier, and Confirmation key throttlers. |
-| `src/usecase/` | Atomic use cases grouped into `auth/`, `session/`, `user/`, and `identifier/`. |
-| `src/error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
-| `src/validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
-| `src/ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
-| `src/ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and User screens. |
-| `src/locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
-| `src/mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
+| `di/` | `UserStorageModule` for initializing storage components. |
+| `auth/` | `UserAuthServices`, `GoogleAuthService`, `WebGoogleAuthService`, and disabled fallbacks. |
+| `storage/` | `AuthStorage` (tokens), `UserStorage` (user details), and WebCrypto AES-GCM implementations. |
+| `network/` | REST APIs (`SessionApi`, `UserSecurityApi`), `AuthHttpClientConfigPlugin`, `MfaStepUpHttpClientConfigPlugin`, and `UserWebSocketMessageHandler`. |
+| `repository/` | Repositories for Auth, Session, User, Identifier, and Confirmation key throttlers. |
+| `usecase/` | Atomic use cases grouped into `auth/`, `session/`, `user/`, and `identifier/`. |
+| `error/` | `UserError`, `ClientUserErrorCodes`, and `UserErrorParser`. |
+| `validator/` | `FieldValidator` for email, phone number, and TOTP code formatting checks. |
+| `ui/components/` | Reusable UI components (`AuthProviderGrid`, `IdentifierItem`, `SessionItem`, `LegalFooter`). |
+| `ui/screens/` | React screens, Zustand stores, and Zod router search schemas for Auth, Reset Password, Unlock, and User screens. |
+| `locales/` | Typed localization dictionaries (`UserStrings` with `enStrings` and `ruStrings`). |
+| `mock/` | Complete suite of test doubles (`AuthStorageMock`, repository mocks, use case mocks). |
 
 ---
 
@@ -74,7 +74,7 @@ This package depends on `@mudrichenkoevgeny/web-platform-sdk-core-common`, `@mud
 
 ### 1. Installation
 ```bash
-pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-user
+pnpm add @mudrichenkoevgeny/web-platform-sdk
 ```
 
 ### 2. System Registration
@@ -82,7 +82,7 @@ pnpm add @mudrichenkoevgeny/web-platform-sdk-feature-user
 Register `UserErrorParser`, `AuthHttpClientConfigPlugin`, and `UserWebSocketMessageHandler` during host startup:
 
 ```typescript
-import { UserErrorParser, UserWebSocketMessageHandler } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { UserErrorParser, UserWebSocketMessageHandler } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
 // 1. Attach Auth HTTP Interceptor
 commonComponent.httpClientConfigPlugins.push(clientUserComponent.authHttpClientConfigPlugin)
@@ -101,7 +101,7 @@ commonComponent.webSocketService.updateWebSocketMessageHandlers([
 ### 3. Rendering User Main Screen
 
 ```tsx
-import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk-feature-user'
+import { MainUserScreen } from '@mudrichenkoevgeny/web-platform-sdk/feature/user'
 
 export function UserMainPage() {
   return <MainUserScreen dependencies={dependencies} />

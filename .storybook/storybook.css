@@ -1,0 +1,5 @@
+@import '../packages/sdk/src/core/common/theme/index.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { fileURLToPath, URL } from 'node:url'
 
@@ -9,6 +10,12 @@ export default defineConfig({
     TanStackRouterVite({
       routesDirectory: './src/routes',
       generatedRouteTree: './src/routeTree.gen.ts'
+    }),
+    svgr({
+      include: '**/*.svg?react',
+      svgrOptions: {
+        icon: true
+      }
     }),
     react()
   ],
